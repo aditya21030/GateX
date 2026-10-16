@@ -1,0 +1,497 @@
+{
+  "subjects": [
+    {
+      "subject": "Probability and Statistics",
+      "questions": [
+        {
+          "type": "MCQ",
+          "question": "Two fair dice are rolled. Let A = {sum is 7}, B = {first die shows 3}. Which of the following is true?",
+          "options": ["A and B are independent", "P(A|B) = 1/6", "P(B|A) = 1/6", "All of the above"],
+          "answer": "D"
+        },
+        {
+          "type": "NAT",
+          "question": "A random variable X has MGF M_X(t) = (0.6e^t + 0.4)^5. Find P(X ≥ 3) (up to 4 decimal places).",
+          "answer": "0.6826"
+        },
+        {
+          "type": "MSQ",
+          "question": "Let X ~ Uniform(0,1) and Y = X². Which of the following statements are correct?",
+          "options": ["Cov(X,Y) = 1/12", "X and Y are independent", "E[Y|X] = X²", "Var(Y) = 4/45"],
+          "answer": ["A", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "A factory has three machines M1, M2, M3 producing 40%, 35%, 25% of output with defect rates 2%, 3%, 4% respectively. A random product is defective. What is the probability it came from M2?",
+          "options": ["0.3684", "0.3158", "0.2807", "0.4211"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "For a bivariate normal distribution with μ_X=10, σ_X=2, μ_Y=20, σ_Y=5, ρ=0.6. Find Var(Y|X=12).",
+          "answer": "16"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following statements about the Central Limit Theorem (CLT) are true?",
+          "options": ["CLT applies only if the population is normal", "For n=30, the sample mean is exactly normal", "CLT allows approximation of sample mean distribution regardless of population shape for large n", "The standard error = σ/√n"],
+          "answer": ["C", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "Given joint PDF f(x,y)=2 for 0<x<y<1. What is E[Y|X=0.2]?",
+          "options": ["0.5", "0.6", "0.7", "0.8"],
+          "answer": "B"
+        },
+        {
+          "type": "NAT",
+          "question": "In a regression model Y=β0+β1X+ε, given Σ(Xi−X̄)(Yi−Ȳ)=120, Σ(Xi−X̄)²=80, Σ(Yi−Ȳ)²=200, n=20. Compute the F-statistic to test H0: β1=0.",
+          "answer": "162"
+        },
+        {
+          "type": "MSQ",
+          "question": "Let X ~ Poisson(λ=4). Which of the following are correct?",
+          "options": ["E[X²] = 20", "Var(X) = 4", "P(X=4) = e^{-4} * 4^4 / 24", "M_X(t) = exp(4(e^t-1))"],
+          "answer": ["A", "B", "C", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "Two independent samples: n1=16, s1²=25; n2=21, s2²=36. Test H0: σ1²=σ2² at α=0.05 (two‑tailed). The correct decision is:",
+          "options": ["Reject H0", "Fail to reject H0", "Reject only if F < 0.362", "Reject only if F > 2.20"],
+          "answer": "B"
+        }
+      ]
+    },
+    {
+      "subject": "Linear Algebra",
+      "questions": [
+        {
+          "type": "MCQ",
+          "question": "Matrix A = [[2,1],[1,2]]. Which of the following is A^10?",
+          "options": ["½[[3^10+1, 3^10-1],[3^10-1,3^10+1]]", "½[[3^10-1,3^10+1],[3^10+1,3^10-1]]", "[[2^10,1],[1,2^10]]", "[[3^10,0],[0,1^10]]"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "For A = [[2,1,1],[1,2,1],[1,1,2]], find the sum of all eigenvalues of A².",
+          "answer": "18"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following statements are true for a 3×3 real symmetric matrix?",
+          "options": ["All eigenvalues are real", "Eigenvectors corresponding to distinct eigenvalues are orthogonal", "It is always diagonalizable", "Its determinant is the sum of eigenvalues"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "Let T: R³→R³ be rotation by 90° about the y‑axis (counterclockwise when looking from positive y). The matrix of T is:",
+          "options": ["[[0,0,1],[0,1,0],[-1,0,0]]", "[[0,0,-1],[0,1,0],[1,0,0]]", "[[0,1,0],[-1,0,0],[0,0,1]]", "[[1,0,0],[0,0,-1],[0,1,0]]"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "Find the rank of matrix A = [[1,2,3,4],[2,4,6,8],[3,6,9,12],[1,3,5,7]].",
+          "answer": "2"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following matrices are diagonalizable over real numbers?",
+          "options": ["[[3,1],[0,3]]", "[[2,0],[0,2]]", "[[0,1],[-1,0]]", "[[1,2],[2,1]]"],
+          "answer": ["B", "C", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "The orthogonal projection of b=(1,2,3) onto the column space of A=[[1,0],[1,1],[0,1]] is:",
+          "options": ["(1/3, 5/3, 4/3)", "(1/3, 1/3, 2/3)", "(1,2,3)", "(0.333,1.667,1.333)"],
+          "answer": "D"
+        },
+        {
+          "type": "NAT",
+          "question": "A 4×4 matrix has eigenvalues 1,2,3,4. Compute the trace of A² - 2A + I.",
+          "answer": "14"
+        },
+        {
+          "type": "MSQ",
+          "question": "Let A be a 3×3 matrix with rank 2. Which of the following are true?",
+          "options": ["Nullity = 1", "Ax=b has a solution for every b", "The column space is a plane through origin", "A is invertible"],
+          "answer": ["A", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "For A = [[2,-1],[-1,2]], the spectral decomposition is:",
+          "options": ["3 v1v1^T + 1 v2v2^T with v1=(1/√2, -1/√2), v2=(1/√2, 1/√2)", "3 v1v1^T + 1 v2v2^T with v1=(1/√2,1/√2), v2=(1/√2,-1/√2)", "2I - J", "None of these"],
+          "answer": "A"
+        }
+      ]
+    },
+    {
+      "subject": "Calculus and Optimization",
+      "questions": [
+        {
+          "type": "NAT",
+          "question": "Find the maximum value of f(x,y)=x²+y²+2x-4y on the closed disk x²+y² ≤ 25 (up to 2 decimals).",
+          "answer": "47.36"
+        },
+        {
+          "type": "MCQ",
+          "question": "Evaluate ∫∫_R (x-y)e^{x+y} dA over the rectangle [0,1]×[0,1]. The value is:",
+          "options": ["(e²-1)/2", "0", "e²-1", "1"],
+          "answer": "B"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following points are critical points of f(x,y)=x³+y³-3x-12y+20?",
+          "options": ["(1,2)", "(1,-2)", "(-1,2)", "(-1,-2)"],
+          "answer": ["A", "B", "C", "D"]
+        },
+        {
+          "type": "NAT",
+          "question": "Use Lagrange multipliers to find the squared distance from the origin to the plane x+2y+3z=6. Enter the squared distance.",
+          "answer": "126/49"
+        },
+        {
+          "type": "MCQ",
+          "question": "The directional derivative of f(x,y,z)=x²y+yz² at (1,1,1) in the direction of v=(1,2,2) is:",
+          "options": ["10/3", "2√3", "2", "4/3"],
+          "answer": "A"
+        },
+        {
+          "type": "MSQ",
+          "question": "For the function f(x)=e^x sin x, the Taylor expansion up to x⁴ is:",
+          "options": ["x + x² + x³/3 - x⁴/8", "x + x²/2 + x³/6 + x⁴/24", "x + x² + x³/3 - x⁴/12", "x + x²/2 + x³/6 - x⁴/24"],
+          "answer": ["A"]
+        },
+        {
+          "type": "NAT",
+          "question": "Apply one iteration of Newton's method to find the root of f(x)=x³-2x-5 starting from x0=2. Compute x1 (3 decimal places).",
+          "answer": "2.1"
+        },
+        {
+          "type": "MCQ",
+          "question": "The volume of the region bounded by the paraboloid z=x²+y² and the plane z=4 is:",
+          "options": ["8π", "16π", "4π", "32π"],
+          "answer": "A"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following statements about gradient descent are correct?",
+          "options": ["It always converges to the global minimum for convex functions", "Learning rate too high may cause divergence", "It uses first‑order derivatives only", "It is guaranteed to find the global minimum for non‑convex functions"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "NAT",
+          "question": "Evaluate the line integral ∫_C (x²+y²)dx + (2xy)dy where C is from (0,0) to (1,1) along y=x² and back from (1,1) to (0,0) along y=x. Enter the value.",
+          "answer": "0"
+        }
+      ]
+    },
+    {
+      "subject": "Programming, Data Structures and Algorithms",
+      "questions": [
+        {
+          "type": "MCQ",
+          "question": "What is the worst‑case time complexity of quickselect to find the kth largest element in an unsorted array (using random pivot)?",
+          "options": ["O(n)", "O(n log n)", "O(n²)", "O(log n)"],
+          "answer": "C"
+        },
+        {
+          "type": "NAT",
+          "question": "In Floyd’s cycle detection algorithm, if the slow and fast pointers meet after moving 7 steps from the head, and the cycle length is 5, how many steps from the head is the cycle start node?",
+          "answer": "3"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following data structures can be used to implement a queue with O(1) amortized time for both enqueue and dequeue?",
+          "options": ["Two stacks", "Circular array", "Singly linked list with head and tail pointers", "Binary heap"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "Given array [5,3,8,4,2,7,1,6], what is the first pivot chosen if we use Lomuto partition scheme for quicksort (first element as pivot)?",
+          "options": ["5", "3", "4", "1"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "In a binary tree, the diameter is the longest path between any two nodes. If left subtree height = 4, right subtree height = 3, and left diameter = 6, right diameter = 5, what is the diameter of the whole tree?",
+          "answer": "7"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following problems can be solved in O(n) time using a hashmap?",
+          "options": ["Longest subarray with sum k", "Two Sum", "Find duplicate in array", "Merge two sorted arrays"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "Dijkstra’s algorithm fails for graphs with:",
+          "options": ["Negative edge weights", "Positive weights only", "Cycles", "Disconnected graphs"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "How many distinct solutions exist for the 4‑Queens problem?",
+          "answer": "2"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are true about the sliding window maximum problem (deque solution)?",
+          "options": ["Time complexity O(n)", "Space complexity O(k)", "Uses a monotonic deque", "Worst case O(n log k)"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "A function to reverse a linked list in groups of size k uses recursion/iteration. What is the space complexity of the iterative version?",
+          "options": ["O(1)", "O(n)", "O(k)", "O(log n)"],
+          "answer": "A"
+        }
+      ]
+    },
+    {
+      "subject": "Database Management and Warehousing",
+      "questions": [
+        {
+          "type": "MCQ",
+          "question": "Consider R(A,B,C,D) with FDs: A→BC, B→D, C→A. Which of the following is a candidate key?",
+          "options": ["A", "B", "C", "Both A and C"],
+          "answer": "D"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following schedules are conflict serializable?",
+          "options": ["R1(A),W2(A),R1(B),W2(B),Commit2,R1(A),W1(A),Commit1", "R1(A),W1(A),R2(A),W2(A)", "R1(A),R2(A),W1(A),W2(A)", "R1(A),W2(A),W1(A),R2(A)"],
+          "answer": ["A"]
+        },
+        {
+          "type": "NAT",
+          "question": "Given Employee(id, salary). Write a SQL query to find the second highest salary. How many rows does the following query return? SELECT salary FROM Employee e1 WHERE 2 = (SELECT COUNT(DISTINCT salary) FROM Employee e2 WHERE e2.salary >= e1.salary). Assume salaries: 100,200,200,300. Enter the count.",
+          "answer": "2"
+        },
+        {
+          "type": "MCQ",
+          "question": "In MVCC, a read‑only transaction sees:",
+          "options": ["The latest committed version", "A snapshot as of its start time", "The version with the highest timestamp", "All uncommitted writes"],
+          "answer": "B"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are true about B+ tree indexes?",
+          "options": ["Supports range queries", "Leaf nodes contain data pointers", "Internal nodes contain only keys", "Height is O(log n)"],
+          "answer": ["A", "B", "C", "D"]
+        },
+        {
+          "type": "NAT",
+          "question": "In a star schema for sales, the fact table has foreign keys to Date, Product, Store, Customer. If Date dimension has 365 rows, Product 500, Store 100, Customer 1000, what is the maximum number of rows in the fact table (without any filtering)?",
+          "answer": "365*500*100*1000"
+        },
+        {
+          "type": "MCQ",
+          "question": "A deadlock occurs in 2PL if:",
+          "options": ["A transaction holds a lock and requests another lock held by another transaction", "A transaction releases a lock before commit", "A transaction acquires all locks at once", "The wait‑for graph has a cycle"],
+          "answer": "D"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are correct about materialized views?",
+          "options": ["They store query results physically", "They always improve query performance", "They require refresh strategies", "They cannot be used in OLTP systems"],
+          "answer": ["A", "C"]
+        },
+        {
+          "type": "NAT",
+          "question": "Given Orders(order_id, customer_id, amount) and Customers(customer_id, city). Write a query to get total amount per city for cities with at least 2 customers. How many rows will be returned if only one city has 2 customers?",
+          "answer": "1"
+        },
+        {
+          "type": "MCQ",
+          "question": "Which normal form prohibits partial dependencies?",
+          "options": ["2NF", "3NF", "BCNF", "1NF"],
+          "answer": "A"
+        }
+      ]
+    },
+    {
+      "subject": "Machine Learning",
+      "questions": [
+        {
+          "type": "NAT",
+          "question": "In logistic regression, the gradient of binary cross‑entropy loss for a single sample (x,y) is (σ(w^Tx)-y)x. If w=(1,2), x=(1,1), y=1, and σ(3)=0.9526, compute the gradient component for the first weight (w1). (3 decimals)",
+          "answer": "-0.0474"
+        },
+        {
+          "type": "MCQ",
+          "question": "A decision tree with depth 10 gives 100% train accuracy and 70% test accuracy. This is most likely due to:",
+          "options": ["Underfitting", "Overfitting", "Data leakage", "Class imbalance"],
+          "answer": "B"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following kernel functions are valid (Mercer’s condition) for SVM?",
+          "options": ["Linear: K(x,y)=x·y", "Polynomial: (x·y+1)^d", "Gaussian: exp(-γ||x-y||²)", "Sigmoid: tanh(κ x·y + θ)"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "NAT",
+          "question": "k‑means clustering on points (1,1),(2,1),(4,3),(5,4) with initial centroids at (1,1) and (4,3). After one iteration, compute the sum of squared errors (SSE).",
+          "answer": "1.5"
+        },
+        {
+          "type": "MCQ",
+          "question": "Which ensemble method is most suitable for a high‑variance, low‑bias model like an unpruned decision tree?",
+          "options": ["Bagging (Random Forest)", "AdaBoost", "Gradient Boosting", "Stacking"],
+          "answer": "A"
+        },
+        {
+          "type": "MSQ",
+          "question": "In a neural network with sigmoid hidden units and one sigmoid output, backpropagation computes δ for output layer as ŷ−y. Which of the following are correct?",
+          "options": ["δ for hidden layer depends on δ_output", "Gradient for input‑to‑hidden weights uses hidden layer δ", "The activation derivative is σ(z)(1-σ(z))", "The loss function must be cross‑entropy"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "NAT",
+          "question": "For an imbalanced dataset with 90% class 0 and 10% class 1, a classifier predicts all zeros. Compute the recall for class 1.",
+          "answer": "0"
+        },
+        {
+          "type": "MCQ",
+          "question": "PCA on 2D data: (1,2),(3,4),(5,6). The first principal component direction is:",
+          "options": ["(1,1)", "(1,-1)", "(0,1)", "(1,0)"],
+          "answer": "A"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following statements about k‑NN are correct?",
+          "options": ["k=1 gives low bias and high variance", "Large k smooths decision boundaries", "k‑NN is a parametric model", "Curse of dimensionality affects k‑NN"],
+          "answer": ["A", "B", "D"]
+        },
+        {
+          "type": "NAT",
+          "question": "In the bias‑variance decomposition, suppose irreducible error = 0.1, bias² = 0.2, variance = 0.3. What is the expected squared error?",
+          "answer": "0.6"
+        }
+      ]
+    },
+    {
+      "subject": "Artificial Intelligence",
+      "questions": [
+        {
+          "type": "MCQ",
+          "question": "In A* search, which heuristic is guaranteed to be admissible?",
+          "options": ["Manhattan distance for 8‑puzzle", "Euclidean distance for grid", "0 (zero heuristic)", "All of the above"],
+          "answer": "D"
+        },
+        {
+          "type": "NAT",
+          "question": "Bayesian network: A→B, A→C, B→D, C→D. P(A)=0.5, P(B|A)=0.8, P(B|¬A)=0.2, P(C|A)=0.7, P(C|¬A)=0.3, P(D|B,C)=0.9, P(D|B,¬C)=0.6, P(D|¬B,C)=0.5, P(D|¬B,¬C)=0.1. Compute P(D|A).",
+          "answer": "0.724"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are true about alpha‑beta pruning?",
+          "options": ["It returns the same minimax value as standard minimax", "It prunes branches that cannot influence the final decision", "The order of node evaluation affects the amount of pruning", "It works only for zero‑sum games"],
+          "answer": ["A", "B", "C", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "Using resolution refutation on KB: (P→Q)∧(R→S)∧(P∨R)∧(¬Q). The derived clause after resolving ¬P∨Q and ¬Q is:",
+          "options": ["¬P", "P", "¬R", "S"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "MDP with states {A,B}, actions: A: stay (reward0, go to A), move (reward1, go to B); B: stay (0,B), move (0,A). γ=0.9. After one value iteration starting from V0=0, what is V(A)?",
+          "answer": "1"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following search algorithms are complete and optimal for graphs with positive edge weights?",
+          "options": ["BFS", "DFS", "Uniform Cost Search", "A* with admissible heuristic"],
+          "answer": ["C", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "Given CSP with variables {WA,NT,SA} domains {R,G,B}, constraints WA≠NT, NT≠SA, SA≠WA. After assigning WA=R and using forward checking, the domain of SA becomes:",
+          "options": ["{R,G,B}", "{G,B}", "{B}", "{}"],
+          "answer": "C"
+        },
+        {
+          "type": "NAT",
+          "question": "In the Turing test, if a machine fools a human interrogator 30% of the time, what is the standard criterion for passing (original Turing test suggestion)?",
+          "answer": "30"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are linearly separable?",
+          "options": ["AND function", "OR function", "XOR function", "NAND function"],
+          "answer": ["A", "B", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "For HMM with 2 states and 2 observations, the forward algorithm computes α_t(j). Which recurrence is correct?",
+          "options": ["α_t(j) = [∑_i α_{t-1}(i) a_{ij}] b_j(o_t)", "α_t(j) = b_j(o_t) ∑_i α_{t-1}(i) a_{ij}", "Both are equivalent", "None"],
+          "answer": "C"
+        }
+      ]
+    },
+    {
+      "subject": "General Aptitude",
+      "questions": [
+        {
+          "type": "NAT",
+          "question": "If x + 1/x = 3, find x^5 + 1/x^5.",
+          "answer": "123"
+        },
+        {
+          "type": "MCQ",
+          "question": "In a certain code, 'CONSTANT' is written as 'PCNTSATO'. How is 'VARIABLE' written?",
+          "options": ["AVBALREI", "AVBLAREI", "AVBALERI", "AVBLAERI"],
+          "answer": "A"
+        },
+        {
+          "type": "MSQ",
+          "question": "A train crosses a platform 200m long in 30s and a man in 10s. Which of the following are correct?",
+          "options": ["Train length = 100m", "Speed = 10 m/s", "Train length = 150m", "Speed = 36 km/h"],
+          "answer": ["A", "B", "D"]
+        },
+        {
+          "type": "NAT",
+          "question": "Average of 11 numbers is 50. Average of first 6 is 49, last 6 is 52. Find the 6th number.",
+          "answer": "56"
+        },
+        {
+          "type": "MCQ",
+          "question": "A man invests ₹10,000 at 8% compounded half‑yearly for 1.5 years. The amount is closest to:",
+          "options": ["₹11249", "₹10816", "₹11000", "₹11500"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "Find the next term in the series: 2, 6, 12, 20, 30, ___.",
+          "answer": "42"
+        },
+        {
+          "type": "MSQ",
+          "question": "In a group of 100 people, 70 like tea, 60 like coffee, 40 like both. How many like neither? How many like exactly one?",
+          "options": ["Neither = 10", "Neither = 20", "Exactly one = 50", "Exactly one = 30"],
+          "answer": ["A", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "A boat goes 30 km upstream and 44 km downstream in 10h; 40 km upstream and 55 km downstream in 13h. The speed of the boat in still water (km/h) is:",
+          "options": ["8", "9", "10", "11"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "Complete the letter analogy: ABD : CEG :: IJK : ? (Express as three capital letters).",
+          "answer": "KMN"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are fallacies in the argument: 'Most politicians are corrupt. Mr. X is a politician. Therefore, Mr. X is corrupt.'?",
+          "options": ["Hasty generalization", "Fallacy of division", "Syllogistic error (undistributed middle)", "Ad hominem"],
+          "answer": ["A", "C"]
+        }
+      ]
+    }
+  ]
+}

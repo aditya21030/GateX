@@ -1,0 +1,26 @@
+{
+    "flutter":  {
+                    "platforms":  {
+                                      "android":  {
+                                                      "default":  {
+                                                                      "projectId":  "gatex-111",
+                                                                      "appId":  "1:665863577421:android:ae7eb7f5a5979464a72104",
+                                                                      "fileOutput":  "android/app/google-services.json"
+                                                                  }
+                                                  },
+                                      "dart":  {
+                                                   "lib/firebase_options.dart":  {
+                                                                                     "projectId":  "gatex-111",
+                                                                                     "configurations":  {
+                                                                                                            "android":  "1:665863577421:android:ae7eb7f5a5979464a72104",
+                                                                                                            "ios":  "1:665863577421:ios:38a26d706da63889a72104",
+                                                                                                            "web":  "1:665863577421:web:1c1f4e94c48315b7a72104"
+                                                                                                        }
+                                                                                 }
+                                               }
+                                  }
+                },
+    "firestore":  {
+                      "rules":  "firestore.rules"
+                  }
+}

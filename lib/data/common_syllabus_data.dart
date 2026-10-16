@@ -1,0 +1,139 @@
+import 'dart:convert';
+
+class CommonSyllabusData {
+  static final Map<String, dynamic> data = jsonDecode(r'''
+{
+  "meta": {
+    "title": "GATE Common Syllabus",
+    "description": "Subjects common to both GATE CS and GATE DA",
+    "sources": ["GATE CS 2024", "GATE DA 2026"]
+  },
+  "subjects": [
+    {
+      "id": "prob_stats",
+      "title": "Probability & Statistics",
+      "tags": ["CS", "DA"],
+      "subtopics": {
+        "CS": [
+          "Random variables",
+          "Uniform, normal, exponential, Poisson and binomial distributions",
+          "Mean, median, mode and standard deviation",
+          "Conditional probability and Bayes theorem"
+        ],
+        "DA": [
+          "Counting (permutations and combinations), probability axioms",
+          "Sample space, events, independent events, mutually exclusive events",
+          "Marginal, conditional and joint probability",
+          "Bayes theorem",
+          "Conditional expectation and variance",
+          "Mean, median, mode and standard deviation, correlation and covariance",
+          "Discrete random variables and probability mass functions",
+          "Uniform, Bernoulli, binomial distribution",
+          "Continuous random variables and probability distribution function",
+          "Uniform, exponential, Poisson, normal, standard normal, t-distribution, chi-squared distributions",
+          "Cumulative distribution function (CDF), Conditional PDF",
+          "Central limit theorem",
+          "Confidence interval",
+          "z-test, t-test, chi-squared test"
+        ]
+      }
+    },
+    {
+      "id": "linear_algebra",
+      "title": "Linear Algebra",
+      "tags": ["CS", "DA"],
+      "subtopics": {
+        "CS": [
+          "Matrices, determinants",
+          "System of linear equations",
+          "Eigenvalues and eigenvectors",
+          "LU decomposition"
+        ],
+        "DA": [
+          "Vector space, subspaces",
+          "Linear dependence and independence of vectors",
+          "Matrices, projection matrix, orthogonal matrix, idempotent matrix, partition matrix and their properties",
+          "Quadratic forms",
+          "Systems of linear equations and solutions",
+          "Gaussian elimination",
+          "Eigenvalues and eigenvectors",
+          "Determinant, rank, nullity, projections",
+          "LU decomposition",
+          "Singular value decomposition (SVD)"
+        ]
+      }
+    },
+    {
+      "id": "calculus_optimization",
+      "title": "Calculus & Optimization",
+      "tags": ["CS", "DA"],
+      "subtopics": {
+        "CS": [
+          "Limits, continuity and differentiability",
+          "Maxima and minima",
+          "Mean value theorem",
+          "Integration"
+        ],
+        "DA": [
+          "Functions of a single variable",
+          "Limits, continuity and differentiability",
+          "Taylor series",
+          "Maxima and minima",
+          "Optimization involving a single variable"
+        ]
+      }
+    },
+    {
+      "id": "programming_dsa",
+      "title": "Programming, Data Structures & Algorithms",
+      "tags": ["CS", "DA"],
+      "subtopics": {
+        "CS": [
+          "Programming in C",
+          "Recursion",
+          "Arrays, stacks, queues, linked lists, trees, binary search trees, binary heaps, graphs",
+          "Searching, sorting, hashing",
+          "Asymptotic worst case time and space complexity",
+          "Algorithm design techniques: greedy, dynamic programming, divide-and-conquer",
+          "Graph traversals, minimum spanning trees, shortest paths"
+        ],
+        "DA": [
+          "Programming in Python",
+          "Basic data structures: stacks, queues, linked lists, trees, hash tables",
+          "Search algorithms: linear search and binary search",
+          "Basic sorting algorithms: selection sort, bubble sort, insertion sort",
+          "Divide and conquer: mergesort, quicksort",
+          "Introduction to graph theory",
+          "Basic graph algorithms: traversals and shortest path"
+        ]
+      }
+    },
+    {
+      "id": "dbms",
+      "title": "Database Management",
+      "tags": ["CS", "DA"],
+      "subtopics": {
+        "CS": [
+          "ER-model",
+          "Relational model: relational algebra, tuple calculus, SQL",
+          "Integrity constraints, normal forms",
+          "File organization, indexing (B and B+ trees)",
+          "Transactions and concurrency control"
+        ],
+        "DA": [
+          "ER-model",
+          "Relational model: relational algebra, tuple calculus, SQL",
+          "Integrity constraints, normal form",
+          "File organization, indexing",
+          "Data types",
+          "Data transformation: normalization, discretization, sampling, compression",
+          "Data warehouse modelling: schema for multidimensional data models",
+          "Concept hierarchies, measures: categorization and computations"
+        ]
+      }
+    }
+  ]
+}
+
+''');
+}

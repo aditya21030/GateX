@@ -1,0 +1,685 @@
+{
+  "subjects": [
+    {
+      "subject": "Engineering Mathematics (Probability, Linear Algebra, Calculus, Discrete Maths)",
+      "questions": [
+        {
+          "type": "MCQ",
+          "question": "Two fair dice are rolled. Let A = {sum is 7}, B = {first die shows 3}. Which of the following is true?",
+          "options": ["A and B are independent", "P(A|B) = 1/6", "P(B|A) = 1/6", "All of the above"],
+          "answer": "D"
+        },
+        {
+          "type": "NAT",
+          "question": "A random variable X has MGF M_X(t) = (0.6e^t + 0.4)^5. Find P(X ≥ 3) (up to 4 decimal places).",
+          "answer": "0.6826"
+        },
+        {
+          "type": "MSQ",
+          "question": "Let A be a 3×3 real matrix with eigenvalues 1, 2, -1. Which of the following are correct?",
+          "options": ["det(A) = -2", "trace(A) = 2", "A^2 has eigenvalue 1", "A is invertible"],
+          "answer": ["A", "B", "C", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "For matrix A = [[2,1],[1,2]], A^10 equals:",
+          "options": ["½[[3^10+1, 3^10-1],[3^10-1,3^10+1]]", "½[[3^10-1,3^10+1],[3^10+1,3^10-1]]", "[[2^10,1],[1,2^10]]", "[[3^10,0],[0,1^10]]"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "Find the maximum value of f(x,y)=x²+y²+2x-4y on the closed disk x²+y² ≤ 25 (up to 2 decimals).",
+          "answer": "47.36"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following statements about the Central Limit Theorem (CLT) are true?",
+          "options": ["CLT applies only if the population is normal", "For n=30, the sample mean is exactly normal", "CLT allows approximation of sample mean distribution regardless of population shape for large n", "The standard error = σ/√n"],
+          "answer": ["C", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "The number of solutions to x₁ + x₂ + x₃ = 10 with xᵢ ≥ 0 integers is:",
+          "options": ["C(12,2)", "C(10,3)", "C(13,3)", "C(12,3)"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "How many distinct spanning trees does a complete graph K₄ have?",
+          "answer": "16"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are true about a bipartite graph?",
+          "options": ["It contains no odd cycle", "It can be 2‑colored", "A tree is bipartite", "K₃,₃ is bipartite"],
+          "answer": ["A", "B", "C", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "The directional derivative of f(x,y,z)=x²y+yz² at (1,1,1) in the direction of v=(1,2,2) is:",
+          "options": ["10/3", "2√3", "2", "4/3"],
+          "answer": "A"
+        }
+      ]
+    },
+    {
+      "subject": "Digital Logic",
+      "questions": [
+        {
+          "type": "MCQ",
+          "question": "The Boolean expression F = A·B + A·C + B·C can be simplified to:",
+          "options": ["A·B + C", "A·B + A·C", "A·C + B·C", "A·B + B·C"],
+          "answer": "C"
+        },
+        {
+          "type": "NAT",
+          "question": "How many 2‑input NAND gates are required to implement a 2‑input XOR gate?",
+          "answer": "4"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following flip‑flops can be used as a toggle (T) flip‑flop?",
+          "options": ["JK with J=K=1", "SR with S=R=1", "D with D = Q'", "JK with J=K=0"],
+          "answer": ["A", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "A 4‑bit ripple counter using negative‑edge triggered JK flip‑flops starts from 0000. After 13 clock pulses, the count is:",
+          "options": ["1101", "1011", "1100", "1001"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "What is the minimum number of 2:1 multiplexers needed to implement a 4:1 multiplexer?",
+          "answer": "3"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are true about the Karnaugh map (K‑map) method?",
+          "options": ["It works for any number of variables", "Adjacent cells differ by one bit", "Don't‑care conditions can be used to form larger groups", "It guarantees a minimal SOP expression"],
+          "answer": ["B", "C", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "The output of a 4‑bit binary adder when adding 1011 and 1101 (ignoring final carry) is:",
+          "options": ["1000", "0110", "1001", "0100"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "A 3‑to‑8 decoder with active‑high outputs and an enable pin is used to implement a function F = Σm(1,3,5,7). How many OR gates are required (minimum)?",
+          "answer": "1"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following hazards can occur in a combinational circuit?",
+          "options": ["Static‑1 hazard", "Static‑0 hazard", "Dynamic hazard", "Setup time violation"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "In a 4‑bit Johnson counter, the number of distinct states is:",
+          "options": ["4", "6", "8", "16"],
+          "answer": "C"
+        }
+      ]
+    },
+    {
+      "subject": "Computer Organization and Architecture",
+      "questions": [
+        {
+          "type": "MCQ",
+          "question": "A CPU has a 32‑bit address bus and a 16‑bit data bus. The maximum addressable memory is:",
+          "options": ["64 KB", "4 GB", "64 MB", "16 MB"],
+          "answer": "B"
+        },
+        {
+          "type": "NAT",
+          "question": "In a 4‑way set associative cache with 64 KB total size and 16‑byte blocks, how many sets are there?",
+          "answer": "1024"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following pipeline hazards can be resolved by forwarding (operand forwarding)?",
+          "options": ["RAW hazard", "WAR hazard", "WAW hazard", "Structural hazard"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "A program has 20% branch instructions, with 60% of branches taken. The branch penalty is 3 cycles. The average CPI without branches is 1.2. The average CPI including branches is:",
+          "options": ["1.56", "1.80", "1.92", "2.04"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "A direct‑mapped cache has 128 blocks. Main memory has 4096 blocks. How many bits are needed for the tag?",
+          "answer": "5"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are true about RISC vs CISC?",
+          "options": ["RISC has fewer addressing modes", "CISC typically has variable‑length instructions", "RISC uses register‑to‑register operations", "CISC always has lower CPI"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "A CPU uses 16 bits for virtual address, 12 bits for physical address, page size 4 KB. The number of entries in the page table is:",
+          "options": ["16", "256", "4096", "65536"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "Consider a 5‑stage pipeline (IF, ID, EX, MEM, WB). Each stage takes 2 ns. What is the speedup over a non‑pipelined design (assuming infinite number of instructions and no hazards)?",
+          "answer": "5"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are used to reduce miss penalty in caches?",
+          "options": ["Multi‑level caches", "Write buffer", "Critical word first", "Victim cache"],
+          "answer": ["A", "C", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "In a 32‑bit IEEE 754 floating point representation, the number of bits for exponent is:",
+          "options": ["8", "11", "23", "24"],
+          "answer": "A"
+        }
+      ]
+    },
+    {
+      "subject": "Programming and Data Structures",
+      "questions": [
+        {
+          "type": "MCQ",
+          "question": "What is the output of the following C code? int x=5; printf(\"%d\", x++ + ++x);",
+          "options": ["11", "12", "10", "Undefined behavior"],
+          "answer": "D"
+        },
+        {
+          "type": "NAT",
+          "question": "How many times is the loop executed? for(i=0; i<10; i++) { for(j=0; j<i; j++) { break; } }",
+          "answer": "10"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following data structures can be used to implement a queue with O(1) amortized time for both enqueue and dequeue?",
+          "options": ["Two stacks", "Circular array", "Singly linked list with head and tail pointers", "Binary heap"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "A binary search tree is traversed in order: 10, 20, 30, 40, 50. Which of the following could be the preorder traversal?",
+          "options": ["30,20,10,40,50", "10,20,30,40,50", "50,40,30,20,10", "20,10,30,40,50"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "What is the minimum number of nodes in an AVL tree of height 4 (height of root = 1)?",
+          "answer": "12"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are true about recursion?",
+          "options": ["Every recursive function can be written iteratively", "Recursion uses stack memory", "Tail recursion can be optimized by compilers", "Recursion always leads to exponential time complexity"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "Given a linked list with a cycle, Floyd’s cycle detection algorithm uses two pointers. If the slow pointer moves 1 step and fast moves 2 steps, they meet after m steps. The distance from head to cycle start is:",
+          "options": ["m mod cycle length", "m – cycle length", "m – (meeting point distance)", "Cannot be determined"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "A stack is implemented using an array of size 5. Push(10), Push(20), Pop(), Push(30), Push(40), Pop(), Pop(). What is the top element?",
+          "answer": "30"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following C operators have right‑to‑left associativity?",
+          "options": ["=", "?", "+", "++"],
+          "answer": ["A", "B"]
+        },
+        {
+          "type": "MCQ",
+          "question": "The worst‑case time complexity of inserting an element into a binary heap of size n is:",
+          "options": ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+          "answer": "B"
+        }
+      ]
+    },
+    {
+      "subject": "Algorithms",
+      "questions": [
+        {
+          "type": "MCQ",
+          "question": "What is the worst‑case time complexity of quickselect (using random pivot) to find the kth smallest element?",
+          "options": ["O(n)", "O(n log n)", "O(n²)", "O(log n)"],
+          "answer": "C"
+        },
+        {
+          "type": "NAT",
+          "question": "In a binary tree, the diameter is the longest path between any two nodes. If left subtree height = 4, right subtree height = 3, left diameter = 6, right diameter = 5, what is the diameter of the whole tree?",
+          "answer": "7"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following problems can be solved in O(n) time using a hashmap?",
+          "options": ["Longest subarray with sum k", "Two Sum", "Find duplicate in array", "Merge two sorted arrays"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "Dijkstra’s algorithm fails for graphs with:",
+          "options": ["Negative edge weights", "Positive weights only", "Cycles", "Disconnected graphs"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "How many distinct solutions exist for the 4‑Queens problem?",
+          "answer": "2"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are true about the master theorem for solving recurrences?",
+          "options": ["It applies to T(n)=aT(n/b)+f(n)", "It requires a≥1, b>1", "It can handle f(n)=n² log n", "It always gives exact complexity"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "The recurrence T(n)=2T(n/2)+n log n solves to:",
+          "options": ["Θ(n log² n)", "Θ(n log n)", "Θ(n²)", "Θ(n² log n)"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "What is the minimum number of comparisons required to find the largest and second largest elements from n=8 using tournament method?",
+          "answer": "10"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are NP‑complete problems?",
+          "options": ["Hamiltonian cycle", "3‑SAT", "Travelling salesman (decision version)", "Minimum spanning tree"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "The Floyd‑Warshall algorithm runs in time:",
+          "options": ["O(V³)", "O(V²)", "O(VE log V)", "O(E log V)"],
+          "answer": "A"
+        }
+      ]
+    },
+    {
+      "subject": "Theory of Computation",
+      "questions": [
+        {
+          "type": "MCQ",
+          "question": "Which of the following languages is not regular?",
+          "options": ["{a^n b^n | n≥0}", "{a^n b^m | n,m≥0}", "{w ∈ {a,b}* | #a(w) mod 2 = 0}", "{(ab)^n | n≥0}"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "How many states does the minimal DFA for the language L = {w ∈ {0,1}* | w ends with 01} have?",
+          "answer": "4"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are decidable problems?",
+          "options": ["Whether a CFG generates a given string", "Whether two CFGs generate the same language", "Whether a TM halts on all inputs", "Whether a DFA accepts any string"],
+          "answer": ["A", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "The language {a^p | p is prime} is:",
+          "options": ["Regular", "Context‑free but not regular", "Recursive but not context‑free", "Recursively enumerable but not recursive"],
+          "answer": "C"
+        },
+        {
+          "type": "NAT",
+          "question": "What is the minimum number of states in an NFA for the language (0+1)*00(0+1)*?",
+          "answer": "3"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following closure properties hold for context‑free languages?",
+          "options": ["Union", "Intersection", "Kleene star", "Complement"],
+          "answer": ["A", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "A CFG has productions S → aS | aSbS | ε. The language generated is:",
+          "options": ["All strings with equal a and b", "All strings where #a ≥ #b", "All strings of a and b", "All strings where #a = #b and prefix property?"],
+          "answer": "B"
+        },
+        {
+          "type": "NAT",
+          "question": "If L = {w \u2208 {0,1}* | w contains 00}, what is the minimum pumping length?",
+          "answer": "2"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are recursively enumerable languages?",
+          "options": ["Halting problem", "Empty language", "All recursively enumerable languages are recursive", "The complement of halting problem"],
+          "answer": ["A", "B"]
+        },
+        {
+          "type": "MCQ",
+          "question": "Which of the following is true about a deterministic PDA and a non‑deterministic PDA?",
+          "options": ["DPDA is strictly less powerful than NPDA", "DPDA and NPDA accept the same set of languages", "DPDA cannot accept all CFLs", "Both A and C"],
+          "answer": "D"
+        }
+      ]
+    },
+    {
+      "subject": "Compiler Design",
+      "questions": [
+        {
+          "type": "MCQ",
+          "question": "Given the grammar: E → E + T | T, T → T * F | F, F → (E) | id. What is the associativity of +?",
+          "options": ["Left", "Right", "Non‑associative", "Depends on parsing"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "How many states are in the LR(0) automaton for the grammar S → AA, A → aA | b?",
+          "answer": "5"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are true about a regular expression? (Not typical for compilers, but lexer) Actually ask: ",
+          "options": ["Lexical analysis uses DFA", "Parser uses CFG", "Semantic analysis uses attribute grammars", "Code generation uses target machine description"],
+          "answer": ["A", "B", "C", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "The first set of non‑terminal A in grammar S → Aa | b, A → c | ε is:",
+          "options": ["{c, a, b}", "{c, ε}", "{c}", "{c, b}"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "For the expression a + b * c, how many nodes are in the abstract syntax tree (AST) if each operator is a node and operands are leaves?",
+          "answer": "5"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following optimizations are performed on basic blocks?",
+          "options": ["Constant folding", "Common subexpression elimination", "Loop unrolling", "Dead code elimination"],
+          "answer": ["A", "B", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "A shift‑reduce parser that uses a stack and a parse table is called:",
+          "options": ["LR parser", "LL parser", "Recursive descent", "Operator precedence"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "How many reduce moves are performed by an LR parser for the input string 'id + id * id' using grammar E → E + T | T, T → T * F | F, F → id? (Assume shift and reduce only)",
+          "answer": "4"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are true about LALR(1) parsers?",
+          "options": ["They have the same number of states as LR(1)", "They are less powerful than LR(1)", "They can parse all deterministic CFGs", "They are built from LR(1) by merging states"],
+          "answer": ["B", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "In three‑address code, the statement x = y + z * w would be translated as:",
+          "options": ["t1 = z * w; x = y + t1", "x = y + z * w", "t1 = y + z; x = t1 * w", "t1 = y + z * w; x = t1"],
+          "answer": "A"
+        }
+      ]
+    },
+    {
+      "subject": "Operating Systems",
+      "questions": [
+        {
+          "type": "MCQ",
+          "question": "A process has 5 pages and the OS allocates 3 frames. Using FIFO page replacement, the reference string: 1,2,3,4,1,2,5,1,2,3,4,5. How many page faults occur?",
+          "options": ["9", "10", "8", "11"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "In a system with 4 resources of same type, processes P1, P2, P3 have max needs 3, 4, 5 and currently hold 1, 2, 1 respectively. Find the minimum number of additional resources needed to avoid deadlock (using Banker's algorithm).",
+          "answer": "2"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following scheduling algorithms are non‑preemptive?",
+          "options": ["FCFS", "SJF (non‑preemptive)", "Round Robin", "Priority (non‑preemptive)"],
+          "answer": ["A", "B", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "The turn around time for a process is:",
+          "options": ["Completion time – Arrival time", "Burst time + Waiting time", "Both A and B", "Waiting time + I/O time"],
+          "answer": "C"
+        },
+        {
+          "type": "NAT",
+          "question": "A disk has 200 tracks (0-199). The queue: 98, 183, 37, 122, 14, 124, 65, 67. Head starts at 53. Using SCAN (elevator) moving towards 0, how many tracks are traversed?",
+          "answer": "208"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are true about semaphores?",
+          "options": ["They can be used for mutual exclusion", "They can be used for synchronization", "A binary semaphore can count only 0 or 1", "A counting semaphore can have negative values"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "A page size of 4 KB, virtual address 32 bits. The number of bits for page offset is:",
+          "options": ["12", "10", "20", "22"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "In a multi‑level paging with 2 levels, page table size per process = 4 MB, each page table entry = 4 bytes, page size = 4 KB. How many pages are used for the outer page table?",
+          "answer": "1"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are valid states of a process in an OS?",
+          "options": ["Running", "Ready", "Blocked", "Terminated"],
+          "answer": ["A", "B", "C", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "The producer‑consumer problem can be solved using semaphores. The semaphore 'empty' is initialized to n. What does 'full' represent?",
+          "options": ["Number of full buffers", "Number of empty buffers", "Mutual exclusion", "Number of producers"],
+          "answer": "A"
+        }
+      ]
+    },
+    {
+      "subject": "Databases",
+      "questions": [
+        {
+          "type": "MCQ",
+          "question": "Consider R(A,B,C,D) with FDs: A→BC, B→D, C→A. Which of the following is a candidate key?",
+          "options": ["A", "B", "C", "Both A and C"],
+          "answer": "D"
+        },
+        {
+          "type": "NAT",
+          "question": "Given Employee(id, salary). Write a SQL query to find the second highest salary. How many rows does the following query return? SELECT salary FROM Employee e1 WHERE 2 = (SELECT COUNT(DISTINCT salary) FROM Employee e2 WHERE e2.salary >= e1.salary). Assume salaries: 100,200,200,300. Enter the count.",
+          "answer": "2"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are true about B+ tree indexes?",
+          "options": ["Supports range queries", "Leaf nodes contain data pointers", "Internal nodes contain only keys", "Height is O(log n)"],
+          "answer": ["A", "B", "C", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "In MVCC, a read‑only transaction sees:",
+          "options": ["The latest committed version", "A snapshot as of its start time", "The version with the highest timestamp", "All uncommitted writes"],
+          "answer": "B"
+        },
+        {
+          "type": "NAT",
+          "question": "Given two relations R(A,B) and S(B,C), both with 100 tuples each, B is foreign key in R referencing S. How many tuples can the natural join R⋈S have at most?",
+          "answer": "100"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are ACID properties?",
+          "options": ["Atomicity", "Consistency", "Isolation", "Durability"],
+          "answer": ["A", "B", "C", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "A schedule is conflict serializable if the precedence graph has:",
+          "options": ["No cycle", "A cycle", "At least one topological order", "No edges"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "In a B+ tree of order 4 (each node can have at most 4 pointers), the minimum number of pointers in a non‑root internal node is:",
+          "answer": "2"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are true about a materialized view?",
+          "options": ["It stores query results physically", "It always improves query performance", "It requires refresh strategies", "It can be indexed"],
+          "answer": ["A", "C", "D"]
+        },
+        {
+          "type": "MCQ",
+          "question": "The normal form that eliminates transitive dependencies is:",
+          "options": ["2NF", "3NF", "BCNF", "4NF"],
+          "answer": "B"
+        }
+      ]
+    },
+    {
+      "subject": "Computer Networks",
+      "questions": [
+        {
+          "type": "MCQ",
+          "question": "In the TCP/IP model, which layer corresponds to the OSI network layer?",
+          "options": ["Internet layer", "Transport layer", "Link layer", "Application layer"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "An IPv4 datagram has header length field = 6 (in 32‑bit words). What is the size of the header in bytes?",
+          "answer": "24"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are valid private IP address ranges?",
+          "options": ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "127.0.0.0/8"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "In CSMA/CD, the maximum propagation delay is 25 μs. The minimum frame size for a 10 Mbps network is:",
+          "options": ["500 bits", "250 bits", "5000 bits", "2500 bits"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "A subnet mask of 255.255.255.240 corresponds to how many host addresses per subnet?",
+          "answer": "14"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are true about TCP?",
+          "options": ["Connection oriented", "Reliable", "Uses three‑way handshake", "Supports multicast"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "The purpose of ARP is to resolve:",
+          "options": ["IP address to MAC address", "MAC address to IP address", "Hostname to IP address", "Port number to process"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "If the bandwidth of a channel is 10 MHz and SNR is 63, what is the maximum data rate according to Shannon's theorem (in Mbps)?",
+          "answer": "60"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are routing protocols?",
+          "options": ["RIP", "OSPF", "BGP", "HTTP"],
+          "answer": ["A", "B", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "In HTTP, the status code 404 indicates:",
+          "options": ["Not Found", "OK", "Internal Server Error", "Forbidden"],
+          "answer": "A"
+        }
+      ]
+    },
+    {
+      "subject": "General Aptitude",
+      "questions": [
+        {
+          "type": "NAT",
+          "question": "If x + 1/x = 3, find x^5 + 1/x^5.",
+          "answer": "123"
+        },
+        {
+          "type": "MCQ",
+          "question": "In a certain code, 'CONSTANT' is written as 'PCNTSATO'. How is 'VARIABLE' written?",
+          "options": ["AVBALREI", "AVBLAREI", "AVBALERI", "AVBLAERI"],
+          "answer": "A"
+        },
+        {
+          "type": "MSQ",
+          "question": "A train crosses a platform 200m long in 30s and a man in 10s. Which of the following are correct?",
+          "options": ["Train length = 100m", "Speed = 10 m/s", "Train length = 150m", "Speed = 36 km/h"],
+          "answer": ["A", "B", "D"]
+        },
+        {
+          "type": "NAT",
+          "question": "Average of 11 numbers is 50. Average of first 6 is 49, last 6 is 52. Find the 6th number.",
+          "answer": "56"
+        },
+        {
+          "type": "MCQ",
+          "question": "A man invests ₹10,000 at 8% compounded half‑yearly for 1.5 years. The amount is closest to:",
+          "options": ["₹11249", "₹10816", "₹11000", "₹11500"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "Find the next term in the series: 2, 6, 12, 20, 30, ___.",
+          "answer": "42"
+        },
+        {
+          "type": "MSQ",
+          "question": "In a group of 100 people, 70 like tea, 60 like coffee, 40 like both. How many like neither? How many like exactly one?",
+          "options": ["Neither = 10", "Neither = 20", "Exactly one = 50", "Exactly one = 30"],
+          "answer": ["A", "C"]
+        },
+        {
+          "type": "MCQ",
+          "question": "A boat goes 30 km upstream and 44 km downstream in 10h; 40 km upstream and 55 km downstream in 13h. The speed of the boat in still water (km/h) is:",
+          "options": ["8", "9", "10", "11"],
+          "answer": "A"
+        },
+        {
+          "type": "NAT",
+          "question": "Complete the letter analogy: ABD : CEG :: IJK : ? (Express as three capital letters).",
+          "answer": "KMN"
+        },
+        {
+          "type": "MSQ",
+          "question": "Which of the following are fallacies in the argument: 'Most politicians are corrupt. Mr. X is a politician. Therefore, Mr. X is corrupt.'?",
+          "options": ["Hasty generalization", "Fallacy of division", "Syllogistic error (undistributed middle)", "Ad hominem"],
+          "answer": ["A", "C"]
+        }
+      ]
+    }
+  ]
+}

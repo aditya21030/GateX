@@ -1,0 +1,6 @@
+content = open('lib/data/csit_mock_pyqs.dart', 'r', encoding='utf-8').read()
+content = content.replace("subject: 'Engineering Mathematics (Probability, Linear Algebra, Calculus, Discrete Maths)'", "subject: 'Engineering Mathematics'")
+content = content.replace("subject: 'Computer Organization and Architecture'", "subject: 'Computer Organization'")
+content = content.replace("subject: 'Programming and Data Structures'", "subject: 'Programming & Data Structures'")
+content = content.replace("subject: 'Operating Systems'", "subject: 'Operating System'")
+open('lib/data/csit_mock_pyqs.dart', 'w', encoding='utf-8').write(content)

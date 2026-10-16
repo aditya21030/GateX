@@ -1,0 +1,374 @@
+{
+  "meta": {
+    "exam": "GATE DA 2027",
+    "exam_date": "February 2027",
+    "roadmap_type": "3-month (fresh start)",
+    "start_date": "2026-11-01",
+    "end_date": "2027-01-31",
+    "total_weeks": 13,
+    "target": "65+ marks, sub-500 AIR",
+    "note": "Designed for students starting from zero. Every subject covered from scratch. Minimum 6 hrs/day weekdays, 8+ hrs weekends. No prior preparation assumed.",
+    "total_marks": 100,
+    "aptitude_marks": 15,
+    "core_marks": 85
+  },
+  "daily_routine": {
+    "weekday": [
+      { "time": "04:00-06:30", "block": "Deep study – new concepts from scratch (lecture + notes)" },
+      { "time": "06:30-07:00", "block": "Error log update + formula revision" },
+      { "time": "20:00-22:00", "block": "PYQ practice + DPP on today's topic" },
+      { "time": "22:00-22:15", "block": "Next-day planning + study plan check" }
+    ],
+    "weekend": [
+      { "time": "04:00-07:30", "block": "Revision – full previous week topics" },
+      { "time": "08:00-10:00", "block": "Topic-wise PYQ set (timed, all years)" },
+      { "time": "10:30-12:00", "block": "Mock test or timed mixed problem set" },
+      { "time": "20:00-21:30", "block": "Mock analysis + error log update" }
+    ],
+    "rules": [
+      "Start every topic from absolute basics – do not skip fundamentals",
+      "No passive lecture watching – pause after every concept and solve problems",
+      "PYQs immediately after each topic, not at the end of the week",
+      "Error log: write every wrong answer with mistake type and correct concept",
+      "Sunday evening: plan the full coming week day by day",
+      "Mock tests every Sunday from Week 10 onwards",
+      "General Aptitude: 30 min every Saturday throughout the plan"
+    ]
+  },
+  "subject_weightage": [
+    { "subject": "General Aptitude", "marks": 15, "priority": "High – always 15 marks, easy scoring" },
+    { "subject": "Probability & Statistics", "marks": "12-18", "priority": "Highest – biggest section in DA" },
+    { "subject": "Linear Algebra", "marks": "8-12", "priority": "High" },
+    { "subject": "Calculus & Optimization", "marks": "8-12", "priority": "High" },
+    { "subject": "Machine Learning", "marks": "10-15", "priority": "High" },
+    { "subject": "Artificial Intelligence", "marks": "4-8", "priority": "Medium" },
+    { "subject": "DBMS", "marks": "6-10", "priority": "High" },
+    { "subject": "DSA", "marks": "8-12", "priority": "High" },
+    { "subject": "Python Programming", "marks": "4-8", "priority": "Medium – high ROI, easy marks" }
+  ],
+  "phases": [
+    {
+      "phase": 1,
+      "title": "Linear Algebra + Probability & Statistics",
+      "weeks": "1-4",
+      "dates": "Nov 1 – Nov 28, 2026",
+      "subjects": ["Linear Algebra", "Probability & Statistics"],
+      "note": "These two are the highest weightage math subjects in GATE DA. Start here. Build from zero.",
+      "weekly_plan": [
+        {
+          "week": 1,
+          "subject": "Linear Algebra",
+          "topics": [
+            "Vectors and vector spaces",
+            "Linear independence, basis, dimension",
+            "Rank, nullity, rank-nullity theorem",
+            "System of linear equations (Ax=b)",
+            "Eigenvalues and eigenvectors",
+            "Diagonalization"
+          ],
+          "daily_targets": {
+            "Mon": "Vectors, vector spaces, subspaces – lecture from scratch + 10 PYQs",
+            "Tue": "Linear independence, basis, dimension – lecture + DPP",
+            "Wed": "Rank, nullity, rank-nullity theorem – lecture + PYQs",
+            "Thu": "System of linear equations (Ax=b): consistency, infinite solutions – lecture + problems",
+            "Fri": "Eigenvalues and eigenvectors – lecture + 10 PYQs",
+            "Sat": "Diagonalization, symmetric matrices, PSD – lecture + PYQs + 30 min Aptitude",
+            "Sun": "LA week 1 full revision + all week PYQs re-attempt + next week planning"
+          }
+        },
+        {
+          "week": 2,
+          "subject": "Linear Algebra (continued) + start P&S",
+          "topics": [
+            "Matrix norms, trace, determinant",
+            "Orthogonality, Gram-Schmidt",
+            "SVD (conceptual)",
+            "Projections",
+            "Probability axioms",
+            "Conditional probability, Bayes theorem"
+          ],
+          "daily_targets": {
+            "Mon": "Matrix norms, trace, determinant properties – lecture + PYQs",
+            "Tue": "Orthogonality, Gram-Schmidt process – lecture + DPP",
+            "Wed": "SVD (conceptual understanding) + projections – lecture + PYQs",
+            "Thu": "Full LA PYQ set (GATE DA 2024 + 2025, all LA questions, timed) – review errors",
+            "Fri": "Probability: sample space, events, axioms – lecture from scratch + PYQs",
+            "Sat": "Conditional probability, Bayes theorem, total probability – lecture + PYQs + 30 min Aptitude",
+            "Sun": "LA complete revision + Bayes problems + next week planning"
+          }
+        },
+        {
+          "week": 3,
+          "subject": "Probability & Statistics – Distributions + Random Variables",
+          "topics": [
+            "Discrete random variables: PMF, CDF",
+            "Binomial, Poisson, Geometric distributions",
+            "Continuous random variables",
+            "Uniform, Exponential, Normal distributions",
+            "Expectation, variance, moments",
+            "MGF"
+          ],
+          "daily_targets": {
+            "Mon": "Discrete RVs: PMF, CDF, expected value – lecture from scratch + PYQs",
+            "Tue": "Binomial, Poisson, Geometric distributions – lecture + DPP",
+            "Wed": "Continuous RVs: PDF, CDF – Uniform, Exponential distributions – lecture + PYQs",
+            "Thu": "Normal distribution (standard normal, Z-scores) – lecture + problems",
+            "Fri": "Expectation, variance, standard deviation, moments – lecture + PYQs",
+            "Sat": "MGF, moment-generating functions – lecture + PYQs + 30 min Aptitude",
+            "Sun": "Distributions full revision + GATE DA PYQ blitz (all distribution questions) + planning"
+          }
+        },
+        {
+          "week": 4,
+          "subject": "Probability & Statistics – Joint Distributions + Inference",
+          "topics": [
+            "Joint distributions, marginal, conditional distributions",
+            "Covariance, correlation",
+            "Central Limit Theorem, Law of Large Numbers",
+            "Sampling distributions",
+            "Point estimation: MLE, MAP",
+            "Hypothesis testing basics",
+            "Confidence intervals"
+          ],
+          "daily_targets": {
+            "Mon": "Joint distributions: joint PMF/PDF, marginal, conditional – lecture + PYQs",
+            "Tue": "Covariance, correlation, independence of RVs – lecture + DPP",
+            "Wed": "CLT, LLN, sampling distributions (t, chi-square, F) – lecture + PYQs",
+            "Thu": "Point estimation: MLE, MAP – lecture + problems",
+            "Fri": "Hypothesis testing (null/alternate, Type I/II errors, p-value) + confidence intervals – lecture + PYQs",
+            "Sat": "Full P&S PYQ set (GATE DA 2024 + 2025, all P&S questions, timed) + 30 min Aptitude",
+            "Sun": "Mock test 1: Linear Algebra + Probability & Statistics (full, 90 min) + analysis"
+          }
+        }
+      ],
+      "phase_end_milestone": "100% LA + P&S PYQs (GATE DA 2024 + 2025) attempted. Mock 1 score > 60%."
+    },
+    {
+      "phase": 2,
+      "title": "Calculus + Optimization + Machine Learning + AI",
+      "weeks": "5-9",
+      "dates": "Nov 29 – Jan 2, 2027",
+      "subjects": ["Calculus", "Optimization", "Machine Learning", "Artificial Intelligence"],
+      "weekly_plan": [
+        {
+          "week": 5,
+          "subject": "Calculus + Optimization",
+          "topics": [
+            "Limits, continuity (single and multivariable)",
+            "Partial derivatives, chain rule, total derivative",
+            "Gradient, directional derivative",
+            "Hessian, critical points, maxima/minima",
+            "Taylor series expansion",
+            "Convex functions and convex sets",
+            "Gradient descent, SGD, mini-batch GD",
+            "KKT conditions, Lagrange multipliers"
+          ],
+          "daily_targets": {
+            "Mon": "Limits, continuity, partial derivatives – lecture from scratch + PYQs",
+            "Tue": "Chain rule, total derivative, gradient, directional derivative – lecture + DPP",
+            "Wed": "Hessian matrix, critical points, maxima/minima (multivariable) – lecture + PYQs",
+            "Thu": "Taylor series + convexity (definition, properties, examples) – lecture + problems",
+            "Fri": "Gradient descent, SGD, learning rate, convergence – lecture + PYQs",
+            "Sat": "Lagrange multipliers, KKT conditions + full Calculus+Optimization PYQ set (timed) + 30 min Aptitude",
+            "Sun": "Calculus + Optimization full revision + mock mini-test + planning"
+          }
+        },
+        {
+          "week": 6,
+          "subject": "Machine Learning – Supervised Learning",
+          "topics": [
+            "Linear regression (closed form + gradient descent)",
+            "Logistic regression",
+            "Regularization: L1 (Lasso), L2 (Ridge)",
+            "Bias-variance tradeoff",
+            "Cross-validation",
+            "Support Vector Machines",
+            "Decision trees (ID3, entropy, Gini index)"
+          ],
+          "daily_targets": {
+            "Mon": "Linear regression: closed form solution, gradient descent derivation – lecture from scratch + PYQs",
+            "Tue": "Logistic regression: sigmoid, cross-entropy loss – lecture + DPP",
+            "Wed": "Regularization (L1/L2), bias-variance tradeoff, overfitting/underfitting – lecture + PYQs",
+            "Thu": "SVM: hard margin, soft margin, kernel trick – lecture + problems",
+            "Fri": "Decision trees: entropy, information gain, Gini, ID3 algorithm – lecture + PYQs",
+            "Sat": "Cross-validation, evaluation metrics (accuracy, precision, recall, F1, ROC-AUC) – lecture + PYQs + 30 min Aptitude",
+            "Sun": "Supervised ML full revision + GATE DA PYQ blitz + planning"
+          }
+        },
+        {
+          "week": 7,
+          "subject": "Machine Learning – Unsupervised + Ensemble + Neural Nets",
+          "topics": [
+            "k-means clustering",
+            "PCA (principal component analysis)",
+            "Gaussian Mixture Models, EM algorithm",
+            "Bagging, Boosting, Random Forest, AdaBoost",
+            "Neural networks: perceptron, backpropagation",
+            "Activation functions",
+            "k-NN"
+          ],
+          "daily_targets": {
+            "Mon": "k-means clustering: algorithm, convergence, limitations – lecture from scratch + PYQs",
+            "Tue": "PCA: derivation using eigenvalues, variance explained – lecture + DPP",
+            "Wed": "GMM, EM algorithm: expectation and maximization steps – lecture + PYQs",
+            "Thu": "Ensemble: Bagging, Boosting, Random Forest, AdaBoost – lecture + problems",
+            "Fri": "Neural networks: perceptron, feedforward, backpropagation, activation functions – lecture + PYQs",
+            "Sat": "k-NN + full ML PYQ set (GATE DA 2024 + 2025, all ML questions, timed) + 30 min Aptitude",
+            "Sun": "Mock test 2: LA + P&S + Calculus + ML (90 min) + analysis"
+          }
+        },
+        {
+          "week": 8,
+          "subject": "Artificial Intelligence",
+          "topics": [
+            "Uninformed search: BFS, DFS, UCS",
+            "Informed search: A*, greedy best-first",
+            "Heuristics, admissibility",
+            "Minimax algorithm, alpha-beta pruning",
+            "Constraint satisfaction problems (CSP)",
+            "Propositional logic",
+            "First-order logic (FOL)"
+          ],
+          "daily_targets": {
+            "Mon": "Uninformed search: BFS, DFS, UCS – time/space complexity – lecture from scratch + PYQs",
+            "Tue": "Informed search: A* (admissible heuristic), greedy best-first – lecture + DPP",
+            "Wed": "Minimax algorithm, alpha-beta pruning – lecture + PYQs",
+            "Thu": "CSP: backtracking, constraint propagation, arc consistency – lecture + problems",
+            "Fri": "Propositional logic: connectives, truth tables, resolution – lecture + PYQs",
+            "Sat": "FOL: quantifiers, predicates + full AI PYQ set (GATE DA 2024 + 2025) + 30 min Aptitude",
+            "Sun": "AI full revision + mock mini-test: AI only + planning"
+          }
+        },
+        {
+          "week": 9,
+          "subject": "DBMS",
+          "topics": [
+            "ER model",
+            "Relational model, relational algebra",
+            "SQL",
+            "Normalization: 1NF, 2NF, 3NF, BCNF",
+            "Transactions: ACID properties",
+            "Concurrency control",
+            "Indexing: B-tree, B+-tree, hashing"
+          ],
+          "daily_targets": {
+            "Mon": "ER model: entities, attributes, relationships, ER-to-relational mapping – lecture from scratch + PYQs",
+            "Tue": "Relational algebra: select, project, join, division – lecture + DPP",
+            "Wed": "SQL: joins (inner/outer/cross), subqueries, aggregation, GROUP BY – lecture + PYQs",
+            "Thu": "Normalization: functional dependencies, 1NF to BCNF, lossy/lossless decomposition – lecture + problems",
+            "Fri": "Transactions: ACID, serializability, conflict serializability, 2PL – lecture + PYQs",
+            "Sat": "Indexing (B-tree, B+-tree) + full DBMS PYQ set (GATE DA 2024 + 2025, timed) + 30 min Aptitude",
+            "Sun": "Mock test 3: LA + P&S + Calculus + ML + AI + DBMS (full 3-hr mock) + analysis"
+          }
+        }
+      ],
+      "phase_end_milestone": "Calculus + ML + AI + DBMS PYQs done. Mock 3 score > 55% (fresh start benchmark)."
+    },
+    {
+      "phase": 3,
+      "title": "DSA + Python + General Aptitude + Full Revision + Mocks",
+      "weeks": "10-13",
+      "dates": "Jan 3 – Jan 31, 2027",
+      "subjects": ["DSA", "Python Programming", "General Aptitude", "All subjects – revision + mock tests"],
+      "weekly_plan": [
+        {
+          "week": 10,
+          "subject": "DSA + Python Programming",
+          "topics": [
+            "Arrays, linked lists, stacks, queues",
+            "Trees: BST, AVL, heaps",
+            "Graphs: BFS, DFS, shortest path, MST",
+            "Hashing",
+            "Sorting algorithms and complexity",
+            "Dynamic programming",
+            "Python: syntax, built-in data structures",
+            "Python: OOP, comprehensions, lambda",
+            "NumPy, Pandas basics"
+          ],
+          "daily_targets": {
+            "Mon": "Arrays, stacks, queues, linked lists + sorting (merge, quick, heap) + complexity – lecture from scratch + PYQs",
+            "Tue": "BST, AVL trees (rotations), heaps, priority queues – lecture + DPP",
+            "Wed": "Graphs: BFS, DFS, Dijkstra, Bellman-Ford, MST (Prim, Kruskal) – lecture + PYQs",
+            "Thu": "Hashing + DP (LCS, knapsack, LIS, edit distance) – lecture + problems",
+            "Fri": "Python: lists, dicts, sets, tuples, comprehensions, OOP, lambda, map/filter – PYQs",
+            "Sat": "NumPy (arrays, broadcasting, indexing) + Pandas (Series, DataFrame, groupby) – PYQs + Full DSA + Python PYQ set (timed) + 30 min Aptitude",
+            "Sun": "Mock test 4: FULL SYLLABUS (3 hr, timed, all subjects) + analysis"
+          }
+        },
+        {
+          "week": 11,
+          "subject": "General Aptitude Sprint + Revision Round 1",
+          "topics": [
+            "Verbal ability: reading comprehension, grammar, vocabulary",
+            "Numerical ability: percentages, ratio, time-work, time-speed",
+            "Analytical reasoning: series, puzzles, data interpretation",
+            "Full syllabus rapid revision (1 subject per day)"
+          ],
+          "daily_targets": {
+            "Mon": "Aptitude: verbal ability (RC passages, grammar, fill-in-the-blanks) – PYQ blitz (last 5 years)",
+            "Tue": "Aptitude: numerical ability (percentages, profit-loss, ratio, time-work) – PYQ blitz",
+            "Wed": "Aptitude: analytical reasoning (series, analogies, puzzles, DI) – PYQ blitz",
+            "Thu": "LA + P&S rapid revision – formula sheet + GateOverflow problem set (40 questions, 60 min)",
+            "Fri": "Calculus + Optimization + ML – formula sheet + GateOverflow problem set (40 questions)",
+            "Sat": "AI + DBMS + DSA + Python – formula sheet + GateOverflow problem set + 30 min Aptitude",
+            "Sun": "Mock test 5: FULL SYLLABUS including Aptitude (3 hr) + analysis"
+          }
+        },
+        {
+          "week": 12,
+          "subject": "Targeted Weak Area Revision + Intensive Mocks",
+          "topics": ["Based on mock 5 analysis – drill weakest subjects"],
+          "daily_targets": {
+            "Mon": "Weakest subject from mock 5 – deep drill (3 hrs: re-study from basics + PYQs)",
+            "Tue": "2nd weakest subject – deep drill",
+            "Wed": "3rd weakest subject + all previous wrong answers re-attempt",
+            "Thu": "Mock test 6 (full syllabus + Aptitude, 3 hr, timed)",
+            "Fri": "Mock 6 analysis + error log + formula sheet update",
+            "Sat": "Mock test 7 (full syllabus + Aptitude, 3 hr) – exam conditions (morning slot) + 30 min Aptitude",
+            "Sun": "Mock 7 analysis + rest"
+          }
+        },
+        {
+          "week": 13,
+          "subject": "Final Revision + Exam Week",
+          "topics": ["Formula sheets only, no new problems, confidence mocks, exam"],
+          "daily_targets": {
+            "Mon": "Mock test 8 – exact exam conditions (3 hr, morning, full syllabus)",
+            "Tue": "Mock 8 analysis + re-attempt all wrong answers",
+            "Wed": "Formula sheet revision: LA + P&S + Calculus + Optimization",
+            "Thu": "Formula sheet revision: ML + AI + DBMS + DSA + Python + Aptitude",
+            "Fri": "Zero new problems. Light read of formula sheets only. Sleep 10 PM.",
+            "Sat": "Rest. Exam logistics prep. Sleep by 9 PM.",
+            "Sun": "GATE DA 2027 EXAM"
+          }
+        }
+      ],
+      "phase_end_milestone": "8+ full mocks done. All subjects covered from scratch. Formula sheets ready. Average mock score 60+."
+    }
+  ],
+  "mock_schedule": [
+    { "mock": 1, "week": 4, "date_approx": "Nov 28", "scope": "Linear Algebra + Probability & Statistics", "duration_min": 90 },
+    { "mock": 2, "week": 7, "date_approx": "Dec 19", "scope": "LA + P&S + Calculus + ML", "duration_min": 90 },
+    { "mock": 3, "week": 9, "date_approx": "Jan 2", "scope": "Full syllabus except DSA + Python + Aptitude", "duration_min": 180 },
+    { "mock": 4, "week": 10, "date_approx": "Jan 9", "scope": "Full syllabus (all subjects)", "duration_min": 180 },
+    { "mock": 5, "week": 11, "date_approx": "Jan 16", "scope": "Full syllabus + Aptitude", "duration_min": 180 },
+    { "mock": 6, "week": 12, "date_approx": "Jan 22", "scope": "Full syllabus + Aptitude", "duration_min": 180 },
+    { "mock": 7, "week": 12, "date_approx": "Jan 25", "scope": "Full syllabus + Aptitude – exam conditions", "duration_min": 180 },
+    { "mock": 8, "week": 13, "date_approx": "Jan 27", "scope": "Full syllabus + Aptitude – exam conditions", "duration_min": 180 }
+  ],
+  "weekly_targets_summary": [
+    { "week": 1, "focus": "Linear Algebra (complete)", "pyq_goal": "All LA PYQs 2024+2025" },
+    { "week": 2, "focus": "LA wrap-up + P&S start (Bayes)", "pyq_goal": "Full LA PYQ set timed" },
+    { "week": 3, "focus": "Probability distributions, expectation, variance", "pyq_goal": "All distribution PYQs 2024+2025" },
+    { "week": 4, "focus": "Joint distributions, CLT, MLE, hypothesis testing", "pyq_goal": "Full P&S PYQ set + Mock 1" },
+    { "week": 5, "focus": "Calculus + Optimization (complete)", "pyq_goal": "All Calculus + Optimization PYQs" },
+    { "week": 6, "focus": "ML supervised learning", "pyq_goal": "Supervised ML PYQs 2024+2025" },
+    { "week": 7, "focus": "ML unsupervised + ensemble + neural nets", "pyq_goal": "Full ML PYQs + Mock 2" },
+    { "week": 8, "focus": "Artificial Intelligence (complete)", "pyq_goal": "All AI PYQs 2024+2025" },
+    { "week": 9, "focus": "DBMS (complete)", "pyq_goal": "All DBMS PYQs + Mock 3 (full syllabus)" },
+    { "week": 10, "focus": "DSA + Python (complete)", "pyq_goal": "All DSA + Python PYQs + Mock 4" },
+    { "week": 11, "focus": "General Aptitude + Revision Round 1", "pyq_goal": "Aptitude PYQs + Mock 5 full syllabus" },
+    { "week": 12, "focus": "Weak area drill + Mocks 6 + 7", "pyq_goal": "Weakest subjects re-drilled" },
+    { "week": 13, "focus": "Final revision + Exam", "pyq_goal": "Mock 8 + formula sheets + exam" }
+  ]
+}

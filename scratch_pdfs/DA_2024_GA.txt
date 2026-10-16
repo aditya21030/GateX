@@ -1,0 +1,416 @@
+
+--- PAGE 1 ---
+ Data Science and Artificial Intelligence (DA) 
+Page 1 of 41 
+Organizing Institute: IISc Bengaluru 
+General Aptitude (GA)  
+Q.1 – Q.5 Carry ONE mark Each 
+Q.1 If ‘→’ denotes increasing order of intensity, then the meaning of the words  
+[sick → infirm → moribund] is analogous to [silly → _______ → daft]. 
+Which one of the given options is appropriate to fill the blank? 
+  
+(A) frown 
+(B) fawn 
+(C) vein 
+(D) vain 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+--- PAGE 2 ---
+ Data Science and Artificial Intelligence (DA) 
+Page 2 of 41 
+Organizing Institute: IISc Bengaluru 
+Q.2 The 15 parts of the given figure are to be painted such that no two adjacent parts 
+with shared boundaries (excluding corners) have the same color. The minimum 
+number of colors required is 
+ 
+  
+(A) 4 
+(B) 3 
+(C) 5 
+(D) 6 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+--- PAGE 3 ---
+ Data Science and Artificial Intelligence (DA) 
+Page 3 of 41 
+Organizing Institute: IISc Bengaluru 
+Q.3 How many 4 -digit positive integers divisible by 3 can be formed using only the 
+digits {1, 3,4, 6, 7}, such that no digit appears more than once in a number? 
+  
+(A) 24 
+(B) 48 
+(C) 72 
+(D) 12 
+  
+Q.4 The sum of the following infinite series is 
+2 + 1
+2 + 1
+3 + 1
+4 + 1
+8 + 1
+9 + 1
+16 + 1
+27 + ⋯ 
+  
+(A) 11/3 
+(B) 7/2 
+(C) 13/4 
+(D) 9/2 
+  
+ 
+ 
+ 
+ 
+--- PAGE 4 ---
+ Data Science and Artificial Intelligence (DA) 
+Page 4 of 41 
+Organizing Institute: IISc Bengaluru 
+Q.5 In an election, the share of valid votes received by the four candidates A, B, C, and 
+D is represented by the pie chart shown. The total number of votes cast in the 
+election were 1,15,000, out of which 5,000 were invalid.  
+ 
+Based on the data provided, t he total number of valid votes received by the 
+candidates B and C is 
+  
+(A) 45,000 
+(B) 49,500 
+(C) 51,750 
+(D) 54,000 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+A
+40%
+B
+25%
+C
+20%
+D
+15%
+Share of valid votes
+--- PAGE 5 ---
+ Data Science and Artificial Intelligence (DA) 
+Page 5 of 41 
+Organizing Institute: IISc Bengaluru 
+Q.6 – Q.10 Carry TWO marks Each 
+Q.6 Thousands of years ago, some people began dairy farming. This coincided with a 
+number of mutations in a particular gene that resulted in these people developing 
+the ability to digest dairy milk. 
+Based on the given passage, which of the following can be inferred? 
+  
+(A) All human beings can digest dairy milk. 
+(B) No human being can digest dairy milk. 
+(C) Digestion of dairy milk is essential for human beings. 
+(D) In human beings, digestion of dairy milk resulted from a mutated gene. 
+  
+Q.7 The probability of a boy or a girl being born is 1/2. For a family having only  
+three children, what is the probability of having two girls and one boy? 
+  
+(A) 3/8 
+(B) 1/8 
+(C) 1/4 
+(D) 1/2  
+  
+ 
+--- PAGE 6 ---
+ Data Science and Artificial Intelligence (DA) 
+Page 6 of 41 
+Organizing Institute: IISc Bengaluru 
+Q.8 Person 1 and Person 2 invest in three mutual funds A, B, and C. The amounts they 
+invest in each of these mutual funds are given in the table. 
+ Mutual fund A Mutual fund B Mutual fund C 
+Person 1 ₹10,000 ₹20,000 ₹20,000 
+Person 2 ₹20,000 ₹15,000 ₹15,000 
+At the end of one year, the total amount that Person 1 gets is ₹500 more than  
+Person 2. The annual rate of return for the mutual funds B and C is 15% each. What 
+is the annual rate of return for the mutual fund A? 
+  
+(A) 7.5% 
+(B) 10% 
+(C) 15% 
+(D) 20% 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+--- PAGE 7 ---
+ Data Science and Artificial Intelligence (DA) 
+Page 7 of 41 
+Organizing Institute: IISc Bengaluru 
+Q.9 Three different views of a dice are shown in the figure below.  
+ 
+The piece of paper that can be folded to make this dice is  
+  
+(A) 
+ 
+(B) 
+ 
+(C) 
+ 
+(D) 
+ 
+  
+ 
+--- PAGE 8 ---
+ Data Science and Artificial Intelligence (DA) 
+Page 8 of 41 
+Organizing Institute: IISc Bengaluru 
+Q.10 Visualize two identical right circular cones such that one is inverted over the other 
+and they share a common circular base. If a cutting plane passes through the vertices 
+of the assembled cones, what shape does the  outer boundary of the  
+resulting cross-section make?  
+  
+(A) A rhombus 
+(B) A triangle 
+(C) An ellipse 
+(D) A hexagon 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+--- PAGE 9 ---
+ Data Science and Artificial Intelligence (DA) 
+Page 9 of 41 
+Organizing Institute: IISc Bengaluru 
+Q.11 – Q.35 Carry ONE mark Each 
+ 
+Q.11 Consider the following statements: 
+(i) The mean and variance of a Poisson random variable are equal. 
+(ii) For a standard normal random variable, the mean is zero and the 
+variance is one. 
+Which ONE of the following options is correct?  
+(A) Both (i) and (ii) are true 
+(B) (i) is true and (ii) is false 
+(C) (ii) is true and (i) is false 
+(D) Both (i) and (ii) are false 
+ 
+Q.12 Three fair coins are tossed independently. T is the event that two or more tosses 
+result in heads. S is the event that two or more tosses result in tails.  
+What is the probability of the event 𝑇 ∩ 𝑆 ? 
+(A) 0 
+(B) 0.5 
+(C) 0.25 
+(D) 1 
+ 
+ 
+ 
+ 
+ 
+--- PAGE 10 ---
+ Data Science and Artificial Intelligence (DA) 
+Page 10 of 41 
+Organizing Institute: IISc Bengaluru 
+Q.13 Consider the matrix 𝑴 = [2 −1
+3 1 ].  
+Which ONE of the following statements is TRUE? 
+(A) The eigenvalues of 𝑴 are non-negative and real. 
+(B) The eigenvalues of 𝑴 are complex conjugate pairs. 
+(C) One eigenvalue of 𝑴 is positive and real, and another eigenvalue of 𝑴 is zero.  
+(D) One eigenvalue of 𝑴 is non-negative and real, and another eigenvalue of 𝑴 is 
+negative and real.  
+ 
+Q.14 Consider performing depth -first search (DFS) on an undirected and unweighted 
+graph G starting at vertex 𝑠. For any vertex 𝑢 in G, 𝑑[𝑢] is the length of the shortest 
+path from 𝑠 to 𝑢. Let (𝑢, 𝑣) be an edge in G such that 𝑑[𝑢] < 𝑑[𝑣]. If the edge 
+(𝑢, 𝑣) is explored first in the direction from 𝑢 to 𝑣 during the above DFS, then (𝑢, 𝑣) 
+becomes a ______ edge. 
+(A) tree  
+(B) cross  
+(C) back 
+(D) gray 
+ 
+  
+--- PAGE 11 ---
+ Data Science and Artificial Intelligence (DA) 
+Page 11 of 41 
+Organizing Institute: IISc Bengaluru 
+Q.15 For any twice differentiable function 𝑓: ℝ → ℝ, if at some 𝑥 ∗ ∈ ℝ, 𝑓 ′(𝑥 ∗) = 0 
+and 𝑓′′(𝑥 ∗) > 0, then the function 𝑓 necessarily has a ______ at 𝑥 = 𝑥 ∗. 
+Note: ℝ denotes the set of real numbers. 
+(A) local minimum 
+(B) global minimum 
+(C) local maximum 
+(D) global maximum 
+ 
+Q.16 Match the items in Column 1 with the items in Column 2 in the following table: 
+Column 1 Column 2 
+(p) First In First Out 
+(q) Lookup Operation 
+(r) Last In First Out 
+ 
+(i) Stacks 
+(ii) Queues 
+(iii) Hash Tables 
+(A) (p) − (ii), (q) − (iii), (r) − (i) 
+(B) (p) − (ii), (q) − (i), (r) − (iii) 
+(C) (p) − (i), (q) − (ii), (r) − (iii) 
+(D) (p) − (i), (q) − (iii), (r) − (ii) 
+ 
+  
+--- PAGE 12 ---
+ Data Science and Artificial Intelligence (DA) 
+Page 12 of 41 
+Organizing Institute: IISc Bengaluru 
+Q.17 Consider the dataset with six datapoints: {(𝒙𝟏, 𝒚𝟏),(𝒙𝟐, 𝒚𝟐),… , (𝒙𝟔,𝒚𝟔)},  
+where 𝒙𝟏 =  [1
+0] ,  𝒙𝟐 =  [0
+1] , 𝒙𝟑 =  [ 0
+−1] , 𝒙𝟒 =  [−1
+0 ] , 𝒙𝟓 =  [2
+2] , 𝒙𝟔 =  [−2
+−2]    
+and the labels are given by 𝒚𝟏 = 𝒚𝟐 = 𝒚𝟓 = 1, and 𝒚𝟑 = 𝒚𝟒 = 𝒚𝟔 =  −1. A hard 
+margin linear support vector machine is trained on the above dataset.  
+Which ONE of the following sets is a possible set of support vectors? 
+(A)  {𝒙𝟏, 𝒙𝟐,𝒙𝟓} 
+(B) {𝒙𝟑, 𝒙𝟒,𝒙𝟓} 
+(C) {𝒙𝟒, 𝒙𝟓} 
+(D) {𝒙𝟏, 𝒙𝟐,𝒙𝟑, 𝒙𝟒} 
+ 
+Q.18 Match the items in Column 1 with the items in Column 2 in the following table: 
+Column 1 Column 2 
+(p) Principal Component Analysis 
+(q) Naïve Bayes Classification 
+(r) Logistic Regression 
+(i) Discriminative Model 
+(ii) Dimensionality Reduction 
+(iii) Generative Model 
+ 
+(A) (p) − (iii), (q) − (i), (r) − (ii) 
+(B) (p) − (ii), (q) − (i), (r) − (iii)  
+(C) (p) − (ii), (q) − (iii), (r) − (i)  
+(D) (p) − (iii), (q) − (ii), (r) − (i) 
+ 
+ 
+ 
+ 
+--- PAGE 13 ---
+ Data Science and Artificial Intelligence (DA) 
+Page 13 of 41 
+Organizing Institute: IISc Bengaluru 
+ 
+Q.19 Euclidean distance based 𝑘-means clustering algorithm was run on a dataset of 100 
+points with 𝑘 = 3. If the points [1
+1] and  [−1
+1 ] are both part of cluster 3, then which 
+ONE of the following points is necessarily also part of cluster 3? 
+(A) [0
+0]  
+(B) [0
+2]  
+(C) [2
+0]  
+(D) [0
+1]  
+ 
+Q.20 Given a dataset with 𝐾 binary-valued attributes (where 𝐾 > 2) for a two -class 
+classification task, the number of parameters to be estimated for learning a naïve 
+Bayes classifier is 
+(A) 2𝐾 + 1 
+(B) 2𝐾 + 1 
+(C) 2𝐾+1 + 1 
+(D) 𝐾2 + 1 
+ 
+ 
+ 
+ 
+--- PAGE 14 ---
+ Data Science and Artificial Intelligence (DA) 
+Page 14 of 41 
+Organizing Institute: IISc Bengaluru 
+Q.21 Consider performing uniform hashing on an open address  hash table with load 
+factor 𝛼 =
+𝑛
+𝑚 < 1, where 𝑛 elements are stored in the table with 𝑚 slots. The 
+expected number of probes in an unsuccessful search is at most 
+1
+1−𝛼 . 
+Inserting an element in this hash table requires at most ______ probes, on average. 
+(A) ln ( 1
+1 − 𝛼) 
+(B) 1
+1 − 𝛼 
+(C) 1 + 𝛼
+2 
+(D) 1
+1 + 𝛼 
+ 
+Q.22 For any binary classification dataset, let 𝑆𝐵 ∈ ℝ𝑑×𝑑 and 𝑆𝑊 ∈ ℝ𝑑×𝑑 be the 
+between-class and within -class scatter (covariance) matrices, respectively. The 
+Fisher linear discriminant is defined by  𝑢∗ ∈ ℝ𝑑, that maximizes  
+𝐽(𝑢) = 𝑢𝑇 𝑆𝐵𝑢
+𝑢𝑇𝑆𝑊𝑢 
+If 𝜆 = 𝐽(𝑢∗),  𝑆𝑊 is non-singular and 𝑆𝐵 ≠ 0, then (𝑢∗, 𝜆) must satisfy which ONE 
+of the following equations? 
+Note: ℝ denotes the set of real numbers. 
+(A) 𝑆𝑊  −1𝑆𝐵𝑢∗ = 𝜆𝑢∗  
+(B) 𝑆𝑊𝑢∗ = 𝜆𝑆𝐵𝑢∗  
+(C) 𝑆𝐵𝑆𝑊𝑢∗ = 𝜆𝑢∗  
+(D) 𝑢∗𝑇𝑢∗ = 𝜆2  
+ 
+--- PAGE 15 ---
+ Data Science and Artificial Intelligence (DA) 
+Page 15 of 41 
+Organizing Institute: IISc Bengaluru 
+Q.23 Let ℎ1and ℎ2 be two admissible heuristics used in 𝐴∗ search.  
+Which ONE of the following expressions is always an admissible heuristic? 
+(A) ℎ1 +  ℎ2  
+(B) ℎ1 × ℎ2   
+(C) ℎ1/ℎ2, (ℎ2 ≠ 0) 
+(D) |ℎ1 − ℎ2|  
+ 
+Q.24 Consider five random variables 𝑈, 𝑉, 𝑊, 𝑋, and 𝑌 whose joint distribution 
+satisfies:  
+𝑃(𝑈, 𝑉, 𝑊, 𝑋, 𝑌) = 𝑃(𝑈)𝑃(𝑉)𝑃(𝑊|𝑈, 𝑉)𝑃(𝑋|𝑊)𝑃(𝑌|𝑊) 
+Which ONE of the following statements is FALSE? 
+(A) 𝑌 is conditionally independent of 𝑉 given 𝑊 
+(B) 𝑋 is conditionally independent of 𝑈 given 𝑊 
+(C) 𝑈 and 𝑉 are conditionally independent given 𝑊 
+(D) 𝑌 and 𝑋 are conditionally independent given 𝑊 
+ 
+ 
+ 
+ 
+ 
+ 

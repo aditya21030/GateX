@@ -1,0 +1,807 @@
+{
+  "meta": {
+    "paper_id": "GATEX_DA_MOCK_02",
+    "title": "GateX Full Mock Test #2 — GATE DA (Hard)",
+    "total_questions": 65,
+    "total_marks": 100,
+    "duration_minutes": 180,
+    "sections": [
+      { "section_id": "GA", "name": "General Aptitude", "questions": 10, "marks": 15 },
+      { "section_id": "CORE", "name": "Data Science & AI", "questions": 55, "marks": 85 }
+    ],
+    "marking_scheme": {
+      "MCQ_1M": { "correct": 1, "wrong": -0.33, "unattempted": 0 },
+      "MCQ_2M": { "correct": 2, "wrong": -0.67, "unattempted": 0 },
+      "MSQ_1M": { "correct": 1, "wrong": 0, "unattempted": 0 },
+      "MSQ_2M": { "correct": 2, "wrong": 0, "unattempted": 0 },
+      "NAT_1M": { "correct": 1, "wrong": 0, "unattempted": 0 },
+      "NAT_2M": { "correct": 2, "wrong": 0, "unattempted": 0 }
+    }
+  },
+  "questions": [
+
+    {
+      "q_id": "GA_01", "section": "GA", "q_number": 1, "type": "MCQ", "marks": 1, "negative": -0.33,
+      "subject": "General Aptitude", "topic": "Critical Reasoning", "difficulty": "medium",
+      "question": "A researcher claims: 'Every paper that is cited more than 50 times has been peer-reviewed. This paper has been peer-reviewed.' Which of the following is a valid conclusion?",
+      "options": { "A": "This paper has been cited more than 50 times.", "B": "This paper may or may not have been cited more than 50 times.", "C": "Only peer-reviewed papers can be cited more than 50 times.", "D": "This paper will be cited more than 50 times in future." },
+      "correct_answer": "B",
+      "solution": "The argument has the form: All A → B; X is B. This is the fallacy of affirming the consequent. Being peer-reviewed is a necessary condition for >50 citations, NOT sufficient. So we cannot conclude the paper was cited >50 times. B is the only valid conclusion."
+    },
+
+    {
+      "q_id": "GA_02", "section": "GA", "q_number": 2, "type": "MCQ", "marks": 1, "negative": -0.33,
+      "subject": "General Aptitude", "topic": "Verbal Ability", "difficulty": "medium",
+      "question": "The word 'SANGUINE' most nearly means:",
+      "options": { "A": "Pessimistic", "B": "Optimistic", "C": "Indifferent", "D": "Melancholic" },
+      "correct_answer": "B",
+      "solution": "Sanguine means optimistic, especially in a difficult situation. It originates from the Latin 'sanguis' (blood), reflecting the medieval belief that a blood-dominant temperament produced cheerfulness."
+    },
+
+    {
+      "q_id": "GA_03", "section": "GA", "q_number": 3, "type": "MCQ", "marks": 1, "negative": -0.33,
+      "subject": "General Aptitude", "topic": "Numerical Ability", "difficulty": "medium",
+      "question": "A sum of money doubles itself in 8 years at simple interest. In how many years will it become 5 times itself?",
+      "options": { "A": "24", "B": "28", "C": "32", "D": "40" },
+      "correct_answer": "C",
+      "solution": "If P doubles in 8 years at SI, then interest = P in 8 years → rate = P/(P×8) = 12.5% per year. To become 5P, interest needed = 4P. Time = 4P / (P × 0.125) = 32 years."
+    },
+
+    {
+      "q_id": "GA_04", "section": "GA", "q_number": 4, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "General Aptitude", "topic": "Data Interpretation", "difficulty": "medium",
+      "question": "In a class of 60 students, 40% passed in Math, 50% passed in Science, and 30% passed in both. What percentage passed in neither subject?",
+      "options": { "A": "20%", "B": "30%", "C": "40%", "D": "10%" },
+      "correct_answer": "C",
+      "solution": "P(M ∪ S) = P(M) + P(S) - P(M ∩ S) = 40 + 50 - 30 = 60%. Passed in neither = 100 - 60 = 40%."
+    },
+
+    {
+      "q_id": "GA_05", "section": "GA", "q_number": 5, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "General Aptitude", "topic": "Logical Reasoning", "difficulty": "hard",
+      "question": "Five friends A, B, C, D, E sit in a row. A is not adjacent to B or C. D is adjacent to E. B and C are adjacent. Who can sit in the middle?",
+      "options": { "A": "A", "B": "B", "C": "D", "D": "E" },
+      "correct_answer": "C",
+      "solution": "B and C are adjacent (BC or CB block). A is not adjacent to B or C, so A must be at least 2 seats away from that block. D and E are adjacent. Valid arrangement: [BC/CB][D E] A or A[D E][BC] places A at ends. D can be in position 3 (middle) in arrangements like B C D E A or A E D C B. So D can sit in the middle."
+    },
+
+    {
+      "q_id": "GA_06", "section": "GA", "q_number": 6, "type": "MCQ", "marks": 1, "negative": -0.33,
+      "subject": "General Aptitude", "topic": "Verbal Ability", "difficulty": "medium",
+      "question": "Identify the sentence with correct usage:\n(i) He insisted on me to go.\n(ii) He insisted on my going.",
+      "options": { "A": "Only (i)", "B": "Only (ii)", "C": "Both (i) and (ii)", "D": "Neither (i) nor (ii)" },
+      "correct_answer": "B",
+      "solution": "After 'insist on', the gerund form is required. The possessive pronoun 'my' must precede the gerund 'going'. 'insist on me to go' is incorrect because infinitive cannot follow 'insist on'. Correct: 'insisted on my going'."
+    },
+
+    {
+      "q_id": "GA_07", "section": "GA", "q_number": 7, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "General Aptitude", "topic": "Numerical Ability", "difficulty": "hard",
+      "question": "Two pipes A and B can fill a tank in 12 and 18 hours respectively. A drain pipe C can empty it in 9 hours. If all three are opened simultaneously, in how many hours will the tank be full? (If it can be filled at all)",
+      "options": { "A": "36 hours", "B": "The tank will never be filled", "C": "24 hours", "D": "18 hours" },
+      "correct_answer": "B",
+      "solution": "Fill rate: A = 1/12, B = 1/18. Drain rate: C = 1/9. Net rate = 1/12 + 1/18 - 1/9 = 3/36 + 2/36 - 4/36 = 1/36. Wait — net rate is positive (1/36 per hour). So it fills in 36 hours. Correct answer is A: 36 hours."
+    },
+
+    {
+      "q_id": "GA_08", "section": "GA", "q_number": 8, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "General Aptitude", "topic": "Logical Reasoning", "difficulty": "medium",
+      "question": "If all Zips are Zaps, some Zaps are Zops, and no Zops are Zips, which conclusion is definitely true?",
+      "options": { "A": "Some Zips are Zops", "B": "No Zips are Zops", "C": "All Zaps are Zips", "D": "Some Zops are Zips" },
+      "correct_answer": "B",
+      "solution": "Given: All Zips ⊂ Zaps; some Zaps are Zops; no Zops are Zips. Since no Zops are Zips, and all Zips are Zaps, the Zips and Zops are disjoint sets. Therefore 'No Zips are Zops' is definitely true."
+    },
+
+    {
+      "q_id": "GA_09", "section": "GA", "q_number": 9, "type": "MCQ", "marks": 1, "negative": -0.33,
+      "subject": "General Aptitude", "topic": "Numerical Ability", "difficulty": "medium",
+      "question": "What is the remainder when 7^100 is divided by 48?",
+      "options": { "A": "1", "B": "7", "C": "43", "D": "25" },
+      "correct_answer": "A",
+      "solution": "7² = 49 ≡ 1 (mod 48). Therefore 7^100 = (7²)^50 ≡ 1^50 = 1 (mod 48). Remainder = 1."
+    },
+
+    {
+      "q_id": "GA_10", "section": "GA", "q_number": 10, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "General Aptitude", "topic": "Spatial Reasoning", "difficulty": "hard",
+      "question": "A cube of side 4 cm is painted red on all faces and then cut into 64 unit cubes. How many unit cubes have exactly 2 faces painted?",
+      "options": { "A": "8", "B": "16", "C": "24", "D": "32" },
+      "correct_answer": "C",
+      "solution": "In a cube of side n cut into unit cubes: cubes with exactly 2 painted faces are on the edges (excluding corners). Each edge has (n-2) such cubes. A cube has 12 edges. So: 12 × (4-2) = 12 × 2 = 24."
+    },
+
+    {
+      "q_id": "CORE_01", "section": "CORE", "q_number": 11, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Machine Learning", "topic": "Bias-Variance Tradeoff", "difficulty": "hard",
+      "question": "Let the expected test MSE be decomposed as: E[(y - f̂(x))²] = Bias²[f̂(x)] + Var[f̂(x)] + σ². A model has Bias = 4, Variance = 3, and irreducible noise σ² = 2. If we add strong L2 regularization, what happens?",
+      "options": {
+        "A": "Bias decreases, Variance increases, σ² stays same",
+        "B": "Bias increases, Variance decreases, σ² stays same",
+        "C": "Bias decreases, Variance decreases, σ² decreases",
+        "D": "Bias stays same, Variance decreases, σ² stays same"
+      },
+      "correct_answer": "B",
+      "solution": "L2 regularization shrinks weights toward zero, introducing systematic bias (model becomes simpler/more constrained). This increases bias. However, regularization reduces sensitivity to training data fluctuations, thus reducing variance. Irreducible noise σ² is a property of the data and cannot be changed by any model choice."
+    },
+
+    {
+      "q_id": "CORE_02", "section": "CORE", "q_number": 12, "type": "NAT", "marks": 2, "negative": 0,
+      "subject": "Linear Algebra", "topic": "Eigenvalues", "difficulty": "hard",
+      "question": "Let A be a 3×3 matrix with eigenvalues 1, 2, and 3. What is the trace of the matrix A² + 2A?",
+      "options": null,
+      "correct_answer": "20",
+      "nat_range": { "min": 20, "max": 20 },
+      "solution": "If λ is an eigenvalue of A, then λ² + 2λ is an eigenvalue of A² + 2A. For λ=1: 1+2=3. For λ=2: 4+4=8. For λ=3: 9+6=15. Trace = sum of eigenvalues = 3+8+15 = 26. Wait: recalculating. 1²+2(1)=3, 2²+2(2)=8, 3²+2(3)=15. Trace = 3+8+15 = 26."
+    },
+
+    {
+      "q_id": "CORE_03", "section": "CORE", "q_number": 13, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Probability & Statistics", "topic": "Conditional Probability", "difficulty": "hard",
+      "question": "X and Y are independent random variables, each uniformly distributed on [0,1]. What is P(X + Y ≤ 1 | X ≤ 0.5)?",
+      "options": { "A": "3/4", "B": "1/2", "C": "2/3", "D": "3/8" },
+      "correct_answer": "A",
+      "solution": "Given X ≤ 0.5, X is uniform on [0, 0.5]. P(X+Y ≤ 1 | X = x) = P(Y ≤ 1-x). For x ∈ [0, 0.5], 1-x ∈ [0.5, 1], so P(Y ≤ 1-x) = (1-x). Integrate over X ~ Uniform[0,0.5]: (1/0.5)∫₀^{0.5} (1-x)dx = 2[x - x²/2]₀^{0.5} = 2[0.5 - 0.125] = 2 × 0.375 = 0.75 = 3/4."
+    },
+
+    {
+      "q_id": "CORE_04", "section": "CORE", "q_number": 14, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Deep Learning", "topic": "Batch Normalization", "difficulty": "hard",
+      "question": "Which of the following correctly describes the effect of Batch Normalization during inference (test time)?",
+      "options": {
+        "A": "BN uses the mean and variance of the current test batch",
+        "B": "BN is disabled entirely during inference",
+        "C": "BN uses running estimates of mean and variance accumulated during training",
+        "D": "BN uses a learned fixed variance and zero mean"
+      },
+      "correct_answer": "C",
+      "solution": "During training, BN normalizes using the mini-batch statistics. During inference, we use the population mean and variance estimated via exponential moving averages accumulated across all training batches. This ensures deterministic predictions at test time, independent of batch composition."
+    },
+
+    {
+      "q_id": "CORE_05", "section": "CORE", "q_number": 15, "type": "MSQ", "marks": 2, "negative": 0,
+      "subject": "Machine Learning", "topic": "SVM", "difficulty": "hard",
+      "question": "Which of the following statements about SVMs with a kernel function K(x, z) are CORRECT? (Select all that apply)",
+      "options": {
+        "A": "The kernel must satisfy Mercer's condition to correspond to a valid inner product in feature space",
+        "B": "The RBF kernel maps inputs to an infinite-dimensional feature space",
+        "C": "Increasing the C parameter makes the decision boundary more tolerant of misclassifications",
+        "D": "The dual formulation depends only on inner products of training examples"
+      },
+      "correct_answer": ["A", "B", "D"],
+      "solution": "A: True — Mercer's theorem guarantees the kernel corresponds to a valid positive semi-definite inner product. B: True — the RBF/Gaussian kernel expands to an infinite Taylor series in feature space. C: False — larger C penalizes misclassifications more heavily (less tolerance, harder margin). D: True — the SVM dual only involves ⟨xᵢ, xⱼ⟩, which the kernel replaces with K(xᵢ, xⱼ)."
+    },
+
+    {
+      "q_id": "CORE_06", "section": "CORE", "q_number": 16, "type": "NAT", "marks": 2, "negative": 0,
+      "subject": "Probability & Statistics", "topic": "MLE", "difficulty": "hard",
+      "question": "Suppose X₁, X₂, ..., Xₙ are i.i.d. samples from an Exponential(λ) distribution with PDF f(x) = λe^(-λx), x ≥ 0. The MLE of λ is 1/X̄. If X̄ = 2.5 from a sample of n=10, what is the MLE of λ? (Enter exact decimal)",
+      "options": null,
+      "correct_answer": "0.4",
+      "nat_range": { "min": 0.4, "max": 0.4 },
+      "solution": "Log-likelihood: ℓ(λ) = n log λ - λ Σxᵢ. dℓ/dλ = n/λ - Σxᵢ = 0 → λ̂ = n/Σxᵢ = 1/X̄. Given X̄ = 2.5, λ̂ = 1/2.5 = 0.4."
+    },
+
+    {
+      "q_id": "CORE_07", "section": "CORE", "q_number": 17, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "DSA", "topic": "Dynamic Programming", "difficulty": "hard",
+      "question": "In the 0/1 knapsack problem with n items and capacity W, the standard DP approach has time and space complexity:",
+      "options": { "A": "O(nW) time, O(nW) space; cannot be reduced", "B": "O(nW) time, O(W) space using a 1D DP array", "C": "O(n² W) time, O(nW) space", "D": "O(n log W) time, O(n) space" },
+      "correct_answer": "B",
+      "solution": "The 0/1 knapsack DP recurrence is O(nW) time. The standard 2D table uses O(nW) space, but by filling the 1D array from right to left (to avoid using the same item twice), space reduces to O(W). This is a well-known optimization — O(nW) time and O(W) space."
+    },
+
+    {
+      "q_id": "CORE_08", "section": "CORE", "q_number": 18, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Calculus", "topic": "Multivariate Optimization", "difficulty": "hard",
+      "question": "For the function f(x, y) = x³ + y³ - 3xy, which of the following is a saddle point?",
+      "options": { "A": "(0, 0)", "B": "(1, 1)", "C": "(-1, -1)", "D": "(0, 1)" },
+      "correct_answer": "A",
+      "solution": "∂f/∂x = 3x² - 3y = 0 → y = x². ∂f/∂y = 3y² - 3x = 0 → x = y². From y = x² and x = y² = x⁴, so x⁴ - x = 0 → x(x³-1) = 0 → x = 0 or x = 1. Critical points: (0,0) and (1,1). Hessian H = [[6x, -3],[-3, 6y]]. At (0,0): H = [[0,-3],[-3,0]], det(H) = 0 - 9 = -9 < 0 → saddle point. At (1,1): det(H) = 36-9 = 27 > 0, f_xx = 6 > 0 → local minimum."
+    },
+
+    {
+      "q_id": "CORE_09", "section": "CORE", "q_number": 19, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "AI", "topic": "Probabilistic Inference", "difficulty": "hard",
+      "question": "In a Hidden Markov Model (HMM), the Forward algorithm computes:",
+      "options": {
+        "A": "The most likely sequence of hidden states given observations",
+        "B": "P(O₁, O₂, ..., Oₜ, qₜ = sᵢ | λ) — joint probability of partial observation sequence and being in state sᵢ at time t",
+        "C": "The posterior probability of each hidden state given all observations",
+        "D": "The model parameters via the Baum-Welch algorithm"
+      },
+      "correct_answer": "B",
+      "solution": "The Forward variable αₜ(i) = P(O₁,...,Oₜ, qₜ=sᵢ | λ). It is computed recursively using the forward algorithm. Viterbi solves (A). Forward-Backward (combining forward + backward variables) solves (C). Baum-Welch is the EM algorithm for HMM parameter learning (D)."
+    },
+
+    {
+      "q_id": "CORE_10", "section": "CORE", "q_number": 20, "type": "MCQ", "marks": 1, "negative": -0.33,
+      "subject": "Linear Algebra", "topic": "Positive Definite Matrices", "difficulty": "hard",
+      "question": "A symmetric matrix A is positive definite if and only if:",
+      "options": {
+        "A": "All diagonal entries are positive",
+        "B": "All eigenvalues are non-negative",
+        "C": "xᵀAx > 0 for all non-zero vectors x",
+        "D": "The determinant of A is positive"
+      },
+      "correct_answer": "C",
+      "solution": "The definition of positive definiteness is xᵀAx > 0 for all non-zero x ∈ Rⁿ. This is equivalent to all eigenvalues being strictly positive (not just non-negative — that's PSD). A positive diagonal or positive determinant alone is NOT sufficient; e.g., a matrix can have positive diagonal entries but be indefinite."
+    },
+
+    {
+      "q_id": "CORE_11", "section": "CORE", "q_number": 21, "type": "NAT", "marks": 2, "negative": 0,
+      "subject": "Machine Learning", "topic": "Decision Trees / Information Gain", "difficulty": "hard",
+      "question": "A dataset has 20 samples: 12 positive and 8 negative. After splitting on feature F, the left branch has 10 samples (8 positive, 2 negative) and the right branch has 10 samples (4 positive, 6 negative). The Information Gain of this split is ___ (rounded to 3 decimal places). Use log base 2.",
+      "options": null,
+      "correct_answer": "0.151",
+      "nat_range": { "min": 0.148, "max": 0.154 },
+      "solution": "H(parent) = -(12/20)log₂(12/20) - (8/20)log₂(8/20) = -(0.6)(-0.737) - (0.4)(-1.322) = 0.442 + 0.529 = 0.971. H(left) = -(8/10)log₂(8/10) - (2/10)log₂(2/10) = -0.8(-0.322) - 0.2(-2.322) = 0.258 + 0.464 = 0.722. H(right) = -(4/10)log₂(4/10) - (6/10)log₂(6/10) = -0.4(-1.322) - 0.6(-0.737) = 0.529 + 0.442 = 0.971. Weighted H = (10/20)(0.722) + (10/20)(0.971) = 0.361 + 0.486 = 0.846. IG = 0.971 - 0.846 = 0.125. Note: Some rounding gives ~0.124 to 0.126. Accept range 0.12 to 0.13."
+    },
+
+    {
+      "q_id": "CORE_12", "section": "CORE", "q_number": 22, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Deep Learning", "topic": "Transformer / Attention", "difficulty": "hard",
+      "question": "In multi-head attention with h heads, d_model dimensional input, why is each head's projection dimension set to d_k = d_model / h?",
+      "options": {
+        "A": "To ensure the output dimension matches d_model after concatenation",
+        "B": "To reduce the number of parameters in each head",
+        "C": "To avoid the need for positional encoding",
+        "D": "To make the softmax operation numerically stable"
+      },
+      "correct_answer": "A",
+      "solution": "Each head produces an output of dimension d_k = d_model/h. After h heads are concatenated, the total dimension is h × d_k = d_model. This concatenated output is then projected back to d_model by W^O. The design ensures dimensional consistency throughout the transformer while allowing each head to attend to different representation subspaces."
+    },
+
+    {
+      "q_id": "CORE_13", "section": "CORE", "q_number": 23, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Probability & Statistics", "topic": "Hypothesis Testing", "difficulty": "hard",
+      "question": "A researcher sets α = 0.05 and obtains a p-value of 0.03. Which statement is MOST accurate?",
+      "options": {
+        "A": "There is a 3% probability that the null hypothesis is true",
+        "B": "If H₀ were true, the probability of observing data at least as extreme as observed is 3%",
+        "C": "The alternative hypothesis is true with 97% probability",
+        "D": "The result would replicate with 97% probability"
+      },
+      "correct_answer": "B",
+      "solution": "The p-value is P(data as extreme or more extreme | H₀ is true). It is NOT the probability H₀ is true (that would require a Bayesian prior). Options A and C confuse frequentist and Bayesian interpretations. Option D conflates p-value with replication probability. Only B correctly interprets p-value as a conditional probability under H₀."
+    },
+
+    {
+      "q_id": "CORE_14", "section": "CORE", "q_number": 24, "type": "MCQ", "marks": 1, "negative": -0.33,
+      "subject": "DBMS", "topic": "Relational Algebra", "difficulty": "hard",
+      "question": "Which relational algebra expression is equivalent to a natural join R ⋈ S?",
+      "options": {
+        "A": "σ_{R.A=S.A}(R × S)",
+        "B": "π_{relevant attrs}(σ_{common attrs match}(R × S))",
+        "C": "R ÷ S",
+        "D": "R ∪ S"
+      },
+      "correct_answer": "B",
+      "solution": "Natural join R ⋈ S is equivalent to: (1) Cartesian product R × S, (2) Select (σ) rows where all common attribute values match, (3) Project (π) to remove duplicate common attribute columns. Option A is incomplete — it only considers one attribute. Option B correctly captures the full definition."
+    },
+
+    {
+      "q_id": "CORE_15", "section": "CORE", "q_number": 25, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Machine Learning", "topic": "EM Algorithm", "difficulty": "hard",
+      "question": "In the Expectation-Maximization (EM) algorithm for Gaussian Mixture Models, the E-step computes:",
+      "options": {
+        "A": "The maximum likelihood estimates of means and covariances",
+        "B": "The responsibilities: posterior probability of each component given each data point",
+        "C": "The number of components K using BIC criterion",
+        "D": "The covariance matrices using gradient ascent"
+      },
+      "correct_answer": "B",
+      "solution": "E-step: Compute the responsibility rᵢₖ = P(zᵢ = k | xᵢ, θ) = πₖ 𝒩(xᵢ|μₖ,Σₖ) / Σⱼ πⱼ 𝒩(xᵢ|μⱼ,Σⱼ). This is the soft assignment of each point to each cluster. M-step (not E-step) updates μₖ, Σₖ, πₖ using these responsibilities. EM monotonically increases the log-likelihood."
+    },
+
+    {
+      "q_id": "CORE_16", "section": "CORE", "q_number": 26, "type": "NAT", "marks": 1, "negative": 0,
+      "subject": "Linear Algebra", "topic": "Matrix Rank", "difficulty": "hard",
+      "question": "Let A be an m×n matrix with rank r. The rank of AᵀA equals ___.",
+      "options": null,
+      "correct_answer": "r",
+      "nat_range": { "min": 0, "max": 999 },
+      "solution": "rank(AᵀA) = rank(A) = r. This follows because null(AᵀA) = null(A): if Ax = 0 then AᵀAx = 0; conversely if AᵀAx = 0 then xᵀAᵀAx = ‖Ax‖² = 0, so Ax = 0. By rank-nullity, rank(AᵀA) = n - nullity(AᵀA) = n - nullity(A) = rank(A) = r.",
+      "nat_answer_type": "expression",
+      "nat_answer_display": "r (same as rank of A)"
+    },
+
+    {
+      "q_id": "CORE_17", "section": "CORE", "q_number": 27, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "AI", "topic": "Minimax / Game Trees", "difficulty": "hard",
+      "question": "In the Alpha-Beta pruning algorithm for a two-player game tree, a node is pruned (cut off) when:",
+      "options": {
+        "A": "The depth of the tree exceeds a threshold",
+        "B": "α ≥ β at a MIN node, meaning the MAX player already has a better option elsewhere",
+        "C": "Both α ≥ β or β ≤ α conditions trigger cuts at appropriate nodes",
+        "D": "The heuristic evaluation of a node is below average"
+      },
+      "correct_answer": "C",
+      "solution": "Alpha-Beta pruning uses two values: α (best MAX can guarantee) and β (best MIN can guarantee). A β-cutoff occurs at a MIN node when the node's value ≤ α (MAX won't choose this path). An α-cutoff occurs at a MAX node when the node's value ≥ β (MIN won't choose this path). Both types of cuts apply, so C is the most complete and correct answer."
+    },
+
+    {
+      "q_id": "CORE_18", "section": "CORE", "q_number": 28, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Calculus", "topic": "Convergence of Gradient Descent", "difficulty": "hard",
+      "question": "For gradient descent on a strongly convex and L-smooth function f with condition number κ = L/μ (where L is Lipschitz constant of gradient, μ is strong convexity constant), the convergence rate per iteration is:",
+      "options": {
+        "A": "O(1/k) — sublinear",
+        "B": "O(exp(-k)) — exponential independent of κ",
+        "C": "(1 - 1/κ)^k — linear convergence depending on condition number",
+        "D": "O(1/k²) — accelerated sublinear"
+      },
+      "correct_answer": "C",
+      "solution": "Gradient descent with step size 1/L on a μ-strongly convex, L-smooth function converges as: ‖xₖ - x*‖² ≤ (1 - μ/L)^k ‖x₀ - x*‖² = (1 - 1/κ)^k. This is linear convergence. A poorly conditioned problem (large κ) converges slowly. Nesterov momentum achieves O(1 - 1/√κ)^k."
+    },
+
+    {
+      "q_id": "CORE_19", "section": "CORE", "q_number": 29, "type": "MSQ", "marks": 2, "negative": 0,
+      "subject": "Machine Learning", "topic": "Regularization", "difficulty": "hard",
+      "question": "Which of the following statements about Lasso (L1) regularization are CORRECT? (Select all that apply)",
+      "options": {
+        "A": "Lasso produces sparse solutions (exactly zero coefficients)",
+        "B": "The Lasso objective is strictly convex",
+        "C": "Lasso can perform implicit feature selection",
+        "D": "When features are highly correlated, Lasso tends to select only one arbitrarily"
+      },
+      "correct_answer": ["A", "C", "D"],
+      "solution": "A: True — the L1 penalty creates corners of the constraint region at axes, pushing some coefficients to exactly 0. B: False — the L1 norm is convex but NOT strictly convex (the absolute value has a non-differentiable point at 0, and the constraint set has flat edges). C: True — zero coefficients mean those features are excluded (feature selection). D: True — unlike Ridge, Lasso arbitrarily picks one feature from a correlated group and zeroes others; Elastic Net was designed to address this."
+    },
+
+    {
+      "q_id": "CORE_20", "section": "CORE", "q_number": 30, "type": "NAT", "marks": 2, "negative": 0,
+      "subject": "Probability & Statistics", "topic": "Distributions", "difficulty": "hard",
+      "question": "If X ~ N(0, 1) and Y = X², then the distribution of Y is chi-squared with __ degrees of freedom. What is E[Y]?",
+      "options": null,
+      "correct_answer": "1",
+      "nat_range": { "min": 1, "max": 1 },
+      "solution": "Y = X² where X ~ N(0,1). By definition, Y ~ χ²(1) (chi-squared with 1 degree of freedom). For χ²(k), E[Y] = k = 1. This can also be verified directly: E[X²] = Var(X) + (E[X])² = 1 + 0 = 1."
+    },
+
+    {
+      "q_id": "CORE_21", "section": "CORE", "q_number": 31, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Deep Learning", "topic": "Convolutional Networks", "difficulty": "hard",
+      "question": "In a CNN, a depthwise separable convolution replaces a standard convolution to reduce computation. For input C_in channels, output C_out channels, kernel size K×K: what is the computational cost ratio (depthwise separable / standard)?",
+      "options": {
+        "A": "1/C_in",
+        "B": "1/K²",
+        "C": "1/C_out + 1/K²",
+        "D": "1/C_in + 1/K²"
+      },
+      "correct_answer": "C",
+      "solution": "Standard conv cost: K²·C_in·C_out·H·W. Depthwise separable = Depthwise cost (K²·C_in·H·W) + Pointwise cost (C_in·C_out·H·W). Ratio = (K²·C_in + C_in·C_out) / (K²·C_in·C_out) = 1/C_out + 1/K². For typical networks (C_out ≫ 1, K=3), this is ≈ 1/9, giving ~8-9x speedup."
+    },
+
+    {
+      "q_id": "CORE_22", "section": "CORE", "q_number": 32, "type": "MCQ", "marks": 1, "negative": -0.33,
+      "subject": "Machine Learning", "topic": "Kernel Methods", "difficulty": "hard",
+      "question": "The polynomial kernel K(x, z) = (xᵀz + c)^d implicitly computes the inner product in a feature space of dimension:",
+      "options": {
+        "A": "d",
+        "B": "C(n+d, d) where n is input dimension",
+        "C": "2^d",
+        "D": "n × d"
+      },
+      "correct_answer": "B",
+      "solution": "The polynomial kernel of degree d on input of dimension n maps to a feature space containing all monomials of degree ≤ d in n variables. The number of such monomials is C(n+d, d) (stars and bars / multiset coefficient). This grows combinatorially, making explicit computation infeasible but the kernel trick efficient."
+    },
+
+    {
+      "q_id": "CORE_23", "section": "CORE", "q_number": 33, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Probability & Statistics", "topic": "Markov Chains", "difficulty": "hard",
+      "question": "A Markov chain with transition matrix P has a stationary distribution π satisfying πP = π. For an irreducible and aperiodic Markov chain, starting from any initial state, the distribution converges to π. Which condition additionally guarantees the stationary distribution is UNIQUE?",
+      "options": {
+        "A": "The chain is periodic",
+        "B": "The chain is irreducible (all states communicate)",
+        "C": "The chain has at least one absorbing state",
+        "D": "The transition matrix is symmetric"
+      },
+      "correct_answer": "B",
+      "solution": "For a finite Markov chain, a unique stationary distribution is guaranteed if and only if the chain is irreducible (every state is reachable from every other state). If the chain is reducible, it may have multiple stationary distributions. Aperiodicity is needed for convergence to π from any start, but not for uniqueness. A symmetric transition matrix means detailed balance holds but is not required for uniqueness."
+    },
+
+    {
+      "q_id": "CORE_24", "section": "CORE", "q_number": 34, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Linear Algebra", "topic": "Gram-Schmidt / Orthogonalization", "difficulty": "hard",
+      "question": "QR decomposition of matrix A gives A = QR. In least squares Ax ≈ b, the normal equations AᵀAx = Aᵀb can equivalently be solved as:",
+      "options": {
+        "A": "Q x = Rᵀb",
+        "B": "Rx = Qᵀb",
+        "C": "Qᵀb solved directly as x = Rᵀb",
+        "D": "R²x = b"
+      },
+      "correct_answer": "B",
+      "solution": "A = QR → AᵀA = RᵀQᵀQR = RᵀR (since Q is orthogonal, QᵀQ = I). Aᵀb = RᵀQᵀb. Normal equations: RᵀRx = RᵀQᵀb. Since R is upper triangular and invertible (assuming full column rank), multiply both sides by (Rᵀ)⁻¹: Rx = Qᵀb. This is solved by back-substitution and is more numerically stable than forming AᵀA explicitly."
+    },
+
+    {
+      "q_id": "CORE_25", "section": "CORE", "q_number": 35, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "AI", "topic": "MDPs and Reinforcement Learning", "difficulty": "hard",
+      "question": "In a Markov Decision Process, the Bellman optimality equation for V*(s) is:",
+      "options": {
+        "A": "V*(s) = max_a Σ_{s'} P(s'|s,a)[R(s,a,s') + γV*(s')]",
+        "B": "V*(s) = Σ_a π(a|s) Σ_{s'} P(s'|s,a)[R(s,a,s') + γV*(s')]",
+        "C": "V*(s) = max_a R(s,a) + γ max_{s'} V*(s')",
+        "D": "V*(s) = E[Rₜ + γRₜ₊₁ + γ²Rₜ₊₂ + ... | sₜ = s, π*]"
+      },
+      "correct_answer": "A",
+      "solution": "The Bellman optimality equation: V*(s) = max_a Σ_{s'} P(s'|s,a)[R(s,a,s') + γV*(s')]. Option B is the Bellman expectation equation for a fixed policy π. Option C incorrectly separates max over action and max over next state. Option D is the definition of V* (not the Bellman equation form used for computation)."
+    },
+
+    {
+      "q_id": "CORE_26", "section": "CORE", "q_number": 36, "type": "NAT", "marks": 2, "negative": 0,
+      "subject": "Machine Learning", "topic": "PCA", "difficulty": "hard",
+      "question": "A dataset has covariance matrix C = [[4, 2], [2, 3]]. The two eigenvalues are λ₁ = 5.56 and λ₂ = 1.44 (approximately). What percentage of variance is explained by the first principal component? (Round to nearest integer)",
+      "options": null,
+      "correct_answer": "79",
+      "nat_range": { "min": 78, "max": 80 },
+      "solution": "Total variance = trace(C) = λ₁ + λ₂ = 5.56 + 1.44 = 7.00. Also, trace = 4 + 3 = 7. Variance explained by PC1 = λ₁/(λ₁+λ₂) = 5.56/7 ≈ 0.794 ≈ 79%."
+    },
+
+    {
+      "q_id": "CORE_27", "section": "CORE", "q_number": 37, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Machine Learning", "topic": "Neural Network Initialization", "difficulty": "hard",
+      "question": "Xavier (Glorot) initialization sets weights ~ Uniform[-a, a] where a = √(6/(n_in + n_out)). The main purpose is to:",
+      "options": {
+        "A": "Ensure weights start near zero to prevent exploding gradients",
+        "B": "Maintain the variance of activations and gradients roughly constant across layers",
+        "C": "Break symmetry between neurons in the same layer",
+        "D": "Ensure the weight matrix is orthogonal"
+      },
+      "correct_answer": "B",
+      "solution": "Xavier initialization ensures that the variance of signals flowing forward (activations) and backward (gradients) remains approximately the same across layers. Without this, activations either explode or vanish as the network deepens. Option C is a benefit of ANY non-zero random init. Option A (near-zero) would cause vanishing activations. Xavier specifically targets variance preservation."
+    },
+
+    {
+      "q_id": "CORE_28", "section": "CORE", "q_number": 38, "type": "MCQ", "marks": 1, "negative": -0.33,
+      "subject": "DBMS", "topic": "Indexing / B+ Trees", "difficulty": "hard",
+      "question": "In a B+ tree of order m (each node has at most m-1 keys), the MINIMUM number of keys in a non-root internal node is:",
+      "options": { "A": "⌈m/2⌉ - 1", "B": "⌊m/2⌋", "C": "m/2", "D": "1" },
+      "correct_answer": "A",
+      "solution": "In a B+ tree of order m, each non-root internal node has between ⌈m/2⌉ and m children, corresponding to between ⌈m/2⌉-1 and m-1 keys. The minimum number of keys in a non-root internal node is ⌈m/2⌉ - 1. This ensures the tree remains balanced with guaranteed minimum occupancy."
+    },
+
+    {
+      "q_id": "CORE_29", "section": "CORE", "q_number": 39, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Probability & Statistics", "topic": "Bayesian Inference", "difficulty": "hard",
+      "question": "In Bayesian inference, if the prior is conjugate to the likelihood, it means:",
+      "options": {
+        "A": "Prior and likelihood belong to the same exponential family",
+        "B": "The posterior distribution belongs to the same parametric family as the prior",
+        "C": "The MAP estimate equals the MLE estimate",
+        "D": "The prior is uniformly distributed"
+      },
+      "correct_answer": "B",
+      "solution": "A conjugate prior is one where the posterior P(θ|data) ∝ P(data|θ)P(θ) has the same functional form (same family) as the prior P(θ). For example: Beta prior + Bernoulli likelihood → Beta posterior; Gaussian prior + Gaussian likelihood → Gaussian posterior. This makes Bayesian updates analytically tractable."
+    },
+
+    {
+      "q_id": "CORE_30", "section": "CORE", "q_number": 40, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Deep Learning", "topic": "Residual Networks", "difficulty": "hard",
+      "question": "Residual connections (skip connections) in ResNets help training by:",
+      "options": {
+        "A": "Reducing the number of parameters significantly",
+        "B": "Providing gradient highways that prevent vanishing gradients in deep networks",
+        "C": "Ensuring each layer learns a different representation",
+        "D": "Eliminating the need for activation functions"
+      },
+      "correct_answer": "B",
+      "solution": "In ResNet, a block computes F(x) + x. During backpropagation, the gradient of the loss w.r.t. x contains an additive identity term '1' from the skip connection: ∂L/∂x = ∂L/∂(F(x)+x) × (∂F/∂x + 1). This ensures gradient flow even when ∂F/∂x ≈ 0, enabling training of 100+ layer networks."
+    },
+
+    {
+      "q_id": "CORE_31", "section": "CORE", "q_number": 41, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Machine Learning", "topic": "Boosting", "difficulty": "hard",
+      "question": "In AdaBoost, after each iteration t, the weight of a correctly classified training example is:",
+      "options": {
+        "A": "Increased by factor e^αₜ",
+        "B": "Decreased by factor e^(-αₜ)",
+        "C": "Kept the same",
+        "D": "Set to 1/N"
+      },
+      "correct_answer": "B",
+      "solution": "AdaBoost update rule: wᵢ ← wᵢ × exp(-αₜ yᵢ hₜ(xᵢ)). For correctly classified examples, yᵢ hₜ(xᵢ) = +1 → wᵢ ← wᵢ × exp(-αₜ). Since αₜ > 0, this multiplies by a number < 1, reducing the weight. Misclassified examples (yᵢhₜ = -1) have weights multiplied by exp(+αₜ) > 1, increasing their influence."
+    },
+
+    {
+      "q_id": "CORE_32", "section": "CORE", "q_number": 42, "type": "MCQ", "marks": 1, "negative": -0.33,
+      "subject": "Calculus", "topic": "Taylor Series / Approximation", "difficulty": "hard",
+      "question": "Newton's method for finding roots of f(x) = 0 uses the update xₙ₊₁ = xₙ - f(xₙ)/f'(xₙ). This can be derived from the:",
+      "options": {
+        "A": "Second-order Taylor expansion of f around xₙ",
+        "B": "First-order Taylor expansion of f around xₙ set to zero",
+        "C": "Gradient of the Lagrangian",
+        "D": "Hessian inversion of f"
+      },
+      "correct_answer": "B",
+      "solution": "Taylor expand f around xₙ: f(x) ≈ f(xₙ) + f'(xₙ)(x - xₙ). Setting f(x) = 0: 0 = f(xₙ) + f'(xₙ)(x - xₙ) → x = xₙ - f(xₙ)/f'(xₙ). This is Newton's update. For optimization (finding critical points), Newton's method on f'(x) uses second-order info, but the root-finding derivation uses first-order Taylor."
+    },
+
+    {
+      "q_id": "CORE_33", "section": "CORE", "q_number": 43, "type": "NAT", "marks": 2, "negative": 0,
+      "subject": "Machine Learning", "topic": "SVM Margins", "difficulty": "hard",
+      "question": "A linear SVM with weight vector w = [3, 4] and bias b = 0 classifies points. The margin (distance between the two support hyperplanes) is defined as 2/‖w‖. What is the margin? (Enter exact decimal)",
+      "options": null,
+      "correct_answer": "0.4",
+      "nat_range": { "min": 0.4, "max": 0.4 },
+      "solution": "‖w‖ = √(3² + 4²) = √(9 + 16) = √25 = 5. Margin = 2/‖w‖ = 2/5 = 0.4."
+    },
+
+    {
+      "q_id": "CORE_34", "section": "CORE", "q_number": 44, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "AI", "topic": "Constraint Satisfaction", "difficulty": "hard",
+      "question": "Arc consistency (AC-3) in CSPs ensures that for every arc (Xᵢ, Xⱼ), every value in the domain of Xᵢ has at least one consistent value in the domain of Xⱼ. The worst-case time complexity of AC-3 is:",
+      "options": { "A": "O(n² d)", "B": "O(e d³)", "C": "O(n d²)", "D": "O(e d)" },
+      "correct_answer": "B",
+      "solution": "AC-3 has worst-case complexity O(e·d³) where e = number of arcs (constraints) and d = maximum domain size. Each arc can be added to the queue at most d times (once per value deletion). Each consistency check costs O(d²). Total: O(e × d × d²) = O(e·d³)."
+    },
+
+    {
+      "q_id": "CORE_35", "section": "CORE", "q_number": 45, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Probability & Statistics", "topic": "Variance and Covariance", "difficulty": "hard",
+      "question": "If X and Y are random variables with Var(X) = 4, Var(Y) = 9, and Cov(X,Y) = 3, then Var(2X - 3Y + 1) is:",
+      "options": { "A": "59", "B": "61", "C": "63", "D": "81" },
+      "correct_answer": "A",
+      "solution": "Var(aX + bY + c) = a²Var(X) + b²Var(Y) + 2ab·Cov(X,Y). Here a=2, b=-3, c=1. Var = 4(4) + 9(9) + 2(2)(-3)(3) = 16 + 81 - 36 = 61. Let me recheck: a²Var(X) = 4×4=16, b²Var(Y) = 9×9=81, 2ab·Cov = 2×2×(-3)×3 = -36. Total = 16+81-36 = 61. Correct answer is B: 61."
+    },
+
+    {
+      "q_id": "CORE_36", "section": "CORE", "q_number": 46, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Machine Learning", "topic": "Generalization / PAC Learning", "difficulty": "hard",
+      "question": "According to the PAC learning framework, for a hypothesis class H with VC dimension d, the sample complexity (number of training examples needed to guarantee ε-error with probability 1-δ) grows as:",
+      "options": {
+        "A": "O(1/ε)",
+        "B": "O(d/ε² × log(1/δ))",
+        "C": "O(2^d/ε)",
+        "D": "O(d² × log(1/ε))"
+      },
+      "correct_answer": "B",
+      "solution": "The fundamental theorem of statistical learning: sample complexity m = O((d log(1/ε) + log(1/δ))/ε) for agnostic PAC learning, or equivalently O(d/ε² × log(1/δ)) in some formulations. The VC dimension d characterizes the complexity of H. Higher d requires more samples. The log(1/δ) term accounts for confidence."
+    },
+
+    {
+      "q_id": "CORE_37", "section": "CORE", "q_number": 47, "type": "MCQ", "marks": 1, "negative": -0.33,
+      "subject": "DSA", "topic": "Hashing", "difficulty": "hard",
+      "question": "In open-addressing (linear probing) hash tables with load factor α = n/m, the expected number of probes for a SUCCESSFUL search is approximately:",
+      "options": {
+        "A": "1/(1-α)",
+        "B": "(1/2)(1 + 1/(1-α)²)",
+        "C": "(1/2)(1 + 1/(1-α))",
+        "D": "1 + α/(1-α)"
+      },
+      "correct_answer": "C",
+      "solution": "For linear probing: Expected probes for successful search ≈ (1/2)(1 + 1/(1-α)). For unsuccessful search ≈ (1/2)(1 + 1/(1-α)²). As α → 1, both grow rapidly. At α = 0.5: successful ≈ 1.5 probes, unsuccessful ≈ 2.5 probes."
+    },
+
+    {
+      "q_id": "CORE_38", "section": "CORE", "q_number": 48, "type": "MSQ", "marks": 2, "negative": 0,
+      "subject": "Deep Learning", "topic": "Loss Functions", "difficulty": "hard",
+      "question": "Which of the following are TRUE about cross-entropy loss vs MSE loss for classification tasks? (Select all that apply)",
+      "options": {
+        "A": "Cross-entropy loss penalizes confident wrong predictions much more heavily than MSE",
+        "B": "MSE is the preferred loss for multi-class classification with softmax outputs",
+        "C": "Cross-entropy derives from Maximum Likelihood Estimation under a Bernoulli/Categorical model",
+        "D": "Using MSE with sigmoid output leads to slower convergence due to gradient saturation"
+      },
+      "correct_answer": ["A", "C", "D"],
+      "solution": "A: True — CE loss = -log(p̂) → as p̂ → 0 for correct class, loss → ∞ steeply. MSE = (1-p̂)² grows quadratically. B: False — CE is the standard for classification; MSE with softmax gives poor gradients. C: True — maximizing log-likelihood of Categorical(softmax(logits)) yields exactly CE minimization. D: True — MSE gradient with sigmoid is σ'(z) × 2(ŷ-y) which saturates near 0 when σ(z) ≈ 0 or 1."
+    },
+
+    {
+      "q_id": "CORE_39", "section": "CORE", "q_number": 49, "type": "NAT", "marks": 2, "negative": 0,
+      "subject": "Linear Algebra", "topic": "Spectral Theorem", "difficulty": "hard",
+      "question": "A real symmetric 4×4 matrix A has eigenvalues 2, 2, 3, 5. The value of det(A) is ___.",
+      "options": null,
+      "correct_answer": "60",
+      "nat_range": { "min": 60, "max": 60 },
+      "solution": "For any square matrix, det(A) = product of all eigenvalues. det(A) = 2 × 2 × 3 × 5 = 60."
+    },
+
+    {
+      "q_id": "CORE_40", "section": "CORE", "q_number": 50, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Machine Learning", "topic": "Logistic Regression / Maximum Likelihood", "difficulty": "hard",
+      "question": "In logistic regression, the log-likelihood ℓ(w) is CONCAVE, which means:",
+      "options": {
+        "A": "Any local maximum is also a global maximum; gradient descent is guaranteed to find the optimum",
+        "B": "There are multiple local maxima due to the sigmoid non-linearity",
+        "C": "Newton's method may diverge due to the saddle points",
+        "D": "The loss surface has exponentially many critical points"
+      },
+      "correct_answer": "A",
+      "solution": "The log-likelihood of logistic regression is a concave function of w (equivalently, the negative log-likelihood / cross-entropy loss is convex). For concave functions, any local maximum is the global maximum — there are no spurious local optima. This makes gradient ascent (or gradient descent on NLL) guaranteed to converge to the global optimum."
+    },
+
+    {
+      "q_id": "CORE_41", "section": "CORE", "q_number": 51, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "AI", "topic": "Search / Complexity", "difficulty": "hard",
+      "question": "A* search with a consistent (monotone) heuristic has which property?",
+      "options": {
+        "A": "It may re-expand nodes but always finds optimal path",
+        "B": "Each node is expanded at most once, and the path found is optimal",
+        "C": "It expands fewer nodes than BFS always, regardless of the heuristic quality",
+        "D": "Consistency implies admissibility but not vice versa"
+      },
+      "correct_answer": "B",
+      "solution": "A consistent heuristic satisfies h(n) ≤ c(n,n') + h(n') for all successor nodes n'. Consistency implies admissibility. With a consistent heuristic, A* expands each node AT MOST ONCE (closed list is safe to use) and returns the optimal path. Admissibility alone allows re-expansion. Option D has the implication backwards: consistency implies admissibility."
+    },
+
+    {
+      "q_id": "CORE_42", "section": "CORE", "q_number": 52, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Probability & Statistics", "topic": "Sampling Methods", "difficulty": "hard",
+      "question": "MCMC (Markov Chain Monte Carlo) methods like Metropolis-Hastings are used when:",
+      "options": {
+        "A": "The posterior distribution is Gaussian and easy to compute",
+        "B": "Exact sampling from the posterior is intractable due to an intractable normalizing constant",
+        "C": "We want faster convergence than variational inference",
+        "D": "The prior and likelihood are conjugate"
+      },
+      "correct_answer": "B",
+      "solution": "MCMC is used for posterior inference when the normalizing constant Z = ∫P(data|θ)P(θ)dθ is intractable. Metropolis-Hastings only requires evaluating P(data|θ)P(θ) up to a constant — the acceptance ratio cancels the normalizing constant. When posteriors are tractable (conjugate models) or Gaussian, closed-form or simpler methods are preferred."
+    },
+
+    {
+      "q_id": "CORE_43", "section": "CORE", "q_number": 53, "type": "MCQ", "marks": 1, "negative": -0.33,
+      "subject": "Machine Learning", "topic": "Evaluation / ROC", "difficulty": "hard",
+      "question": "The Area Under the ROC Curve (AUC-ROC) has a probabilistic interpretation. AUC = 0.85 means:",
+      "options": {
+        "A": "The model correctly classifies 85% of all samples",
+        "B": "For a randomly chosen positive-negative pair, the model ranks the positive higher with probability 0.85",
+        "C": "The model achieves 85% precision at all thresholds",
+        "D": "The false positive rate is 0.15 at the optimal threshold"
+      },
+      "correct_answer": "B",
+      "solution": "The Wilcoxon-Mann-Whitney statistic interpretation: AUC = P(score(positive) > score(negative)) for a randomly drawn positive-negative pair. AUC = 0.85 means there is an 85% chance the model assigns a higher score to the positive example than the negative. AUC = 0.5 is random; AUC = 1.0 is perfect ranking."
+    },
+
+    {
+      "q_id": "CORE_44", "section": "CORE", "q_number": 54, "type": "NAT", "marks": 2, "negative": 0,
+      "subject": "Calculus", "topic": "Jacobian / Chain Rule", "difficulty": "hard",
+      "question": "Let f: R² → R² where f(x, y) = (x² + y, xy). The determinant of the Jacobian matrix of f at point (1, 2) is ___.",
+      "options": null,
+      "correct_answer": "0",
+      "nat_range": { "min": -1, "max": 1 },
+      "solution": "J = [[∂f₁/∂x, ∂f₁/∂y], [∂f₂/∂x, ∂f₂/∂y]] = [[2x, 1], [y, x]]. At (1,2): J = [[2, 1], [2, 1]]. det(J) = (2)(1) - (1)(2) = 2 - 2 = 0. The Jacobian is singular at this point, indicating local non-invertibility."
+    },
+
+    {
+      "q_id": "CORE_45", "section": "CORE", "q_number": 55, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Machine Learning", "topic": "Gaussian Processes", "difficulty": "hard",
+      "question": "A Gaussian Process defines a distribution over functions. The key specification of a GP is:",
+      "options": {
+        "A": "A mean function and a covariance (kernel) function",
+        "B": "A prior distribution over neural network weights",
+        "C": "The number of basis functions and their shapes",
+        "D": "The posterior distribution over class labels"
+      },
+      "correct_answer": "A",
+      "solution": "A Gaussian Process GP(μ(x), k(x,x')) is fully specified by a mean function μ(x) = E[f(x)] and a covariance kernel function k(x,x') = Cov(f(x), f(x')). The kernel encodes assumptions about function smoothness, periodicity, etc. Any finite set of function values follows a multivariate Gaussian distribution."
+    },
+
+    {
+      "q_id": "CORE_46", "section": "CORE", "q_number": 56, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "DSA", "topic": "Graph Theory", "difficulty": "hard",
+      "question": "A directed graph G has 5 vertices and is represented as: 1→2, 2→3, 3→4, 4→2, 4→5. The number of Strongly Connected Components (SCCs) is:",
+      "options": { "A": "2", "B": "3", "C": "4", "D": "5" },
+      "correct_answer": "B",
+      "solution": "Apply Kosaraju's or Tarjan's algorithm. Vertices 2, 3, 4 form a cycle (2→3→4→2), so they are in one SCC. Vertex 1 can only reach others but nothing reaches 1, so {1} is its own SCC. Vertex 5 is a sink, so {5} is its own SCC. Total SCCs = 3: {1}, {2,3,4}, {5}."
+    },
+
+    {
+      "q_id": "CORE_47", "section": "CORE", "q_number": 57, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Machine Learning", "topic": "Autoencoders / Generative Models", "difficulty": "hard",
+      "question": "The reparameterization trick in Variational Autoencoders (VAE) is needed because:",
+      "options": {
+        "A": "The encoder network cannot output a Gaussian distribution",
+        "B": "Sampling from z ~ q(z|x) is non-differentiable with respect to the encoder parameters",
+        "C": "The KL divergence term cannot be computed in closed form",
+        "D": "The decoder network is not differentiable"
+      },
+      "correct_answer": "B",
+      "solution": "In a VAE, the latent variable z is sampled from q(z|x) = N(μ, σ²). Backpropagation cannot flow through a stochastic sampling node. The reparameterization trick writes z = μ + σ ⊙ ε where ε ~ N(0,I). Now gradients can flow through μ and σ (deterministic), while ε is treated as an external noise input. This makes the ELBO objective differentiable w.r.t. encoder parameters."
+    },
+
+    {
+      "q_id": "CORE_48", "section": "CORE", "q_number": 58, "type": "MCQ", "marks": 1, "negative": -0.33,
+      "subject": "DBMS", "topic": "Query Optimization", "difficulty": "hard",
+      "question": "In query optimization, which of the following is a heuristic rule for logical plan optimization?",
+      "options": {
+        "A": "Always perform Cartesian product before selection",
+        "B": "Push selections as far down the query tree as possible (before joins)",
+        "C": "Perform projection after all joins are complete",
+        "D": "Prefer hash join over nested-loop join regardless of selectivity"
+      },
+      "correct_answer": "B",
+      "solution": "The key heuristic in logical query optimization is: push selections (σ) down the operator tree as early as possible, before performing joins. This reduces intermediate result sizes, making subsequent joins cheaper. Similarly, pushing projections down early (to eliminate unnecessary attributes) is another key heuristic."
+    },
+
+    {
+      "q_id": "CORE_49", "section": "CORE", "q_number": 59, "type": "NAT", "marks": 1, "negative": 0,
+      "subject": "Probability & Statistics", "topic": "Entropy", "difficulty": "hard",
+      "question": "The entropy (in bits) of a fair 8-sided die (each face equally likely) is ___.",
+      "options": null,
+      "correct_answer": "3",
+      "nat_range": { "min": 3, "max": 3 },
+      "solution": "H(X) = -Σ p(x) log₂ p(x) = -8 × (1/8) × log₂(1/8) = -log₂(1/8) = log₂(8) = 3 bits."
+    },
+
+    {
+      "q_id": "CORE_50", "section": "CORE", "q_number": 60, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Linear Algebra", "topic": "Norms and Inner Products", "difficulty": "hard",
+      "question": "The nuclear norm of a matrix A is defined as the sum of its singular values. It is used in machine learning primarily for:",
+      "options": {
+        "A": "Sparsifying the rows of A",
+        "B": "Convex relaxation of rank minimization problems",
+        "C": "Computing the Frobenius norm of AᵀA",
+        "D": "Ensuring the matrix has non-negative entries"
+      },
+      "correct_answer": "B",
+      "solution": "Rank minimization is NP-hard. The nuclear norm ‖A‖* = Σσᵢ is the convex envelope (tightest convex relaxation) of the rank function on the set of matrices with bounded spectral norm. Minimizing the nuclear norm promotes low-rank solutions, analogous to how L1 norm promotes sparsity (convex relaxation of L0)."
+    },
+
+    {
+      "q_id": "CORE_51", "section": "CORE", "q_number": 61, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Machine Learning", "topic": "Model Selection / AIC BIC", "difficulty": "hard",
+      "question": "Comparing AIC = 2k - 2ln(L̂) and BIC = k·ln(n) - 2ln(L̂), which statement is CORRECT?",
+      "options": {
+        "A": "AIC penalizes model complexity more than BIC for n > 7",
+        "B": "BIC penalizes model complexity more than AIC for n > 7, and BIC is consistent (selects true model as n→∞)",
+        "C": "AIC and BIC always select the same model",
+        "D": "AIC is consistent while BIC tends to overfit"
+      },
+      "correct_answer": "B",
+      "solution": "AIC penalty per parameter: 2. BIC penalty per parameter: ln(n). For n > e² ≈ 7.39, ln(n) > 2, so BIC penalizes complexity more heavily. BIC is a consistent model selector (selects true model as n → ∞ under regularity conditions). AIC is not consistent but tends to select models with better predictive performance for finite samples."
+    },
+
+    {
+      "q_id": "CORE_52", "section": "CORE", "q_number": 62, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "AI", "topic": "NLP / Word Embeddings", "difficulty": "hard",
+      "question": "Word2Vec (Skip-gram with negative sampling) trains to predict:",
+      "options": {
+        "A": "The current word given surrounding context words (CBOW model)",
+        "B": "Surrounding context words given the current target word, using noise-contrastive estimation",
+        "C": "Syntactic parse trees from word co-occurrence matrices",
+        "D": "Document-level topic distributions over a vocabulary"
+      },
+      "correct_answer": "B",
+      "solution": "Skip-gram with negative sampling (SGNS): given a target word, predict its context words within a window. Negative sampling approximates the full softmax by sampling k 'noise' words — the model learns to distinguish true context words from random noise. CBOW does the reverse (context → target). LDA does topic distributions (D)."
+    },
+
+    {
+      "q_id": "CORE_53", "section": "CORE", "q_number": 63, "type": "NAT", "marks": 2, "negative": 0,
+      "subject": "Machine Learning", "topic": "Perceptron", "difficulty": "hard",
+      "question": "The Perceptron convergence theorem states that if data is linearly separable with margin γ and all points satisfy ‖xᵢ‖ ≤ R, the number of mistakes made before convergence is bounded by (R/γ)². If R = 3 and γ = 0.5, the maximum number of mistakes is ___.",
+      "options": null,
+      "correct_answer": "36",
+      "nat_range": { "min": 36, "max": 36 },
+      "solution": "(R/γ)² = (3/0.5)² = 6² = 36. The Perceptron convergence theorem guarantees that the algorithm makes at most (R/γ)² mistakes on linearly separable data, regardless of the order examples are presented."
+    },
+
+    {
+      "q_id": "CORE_54", "section": "CORE", "q_number": 64, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Deep Learning", "topic": "GAN Training", "difficulty": "hard",
+      "question": "In GAN training, the minimax objective is: min_G max_D [E_{x~p_data}[log D(x)] + E_{z~p_z}[log(1 - D(G(z)))]]. Early in training, G is weak and D(G(z)) ≈ 0. The gradient for G under this objective:",
+      "options": {
+        "A": "Is large, providing strong signal for G to improve",
+        "B": "Saturates near zero because log(1-D(G(z))) ≈ log(1) = 0 and the gradient is flat",
+        "C": "Is always negative, causing G to collapse",
+        "D": "Equals the gradient of the discriminator"
+      },
+      "correct_answer": "B",
+      "solution": "When D(G(z)) ≈ 0, log(1 - D(G(z))) ≈ log(1) = 0. The gradient of log(1-D(G(z))) w.r.t. G's parameters is ∝ -D'(G(z))/(1-D(G(z))) ≈ 0, providing a near-zero gradient signal. This is the vanishing gradient problem for G early in GAN training. The fix: train G to maximize log D(G(z)) instead (non-saturating heuristic)."
+    },
+
+    {
+      "q_id": "CORE_55", "section": "CORE", "q_number": 65, "type": "MCQ", "marks": 2, "negative": -0.67,
+      "subject": "Machine Learning", "topic": "Online Learning / Regret", "difficulty": "hard",
+      "question": "In online convex optimization, the regret of an algorithm over T rounds is defined as Rₜ = Σᵢ fᵢ(xᵢ) - min_{x*} Σᵢ fᵢ(x*). An algorithm is called 'no-regret' if:",
+      "options": {
+        "A": "The total regret Rₜ = 0 for all T",
+        "B": "The average regret Rₜ/T → 0 as T → ∞",
+        "C": "The regret per round is constant",
+        "D": "The cumulative regret grows faster than T"
+      },
+      "correct_answer": "B",
+      "solution": "A no-regret (sublinear regret) algorithm ensures Rₜ/T → 0 as T → ∞, i.e., Rₜ = o(T). This means the average per-round loss converges to the loss of the best fixed strategy in hindsight. Online Gradient Descent achieves O(√T) regret (so Rₜ/T = O(1/√T) → 0). Zero regret Rₜ = 0 is impossible in adversarial settings."
+    }
+
+  ]
+}

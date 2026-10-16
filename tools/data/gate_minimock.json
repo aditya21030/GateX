@@ -1,0 +1,378 @@
+{
+  "gate_da": {
+    "exam": "GATE DA 2026 - Advanced 15-Question Test",
+    "questions": [
+      {
+        "id": "DA_01",
+        "type": "MSQ",
+        "question": "Let X and Y be independent random variables with X ~ Binomial(5, 0.4) and Y ~ Poisson(2). Define Z = X + Y. Which of the following statements is/are correct?",
+        "options": [
+          "E[Z] = 4.0",
+          "Var(Z) = 5.2",
+          "P(Z = 3) = Σ_{k=0}^{3} C(5,k)(0.4)^k(0.6)^{5-k} * e^{-2}2^{3-k}/(3-k)!",
+          "The moment generating function of Z is M_Z(t) = (0.6 + 0.4e^t)^5 * exp(2(e^t - 1))"
+        ],
+        "answer": [
+          "E[Z] = 4.0",
+          "Var(Z) = 5.2",
+          "P(Z = 3) = Σ_{k=0}^{3} C(5,k)(0.4)^k(0.6)^{5-k} * e^{-2}2^{3-k}/(3-k)!",
+          "The moment generating function of Z is M_Z(t) = (0.6 + 0.4e^t)^5 * exp(2(e^t - 1))"
+        ]
+      },
+      {
+        "id": "DA_02",
+        "type": "MCQ",
+        "question": "Consider a 4×4 real matrix A with characteristic polynomial p(λ) = (λ−2)^2(λ−1)(λ+3). Let B = A^3 − 4A^2 + 5I. Which of the following is the determinant of B? (Hint: Use the spectral mapping theorem.)",
+        "options": [
+          "0",
+          "36",
+          "-36",
+          "72"
+        ],
+        "answer": "0"
+      },
+      {
+        "id": "DA_03",
+        "type": "NAT",
+        "question": "A fair coin is tossed repeatedly. Let X be the number of tosses required to get exactly two consecutive heads for the first time. Find the expected value of X. (Give your answer as a simplified fraction, e.g., 3/2, in the answer box.)",
+        "answer": "6"
+      },
+      {
+        "id": "DA_04",
+        "type": "MSQ",
+        "question": "Consider the function f(x, y) = x^2 y + y^3 − 3xy. Which of the following points are classified correctly as a local minimum, local maximum, or saddle point using the second‑order Taylor expansion?",
+        "options": [
+          "(0, 0) is a saddle point.",
+          "(1, 1) is a local minimum.",
+          "(-1, -1) is a local maximum.",
+          "(3/2, 1/2) is a local minimum."
+        ],
+        "answer": [
+          "(0, 0) is a saddle point.",
+          "(1, 1) is a local minimum."
+        ]
+      },
+      {
+        "id": "DA_05",
+        "type": "MCQ",
+        "question": "Consider the following C program segment:\n\n```c\nint fun(int n, int *fp) {\n    int t, f;\n    if (n <= 1) { *fp = 1; return 1; }\n    t = fun(n-1, fp);\n    f = t + *fp;\n    *fp = t;\n    return f;\n}\nint main() {\n    int x = 0;\n    printf(\"%d\\n\", fun(6, &x));\n    return 0;\n}\n```\nWhat is the output?",
+        "options": [
+          "8",
+          "13",
+          "21",
+          "34"
+        ],
+        "answer": "13"
+      },
+      {
+        "id": "DA_06",
+        "type": "MSQ",
+        "question": "Which of the following statements about AVL trees and Red‑Black trees are correct?",
+        "options": [
+          "Both guarantee O(log n) time for search, insert, and delete.",
+          "AVL trees are more strictly balanced than Red‑Black trees, leading to faster lookups but slower insertions/deletions.",
+          "Red‑Black trees have a taller average height than AVL trees but require fewer rotations.",
+          "The number of black nodes on any root‑to‑leaf path is the same for a Red‑Black tree."
+        ],
+        "answer": [
+          "Both guarantee O(log n) time for search, insert, and delete.",
+          "AVL trees are more strictly balanced than Red‑Black trees, leading to faster lookups but slower insertions/deletions.",
+          "Red‑Black trees have a taller average height than AVL trees but require fewer rotations.",
+          "The number of black nodes on any root‑to‑leaf path is the same for a Red‑Black tree."
+        ]
+      },
+      {
+        "id": "DA_07",
+        "type": "MCQ",
+        "question": "Consider the following recurrence for an algorithm: T(n) = 2T(n/2) + n log n. By applying the Master Theorem, what is the asymptotic time complexity?",
+        "options": [
+          "Θ(n log n)",
+          "Θ(n log^2 n)",
+          "Θ(n^2)",
+          "Θ(n)"
+        ],
+        "answer": "Θ(n log^2 n)"
+      },
+      {
+        "id": "DA_08",
+        "type": "NAT",
+        "question": "A relation R(A, B, C, D) has the following functional dependencies:\nAB → C, C → D, D → A.\nWhat is the highest normal form of R? (Enter 1 for 1NF, 2 for 2NF, 3 for 3NF, 4 for BCNF, 5 for 4NF, 6 for 5NF.)",
+        "answer": "4"
+      },
+      {
+        "id": "DA_09",
+        "type": "MSQ",
+        "question": "In a binary classification problem, a logistic regression model is trained. The training data is highly imbalanced (90% negative class). To improve recall of the positive class, the engineer decides to assign a higher weight to positive samples. Which of the following statements are correct?",
+        "options": [
+          "The decision boundary shifts toward the negative class.",
+          "The recall of the positive class will likely increase, but precision may decrease.",
+          "The log‑likelihood function is modified by a weighted sum of errors.",
+          "The model's AUC‑ROC score will always improve."
+        ],
+        "answer": [
+          "The decision boundary shifts toward the negative class.",
+          "The recall of the positive class will likely increase, but precision may decrease.",
+          "The log‑likelihood function is modified by a weighted sum of errors."
+        ]
+      },
+      {
+        "id": "DA_10",
+        "type": "MCQ",
+        "question": "Consider a Support Vector Machine (SVM) with a polynomial kernel of degree d. The feature mapping φ(x) expands the input space to a higher dimension. If the original dimension is n, what is the dimensionality of the feature space for degree d? (Assume the kernel is homogeneous and includes all monomials of degree ≤ d.)",
+        "options": [
+          "n^d",
+          "C(n+d, d)",
+          "C(n+d, d) - 1",
+          "C(n+d, d) + 1"
+        ],
+        "answer": "C(n+d, d)"
+      },
+      {
+        "id": "DA_11",
+        "type": "MSQ",
+        "question": "In the A* search algorithm, which of the following properties are true if the heuristic is both admissible and consistent?",
+        "options": [
+          "A* will expand fewer nodes than with an admissible but inconsistent heuristic.",
+          "A* is guaranteed to find the optimal solution.",
+          "The heuristic must satisfy the triangle inequality.",
+          "If the heuristic is consistent, A* does not need to re‑open nodes."
+        ],
+        "answer": [
+          "A* is guaranteed to find the optimal solution.",
+          "The heuristic must satisfy the triangle inequality.",
+          "If the heuristic is consistent, A* does not need to re‑open nodes."
+        ]
+      },
+      {
+        "id": "DA_12",
+        "type": "MCQ",
+        "question": "Read the following passage:\n\n\"The integration of deep learning into healthcare has been transformative, yet the 'black box' nature of neural networks poses significant risks. Without interpretability, doctors cannot trust AI‑generated diagnoses, especially when the cost of a false negative is life‑threatening. Explainable AI (XAI) attempts to bridge this gap by providing post‑hoc explanations, but these explanations are not always faithful to the model's actual reasoning. Moreover, the trade‑off between performance and interpretability remains a central debate.\"\n\nWhich of the following best summarises the author's viewpoint?",
+        "options": [
+          "Deep learning should be avoided in healthcare due to its lack of transparency.",
+          "Interpretability is essential for trust, but achieving it may compromise accuracy, and current explanations are not always reliable.",
+          "XAI provides perfect explanations that are always faithful to the model.",
+          "The performance of AI models is the only factor that matters in healthcare."
+        ],
+        "answer": "Interpretability is essential for trust, but achieving it may compromise accuracy, and current explanations are not always reliable."
+      },
+      {
+        "id": "DA_13",
+        "type": "NAT",
+        "question": "A man starts from point P and walks 5 km north, then 12 km east, then 5 km south, then 12 km west. He then turns left and walks 15 km, then turns right and walks 10 km, then turns left again and walks 15 km. What is his final displacement (in km) from P? (Enter a single number: the distance.)",
+        "answer": "10"
+      },
+      {
+        "id": "DA_14",
+        "type": "MSQ",
+        "question": "Which of the following statements are logically equivalent to the proposition: \"If it rains, then the ground is wet.\"?",
+        "options": [
+          "If the ground is not wet, then it does not rain.",
+          "It does not rain or the ground is wet.",
+          "If the ground is wet, then it rains.",
+          "It is not the case that it rains and the ground is not wet."
+        ],
+        "answer": [
+          "If the ground is not wet, then it does not rain.",
+          "It does not rain or the ground is wet.",
+          "It is not the case that it rains and the ground is not wet."
+        ]
+      },
+      {
+        "id": "DA_15",
+        "type": "MCQ",
+        "question": "A shopkeeper marks up the price of an article by 40% above cost. He then gives a discount of 20% on the marked price. What is his profit or loss percentage?",
+        "options": [
+          "Profit of 12%",
+          "Profit of 20%",
+          "Loss of 12%",
+          "Loss of 20%"
+        ],
+        "answer": "Profit of 12%"
+      }
+    ]
+  },
+  "gate_csit": {
+    "exam": "GATE CSIT 2026 - Advanced 15-Question Test",
+    "questions": [
+      {
+        "id": "CS_01",
+        "type": "MCQ",
+        "question": "Let A be a 4×4 real matrix with characteristic polynomial p(λ) = (λ−2)^2(λ^2+1). Which of the following statements is true?",
+        "options": [
+          "A is diagonalizable over R.",
+          "A is diagonalizable over C.",
+          "The minimal polynomial of A divides (λ−2)^2(λ^2+1).",
+          "The trace of A is 4."
+        ],
+        "answer": "A is diagonalizable over C."
+      },
+      {
+        "id": "CS_02",
+        "type": "MSQ",
+        "question": "Consider the grammar G:\nS → aS | aSbS | ε\nWhich of the following statements are correct?",
+        "options": [
+          "G is ambiguous.",
+          "The language generated by G is inherently ambiguous.",
+          "There exists an unambiguous grammar for the same language.",
+          "G generates all strings of a's and b's where every prefix has at least as many a's as b's."
+        ],
+        "answer": [
+          "G is ambiguous.",
+          "There exists an unambiguous grammar for the same language.",
+          "G generates all strings of a's and b's where every prefix has at least as many a's as b's."
+        ]
+      },
+      {
+        "id": "CS_03",
+        "type": "NAT",
+        "question": "A 5‑stage pipeline has stage delays: IF=200ps, ID=150ps, EX=250ps, MEM=300ps, WB=200ps. The clock cycle time is chosen as the maximum stage delay plus 50ps for latch overhead. What is the speedup of the pipeline over a non‑pipelined implementation when executing 1000 instructions, assuming no hazards? (Round to two decimal places.)",
+        "answer": "4.17"
+      },
+      {
+        "id": "CS_04",
+        "type": "MCQ",
+        "question": "Consider the following C code:\n\n```c\n#include <stdio.h>\nint f(int n) {\n    static int x = 0;\n    if (n <= 0) return 1;\n    x = n + f(n-2);\n    return x;\n}\nint main() {\n    printf(\"%d\\n\", f(5));\n    return 0;\n}\n```\nWhat is the output?",
+        "options": [
+          "9",
+          "10",
+          "11",
+          "15"
+        ],
+        "answer": "11"
+      },
+      {
+        "id": "CS_05",
+        "type": "MSQ",
+        "question": "Which of the following are true about Red‑Black trees compared to AVL trees?",
+        "options": [
+          "Red‑Black trees require fewer rotations on insertion and deletion.",
+          "AVL trees are more strictly balanced and thus provide faster lookups.",
+          "Both guarantee worst‑case O(log n) time for search, insert, and delete.",
+          "The height of a Red‑Black tree is at most 2 log(n+1)."
+        ],
+        "answer": [
+          "Red‑Black trees require fewer rotations on insertion and deletion.",
+          "AVL trees are more strictly balanced and thus provide faster lookups.",
+          "Both guarantee worst‑case O(log n) time for search, insert, and delete.",
+          "The height of a Red‑Black tree is at most 2 log(n+1)."
+        ]
+      },
+      {
+        "id": "CS_06",
+        "type": "MCQ",
+        "question": "In the Floyd‑Warshall algorithm for all‑pairs shortest paths, the time complexity is O(V^3). Suppose we have a graph with V vertices and E edges. If we use Johnson's algorithm, what is the overall time complexity?",
+        "options": [
+          "O(V^3)",
+          "O(VE log V)",
+          "O(VE + V^2 log V)",
+          "O(VE log V + V^2 log V)"
+        ],
+        "answer": "O(VE log V + V^2 log V)"
+      },
+      {
+        "id": "CS_07",
+        "type": "NAT",
+        "question": "A relation R(A, B, C, D) has the following functional dependencies:\nAB → C, C → D, D → A.\nHow many candidate keys does R have?",
+        "answer": "3"
+      },
+      {
+        "id": "CS_08",
+        "type": "MSQ",
+        "question": "Which of the following statements about the TCP protocol are correct?",
+        "options": [
+          "TCP uses cumulative acknowledgements.",
+          "The slow‑start algorithm increases the congestion window exponentially.",
+          "TCP uses a three‑way handshake for connection establishment.",
+          "TCP provides reliable, ordered delivery of a stream of bytes."
+        ],
+        "answer": [
+          "TCP uses cumulative acknowledgements.",
+          "The slow‑start algorithm increases the congestion window exponentially.",
+          "TCP uses a three‑way handshake for connection establishment.",
+          "TCP provides reliable, ordered delivery of a stream of bytes."
+        ]
+      },
+      {
+        "id": "CS_09",
+        "type": "MCQ",
+        "question": "Consider the following grammar for arithmetic expressions:\nE → E + T | T\nT → T * F | F\nF → (E) | id\nWhich of the following is the canonical collection of LR(0) items? (Assume the augmented grammar is given.)",
+        "options": [
+          "The grammar is SLR(1) but not LR(0).",
+          "The grammar is LR(0) with no conflicts.",
+          "The grammar has a shift‑reduce conflict in the LR(0) automaton.",
+          "The grammar is ambiguous."
+        ],
+        "answer": "The grammar is SLR(1) but not LR(0)."
+      },
+      {
+        "id": "CS_10",
+        "type": "MSQ",
+        "question": "Which of the following are true about the Banker's algorithm for deadlock avoidance?",
+        "options": [
+          "It requires the maximum claim of each process to be known in advance.",
+          "It works by ensuring that the system is always in a safe state.",
+          "It can prevent deadlocks but reduces resource utilisation.",
+          "It is a proactive approach that checks for safety before granting resources."
+        ],
+        "answer": [
+          "It requires the maximum claim of each process to be known in advance.",
+          "It works by ensuring that the system is always in a safe state.",
+          "It can prevent deadlocks but reduces resource utilisation.",
+          "It is a proactive approach that checks for safety before granting resources."
+        ]
+      },
+      {
+        "id": "CS_11",
+        "type": "MCQ",
+        "question": "Which of the following languages is not context‑free?",
+        "options": [
+          "L = {a^n b^n c^n | n ≥ 0}",
+          "L = {a^i b^j c^k | i=j or j=k}",
+          "L = {w w^R | w ∈ {a,b}*}",
+          "L = {a^n b^m | n ≠ m}"
+        ],
+        "answer": "L = {a^n b^n c^n | n ≥ 0}"
+      },
+      {
+        "id": "CS_12",
+        "type": "MSQ",
+        "question": "Which of the following statements about the halting problem are correct?",
+        "options": [
+          "The halting problem is undecidable for Turing machines.",
+          "There is no algorithm that can determine for every Turing machine and input whether it halts.",
+          "The halting problem is recursively enumerable.",
+          "The complement of the halting problem is also recursively enumerable."
+        ],
+        "answer": [
+          "The halting problem is undecidable for Turing machines.",
+          "There is no algorithm that can determine for every Turing machine and input whether it halts.",
+          "The halting problem is recursively enumerable."
+        ]
+      },
+      {
+        "id": "CS_13",
+        "type": "NAT",
+        "question": "In a 4‑way set‑associative cache with a total data capacity of 256 KB, block size of 64 bytes, and a physical address of 32 bits, what is the number of tag bits?",
+        "answer": "16"
+      },
+      {
+        "id": "CS_14",
+        "type": "MCQ",
+        "question": "Read the following argument:\n\n\"All citizens have the right to vote. Some citizens are not eligible due to age. Therefore, some eligible citizens have the right to vote.\"\n\nWhich of the following best describes the logical structure of this argument?",
+        "options": [
+          "Valid and sound.",
+          "Valid but unsound.",
+          "Invalid.",
+          "Sound but invalid."
+        ],
+        "answer": "Valid and sound."
+      },
+      {
+        "id": "CS_15",
+        "type": "NAT",
+        "question": "A train 300 m long is moving at 90 km/h. How many seconds will it take to cross a 500 m long bridge? (Give your answer to one decimal place.)",
+        "answer": "32.0"
+      }
+    ]
+  }
+}

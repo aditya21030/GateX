@@ -1,0 +1,37 @@
+2024 parsed: 65
+2025 parsed: 65
+2026 parsed: 65
+
+--- 2024 Q1 ---
+BODY: If ‘→’ denotes increasing order of intensity, then the meaning of the words
+[sick → infirm → moribund] is analogous to [silly → _______ → daft].
+Which one of the given options is appropriate to fill the blank?
+OPTIONS: ['frown', 'fawn', 'vein', 'vain']
+
+--- 2026 Q11 ---
+BODY: For a classification problem, Principal Component Analysis (PCA) has been used
+to reduce the dimensionality of a feature space from 100 to 10.
+Which of the following options is true about the angle 𝜃 between the first and the
+tenth principal components?
+OPTIONS: ['𝜃 =  0°', '𝜃 =  90°', '90° <  𝜃  ≤  180°', '0 <  𝜃 <  90°']
+
+--- 2026 Q62 ---
+BODY: For a given data set {𝑥1, 𝑥2, … . , 𝑥𝑛}, where 𝑛 = 100, it is known that
+1
+2000 ∑ ∑(𝑥𝑖 − 𝑥𝑗)2
+𝑛
+𝑗=1
+𝑛
+𝑖=1
+= 99
+Let us denote 𝑥̅ =
+1
+𝑛 ∑ 𝑥𝑖
+𝑛
+𝑖=1
+The value of
+1
+99 ∑ (𝑥𝑖 − 𝑥̅)2𝑛
+𝑖=1  is __________ . (Answer in integer)
+OPTIONS: []
+

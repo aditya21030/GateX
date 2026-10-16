@@ -1,0 +1,185 @@
+Q.11 – Q.35 Carry ONE mark Each 
+Q.11 For a classification problem, Principal Component Analysis (PCA) has been used 
+to reduce the dimensionality of a feature space from 100 to 10.  
+Which of the following options is true about the angle 𝜃 between the first and the 
+tenth principal components? 
+  
+(A) 𝜃 =  0°  
+(B) 𝜃 =  90°  
+(C) 90° <  𝜃  ≤  180°  
+(D) 0 <  𝜃 <  90°  
+  
+Q.12 Consider that you are training a classifier for a 10-class classification problem. 
+Each input is represented as a 512-dimensional vector. There are 1000 samples, 
+out of which first 100 will be used for testing. Let Leave-One-Out-Cross-
+Validation (LOOCV) be used for selection of the classifier model before testing.  
+Which of the following options is the correct number of validation splits that will 
+be generated?   
+   
+(A) 10 
+(B) 512 
+(C) 900 
+(D) 1000 
+  
+Organizing Institute: IIT Guwahati
+Page 8 of 39
+--- PAGE 9 ---
+Data Science and Artificial Intelligence (DA) 
+ 
+Q.13 Which of the following algorithms is NOT an example of uninformed search? 
+  
+(A) Breadth First Search 
+(B) Depth First Search 
+(C) A* Search 
+(D) Depth-limited Search 
+  
+Q.14 Which of the following statements is NOT true?  
+(The names of the predicates are intuitive.) 
+  
+(A) ∀𝑥 ∀𝑦 𝐶𝑙𝑎𝑠𝑠𝑚𝑎𝑡𝑒(𝑥, 𝑦) ⇒ 𝐶𝑙𝑎𝑠𝑠𝑚𝑎𝑡𝑒(𝑦, 𝑥)   
+(B) ∀𝑥 𝐿𝑖𝑘𝑒𝑠(𝑥, 𝐼𝑐𝑒𝑐𝑟𝑒𝑎𝑚)  ⇒  ¬∃𝑥 ¬𝐿𝑖𝑘𝑒𝑠(𝑥, 𝐼𝑐𝑒𝑐𝑟𝑒𝑎𝑚)  
+(C) “Each king is a person” is equivalent to ∀𝑥 𝐼𝑠𝐾𝑖𝑛𝑔(𝑥) ⋀  𝐼𝑠𝑃𝑒𝑟𝑠𝑜𝑛(𝑥)  
+(D) “All humans are mortal” is equivalent to ∀𝑥 𝐼𝑠𝐻𝑢𝑚𝑎𝑛(𝑥) ⇒ 𝐼𝑠𝑀𝑜𝑟𝑡𝑎𝑙(𝑥)  
+  
+ 
+ 
+Organizing Institute: IIT Guwahati
+Page 9 of 39
+--- PAGE 10 ---
+Data Science and Artificial Intelligence (DA) 
+ 
+Q.15 Consider that the quick sort algorithm is used to sort an array of n distinct 
+randomly ordered elements. In every call, the pivot is chosen as the first element 
+of the current subarray. 
+Let 𝑇(𝑛) denote the expected time to sort the array. Assume that the time to 
+partition is linear in the size of the current subarray.  
+Which of the following recurrence relations correctly represents 𝑇(𝑛) in this 
+scenario? 
+  
+(A) 𝑇(𝑛) = 𝑇(1) + 𝑇(𝑛 − 1) + 𝑂(𝑛)  
+(B) 𝑇(𝑛) = 𝑇 (
+𝑛
+4) + 𝑇 (
+3𝑛
+4 ) + 𝑂(𝑛)  
+(C) 𝑇(𝑛) = 2𝑇 (
+𝑛
+2) + 𝑂(𝑛)  
+(D) 𝑇(𝑛) =
+1
+𝑛 ∑ [𝑇(𝑘) + 𝑇(𝑛 − 𝑘 − 1)]𝑛−1
+𝑘=0 + 𝑂(𝑛)  
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Organizing Institute: IIT Guwahati
+Page 10 of 39
+--- PAGE 11 ---
+Data Science and Artificial Intelligence (DA) 
+ 
+Q.16 Consider the given Python program.  
+def append_to_lst(val, lst=[]): 
+ lst.append(val) 
+ return lst 
+print(append_to_lst(1)) 
+print(append_to_lst(2)) 
+print(append_to_lst(3, [])) 
+Which of the following is the correct output of this program? 
+  
+(A)  
+[1] 
+[2] 
+[3] 
+ 
+(B)  
+[1] 
+[1, 2] 
+[3]  
+ 
+(C)  
+[1] 
+[2] 
+[1, 2, 3] 
+ 
+(D)  
+[1] 
+[1, 2] 
+[1, 3] 
+ 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+Organizing Institute: IIT Guwahati
+Page 11 of 39
+--- PAGE 12 ---
+Data Science and Artificial Intelligence (DA) 
+ 
+Q.17 Let R(A,B,C,D,E) be a relational schema with functional dependency set 
+F={ABC, CDE, EA}.  
+Which of the following statements is correct?   
+  
+(A) AD, ED and CD are the only candidate keys of R. 
+(B) AD and ED are the only candidate keys of R. 
+(C) A, E and CD are the only candidate keys of R. 
+(D) A and CD are the only candidate keys of R. 
+  
+Q.18 Consider that the visualization of a 3-dimensional data cube is showing Sales 
+Quantity for each combination of the attributes Product Type, Month and Country.  
+From this, if we want to further visualize the Sales Quantity for each combination 
+of Product Type, Month and State, which of the following OLAP operations 
+should be performed? 
+  
+(A) Slicing 
+(B) Dicing 
+(C) Roll-up 
+(D) Drill-down 
+  
+Organizing Institute: IIT Guwahati
+Page 12 of 39
+--- PAGE 13 ---
+Data Science and Artificial Intelligence (DA) 
+ 
+Q.19 Let 𝑀 be a randomly chosen non-empty subset of 𝑆 = {1,2,3, … ,2026}.  
+Which of the following is the probability that the product of all the elements of 𝑀 
+is even? 
+  
+(A) 21013(21013 − 1)/22026  
+(B) 21013/22026  
+(C) 21013(21013 − 1)/(22026 − 1)  
+(D) 1/(22026 − 1)  
+  
+Q.20 Suppose that a computer program provides a non-negative and integer-valued 
+random solution to the equation 𝑛1 + 𝑛2 + 𝑛3 + 𝑛4 = 20.  
+Which of the following is the probability that all of 𝑛1, 𝑛2, 𝑛3, 𝑛4 in the provided 
+solution are positive?  
+  
+(A) (19
+3 )/(23
+3 )  
+(B) (20
+4 )/(24
+4 )  
+(C) (20
+3 )/(23
+3 )  
+(D) (19
+4 )/(24
+4 )   
+  
+Organizing Institute: IIT Guwahati
+Page 13 of 39
+--- PAGE 14 ---
+Data Science and Artificial Intelligence (DA) 
+ 

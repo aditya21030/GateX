@@ -1,0 +1,378 @@
+
+--- PAGE 1 ---
+Data Science & Artificial Intelligence - DA  
+ 
+General Aptitude 
+Q.1 – Q.5 Carry ONE mark Each 
+Q.1 Courage : Bravery :: Yearning : __________ 
+Select the most appropriate option to complete the analogy. 
+(A) Longing 
+(B) Yelling 
+(C) Yawning 
+(D) Glaring 
+  
+ 
+Q.2 We __________ tennis in the lawn when it suddenly started to rain. 
+Select the most appropriate option to complete the above sentence. 
+(A) have been playing 
+(B) had been playing 
+(C) would have been playing 
+(D) could be playing 
+  
+ 
+ 
+  
+Organizing Institute: IIT Roorkee
+Page 1 of 34
+--- PAGE 2 ---
+Data Science & Artificial Intelligence - DA  
+ 
+Q.3 A 4 × 4 digital image has pixel intensities ( 𝑈) as shown in the figure. The number of 
+pixels with 𝑈 ≤ 4 is: 
+ 
+ 
+(A) 3 
+(B) 8 
+(C) 11 
+(D) 9 
+  
+ 
+  
+Organizing Institute: IIT Roorkee
+Page 2 of 34
+--- PAGE 3 ---
+Data Science & Artificial Intelligence - DA  
+ 
+Q.4 In the given figure, the numbers associated with the rectangle, triangle, and ellipse 
+are 1, 2, and 3 , respectively. Which one among the given options is the most 
+appropriate combination of P, Q, and R ? 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+(A) P = 6; Q = 5; R = 3  
+(B) P = 5; Q = 6; R = 3 
+(C) P = 3; Q = 6; R = 6 
+(D) P = 5; Q = 3; R = 6 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+1 
+2 
+4 
+3 
+P 
+Q 
+R 
+Organizing Institute: IIT Roorkee
+Page 3 of 34
+--- PAGE 4 ---
+Data Science & Artificial Intelligence - DA  
+ 
+Q.5 A rectangle has a length L and a width W, where L > W. If the width, W, is increased 
+by 10%, which one of the following statements is correct for all values of L and W? 
+(A) Perimeter increases by 10%.  
+(B) Length of the diagonals increases by 10%. 
+(C) Area increases by 10%. 
+(D) The rectangle becomes a square. 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+  
+Organizing Institute: IIT Roorkee
+Page 4 of 34
+--- PAGE 5 ---
+Data Science & Artificial Intelligence - DA  
+ 
+Q.6 – Q.10 Carry TWO marks Each 
+Q.6 Column-I has statements made by Shanthala; and, Column -II has responses given 
+by Kanishk. 
+Column-I Column-II 
+P.  This house is in a mess. 1.  Alright, I won’t bring it up during 
+our conversations. 
+Q. I am not happy with the marks 
+given to me. 
+2.  Well, you can easily look it up. 
+R. Politics is a subject I avoid talking 
+about. 
+3.  No problem, let me clear it up for 
+you. 
+S. I don’t know what this word 
+means. 
+4.  Don’t worry, I will take it up with 
+your teacher. 
+Identify the option that has the correct match between Column-I and Column-II. 
+(A) P – 2; Q – 3; R – 1; S – 4  
+(B) P – 3; Q – 4; R – 1; S – 2  
+(C) P – 4; Q – 1; R – 2; S – 3  
+(D) P – 1; Q – 2; R – 4; S – 3  
+  
+  
+Organizing Institute: IIT Roorkee
+Page 5 of 34
+--- PAGE 6 ---
+Data Science & Artificial Intelligence - DA  
+ 
+Q.7 Weight of a person can be expressed as a function of their age. The function usually 
+varies from person to person. Suppose this function is identical for two brothers, 
+and it monotonically increases till the age of 50 years and then it monotonically 
+decreases. Let 𝑎1 and 𝑎2 (in years) denote the ages of the brothers and 𝑎1 < 𝑎2.   
+Which one of the following statements is correct about their age on the day when  
+they attain the same weight? 
+(A) 𝑎1 < 𝑎2 < 50 
+(B) 𝑎1 < 50 < 𝑎2 
+(C) 50 < 𝑎1 < 𝑎2 
+(D) Either 𝑎1 = 50 or 𝑎2 = 50 
+  
+ 
+  
+Organizing Institute: IIT Roorkee
+Page 6 of 34
+--- PAGE 7 ---
+Data Science & Artificial Intelligence - DA  
+ 
+Q.8 A regular dodecagon (12-sided regular polygon) is inscribed in a circle of radius r 
+cm as shown in the figure. The side of the dodecagon is d cm. All the triangles 
+(numbered 1 to 12)  in the figure are used to form squares  of side r cm and each 
+numbered triangle is used only once to form a square.  
+The number of squares that can be formed and the number of triangles required to 
+form each square, respectively, are: 
+Note: The figure shown is representative. 
+ 
+ 
+(A) 3; 4  
+(B) 4; 3  
+(C) 3; 3  
+(D) 3; 2  
+  
+  
+Organizing Institute: IIT Roorkee
+Page 7 of 34
+--- PAGE 8 ---
+Data Science & Artificial Intelligence - DA  
+ 
+Q.9 
+If a real variable 𝑥 satisfies 3𝑥2
+= 27 × 9𝑥, then the value of  
+2𝑥2
+(2𝑥)2 is: 
+(A) 2−1 
+(B) 20 
+(C) 23 
+(D) 215 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
+Organizing Institute: IIT Roorkee
+Page 8 of 34
+--- PAGE 9 ---
+Data Science & Artificial Intelligence - DA  
+ 
+Q.10 The number of patients per shift (𝑋) consulting Dr. Gita in her past 100 shifts is 
+shown in the figure. If the amount she earns is ₹ 1000(𝑋 − 0.2), what is the average 
+amount (in ₹) she has earned per shift in the past 100 shifts? 
+Note: The figure shown is representative. 
+ 
+ 
+(A) 6,100 
+(B) 6,300 
+(C) 6,000 
+(D) 6,500 
+  
+ 
+20
+40
+30
+10
+0
+10
+20
+30
+40
+50
+5 6 7 8
+Number of shifts
+Number of patients per shift (X) 
+Organizing Institute: IIT Roorkee
+Page 9 of 34
+--- PAGE 10 ---
+GATE 2025 Data Science & Artiﬁcial Intelligence - DA
+Q. 11 – Q. 35 carry one mark each.
+Q. 11 Suppose X andY are random variables. The conditional expectation of X givenY is
+denoted byE[X|Y ]. ThenE[E[X|Y ]] equals
+(A) E[X|Y ]
+(B) E[X]
+E[Y ]
+(C) E[X]
+(D) E[Y ]
+Q. 12 The number of additions and multiplications involved in performing Gaussian elimina-
+tion on anyn×n upper triangular matrix is of the order
+(A) O(n)
+(B) O(n2)
+(C) O(n3)
+(D) O(n4)
+Q. 13 The sum of the elements in each row of A∈ Rn×n is 1. If B =A3− 2A2 +A, which
+one of the following statements is correct (forx∈ Rn)?
+(A) The equation Bx = 0 has no solution
+(B) The equation Bx = 0 has exactly two solutions
+(C) The equation Bx = 0 has inﬁnitely many solutions
+(D) The equation Bx = 0 has a unique solution
+Organizing Institute: IIT Roorkee
+Page 10 of 34
+--- PAGE 11 ---
+GATE 2025 Data Science & Artiﬁcial Intelligence - DA
+Q. 14 Let f(x) = ex−e−x
+2 ,x∈ R. Let f (k)(a) denote thekth derivative off evaluated ata.
+What is the value off (10)(0)? (Note: ! denotes factorial)
+(A) 0
+(B) 1
+(C) 1
+10!
+(D) 2
+10!
+Q. 15 Let p andq be any two propositions. Consider the following propositional statements.
+S1 :p→q, S2 :¬p∧q, S3 :¬p∨q, S4 :¬p∨¬q ,
+where∧ denotes conjunction (AND operation),∨ denotes disjunction (OR operation),
+and¬ denotes negation (NOT operation). Which one of the following options is correct?
+(Note:≡ denotes logical equivalence)
+(A) S1≡S3
+(B) S2≡S3
+(C) S2≡S4
+(D) S1≡S4
+Q. 16 If a relational decomposition is not dependency-preserving, which one of the following
+relational operators will be executed more frequently in order to maintain the depen-
+dencies?
+(A) Selection
+(B) Projection
+(C) Join
+(D) Set union
+Organizing Institute: IIT Roorkee
+Page 11 of 34
+--- PAGE 12 ---
+GATE 2025 Data Science & Artiﬁcial Intelligence - DA
+Q. 17 Consider the following three relations:
+Car (model, year, serial , color)
+Make (maker, model )
+Own (owner, serial )
+A tuple in Car represents a speciﬁc car of a given model, made in a given year, with
+a serial number and a color. A tuple in Make speciﬁes that a maker company
+makes cars of a certain model. A tuple in Own speciﬁes that an owner owns the car
+with a given serial number. Keys are underlined; (owner, serial ) together
+form key for Own. (⊿◁ denotes natural join)
+πowner(Own⊿◁(σcolor=“red”(Car⊿◁(σmaker=“ABC ”Make))))
+Which one of the following options describes what the above expression computes?
+(A) All owners of a red car, a car made by ABC, or a red car made by ABC
+(B) All owners of more than one car, where at least one car is red and made by ABC
+(C) All owners of a red car made by ABC
+(D) All red cars made by ABC
+Q. 18 Consider a hash table of size 10 with indices{0, 1,..., 9}, with the hash function
+h(x) = 3x (mod 10),
+where linear probing is used to handle collisions. The hash table is initially empty and
+then the following sequence of keys is inserted into the hash table:1, 4, 5, 6, 14, 15. The
+indices where the keys 14 and 15 are stored are, respectively
+(A) 2 and 5
+(B) 2 and 6
+(C) 4 and 5
+(D) 4 and 6
+Organizing Institute: IIT Roorkee
+Page 12 of 34
+--- PAGE 13 ---
+GATE 2025 Data Science & Artiﬁcial Intelligence - DA
+Q. 19 Let X be a continuous random variable whose cumulative distribution function (CDF)
+FX(x), for somet, is given as follows:
+FX(x) =
+
+
+
+
+0 x≤t
+x−t
+4−t t≤x≤ 4
+1 x≥ 4
+If the median ofX is 3, then what is the value oft?
+(A) 2
+(B) 1
+(C) −1
+(D) 0
+Q. 20 Let X = aZ +b, where Z is a standard normal random variable, and a, b are two
+unknown constants. It is given that
+E[X] = 1, E [(X−E[X])Z] =−2, E [(X−E[X])2] = 4,
+whereE[X] denotes the expectation of random variableX. The values ofa,b are:
+(A) a =−2,b = 1
+(B) a = 2,b =−1
+(C) a =−2,b =−1
+(D) a = 1,b = 1
+Organizing Institute: IIT Roorkee
+Page 13 of 34
+--- PAGE 14 ---
+GATE 2025 Data Science & Artiﬁcial Intelligence - DA
+Q. 21 It is given that P (X≥ 2) = 0.25 for an exponentially distributed random variable X
+withE[X] = 1
+λ, whereE[X] denotes the expectation ofX. What is the value ofλ?
+(ln denotes natural logarithm)
+(A) ln 2
+(B) ln 4
+(C) ln 3
+(D) ln 0.25
+Q. 22 Consider designing a linear classiﬁer
+y = sign(f(x;w,b)), f (x;w,b) = w⊤x +b
+on a dataset D = {(x1,y 1), (x2,y 2),..., (xN,y N)}, xi ∈ Rd,y i ∈ {+1,−1}, i =
+1, 2,...,N . Recall that the sign function outputs +1 if the argument is positive, and−1
+if the argument is non-positive. The parametersw andb are updated as per the following
+training algorithm:
+wnew =wold +ynxn, b new =bold +yn
+whenever sign(f(xn;wold,b old))̸=yn. In other words, whenever the classiﬁer wrongly
+predicts a sample (xn,y n) from the dataset,wold gets updated townew, and likewisebold
+gets updated tobnew. Consider the case (xn, +1),f(xn;wold,b old)< 0. Then
+(A) f(xn;wnew,b new)>f (xn;wold,b old)
+(B) f(xn;wnew,b new)<f (xn;wold,b old)
+(C) f(xn;wnew,b new) =f(xn;wold,b old)
+(D) ynf(xn;wold,b old)> 1
+Organizing Institute: IIT Roorkee
+Page 14 of 34
+--- PAGE 15 ---
+GATE 2025 Data Science & Artiﬁcial Intelligence - DA
+Q. 23 Consider the following Python declarations of two lists.
+A=[1,2,3]
+B=[4,5,6]
+Which one of the following statements results in A= [1, 2, 3, 4, 5, 6]?
+(A) A.extend(B)
+(B) A.append(B)
+(C) A.update(B)
+(D) A.insert(B)
+Q. 24 Consider two functions f : R→ R andg : R→ (1,∞). Both functions are differen-
+tiable at a point c. Which of the following functions is/are ALW AYS differentiable at
+c? The symbol· denotes product and the symbol◦ denotes composition of functions.
+(A) f±g
+(B) f·g
+(C) f
+g
+(D) f◦g +g◦f
+Q. 25 Which of the following statements is/are correct?
+(A) Rn has a unique set of orthonormal basis vectors
+(B) Rn does not have a unique set of orthonormal basis vectors
+(C) Linearly independent vectors in Rn are orthonormal
+(D) Orthonormal vectors Rn are linearly independent
+Organizing Institute: IIT Roorkee
+Page 15 of 34

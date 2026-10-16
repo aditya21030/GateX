@@ -1,0 +1,2646 @@
+{
+  "meta": {
+    "exam": "GATE CS/IT 2027",
+    "start_date": "2026-05-01",
+    "syllabus_completion_target": "2026-11-15",
+    "revision_mock_phase": "2026-11-16 to 2027-02-01",
+    "total_scheduled_days": 261,
+    "phases": {
+      "phase_1_syllabus": {
+        "from": "2026-05-01",
+        "to": "2026-11-15",
+        "days": 193
+      },
+      "phase_2_revision_mocks": {
+        "from": "2026-11-16",
+        "to": "2027-02-01",
+        "days": 68
+      }
+    },
+    "sections_covered": [
+      "Engineering Mathematics",
+      "Digital Logic",
+      "Computer Organization and Architecture",
+      "Programming and Data Structures",
+      "Algorithms",
+      "Theory of Computation",
+      "Compiler Design",
+      "Operating System",
+      "Databases",
+      "Computer Networks",
+      "General Aptitude"
+    ]
+  },
+  "schedule": [
+    {
+      "day": 1,
+      "date": "2026-05-01",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Discrete Math \u2013 Propositional & First Order Logic",
+      "day_in_topic": 1,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 2,
+      "date": "2026-05-02",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Discrete Math \u2013 Propositional & First Order Logic",
+      "day_in_topic": 2,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 3,
+      "date": "2026-05-03",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Discrete Math \u2013 Propositional & First Order Logic",
+      "day_in_topic": 3,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 4,
+      "date": "2026-05-04",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Discrete Math \u2013 Propositional & First Order Logic",
+      "day_in_topic": 4,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 5,
+      "date": "2026-05-05",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Discrete Math \u2013 Sets, Relations, Functions, Partial Orders, Lattices",
+      "day_in_topic": 1,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 6,
+      "date": "2026-05-06",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Discrete Math \u2013 Sets, Relations, Functions, Partial Orders, Lattices",
+      "day_in_topic": 2,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 7,
+      "date": "2026-05-07",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Discrete Math \u2013 Sets, Relations, Functions, Partial Orders, Lattices",
+      "day_in_topic": 3,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 8,
+      "date": "2026-05-08",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Discrete Math \u2013 Sets, Relations, Functions, Partial Orders, Lattices",
+      "day_in_topic": 4,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 9,
+      "date": "2026-05-09",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Discrete Math \u2013 Monoids, Groups, Graphs",
+      "day_in_topic": 1,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 10,
+      "date": "2026-05-10",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Discrete Math \u2013 Monoids, Groups, Graphs",
+      "day_in_topic": 2,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 11,
+      "date": "2026-05-11",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Discrete Math \u2013 Monoids, Groups, Graphs",
+      "day_in_topic": 3,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 12,
+      "date": "2026-05-12",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Discrete Math \u2013 Monoids, Groups, Graphs",
+      "day_in_topic": 4,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 13,
+      "date": "2026-05-13",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Discrete Math \u2013 Combinatorics: Counting, Recurrence, Generating Functions",
+      "day_in_topic": 1,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 14,
+      "date": "2026-05-14",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Discrete Math \u2013 Combinatorics: Counting, Recurrence, Generating Functions",
+      "day_in_topic": 2,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 15,
+      "date": "2026-05-15",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Discrete Math \u2013 Combinatorics: Counting, Recurrence, Generating Functions",
+      "day_in_topic": 3,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 16,
+      "date": "2026-05-16",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Linear Algebra \u2013 Matrices, Determinants, System of Linear Equations",
+      "day_in_topic": 1,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 17,
+      "date": "2026-05-17",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Linear Algebra \u2013 Matrices, Determinants, System of Linear Equations",
+      "day_in_topic": 2,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 18,
+      "date": "2026-05-18",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Linear Algebra \u2013 Matrices, Determinants, System of Linear Equations",
+      "day_in_topic": 3,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 19,
+      "date": "2026-05-19",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Linear Algebra \u2013 Matrices, Determinants, System of Linear Equations",
+      "day_in_topic": 4,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 20,
+      "date": "2026-05-20",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Linear Algebra \u2013 Matrices, Determinants, System of Linear Equations",
+      "day_in_topic": 5,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 21,
+      "date": "2026-05-21",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Linear Algebra \u2013 Eigenvalues, Eigenvectors, LU Decomposition",
+      "day_in_topic": 1,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 22,
+      "date": "2026-05-22",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Linear Algebra \u2013 Eigenvalues, Eigenvectors, LU Decomposition",
+      "day_in_topic": 2,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 23,
+      "date": "2026-05-23",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Linear Algebra \u2013 Eigenvalues, Eigenvectors, LU Decomposition",
+      "day_in_topic": 3,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 24,
+      "date": "2026-05-24",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Linear Algebra \u2013 Eigenvalues, Eigenvectors, LU Decomposition",
+      "day_in_topic": 4,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 25,
+      "date": "2026-05-25",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Calculus \u2013 Limits, Continuity, Differentiability, Maxima & Minima, MVT, Integration",
+      "day_in_topic": 1,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 26,
+      "date": "2026-05-26",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Calculus \u2013 Limits, Continuity, Differentiability, Maxima & Minima, MVT, Integration",
+      "day_in_topic": 2,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 27,
+      "date": "2026-05-27",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Calculus \u2013 Limits, Continuity, Differentiability, Maxima & Minima, MVT, Integration",
+      "day_in_topic": 3,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 28,
+      "date": "2026-05-28",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Calculus \u2013 Limits, Continuity, Differentiability, Maxima & Minima, MVT, Integration",
+      "day_in_topic": 4,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 29,
+      "date": "2026-05-29",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Calculus \u2013 Limits, Continuity, Differentiability, Maxima & Minima, MVT, Integration",
+      "day_in_topic": 5,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 30,
+      "date": "2026-05-30",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Probability & Statistics \u2013 Random Variables & Distributions",
+      "day_in_topic": 1,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 31,
+      "date": "2026-05-31",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Probability & Statistics \u2013 Random Variables & Distributions",
+      "day_in_topic": 2,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 32,
+      "date": "2026-06-01",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Probability & Statistics \u2013 Random Variables & Distributions",
+      "day_in_topic": 3,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 33,
+      "date": "2026-06-02",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Probability & Statistics \u2013 Random Variables & Distributions",
+      "day_in_topic": 4,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 34,
+      "date": "2026-06-03",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Probability & Statistics \u2013 Random Variables & Distributions",
+      "day_in_topic": 5,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 35,
+      "date": "2026-06-04",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Probability & Statistics \u2013 Mean/Median/SD, Conditional Probability, Bayes",
+      "day_in_topic": 1,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 36,
+      "date": "2026-06-05",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Probability & Statistics \u2013 Mean/Median/SD, Conditional Probability, Bayes",
+      "day_in_topic": 2,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 37,
+      "date": "2026-06-06",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Probability & Statistics \u2013 Mean/Median/SD, Conditional Probability, Bayes",
+      "day_in_topic": 3,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 38,
+      "date": "2026-06-07",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Probability & Statistics \u2013 Mean/Median/SD, Conditional Probability, Bayes",
+      "day_in_topic": 4,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 39,
+      "date": "2026-06-08",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Engg Math \u2013 PYQ + Section Test",
+      "day_in_topic": 1,
+      "total_days_in_topic": 2,
+      "type": "revision_test"
+    },
+    {
+      "day": 40,
+      "date": "2026-06-09",
+      "phase": "phase_1_syllabus",
+      "section": "Engineering Mathematics",
+      "topic": "Engg Math \u2013 PYQ + Section Test",
+      "day_in_topic": 2,
+      "total_days_in_topic": 2,
+      "type": "revision_test"
+    },
+    {
+      "day": 41,
+      "date": "2026-06-10",
+      "phase": "phase_1_syllabus",
+      "section": "Digital Logic",
+      "topic": "Digital Logic \u2013 Boolean Algebra, Combinational Circuits, Minimization",
+      "day_in_topic": 1,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 42,
+      "date": "2026-06-11",
+      "phase": "phase_1_syllabus",
+      "section": "Digital Logic",
+      "topic": "Digital Logic \u2013 Boolean Algebra, Combinational Circuits, Minimization",
+      "day_in_topic": 2,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 43,
+      "date": "2026-06-12",
+      "phase": "phase_1_syllabus",
+      "section": "Digital Logic",
+      "topic": "Digital Logic \u2013 Boolean Algebra, Combinational Circuits, Minimization",
+      "day_in_topic": 3,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 44,
+      "date": "2026-06-13",
+      "phase": "phase_1_syllabus",
+      "section": "Digital Logic",
+      "topic": "Digital Logic \u2013 Boolean Algebra, Combinational Circuits, Minimization",
+      "day_in_topic": 4,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 45,
+      "date": "2026-06-14",
+      "phase": "phase_1_syllabus",
+      "section": "Digital Logic",
+      "topic": "Digital Logic \u2013 Sequential Circuits, Number Representations & Computer Arithmetic",
+      "day_in_topic": 1,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 46,
+      "date": "2026-06-15",
+      "phase": "phase_1_syllabus",
+      "section": "Digital Logic",
+      "topic": "Digital Logic \u2013 Sequential Circuits, Number Representations & Computer Arithmetic",
+      "day_in_topic": 2,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 47,
+      "date": "2026-06-16",
+      "phase": "phase_1_syllabus",
+      "section": "Digital Logic",
+      "topic": "Digital Logic \u2013 Sequential Circuits, Number Representations & Computer Arithmetic",
+      "day_in_topic": 3,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 48,
+      "date": "2026-06-17",
+      "phase": "phase_1_syllabus",
+      "section": "Digital Logic",
+      "topic": "Digital Logic \u2013 Sequential Circuits, Number Representations & Computer Arithmetic",
+      "day_in_topic": 4,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 49,
+      "date": "2026-06-18",
+      "phase": "phase_1_syllabus",
+      "section": "Digital Logic",
+      "topic": "Digital Logic \u2013 PYQ + Section Test",
+      "day_in_topic": 1,
+      "total_days_in_topic": 2,
+      "type": "revision_test"
+    },
+    {
+      "day": 50,
+      "date": "2026-06-19",
+      "phase": "phase_1_syllabus",
+      "section": "Digital Logic",
+      "topic": "Digital Logic \u2013 PYQ + Section Test",
+      "day_in_topic": 2,
+      "total_days_in_topic": 2,
+      "type": "revision_test"
+    },
+    {
+      "day": 51,
+      "date": "2026-06-20",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Organization and Architecture",
+      "topic": "COA \u2013 Machine Instructions, Addressing Modes, ALU, Data-path, Control Unit",
+      "day_in_topic": 1,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 52,
+      "date": "2026-06-21",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Organization and Architecture",
+      "topic": "COA \u2013 Machine Instructions, Addressing Modes, ALU, Data-path, Control Unit",
+      "day_in_topic": 2,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 53,
+      "date": "2026-06-22",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Organization and Architecture",
+      "topic": "COA \u2013 Machine Instructions, Addressing Modes, ALU, Data-path, Control Unit",
+      "day_in_topic": 3,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 54,
+      "date": "2026-06-23",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Organization and Architecture",
+      "topic": "COA \u2013 Machine Instructions, Addressing Modes, ALU, Data-path, Control Unit",
+      "day_in_topic": 4,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 55,
+      "date": "2026-06-24",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Organization and Architecture",
+      "topic": "COA \u2013 Machine Instructions, Addressing Modes, ALU, Data-path, Control Unit",
+      "day_in_topic": 5,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 56,
+      "date": "2026-06-25",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Organization and Architecture",
+      "topic": "COA \u2013 Instruction Pipelining & Pipeline Hazards",
+      "day_in_topic": 1,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 57,
+      "date": "2026-06-26",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Organization and Architecture",
+      "topic": "COA \u2013 Instruction Pipelining & Pipeline Hazards",
+      "day_in_topic": 2,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 58,
+      "date": "2026-06-27",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Organization and Architecture",
+      "topic": "COA \u2013 Instruction Pipelining & Pipeline Hazards",
+      "day_in_topic": 3,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 59,
+      "date": "2026-06-28",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Organization and Architecture",
+      "topic": "COA \u2013 Instruction Pipelining & Pipeline Hazards",
+      "day_in_topic": 4,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 60,
+      "date": "2026-06-29",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Organization and Architecture",
+      "topic": "COA \u2013 Memory Hierarchy: Cache, Main Memory, Secondary Storage",
+      "day_in_topic": 1,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 61,
+      "date": "2026-06-30",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Organization and Architecture",
+      "topic": "COA \u2013 Memory Hierarchy: Cache, Main Memory, Secondary Storage",
+      "day_in_topic": 2,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 62,
+      "date": "2026-07-01",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Organization and Architecture",
+      "topic": "COA \u2013 Memory Hierarchy: Cache, Main Memory, Secondary Storage",
+      "day_in_topic": 3,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 63,
+      "date": "2026-07-02",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Organization and Architecture",
+      "topic": "COA \u2013 Memory Hierarchy: Cache, Main Memory, Secondary Storage",
+      "day_in_topic": 4,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 64,
+      "date": "2026-07-03",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Organization and Architecture",
+      "topic": "COA \u2013 I/O Interface (Interrupt & DMA) + PYQ + Section Test",
+      "day_in_topic": 1,
+      "total_days_in_topic": 3,
+      "type": "revision_test"
+    },
+    {
+      "day": 65,
+      "date": "2026-07-04",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Organization and Architecture",
+      "topic": "COA \u2013 I/O Interface (Interrupt & DMA) + PYQ + Section Test",
+      "day_in_topic": 2,
+      "total_days_in_topic": 3,
+      "type": "revision_test"
+    },
+    {
+      "day": 66,
+      "date": "2026-07-05",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Organization and Architecture",
+      "topic": "COA \u2013 I/O Interface (Interrupt & DMA) + PYQ + Section Test",
+      "day_in_topic": 3,
+      "total_days_in_topic": 3,
+      "type": "revision_test"
+    },
+    {
+      "day": 67,
+      "date": "2026-07-06",
+      "phase": "phase_1_syllabus",
+      "section": "Programming and Data Structures",
+      "topic": "PDS \u2013 Programming in C, Recursion",
+      "day_in_topic": 1,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 68,
+      "date": "2026-07-07",
+      "phase": "phase_1_syllabus",
+      "section": "Programming and Data Structures",
+      "topic": "PDS \u2013 Programming in C, Recursion",
+      "day_in_topic": 2,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 69,
+      "date": "2026-07-08",
+      "phase": "phase_1_syllabus",
+      "section": "Programming and Data Structures",
+      "topic": "PDS \u2013 Programming in C, Recursion",
+      "day_in_topic": 3,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 70,
+      "date": "2026-07-09",
+      "phase": "phase_1_syllabus",
+      "section": "Programming and Data Structures",
+      "topic": "PDS \u2013 Programming in C, Recursion",
+      "day_in_topic": 4,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 71,
+      "date": "2026-07-10",
+      "phase": "phase_1_syllabus",
+      "section": "Programming and Data Structures",
+      "topic": "PDS \u2013 Arrays, Stacks, Queues, Linked Lists",
+      "day_in_topic": 1,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 72,
+      "date": "2026-07-11",
+      "phase": "phase_1_syllabus",
+      "section": "Programming and Data Structures",
+      "topic": "PDS \u2013 Arrays, Stacks, Queues, Linked Lists",
+      "day_in_topic": 2,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 73,
+      "date": "2026-07-12",
+      "phase": "phase_1_syllabus",
+      "section": "Programming and Data Structures",
+      "topic": "PDS \u2013 Arrays, Stacks, Queues, Linked Lists",
+      "day_in_topic": 3,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 74,
+      "date": "2026-07-13",
+      "phase": "phase_1_syllabus",
+      "section": "Programming and Data Structures",
+      "topic": "PDS \u2013 Arrays, Stacks, Queues, Linked Lists",
+      "day_in_topic": 4,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 75,
+      "date": "2026-07-14",
+      "phase": "phase_1_syllabus",
+      "section": "Programming and Data Structures",
+      "topic": "PDS \u2013 Trees, BST, Binary Heaps, Graphs",
+      "day_in_topic": 1,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 76,
+      "date": "2026-07-15",
+      "phase": "phase_1_syllabus",
+      "section": "Programming and Data Structures",
+      "topic": "PDS \u2013 Trees, BST, Binary Heaps, Graphs",
+      "day_in_topic": 2,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 77,
+      "date": "2026-07-16",
+      "phase": "phase_1_syllabus",
+      "section": "Programming and Data Structures",
+      "topic": "PDS \u2013 Trees, BST, Binary Heaps, Graphs",
+      "day_in_topic": 3,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 78,
+      "date": "2026-07-17",
+      "phase": "phase_1_syllabus",
+      "section": "Programming and Data Structures",
+      "topic": "PDS \u2013 Trees, BST, Binary Heaps, Graphs",
+      "day_in_topic": 4,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 79,
+      "date": "2026-07-18",
+      "phase": "phase_1_syllabus",
+      "section": "Programming and Data Structures",
+      "topic": "PDS \u2013 Trees, BST, Binary Heaps, Graphs",
+      "day_in_topic": 5,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 80,
+      "date": "2026-07-19",
+      "phase": "phase_1_syllabus",
+      "section": "Programming and Data Structures",
+      "topic": "PDS \u2013 PYQ + Section Test",
+      "day_in_topic": 1,
+      "total_days_in_topic": 2,
+      "type": "revision_test"
+    },
+    {
+      "day": 81,
+      "date": "2026-07-20",
+      "phase": "phase_1_syllabus",
+      "section": "Programming and Data Structures",
+      "topic": "PDS \u2013 PYQ + Section Test",
+      "day_in_topic": 2,
+      "total_days_in_topic": 2,
+      "type": "revision_test"
+    },
+    {
+      "day": 82,
+      "date": "2026-07-21",
+      "phase": "phase_1_syllabus",
+      "section": "Algorithms",
+      "topic": "Algorithms \u2013 Searching, Sorting, Hashing, Asymptotic Complexity",
+      "day_in_topic": 1,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 83,
+      "date": "2026-07-22",
+      "phase": "phase_1_syllabus",
+      "section": "Algorithms",
+      "topic": "Algorithms \u2013 Searching, Sorting, Hashing, Asymptotic Complexity",
+      "day_in_topic": 2,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 84,
+      "date": "2026-07-23",
+      "phase": "phase_1_syllabus",
+      "section": "Algorithms",
+      "topic": "Algorithms \u2013 Searching, Sorting, Hashing, Asymptotic Complexity",
+      "day_in_topic": 3,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 85,
+      "date": "2026-07-24",
+      "phase": "phase_1_syllabus",
+      "section": "Algorithms",
+      "topic": "Algorithms \u2013 Searching, Sorting, Hashing, Asymptotic Complexity",
+      "day_in_topic": 4,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 86,
+      "date": "2026-07-25",
+      "phase": "phase_1_syllabus",
+      "section": "Algorithms",
+      "topic": "Algorithms \u2013 Searching, Sorting, Hashing, Asymptotic Complexity",
+      "day_in_topic": 5,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 87,
+      "date": "2026-07-26",
+      "phase": "phase_1_syllabus",
+      "section": "Algorithms",
+      "topic": "Algorithms \u2013 Greedy, DP, Divide & Conquer",
+      "day_in_topic": 1,
+      "total_days_in_topic": 6,
+      "type": "study"
+    },
+    {
+      "day": 88,
+      "date": "2026-07-27",
+      "phase": "phase_1_syllabus",
+      "section": "Algorithms",
+      "topic": "Algorithms \u2013 Greedy, DP, Divide & Conquer",
+      "day_in_topic": 2,
+      "total_days_in_topic": 6,
+      "type": "study"
+    },
+    {
+      "day": 89,
+      "date": "2026-07-28",
+      "phase": "phase_1_syllabus",
+      "section": "Algorithms",
+      "topic": "Algorithms \u2013 Greedy, DP, Divide & Conquer",
+      "day_in_topic": 3,
+      "total_days_in_topic": 6,
+      "type": "study"
+    },
+    {
+      "day": 90,
+      "date": "2026-07-29",
+      "phase": "phase_1_syllabus",
+      "section": "Algorithms",
+      "topic": "Algorithms \u2013 Greedy, DP, Divide & Conquer",
+      "day_in_topic": 4,
+      "total_days_in_topic": 6,
+      "type": "study"
+    },
+    {
+      "day": 91,
+      "date": "2026-07-30",
+      "phase": "phase_1_syllabus",
+      "section": "Algorithms",
+      "topic": "Algorithms \u2013 Greedy, DP, Divide & Conquer",
+      "day_in_topic": 5,
+      "total_days_in_topic": 6,
+      "type": "study"
+    },
+    {
+      "day": 92,
+      "date": "2026-07-31",
+      "phase": "phase_1_syllabus",
+      "section": "Algorithms",
+      "topic": "Algorithms \u2013 Greedy, DP, Divide & Conquer",
+      "day_in_topic": 6,
+      "total_days_in_topic": 6,
+      "type": "study"
+    },
+    {
+      "day": 93,
+      "date": "2026-08-01",
+      "phase": "phase_1_syllabus",
+      "section": "Algorithms",
+      "topic": "Algorithms \u2013 Graph Traversals, MST, Shortest Paths",
+      "day_in_topic": 1,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 94,
+      "date": "2026-08-02",
+      "phase": "phase_1_syllabus",
+      "section": "Algorithms",
+      "topic": "Algorithms \u2013 Graph Traversals, MST, Shortest Paths",
+      "day_in_topic": 2,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 95,
+      "date": "2026-08-03",
+      "phase": "phase_1_syllabus",
+      "section": "Algorithms",
+      "topic": "Algorithms \u2013 Graph Traversals, MST, Shortest Paths",
+      "day_in_topic": 3,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 96,
+      "date": "2026-08-04",
+      "phase": "phase_1_syllabus",
+      "section": "Algorithms",
+      "topic": "Algorithms \u2013 Graph Traversals, MST, Shortest Paths",
+      "day_in_topic": 4,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 97,
+      "date": "2026-08-05",
+      "phase": "phase_1_syllabus",
+      "section": "Algorithms",
+      "topic": "Algorithms \u2013 PYQ + Section Test",
+      "day_in_topic": 1,
+      "total_days_in_topic": 3,
+      "type": "revision_test"
+    },
+    {
+      "day": 98,
+      "date": "2026-08-06",
+      "phase": "phase_1_syllabus",
+      "section": "Algorithms",
+      "topic": "Algorithms \u2013 PYQ + Section Test",
+      "day_in_topic": 2,
+      "total_days_in_topic": 3,
+      "type": "revision_test"
+    },
+    {
+      "day": 99,
+      "date": "2026-08-07",
+      "phase": "phase_1_syllabus",
+      "section": "Algorithms",
+      "topic": "Algorithms \u2013 PYQ + Section Test",
+      "day_in_topic": 3,
+      "total_days_in_topic": 3,
+      "type": "revision_test"
+    },
+    {
+      "day": 100,
+      "date": "2026-08-08",
+      "phase": "phase_1_syllabus",
+      "section": "Theory of Computation",
+      "topic": "TOC \u2013 Regular Expressions & Finite Automata",
+      "day_in_topic": 1,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 101,
+      "date": "2026-08-09",
+      "phase": "phase_1_syllabus",
+      "section": "Theory of Computation",
+      "topic": "TOC \u2013 Regular Expressions & Finite Automata",
+      "day_in_topic": 2,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 102,
+      "date": "2026-08-10",
+      "phase": "phase_1_syllabus",
+      "section": "Theory of Computation",
+      "topic": "TOC \u2013 Regular Expressions & Finite Automata",
+      "day_in_topic": 3,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 103,
+      "date": "2026-08-11",
+      "phase": "phase_1_syllabus",
+      "section": "Theory of Computation",
+      "topic": "TOC \u2013 Regular Expressions & Finite Automata",
+      "day_in_topic": 4,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 104,
+      "date": "2026-08-12",
+      "phase": "phase_1_syllabus",
+      "section": "Theory of Computation",
+      "topic": "TOC \u2013 Regular Expressions & Finite Automata",
+      "day_in_topic": 5,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 105,
+      "date": "2026-08-13",
+      "phase": "phase_1_syllabus",
+      "section": "Theory of Computation",
+      "topic": "TOC \u2013 CFG, Push-Down Automata, Pumping Lemma",
+      "day_in_topic": 1,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 106,
+      "date": "2026-08-14",
+      "phase": "phase_1_syllabus",
+      "section": "Theory of Computation",
+      "topic": "TOC \u2013 CFG, Push-Down Automata, Pumping Lemma",
+      "day_in_topic": 2,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 107,
+      "date": "2026-08-15",
+      "phase": "phase_1_syllabus",
+      "section": "Theory of Computation",
+      "topic": "TOC \u2013 CFG, Push-Down Automata, Pumping Lemma",
+      "day_in_topic": 3,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 108,
+      "date": "2026-08-16",
+      "phase": "phase_1_syllabus",
+      "section": "Theory of Computation",
+      "topic": "TOC \u2013 CFG, Push-Down Automata, Pumping Lemma",
+      "day_in_topic": 4,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 109,
+      "date": "2026-08-17",
+      "phase": "phase_1_syllabus",
+      "section": "Theory of Computation",
+      "topic": "TOC \u2013 CFG, Push-Down Automata, Pumping Lemma",
+      "day_in_topic": 5,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 110,
+      "date": "2026-08-18",
+      "phase": "phase_1_syllabus",
+      "section": "Theory of Computation",
+      "topic": "TOC \u2013 Turing Machines & Undecidability",
+      "day_in_topic": 1,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 111,
+      "date": "2026-08-19",
+      "phase": "phase_1_syllabus",
+      "section": "Theory of Computation",
+      "topic": "TOC \u2013 Turing Machines & Undecidability",
+      "day_in_topic": 2,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 112,
+      "date": "2026-08-20",
+      "phase": "phase_1_syllabus",
+      "section": "Theory of Computation",
+      "topic": "TOC \u2013 Turing Machines & Undecidability",
+      "day_in_topic": 3,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 113,
+      "date": "2026-08-21",
+      "phase": "phase_1_syllabus",
+      "section": "Theory of Computation",
+      "topic": "TOC \u2013 Turing Machines & Undecidability",
+      "day_in_topic": 4,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 114,
+      "date": "2026-08-22",
+      "phase": "phase_1_syllabus",
+      "section": "Theory of Computation",
+      "topic": "TOC \u2013 Turing Machines & Undecidability",
+      "day_in_topic": 5,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 115,
+      "date": "2026-08-23",
+      "phase": "phase_1_syllabus",
+      "section": "Theory of Computation",
+      "topic": "TOC \u2013 PYQ + Section Test",
+      "day_in_topic": 1,
+      "total_days_in_topic": 3,
+      "type": "revision_test"
+    },
+    {
+      "day": 116,
+      "date": "2026-08-24",
+      "phase": "phase_1_syllabus",
+      "section": "Theory of Computation",
+      "topic": "TOC \u2013 PYQ + Section Test",
+      "day_in_topic": 2,
+      "total_days_in_topic": 3,
+      "type": "revision_test"
+    },
+    {
+      "day": 117,
+      "date": "2026-08-25",
+      "phase": "phase_1_syllabus",
+      "section": "Theory of Computation",
+      "topic": "TOC \u2013 PYQ + Section Test",
+      "day_in_topic": 3,
+      "total_days_in_topic": 3,
+      "type": "revision_test"
+    },
+    {
+      "day": 118,
+      "date": "2026-08-26",
+      "phase": "phase_1_syllabus",
+      "section": "Compiler Design",
+      "topic": "Compiler Design \u2013 Lexical Analysis, Parsing, Syntax-Directed Translation",
+      "day_in_topic": 1,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 119,
+      "date": "2026-08-27",
+      "phase": "phase_1_syllabus",
+      "section": "Compiler Design",
+      "topic": "Compiler Design \u2013 Lexical Analysis, Parsing, Syntax-Directed Translation",
+      "day_in_topic": 2,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 120,
+      "date": "2026-08-28",
+      "phase": "phase_1_syllabus",
+      "section": "Compiler Design",
+      "topic": "Compiler Design \u2013 Lexical Analysis, Parsing, Syntax-Directed Translation",
+      "day_in_topic": 3,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 121,
+      "date": "2026-08-29",
+      "phase": "phase_1_syllabus",
+      "section": "Compiler Design",
+      "topic": "Compiler Design \u2013 Lexical Analysis, Parsing, Syntax-Directed Translation",
+      "day_in_topic": 4,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 122,
+      "date": "2026-08-30",
+      "phase": "phase_1_syllabus",
+      "section": "Compiler Design",
+      "topic": "Compiler Design \u2013 Lexical Analysis, Parsing, Syntax-Directed Translation",
+      "day_in_topic": 5,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 123,
+      "date": "2026-08-31",
+      "phase": "phase_1_syllabus",
+      "section": "Compiler Design",
+      "topic": "Compiler Design \u2013 Runtime Environments, Intermediate Code, Optimisation, Data Flow Analysis",
+      "day_in_topic": 1,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 124,
+      "date": "2026-09-01",
+      "phase": "phase_1_syllabus",
+      "section": "Compiler Design",
+      "topic": "Compiler Design \u2013 Runtime Environments, Intermediate Code, Optimisation, Data Flow Analysis",
+      "day_in_topic": 2,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 125,
+      "date": "2026-09-02",
+      "phase": "phase_1_syllabus",
+      "section": "Compiler Design",
+      "topic": "Compiler Design \u2013 Runtime Environments, Intermediate Code, Optimisation, Data Flow Analysis",
+      "day_in_topic": 3,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 126,
+      "date": "2026-09-03",
+      "phase": "phase_1_syllabus",
+      "section": "Compiler Design",
+      "topic": "Compiler Design \u2013 Runtime Environments, Intermediate Code, Optimisation, Data Flow Analysis",
+      "day_in_topic": 4,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 127,
+      "date": "2026-09-04",
+      "phase": "phase_1_syllabus",
+      "section": "Compiler Design",
+      "topic": "Compiler Design \u2013 Runtime Environments, Intermediate Code, Optimisation, Data Flow Analysis",
+      "day_in_topic": 5,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 128,
+      "date": "2026-09-05",
+      "phase": "phase_1_syllabus",
+      "section": "Compiler Design",
+      "topic": "Compiler Design \u2013 PYQ + Section Test",
+      "day_in_topic": 1,
+      "total_days_in_topic": 3,
+      "type": "revision_test"
+    },
+    {
+      "day": 129,
+      "date": "2026-09-06",
+      "phase": "phase_1_syllabus",
+      "section": "Compiler Design",
+      "topic": "Compiler Design \u2013 PYQ + Section Test",
+      "day_in_topic": 2,
+      "total_days_in_topic": 3,
+      "type": "revision_test"
+    },
+    {
+      "day": 130,
+      "date": "2026-09-07",
+      "phase": "phase_1_syllabus",
+      "section": "Compiler Design",
+      "topic": "Compiler Design \u2013 PYQ + Section Test",
+      "day_in_topic": 3,
+      "total_days_in_topic": 3,
+      "type": "revision_test"
+    },
+    {
+      "day": 131,
+      "date": "2026-09-08",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 System Calls, Processes, Threads, IPC, Concurrency & Synchronization",
+      "day_in_topic": 1,
+      "total_days_in_topic": 6,
+      "type": "study"
+    },
+    {
+      "day": 132,
+      "date": "2026-09-09",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 System Calls, Processes, Threads, IPC, Concurrency & Synchronization",
+      "day_in_topic": 2,
+      "total_days_in_topic": 6,
+      "type": "study"
+    },
+    {
+      "day": 133,
+      "date": "2026-09-10",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 System Calls, Processes, Threads, IPC, Concurrency & Synchronization",
+      "day_in_topic": 3,
+      "total_days_in_topic": 6,
+      "type": "study"
+    },
+    {
+      "day": 134,
+      "date": "2026-09-11",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 System Calls, Processes, Threads, IPC, Concurrency & Synchronization",
+      "day_in_topic": 4,
+      "total_days_in_topic": 6,
+      "type": "study"
+    },
+    {
+      "day": 135,
+      "date": "2026-09-12",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 System Calls, Processes, Threads, IPC, Concurrency & Synchronization",
+      "day_in_topic": 5,
+      "total_days_in_topic": 6,
+      "type": "study"
+    },
+    {
+      "day": 136,
+      "date": "2026-09-13",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 System Calls, Processes, Threads, IPC, Concurrency & Synchronization",
+      "day_in_topic": 6,
+      "total_days_in_topic": 6,
+      "type": "study"
+    },
+    {
+      "day": 137,
+      "date": "2026-09-14",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 Deadlock, CPU & I/O Scheduling",
+      "day_in_topic": 1,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 138,
+      "date": "2026-09-15",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 Deadlock, CPU & I/O Scheduling",
+      "day_in_topic": 2,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 139,
+      "date": "2026-09-16",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 Deadlock, CPU & I/O Scheduling",
+      "day_in_topic": 3,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 140,
+      "date": "2026-09-17",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 Deadlock, CPU & I/O Scheduling",
+      "day_in_topic": 4,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 141,
+      "date": "2026-09-18",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 Deadlock, CPU & I/O Scheduling",
+      "day_in_topic": 5,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 142,
+      "date": "2026-09-19",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 Memory Management & Virtual Memory",
+      "day_in_topic": 1,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 143,
+      "date": "2026-09-20",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 Memory Management & Virtual Memory",
+      "day_in_topic": 2,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 144,
+      "date": "2026-09-21",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 Memory Management & Virtual Memory",
+      "day_in_topic": 3,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 145,
+      "date": "2026-09-22",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 Memory Management & Virtual Memory",
+      "day_in_topic": 4,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 146,
+      "date": "2026-09-23",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 Memory Management & Virtual Memory",
+      "day_in_topic": 5,
+      "total_days_in_topic": 5,
+      "type": "study"
+    },
+    {
+      "day": 147,
+      "date": "2026-09-24",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 File Systems + PYQ + Section Test",
+      "day_in_topic": 1,
+      "total_days_in_topic": 4,
+      "type": "revision_test"
+    },
+    {
+      "day": 148,
+      "date": "2026-09-25",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 File Systems + PYQ + Section Test",
+      "day_in_topic": 2,
+      "total_days_in_topic": 4,
+      "type": "revision_test"
+    },
+    {
+      "day": 149,
+      "date": "2026-09-26",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 File Systems + PYQ + Section Test",
+      "day_in_topic": 3,
+      "total_days_in_topic": 4,
+      "type": "revision_test"
+    },
+    {
+      "day": 150,
+      "date": "2026-09-27",
+      "phase": "phase_1_syllabus",
+      "section": "Operating System",
+      "topic": "OS \u2013 File Systems + PYQ + Section Test",
+      "day_in_topic": 4,
+      "total_days_in_topic": 4,
+      "type": "revision_test"
+    },
+    {
+      "day": 151,
+      "date": "2026-09-28",
+      "phase": "phase_1_syllabus",
+      "section": "Databases",
+      "topic": "DBMS \u2013 ER Model, Relational Model, Relational Algebra, Tuple Calculus, SQL",
+      "day_in_topic": 1,
+      "total_days_in_topic": 6,
+      "type": "study"
+    },
+    {
+      "day": 152,
+      "date": "2026-09-29",
+      "phase": "phase_1_syllabus",
+      "section": "Databases",
+      "topic": "DBMS \u2013 ER Model, Relational Model, Relational Algebra, Tuple Calculus, SQL",
+      "day_in_topic": 2,
+      "total_days_in_topic": 6,
+      "type": "study"
+    },
+    {
+      "day": 153,
+      "date": "2026-09-30",
+      "phase": "phase_1_syllabus",
+      "section": "Databases",
+      "topic": "DBMS \u2013 ER Model, Relational Model, Relational Algebra, Tuple Calculus, SQL",
+      "day_in_topic": 3,
+      "total_days_in_topic": 6,
+      "type": "study"
+    },
+    {
+      "day": 154,
+      "date": "2026-10-01",
+      "phase": "phase_1_syllabus",
+      "section": "Databases",
+      "topic": "DBMS \u2013 ER Model, Relational Model, Relational Algebra, Tuple Calculus, SQL",
+      "day_in_topic": 4,
+      "total_days_in_topic": 6,
+      "type": "study"
+    },
+    {
+      "day": 155,
+      "date": "2026-10-02",
+      "phase": "phase_1_syllabus",
+      "section": "Databases",
+      "topic": "DBMS \u2013 ER Model, Relational Model, Relational Algebra, Tuple Calculus, SQL",
+      "day_in_topic": 5,
+      "total_days_in_topic": 6,
+      "type": "study"
+    },
+    {
+      "day": 156,
+      "date": "2026-10-03",
+      "phase": "phase_1_syllabus",
+      "section": "Databases",
+      "topic": "DBMS \u2013 ER Model, Relational Model, Relational Algebra, Tuple Calculus, SQL",
+      "day_in_topic": 6,
+      "total_days_in_topic": 6,
+      "type": "study"
+    },
+    {
+      "day": 157,
+      "date": "2026-10-04",
+      "phase": "phase_1_syllabus",
+      "section": "Databases",
+      "topic": "DBMS \u2013 Integrity Constraints, Normal Forms",
+      "day_in_topic": 1,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 158,
+      "date": "2026-10-05",
+      "phase": "phase_1_syllabus",
+      "section": "Databases",
+      "topic": "DBMS \u2013 Integrity Constraints, Normal Forms",
+      "day_in_topic": 2,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 159,
+      "date": "2026-10-06",
+      "phase": "phase_1_syllabus",
+      "section": "Databases",
+      "topic": "DBMS \u2013 Integrity Constraints, Normal Forms",
+      "day_in_topic": 3,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 160,
+      "date": "2026-10-07",
+      "phase": "phase_1_syllabus",
+      "section": "Databases",
+      "topic": "DBMS \u2013 Integrity Constraints, Normal Forms",
+      "day_in_topic": 4,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 161,
+      "date": "2026-10-08",
+      "phase": "phase_1_syllabus",
+      "section": "Databases",
+      "topic": "DBMS \u2013 File Organization, Indexing (B & B+ Trees), Transactions & Concurrency Control",
+      "day_in_topic": 1,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 162,
+      "date": "2026-10-09",
+      "phase": "phase_1_syllabus",
+      "section": "Databases",
+      "topic": "DBMS \u2013 File Organization, Indexing (B & B+ Trees), Transactions & Concurrency Control",
+      "day_in_topic": 2,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 163,
+      "date": "2026-10-10",
+      "phase": "phase_1_syllabus",
+      "section": "Databases",
+      "topic": "DBMS \u2013 File Organization, Indexing (B & B+ Trees), Transactions & Concurrency Control",
+      "day_in_topic": 3,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 164,
+      "date": "2026-10-11",
+      "phase": "phase_1_syllabus",
+      "section": "Databases",
+      "topic": "DBMS \u2013 File Organization, Indexing (B & B+ Trees), Transactions & Concurrency Control",
+      "day_in_topic": 4,
+      "total_days_in_topic": 4,
+      "type": "study"
+    },
+    {
+      "day": 165,
+      "date": "2026-10-12",
+      "phase": "phase_1_syllabus",
+      "section": "Databases",
+      "topic": "DBMS \u2013 PYQ + Section Test",
+      "day_in_topic": 1,
+      "total_days_in_topic": 2,
+      "type": "revision_test"
+    },
+    {
+      "day": 166,
+      "date": "2026-10-13",
+      "phase": "phase_1_syllabus",
+      "section": "Databases",
+      "topic": "DBMS \u2013 PYQ + Section Test",
+      "day_in_topic": 2,
+      "total_days_in_topic": 2,
+      "type": "revision_test"
+    },
+    {
+      "day": 167,
+      "date": "2026-10-14",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Networks",
+      "topic": "Networks \u2013 OSI & TCP/IP, Switching Types",
+      "day_in_topic": 1,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 168,
+      "date": "2026-10-15",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Networks",
+      "topic": "Networks \u2013 OSI & TCP/IP, Switching Types",
+      "day_in_topic": 2,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 169,
+      "date": "2026-10-16",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Networks",
+      "topic": "Networks \u2013 OSI & TCP/IP, Switching Types",
+      "day_in_topic": 3,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 170,
+      "date": "2026-10-17",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Networks",
+      "topic": "Networks \u2013 Data Link Layer: Framing, Error Detection, MAC, Ethernet",
+      "day_in_topic": 1,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 171,
+      "date": "2026-10-18",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Networks",
+      "topic": "Networks \u2013 Data Link Layer: Framing, Error Detection, MAC, Ethernet",
+      "day_in_topic": 2,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 172,
+      "date": "2026-10-19",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Networks",
+      "topic": "Networks \u2013 Data Link Layer: Framing, Error Detection, MAC, Ethernet",
+      "day_in_topic": 3,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 173,
+      "date": "2026-10-20",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Networks",
+      "topic": "Networks \u2013 Routing Protocols: Shortest Path, DV, Link State, Flooding",
+      "day_in_topic": 1,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 174,
+      "date": "2026-10-21",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Networks",
+      "topic": "Networks \u2013 Routing Protocols: Shortest Path, DV, Link State, Flooding",
+      "day_in_topic": 2,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 175,
+      "date": "2026-10-22",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Networks",
+      "topic": "Networks \u2013 Routing Protocols: Shortest Path, DV, Link State, Flooding",
+      "day_in_topic": 3,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 176,
+      "date": "2026-10-23",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Networks",
+      "topic": "Networks \u2013 IP: Fragmentation, IPv4, CIDR, ARP, DHCP, ICMP, NAT",
+      "day_in_topic": 1,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 177,
+      "date": "2026-10-24",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Networks",
+      "topic": "Networks \u2013 IP: Fragmentation, IPv4, CIDR, ARP, DHCP, ICMP, NAT",
+      "day_in_topic": 2,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 178,
+      "date": "2026-10-25",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Networks",
+      "topic": "Networks \u2013 IP: Fragmentation, IPv4, CIDR, ARP, DHCP, ICMP, NAT",
+      "day_in_topic": 3,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 179,
+      "date": "2026-10-26",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Networks",
+      "topic": "Networks \u2013 Transport Layer: TCP, UDP, Flow & Congestion Control",
+      "day_in_topic": 1,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 180,
+      "date": "2026-10-27",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Networks",
+      "topic": "Networks \u2013 Transport Layer: TCP, UDP, Flow & Congestion Control",
+      "day_in_topic": 2,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 181,
+      "date": "2026-10-28",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Networks",
+      "topic": "Networks \u2013 Transport Layer: TCP, UDP, Flow & Congestion Control",
+      "day_in_topic": 3,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 182,
+      "date": "2026-10-29",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Networks",
+      "topic": "Networks \u2013 Application Layer: DNS, SMTP, HTTP, FTP + PYQ + Section Test",
+      "day_in_topic": 1,
+      "total_days_in_topic": 3,
+      "type": "revision_test"
+    },
+    {
+      "day": 183,
+      "date": "2026-10-30",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Networks",
+      "topic": "Networks \u2013 Application Layer: DNS, SMTP, HTTP, FTP + PYQ + Section Test",
+      "day_in_topic": 2,
+      "total_days_in_topic": 3,
+      "type": "revision_test"
+    },
+    {
+      "day": 184,
+      "date": "2026-10-31",
+      "phase": "phase_1_syllabus",
+      "section": "Computer Networks",
+      "topic": "Networks \u2013 Application Layer: DNS, SMTP, HTTP, FTP + PYQ + Section Test",
+      "day_in_topic": 3,
+      "total_days_in_topic": 3,
+      "type": "revision_test"
+    },
+    {
+      "day": 185,
+      "date": "2026-11-01",
+      "phase": "phase_1_syllabus",
+      "section": "General Aptitude",
+      "topic": "GA \u2013 Verbal Aptitude: Grammar, Vocabulary, Reading Comprehension",
+      "day_in_topic": 1,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 186,
+      "date": "2026-11-02",
+      "phase": "phase_1_syllabus",
+      "section": "General Aptitude",
+      "topic": "GA \u2013 Verbal Aptitude: Grammar, Vocabulary, Reading Comprehension",
+      "day_in_topic": 2,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 187,
+      "date": "2026-11-03",
+      "phase": "phase_1_syllabus",
+      "section": "General Aptitude",
+      "topic": "GA \u2013 Verbal Aptitude: Grammar, Vocabulary, Reading Comprehension",
+      "day_in_topic": 3,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 188,
+      "date": "2026-11-04",
+      "phase": "phase_1_syllabus",
+      "section": "General Aptitude",
+      "topic": "GA \u2013 Quantitative Aptitude: Data Interpretation, Numerical Computation, Statistics",
+      "day_in_topic": 1,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 189,
+      "date": "2026-11-05",
+      "phase": "phase_1_syllabus",
+      "section": "General Aptitude",
+      "topic": "GA \u2013 Quantitative Aptitude: Data Interpretation, Numerical Computation, Statistics",
+      "day_in_topic": 2,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 190,
+      "date": "2026-11-06",
+      "phase": "phase_1_syllabus",
+      "section": "General Aptitude",
+      "topic": "GA \u2013 Quantitative Aptitude: Data Interpretation, Numerical Computation, Statistics",
+      "day_in_topic": 3,
+      "total_days_in_topic": 3,
+      "type": "study"
+    },
+    {
+      "day": 191,
+      "date": "2026-11-07",
+      "phase": "phase_1_syllabus",
+      "section": "General Aptitude",
+      "topic": "GA \u2013 Analytical & Spatial Aptitude + PYQ Mock Test",
+      "day_in_topic": 1,
+      "total_days_in_topic": 3,
+      "type": "revision_test"
+    },
+    {
+      "day": 192,
+      "date": "2026-11-08",
+      "phase": "phase_1_syllabus",
+      "section": "General Aptitude",
+      "topic": "GA \u2013 Analytical & Spatial Aptitude + PYQ Mock Test",
+      "day_in_topic": 2,
+      "total_days_in_topic": 3,
+      "type": "revision_test"
+    },
+    {
+      "day": 193,
+      "date": "2026-11-09",
+      "phase": "phase_1_syllabus",
+      "section": "General Aptitude",
+      "topic": "GA \u2013 Analytical & Spatial Aptitude + PYQ Mock Test",
+      "day_in_topic": 3,
+      "total_days_in_topic": 3,
+      "type": "revision_test"
+    },
+    {
+      "day": 194,
+      "date": "2026-11-10",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 Engg Math + Digital Logic",
+      "day_in_topic": 1,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 195,
+      "date": "2026-11-11",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 Engg Math + Digital Logic",
+      "day_in_topic": 2,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 196,
+      "date": "2026-11-12",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 Engg Math + Digital Logic",
+      "day_in_topic": 3,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 197,
+      "date": "2026-11-13",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 Engg Math + Digital Logic",
+      "day_in_topic": 4,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 198,
+      "date": "2026-11-14",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 Engg Math + Digital Logic",
+      "day_in_topic": 5,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 199,
+      "date": "2026-11-15",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 Engg Math + Digital Logic",
+      "day_in_topic": 6,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 200,
+      "date": "2026-11-16",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 COA + PDS",
+      "day_in_topic": 1,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 201,
+      "date": "2026-11-17",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 COA + PDS",
+      "day_in_topic": 2,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 202,
+      "date": "2026-11-18",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 COA + PDS",
+      "day_in_topic": 3,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 203,
+      "date": "2026-11-19",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 COA + PDS",
+      "day_in_topic": 4,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 204,
+      "date": "2026-11-20",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 COA + PDS",
+      "day_in_topic": 5,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 205,
+      "date": "2026-11-21",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 COA + PDS",
+      "day_in_topic": 6,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 206,
+      "date": "2026-11-22",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 Algorithms + TOC",
+      "day_in_topic": 1,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 207,
+      "date": "2026-11-23",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 Algorithms + TOC",
+      "day_in_topic": 2,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 208,
+      "date": "2026-11-24",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 Algorithms + TOC",
+      "day_in_topic": 3,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 209,
+      "date": "2026-11-25",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 Algorithms + TOC",
+      "day_in_topic": 4,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 210,
+      "date": "2026-11-26",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 Algorithms + TOC",
+      "day_in_topic": 5,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 211,
+      "date": "2026-11-27",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 Algorithms + TOC",
+      "day_in_topic": 6,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 212,
+      "date": "2026-11-28",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 Compiler Design + OS",
+      "day_in_topic": 1,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 213,
+      "date": "2026-11-29",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 Compiler Design + OS",
+      "day_in_topic": 2,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 214,
+      "date": "2026-11-30",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 Compiler Design + OS",
+      "day_in_topic": 3,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 215,
+      "date": "2026-12-01",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 Compiler Design + OS",
+      "day_in_topic": 4,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 216,
+      "date": "2026-12-02",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 Compiler Design + OS",
+      "day_in_topic": 5,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 217,
+      "date": "2026-12-03",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 Compiler Design + OS",
+      "day_in_topic": 6,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 218,
+      "date": "2026-12-04",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 DBMS + Networks",
+      "day_in_topic": 1,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 219,
+      "date": "2026-12-05",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 DBMS + Networks",
+      "day_in_topic": 2,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 220,
+      "date": "2026-12-06",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 DBMS + Networks",
+      "day_in_topic": 3,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 221,
+      "date": "2026-12-07",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 DBMS + Networks",
+      "day_in_topic": 4,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 222,
+      "date": "2026-12-08",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 DBMS + Networks",
+      "day_in_topic": 5,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 223,
+      "date": "2026-12-09",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 DBMS + Networks",
+      "day_in_topic": 6,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 224,
+      "date": "2026-12-10",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 GA + Error Log Review",
+      "day_in_topic": 1,
+      "total_days_in_topic": 3,
+      "type": "revision"
+    },
+    {
+      "day": 225,
+      "date": "2026-12-11",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 GA + Error Log Review",
+      "day_in_topic": 2,
+      "total_days_in_topic": 3,
+      "type": "revision"
+    },
+    {
+      "day": 226,
+      "date": "2026-12-12",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Rapid Revision \u2013 GA + Error Log Review",
+      "day_in_topic": 3,
+      "total_days_in_topic": 3,
+      "type": "revision"
+    },
+    {
+      "day": 227,
+      "date": "2026-12-13",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Full Mock Test 1 + Analysis",
+      "day_in_topic": 1,
+      "total_days_in_topic": 2,
+      "type": "mock_test"
+    },
+    {
+      "day": 228,
+      "date": "2026-12-14",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Full Mock Test 1 + Analysis",
+      "day_in_topic": 2,
+      "total_days_in_topic": 2,
+      "type": "mock_test"
+    },
+    {
+      "day": 229,
+      "date": "2026-12-15",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Full Mock Test 2 + Analysis",
+      "day_in_topic": 1,
+      "total_days_in_topic": 2,
+      "type": "mock_test"
+    },
+    {
+      "day": 230,
+      "date": "2026-12-16",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Full Mock Test 2 + Analysis",
+      "day_in_topic": 2,
+      "total_days_in_topic": 2,
+      "type": "mock_test"
+    },
+    {
+      "day": 231,
+      "date": "2026-12-17",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Full Mock Test 3 + Analysis",
+      "day_in_topic": 1,
+      "total_days_in_topic": 2,
+      "type": "mock_test"
+    },
+    {
+      "day": 232,
+      "date": "2026-12-18",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Full Mock Test 3 + Analysis",
+      "day_in_topic": 2,
+      "total_days_in_topic": 2,
+      "type": "mock_test"
+    },
+    {
+      "day": 233,
+      "date": "2026-12-19",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Targeted Weak Area Practice \u2013 Round 2",
+      "day_in_topic": 1,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 234,
+      "date": "2026-12-20",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Targeted Weak Area Practice \u2013 Round 2",
+      "day_in_topic": 2,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 235,
+      "date": "2026-12-21",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Targeted Weak Area Practice \u2013 Round 2",
+      "day_in_topic": 3,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 236,
+      "date": "2026-12-22",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Targeted Weak Area Practice \u2013 Round 2",
+      "day_in_topic": 4,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 237,
+      "date": "2026-12-23",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Targeted Weak Area Practice \u2013 Round 2",
+      "day_in_topic": 5,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 238,
+      "date": "2026-12-24",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Targeted Weak Area Practice \u2013 Round 2",
+      "day_in_topic": 6,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 239,
+      "date": "2026-12-25",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Full Mock Test 4 + Analysis",
+      "day_in_topic": 1,
+      "total_days_in_topic": 2,
+      "type": "mock_test"
+    },
+    {
+      "day": 240,
+      "date": "2026-12-26",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Full Mock Test 4 + Analysis",
+      "day_in_topic": 2,
+      "total_days_in_topic": 2,
+      "type": "mock_test"
+    },
+    {
+      "day": 241,
+      "date": "2026-12-27",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Full Mock Test 5 + Analysis",
+      "day_in_topic": 1,
+      "total_days_in_topic": 2,
+      "type": "mock_test"
+    },
+    {
+      "day": 242,
+      "date": "2026-12-28",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Full Mock Test 5 + Analysis",
+      "day_in_topic": 2,
+      "total_days_in_topic": 2,
+      "type": "mock_test"
+    },
+    {
+      "day": 243,
+      "date": "2026-12-29",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Full Mock Test 6 + Analysis",
+      "day_in_topic": 1,
+      "total_days_in_topic": 2,
+      "type": "mock_test"
+    },
+    {
+      "day": 244,
+      "date": "2026-12-30",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Full Mock Test 6 + Analysis",
+      "day_in_topic": 2,
+      "total_days_in_topic": 2,
+      "type": "mock_test"
+    },
+    {
+      "day": 245,
+      "date": "2026-12-31",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Formula Sheets + Quick Revision All Sections",
+      "day_in_topic": 1,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 246,
+      "date": "2027-01-01",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Formula Sheets + Quick Revision All Sections",
+      "day_in_topic": 2,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 247,
+      "date": "2027-01-02",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Formula Sheets + Quick Revision All Sections",
+      "day_in_topic": 3,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 248,
+      "date": "2027-01-03",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Formula Sheets + Quick Revision All Sections",
+      "day_in_topic": 4,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 249,
+      "date": "2027-01-04",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Formula Sheets + Quick Revision All Sections",
+      "day_in_topic": 5,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 250,
+      "date": "2027-01-05",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Formula Sheets + Quick Revision All Sections",
+      "day_in_topic": 6,
+      "total_days_in_topic": 6,
+      "type": "revision"
+    },
+    {
+      "day": 251,
+      "date": "2027-01-06",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Full Mock Test 7 + Analysis",
+      "day_in_topic": 1,
+      "total_days_in_topic": 2,
+      "type": "mock_test"
+    },
+    {
+      "day": 252,
+      "date": "2027-01-07",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Full Mock Test 7 + Analysis",
+      "day_in_topic": 2,
+      "total_days_in_topic": 2,
+      "type": "mock_test"
+    },
+    {
+      "day": 253,
+      "date": "2027-01-08",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Full Mock Test 8 + Analysis",
+      "day_in_topic": 1,
+      "total_days_in_topic": 2,
+      "type": "mock_test"
+    },
+    {
+      "day": 254,
+      "date": "2027-01-09",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Full Mock Test 8 + Analysis",
+      "day_in_topic": 2,
+      "total_days_in_topic": 2,
+      "type": "mock_test"
+    },
+    {
+      "day": 255,
+      "date": "2027-01-10",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Final 7 Days \u2013 Light Revision, Rest, Mental Prep",
+      "day_in_topic": 1,
+      "total_days_in_topic": 7,
+      "type": "final_prep"
+    },
+    {
+      "day": 256,
+      "date": "2027-01-11",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Final 7 Days \u2013 Light Revision, Rest, Mental Prep",
+      "day_in_topic": 2,
+      "total_days_in_topic": 7,
+      "type": "final_prep"
+    },
+    {
+      "day": 257,
+      "date": "2027-01-12",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Final 7 Days \u2013 Light Revision, Rest, Mental Prep",
+      "day_in_topic": 3,
+      "total_days_in_topic": 7,
+      "type": "final_prep"
+    },
+    {
+      "day": 258,
+      "date": "2027-01-13",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Final 7 Days \u2013 Light Revision, Rest, Mental Prep",
+      "day_in_topic": 4,
+      "total_days_in_topic": 7,
+      "type": "final_prep"
+    },
+    {
+      "day": 259,
+      "date": "2027-01-14",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Final 7 Days \u2013 Light Revision, Rest, Mental Prep",
+      "day_in_topic": 5,
+      "total_days_in_topic": 7,
+      "type": "final_prep"
+    },
+    {
+      "day": 260,
+      "date": "2027-01-15",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Final 7 Days \u2013 Light Revision, Rest, Mental Prep",
+      "day_in_topic": 6,
+      "total_days_in_topic": 7,
+      "type": "final_prep"
+    },
+    {
+      "day": 261,
+      "date": "2027-01-16",
+      "phase": "phase_2_revision_mocks",
+      "section": "Revision & Mock Tests",
+      "topic": "Final 7 Days \u2013 Light Revision, Rest, Mental Prep",
+      "day_in_topic": 7,
+      "total_days_in_topic": 7,
+      "type": "final_prep"
+    }
+  ]
+}

@@ -1,0 +1,262 @@
+Q.50 Consider the given Python program. 
+def outer(): 
+ x = [] 
+ def inner(val): 
+  x.append(val) 
+  return x 
+ return inner 
+f1 = outer() 
+f2 = outer() 
+print(f1(10)) # Line P 
+print(f1(20)) # Line Q 
+print(f2(30)) # Line R 
+print(f1(40)) # Line S 
+Which of the following options is/are correct?  
+  
+(A) f1 and f2 share the same list x  
+(B) Output of Line Q is [10, 20] 
+(C) Output of Line R is [10, 20, 30] 
+(D) Output of Line S is [10, 20, 40] 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+Organizing Institute: IIT Guwahati
+Page 33 of 39
+--- PAGE 34 ---
+Data Science and Artificial Intelligence (DA) 
+ 
+Q.51 Consider a table Employee(EmpID, TeamID), where the column EmpID (ID of 
+an employee) is the primary key. The column TeamID denotes the team ID of the 
+team of which the employee is a member. TeamID is a NOT NULL column.  
+We want to display the size of the team (denoted as TeamSize) in which each 
+employee is a member by using SQL. As an example, the desired output for the 
+given Employee table is also shown in tabular form. 
+Which of the following is/are correct? 
+Employee  Output 
+EmpID TeamID  EmpID TeamSize 
+1 8  1 3 
+2 8  2 3 
+3 8  3 3 
+4 7  4 2 
+5 7  5 2 
+6 9  6 1 
+  
+  
+(A) SELECT E.EmpID, B.TeamSize 
+FROM Employee AS E, (SELECT TeamID, COUNT(TeamID) AS 
+TeamSize FROM Employee GROUP BY TeamID) AS B  
+WHERE E.TeamID = B.TeamID 
+(B) SELECT A.EmpID, COUNT(B.TeamID) AS TeamSize 
+FROM Employee AS A, Employee AS B 
+WHERE A.TeamID = B.TeamID AND A.EmpID = B.EmpID 
+GROUP BY A.EmpID 
+(C) SELECT B.EmpID, B.TeamSize 
+FROM (SELECT EmpID, COUNT(TeamID) AS TeamSize  
+FROM Employee GROUP BY EmpID) AS B 
+(D) SELECT A.EmpID, B.TeamSize 
+FROM Employee AS A, (SELECT COUNT(TeamID) AS TeamSize FROM 
+Employee GROUP BY TeamID) AS B 
+WHERE A.TeamID = B.TeamID  
+  
+Organizing Institute: IIT Guwahati
+Page 34 of 39
+--- PAGE 35 ---
+Data Science and Artificial Intelligence (DA) 
+ 
+Q.52 Let 𝑀 = (𝐼𝑛 −
+1
+𝑛  𝟏𝟏𝑇) be a matrix, where  𝟏 = (1,1,1, … ,1)𝑇 ∈ ℝ𝑛 and 𝐼𝑛 is the 
+identity matrix of order 𝑛.  
+Which of the following options is/are correct?  
+  
+(A) 𝑀𝑇 = 𝑀    
+(B) 𝑀2 = 𝐼𝑛   
+(C) 𝑇𝑟𝑎𝑐𝑒(𝑀) = 𝑛    
+(D) 𝑀 is a projection matrix  
+  
+Q.53 Let  𝑋1, 𝑋2, … . , 𝑋𝑛  be  𝑛 independent random variables. Each of the random 
+variables follows 𝑁𝑜𝑟𝑚𝑎𝑙(𝜇 = 0, 𝜎2 = 1) distribution. Define 𝑋̅ =
+1
+𝑛 ∑ 𝑋𝑖
+𝑛
+𝑖=1  . 
+Which of the following statements is/are correct? 
+  
+(A) ∑ 𝑋𝑖
+2𝑛
+𝑖=1  follows Chi-square distribution with 𝑛 degrees of freedom. 
+(B) ∑ (𝑋𝑖 − 𝑋̅)2𝑛
+𝑖=1  follows Chi-square distribution with (𝑛 − 1) degrees of freedom. 
+(C) 𝑋1
+2 + 𝑋𝑛
+2 follows exponential distribution with mean 2. 
+(D) (√𝑛 𝑋̅)
+2
+ follows Chi-square distribution with 2 degrees of freedom. 
+  
+ 
+Organizing Institute: IIT Guwahati
+Page 35 of 39
+--- PAGE 36 ---
+Data Science and Artificial Intelligence (DA) 
+ 
+Q.54 Let 𝑋 be a discrete valued random variable with cumulative distribution function  
+𝐹(𝑥).   
+Which of the following statements is/are correct? 
+  
+(A) 𝐹(𝑥) is always a positive function. 
+(B) 𝐹(𝑥) is a non-decreasing function.  
+(C) 𝐹(𝑥) has jump discontinuity.  
+(D) 𝐹(𝑥) is a left continuous function. 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+Q.55 Consider that Linear Ridge Regression is being used to learn a prediction function 
+𝑦𝑝𝑟𝑒𝑑 = 𝑤𝑇𝑥, where 𝑤, 𝑥 ∈ ℝ2 and Mean Absolute Error (MAE) is used to 
+measure the prediction error. A weight of 0.20 is associated with the regularizer.  
+At an intermediate step of the training process, assume that the parameter 𝑤 =
+[−3.00, 4.00]𝑇. In the next step, for the input 𝑥 = [1.00, 2.00]𝑇, the predicted 
+value of 𝑦 is noted. Let the relation between 𝑥 = [𝑥1,  𝑥2]𝑇and the true value of 𝑦 
+be 𝑦𝑡𝑟𝑢𝑒 = 𝑥1 + 𝑥2. 
+ 
+The value of the overall regularized loss function for this instance is _______ . 
+(Rounded off to two decimal places)  
+Organizing Institute: IIT Guwahati
+Page 36 of 39
+--- PAGE 37 ---
+Data Science and Artificial Intelligence (DA) 
+ 
+Q.56 Consider a fully-connected feed-forward multi-layer perceptron. It has 30 neurons 
+in the input layer, followed by two hidden layers and an output layer. The first 
+hidden layer has 4 neurons and the second hidden layer has 3 neurons. The output 
+layer has only one neuron. Assume that no bias parameters are used.  
+The number of learnable parameters in the multi-layer perceptron is __________ . 
+(Answer in integer) 
+Q.57 A clinic specializes in testing for a disease D. The result of the test can be either 
+positive or negative.  
+A study revealed that if a person suffers from the disease D, the test result in that 
+clinic comes out positive 80% of the time, and negative 20% of the time. If a 
+person is not suffering from the disease D, the test comes out positive 10% of the 
+time and negative 90% of the time. It is also known that among the general 
+population, the disease D occurs in 30% of the individuals.  
+If a person tests positive for D in that clinic, the probability that he/she actually 
+suffers from the disease D is __________ . (Rounded off to two decimal places) 
+Q.58 Consider the given Python program. 
+def fun(L, i=0): 
+ if i >= len(L)-1: 
+  return 0 
+ if L[i] > L[i+1]: 
+  L[i+1], L[i] = L[i], L[i+1] 
+  return 1+fun(L, i+1) 
+ else: 
+  return fun(L, i+1) 
+data = [5, 3, 4, 1, 2] 
+count = 0 
+for _ in range(len(data)): 
+ count += fun(data) 
+print(count) 
+ 
+The output of the program is __________ . (Answer in integer) 
+Organizing Institute: IIT Guwahati
+Page 37 of 39
+--- PAGE 38 ---
+Data Science and Artificial Intelligence (DA) 
+ 
+Q.59 Let there be two relations 𝑋 and 𝑌 as shown. 𝑋 has three columns 𝑃, 𝑄 and 𝑅. 𝑌 
+has two columns 𝑃 and 𝑆.  
+𝑋  𝑌 
+𝑃 𝑄 𝑅  𝑃 𝑆 
+P1 Q1 R1  P1 10 
+P2 Q2 R2  P1 15 
+P3 Q3 R2  P2 20 
+  P3 1 
+Consider that the following tuple relational calculus expression is evaluated.  
+{𝑡|𝑡 ∈ 𝑋 ⋀ ∃𝑧 ∈ 𝑋(𝑡[𝑃] = 𝑧[𝑃])  ⋀ ∃𝑚 ∈ 𝑌 (𝑚[𝑃] = 𝑡[𝑃] ⋀ 𝑚[𝑆] > 1)} 
+The number of tuples that will be returned is __________ . (Answer in integer) 
+Q.60 
+ 
+Let Account be a relation as shown.  
+ 
+     Account 
+AccNo Balance 
+A1 5000 
+A2 5000 
+A3 10000 
+A4 15000 
+A5 18000 
+ 
+Consider the given SQL query. 
+  
+SELECT AccNo FROM Account AS A 
+WHERE (SELECT COUNT(*) FROM Account AS B  
+WHERE A.Balance < B.Balance) >= (SELECT COUNT(*)  
+FROM Account AS C WHERE A.Balance > C.Balance) 
+ 
+The number of rows returned by the SQL query is __________ . (Answer in 
+integer) 
+ 
+ 
+ 
+ 
+ 
+ 
+Organizing Institute: IIT Guwahati
+Page 38 of 39
+--- PAGE 39 ---
+Data Science and Artificial Intelligence (DA) 
+ 
+Q.61 Consider an ER model with the entities E1(A11,A12,A13) and E2(A21,A22,A23), 
+where, A11, A12, A13 are the attributes of E1, and A21, A22, A23 are the attributes of 
+E2. Let A22 be a multi-valued attribute. A11 and A21 are the primary keys of E1 and 
+E2, respectively.  
+Let R12 be a many-to-many relationship between E1 and E2. Participation of both 
+E1 and E2 in R12 is total.  
+The minimum number of relations required to convert the ER model into 
+relational model (assuming there is no other functional dependency) where each 
+relation is in third normal form (3NF) is __________ . (Answer in integer) 
+Q.62 For a given data set {𝑥1, 𝑥2, … . , 𝑥𝑛}, where 𝑛 = 100, it is known that 
+1
+2000 ∑ ∑(𝑥𝑖 − 𝑥𝑗)2 
+𝑛
+𝑗=1
+𝑛
+𝑖=1
+= 99 
+Let us denote 𝑥̅ =
+1
+𝑛 ∑ 𝑥𝑖
+𝑛
+𝑖=1   
+The value of 
+1
+99 ∑ (𝑥𝑖 − 𝑥̅)2𝑛
+𝑖=1  is __________ . (Answer in integer) 
+Q.63 Let 𝑋 be a random variable that follows 𝑈𝑛𝑖𝑓𝑜𝑟𝑚(−1,1) distribution. The 
+conditional distribution of the random variable 𝑌 given 𝑋 = 𝑥 is the 
+𝑈𝑛𝑖𝑓𝑜𝑟𝑚(𝑥2 − 0.1, 𝑥2 + 0.1) distribution.  
+The value of  𝑐𝑜𝑟𝑟𝑒𝑙𝑎𝑡𝑖𝑜𝑛(𝑋, 𝑌) is __________ . (Answer in integer) 
+Q.64 Let 𝐴5×5 be a matrix such that each of its elements follows 𝐵𝑒𝑟𝑛𝑜𝑢𝑙𝑙𝑖(𝑝 = 0.50) 
+distribution independently.  
+The probability that the row-sum of the second row and the column-sum of the 
+third column are both equal to 3 is ________ . (Rounded off to two decimal 
+places) 
+Q.65 Let 𝐴 = (𝐼𝑛 −
+1
+𝑛  𝟏𝟏𝑇) be a matrix, where 𝟏 = (1,1,1, … ,1)𝑇 ∈ ℝ𝑛 and 𝐼𝑛 is the 
+identity matrix of order 𝑛. 
+The value of max
+𝑆
+𝑥𝑇𝐴𝑥 , where 𝑆 = {𝑥 ∈ ℝ𝑛| 𝑥𝑇𝑥 = 1}, is __________ . 
+(Answer in integer) 
+ 
+  
+Organizing Institute: IIT Guwahati
+Page 39 of 39

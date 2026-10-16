@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "665863577421",
+    "project_id": "gatex-111",
+    "storage_bucket": "gatex-111.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:665863577421:android:ae7eb7f5a5979464a72104",
+        "android_client_info": {
+          "package_name": "com.yousful.gatex"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "665863577421-l55qggq5r19i1mnifqc9jk50leperdav.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.yousful.gatex",
+            "certificate_hash": "31ac7519da65baf3f667fee3be2b1d84f3bf87aa"
+          }
+        },
+        {
+          "client_id": "665863577421-8vkkqn36t7ic1jed5ic2jetvv1qupiat.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2AF0SW2ANJnVFOQTNm7Zmky2s1hk0z8I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "665863577421-8vkkqn36t7ic1jed5ic2jetvv1qupiat.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "665863577421-c74icelfvm4ovrj60i72cod1aic3kjvf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.yousful.gatex"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

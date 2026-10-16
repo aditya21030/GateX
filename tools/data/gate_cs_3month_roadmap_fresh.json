@@ -1,0 +1,404 @@
+{
+  "meta": {
+    "exam": "GATE CS/IT 2027",
+    "exam_date": "February 2027",
+    "roadmap_type": "3-month (fresh start)",
+    "start_date": "2026-11-01",
+    "end_date": "2027-01-31",
+    "total_weeks": 13,
+    "target": "55+ marks, sub-1000 AIR",
+    "note": "Designed for students starting from absolute zero. Every subject covered from scratch. No prior preparation assumed. Minimum 6 hrs/day weekdays, 8+ hrs weekends. GATE CS has 11 subjects — time is tight, consistency is everything.",
+    "total_marks": 100,
+    "aptitude_marks": 15,
+    "core_marks": 85
+  },
+  "daily_routine": {
+    "weekday": [
+      { "time": "04:00-06:30", "block": "Deep study – new concepts from scratch (lecture + notes)" },
+      { "time": "06:30-07:00", "block": "Error log update + formula revision" },
+      { "time": "20:00-22:00", "block": "PYQ practice + DPP on today's topic" },
+      { "time": "22:00-22:15", "block": "Next-day planning + study plan check" }
+    ],
+    "weekend": [
+      { "time": "04:00-07:30", "block": "Revision – full previous week topics" },
+      { "time": "08:00-10:00", "block": "Topic-wise PYQ set (timed, all years)" },
+      { "time": "10:30-12:00", "block": "Mock test or timed mixed problem set" },
+      { "time": "20:00-21:30", "block": "Mock analysis + error log update" }
+    ],
+    "rules": [
+      "Start every topic from absolute basics – never skip fundamentals",
+      "No passive lecture watching – pause after every concept and solve problems",
+      "PYQs immediately after each topic, not at the end of the week",
+      "Error log: write every wrong answer with mistake type and correct concept",
+      "Sunday evening: plan the full coming week day by day",
+      "GateOverflow is the primary PYQ discussion platform for GATE CS",
+      "Mock tests every Sunday from Week 10 onwards",
+      "General Aptitude: 30 min every Saturday throughout the plan"
+    ]
+  },
+  "subject_weightage": [
+    { "subject": "General Aptitude", "marks": 15, "priority": "High – always 15 marks, easy scoring" },
+    { "subject": "Engineering Mathematics", "marks": "11-15", "priority": "High – Discrete Math + Probability heavy" },
+    { "subject": "Algorithms", "marks": "8-12", "priority": "High" },
+    { "subject": "Operating Systems", "marks": "8-12", "priority": "High" },
+    { "subject": "Computer Networks", "marks": "8-12", "priority": "High" },
+    { "subject": "DBMS", "marks": "6-10", "priority": "High" },
+    { "subject": "Programming & Data Structures", "marks": "6-10", "priority": "High" },
+    { "subject": "Theory of Computation", "marks": "6-10", "priority": "High" },
+    { "subject": "Computer Organization & Architecture", "marks": "6-10", "priority": "High" },
+    { "subject": "Compiler Design", "marks": "4-8", "priority": "Medium" },
+    { "subject": "Digital Logic", "marks": "4-6", "priority": "Medium – low effort, decent marks" }
+  ],
+  "phases": [
+    {
+      "phase": 1,
+      "title": "Engineering Mathematics + Digital Logic + Programming & Data Structures",
+      "weeks": "1-5",
+      "dates": "Nov 1 – Nov 28, 2026",
+      "subjects": ["Engineering Mathematics", "Digital Logic", "Programming & Data Structures"],
+      "note": "Math and DS are the foundation. Every other subject uses these concepts. Start here, build strong.",
+      "weekly_plan": [
+        {
+          "week": 1,
+          "subject": "Engineering Mathematics – Linear Algebra + Calculus",
+          "topics": [
+            "Matrices: types, operations, determinant, rank",
+            "System of linear equations",
+            "Eigenvalues and eigenvectors",
+            "Limits, continuity, differentiability",
+            "Partial derivatives, maxima/minima",
+            "Integration basics"
+          ],
+          "daily_targets": {
+            "Mon": "Matrices: types, operations, determinant, rank, row reduction – lecture from scratch + 10 PYQs",
+            "Tue": "System of linear equations: consistency (Rouche-Capelli), solutions – lecture + DPP",
+            "Wed": "Eigenvalues and eigenvectors, diagonalization – lecture + PYQs",
+            "Thu": "Limits, continuity, differentiability (single variable) – lecture from scratch + PYQs",
+            "Fri": "Partial derivatives, chain rule, maxima/minima (multivariable) – lecture + PYQs",
+            "Sat": "Integration (definite, improper) + LA + Calculus PYQ set (timed, 45 min) + 30 min Aptitude",
+            "Sun": "LA + Calculus full revision + all week wrong answers re-attempt + next week planning"
+          }
+        },
+        {
+          "week": 2,
+          "subject": "Engineering Mathematics – Probability + Discrete Math",
+          "topics": [
+            "Probability axioms, conditional probability, Bayes theorem",
+            "Random variables, distributions (Binomial, Poisson, Normal)",
+            "Expectation, variance",
+            "Set theory, relations, functions",
+            "Propositional logic, predicate logic",
+            "Graph theory: types, connectivity, planarity, coloring",
+            "Combinatorics, recurrence relations"
+          ],
+          "daily_targets": {
+            "Mon": "Probability axioms, conditional probability, Bayes theorem, total probability – lecture from scratch + PYQs",
+            "Tue": "Random variables: PMF, CDF, Binomial, Poisson, Normal – expectation, variance – lecture + DPP",
+            "Wed": "Set theory, relations (reflexive/symmetric/transitive/equivalence), functions – lecture from scratch + PYQs",
+            "Thu": "Propositional logic: connectives, truth tables, tautology, resolution – predicate logic, quantifiers – lecture + PYQs",
+            "Fri": "Graph theory: types, degree, connectivity, Euler/Hamiltonian, planarity, coloring, trees – lecture + PYQs",
+            "Sat": "Combinatorics (permutation, combination, pigeonhole) + recurrence relations + full Engg Math PYQ set (timed) + 30 min Aptitude",
+            "Sun": "Mock mini-test: full Engineering Mathematics (60 min) + analysis + planning"
+          }
+        },
+        {
+          "week": 3,
+          "subject": "Digital Logic",
+          "topics": [
+            "Number systems: binary, octal, hexadecimal, conversions",
+            "Boolean algebra, De Morgan's laws",
+            "K-map minimization (SOP, POS)",
+            "Combinational circuits: MUX, DEMUX, encoder, decoder, adder, subtractor",
+            "Flip-flops: SR, JK, D, T",
+            "Sequential circuits: counters, shift registers",
+            "Hazards, PLDs"
+          ],
+          "daily_targets": {
+            "Mon": "Number systems: binary, octal, hex, conversions, 2's complement, IEEE 754 – lecture from scratch + PYQs",
+            "Tue": "Boolean algebra: theorems, De Morgan, SOP/POS + K-map minimization (2/3/4/5 variable) – lecture + DPP",
+            "Wed": "Combinational circuits: MUX, DEMUX, encoder, decoder, full adder, subtractor – lecture + PYQs",
+            "Thu": "Flip-flops: SR, JK, D, T – state tables, excitation tables – lecture + problems",
+            "Fri": "Sequential circuits: synchronous/asynchronous counters, shift registers, sequence detectors – lecture + PYQs",
+            "Sat": "Hazards, PLDs + full Digital Logic PYQ set (timed, all years) + 30 min Aptitude",
+            "Sun": "Digital Logic full revision + mock mini-test: DL only + planning"
+          }
+        },
+        {
+          "week": 4,
+          "subject": "Programming & Data Structures – C + Linear DS",
+          "topics": [
+            "C: pointers, arrays, structs, dynamic memory",
+            "C: recursion, parameter passing",
+            "Arrays, stacks, queues, linked lists",
+            "Hashing"
+          ],
+          "daily_targets": {
+            "Mon": "C: data types, pointers, pointer arithmetic, arrays, strings – lecture from scratch + PYQs",
+            "Tue": "C: structs, unions, dynamic memory (malloc, calloc, free), scope – lecture + DPP",
+            "Wed": "C: functions, recursion (factorial, fibonacci, tree recursion), parameter passing (value vs reference) – lecture + PYQs",
+            "Thu": "Arrays, stacks, queues (linear, circular), deque – implementations + PYQs",
+            "Fri": "Linked lists: singly, doubly, circular – insert, delete, reverse – lecture + PYQs",
+            "Sat": "Hashing: hash functions, chaining, open addressing (linear/quadratic probing) + C + Linear DS PYQ set (timed) + 30 min Aptitude",
+            "Sun": "C + Linear DS full revision + mock mini-test + planning"
+          }
+        },
+        {
+          "week": 5,
+          "subject": "Programming & Data Structures – Trees + Graphs",
+          "topics": [
+            "Binary trees: traversals, height, diameter",
+            "BST: insert, delete, search, successor",
+            "AVL trees: rotations, balance factor",
+            "Heaps: min-heap, max-heap, heap sort",
+            "Graphs: representations, BFS, DFS",
+            "Spanning trees, topological sort"
+          ],
+          "daily_targets": {
+            "Mon": "Binary trees: inorder, preorder, postorder traversals, height, level order – lecture from scratch + PYQs",
+            "Tue": "BST: insert, delete (all 3 cases), search, inorder successor – lecture + DPP",
+            "Wed": "AVL trees: balance factor, LL/RR/LR/RL rotations, height – lecture + PYQs",
+            "Thu": "Heaps: min-heap, max-heap, heapify, heap sort, priority queue – lecture + problems",
+            "Fri": "Graphs: adjacency matrix vs list, BFS (level order), DFS (recursive + stack) – lecture + PYQs",
+            "Sat": "Topological sort, spanning trees + full DS PYQ set (last 10 years, timed) + 30 min Aptitude",
+            "Sun": "Mock test 1: Engg Math + Digital Logic + full DS (90 min) + analysis"
+          }
+        }
+      ],
+      "phase_end_milestone": "100% Engg Math + Digital Logic + DS PYQs (last 10 years) attempted. Mock 1 score > 50%."
+    },
+    {
+      "phase": 2,
+      "title": "Algorithms + TOC + Compiler Design + OS + DBMS",
+      "weeks": "6-11",
+      "dates": "Nov 29 – Jan 9, 2027",
+      "subjects": ["Algorithms", "Theory of Computation", "Compiler Design", "Operating Systems", "DBMS"],
+      "note": "Core CS theory subjects. Each starts from scratch. High weightage group — do not rush. 6 weeks for 5 subjects.",
+      "weekly_plan": [
+        {
+          "week": 6,
+          "subject": "Algorithms",
+          "topics": [
+            "Asymptotic analysis: Big-O, Omega, Theta",
+            "Recurrence relations: Master theorem, substitution",
+            "Sorting: bubble, insertion, selection, merge, quick, heap, counting, radix",
+            "Searching: binary search, interpolation search",
+            "Divide and conquer",
+            "Greedy algorithms",
+            "Dynamic programming",
+            "Graph algorithms: Dijkstra, Bellman-Ford, Floyd-Warshall, Prim, Kruskal",
+            "Backtracking",
+            "P, NP, NP-complete, NP-hard"
+          ],
+          "daily_targets": {
+            "Mon": "Asymptotic analysis (Big-O, Omega, Theta) + recurrence (Master theorem, substitution) – lecture from scratch + PYQs",
+            "Tue": "Sorting: merge sort, quick sort (analysis, best/worst/avg), heap sort + counting/radix – lecture + DPP",
+            "Wed": "Binary search + Divide and conquer (merge sort recurrence, binary search analysis) – lecture + PYQs",
+            "Thu": "Greedy: activity selection, fractional knapsack, Huffman coding, job scheduling – lecture + problems",
+            "Fri": "DP: LCS, LIS, 0-1 knapsack, matrix chain multiplication, edit distance, coin change – lecture + PYQs",
+            "Sat": "Graph algorithms (Dijkstra, Bellman-Ford, Floyd-Warshall, Prim, Kruskal, topological sort, SCC) + P/NP + full Algorithms PYQ set (timed) + 30 min Aptitude",
+            "Sun": "Algorithms full revision + mock mini-test: Algorithms only + planning"
+          }
+        },
+        {
+          "week": 7,
+          "subject": "Theory of Computation",
+          "topics": [
+            "DFA: design, state minimization",
+            "NFA, epsilon-NFA, NFA-to-DFA conversion",
+            "Regular expressions: construction, equivalence",
+            "Pumping lemma for regular languages",
+            "Context-free grammars: derivations, parse trees",
+            "CNF, GNF conversions",
+            "Pushdown automata (PDA)",
+            "Pumping lemma for CFLs",
+            "Turing machines",
+            "Decidability, undecidability, Halting problem",
+            "Rice's theorem"
+          ],
+          "daily_targets": {
+            "Mon": "DFA: design, state minimization + NFA, epsilon-NFA, NFA-to-DFA conversion – lecture from scratch + PYQs",
+            "Tue": "Regular expressions: construction, RE-to-DFA, equivalence + closure properties of regular languages – lecture + DPP",
+            "Wed": "Pumping lemma (regular) + CFG: derivations, ambiguity, parse trees, leftmost/rightmost derivation – lecture + PYQs",
+            "Thu": "CNF, GNF conversions + PDA (by final state and empty stack) + CFL pumping lemma + closure properties – lecture + problems",
+            "Fri": "Turing machines: design, variants (multi-tape, non-deterministic) + decidability vs undecidability – lecture + PYQs",
+            "Sat": "Halting problem, reduction, Rice's theorem, Post Correspondence Problem + full TOC PYQ set (last 10 years, timed) + 30 min Aptitude",
+            "Sun": "Mock test 2: Engg Math + DL + DS + Algorithms + TOC (full 3-hr mock) + analysis"
+          }
+        },
+        {
+          "week": 8,
+          "subject": "Compiler Design",
+          "topics": [
+            "Phases of compilation",
+            "Lexical analysis: tokens, patterns, LEX",
+            "First and Follow sets",
+            "LL(1) parsing and table construction",
+            "LR(0), SLR(1), CLR(1), LALR(1) parsing",
+            "Syntax-directed translation",
+            "Intermediate code: 3-address code, quadruples",
+            "Code optimization: peephole, DAG",
+            "Symbol table, error recovery"
+          ],
+          "daily_targets": {
+            "Mon": "Phases of compiler + Lexical analysis: tokens, lexemes, patterns, LEX tool – lecture from scratch + PYQs",
+            "Tue": "First set and Follow set computation (practice multiple grammars) – lecture + DPP",
+            "Wed": "LL(1) parsing: conditions, table construction, parsing trace – lecture + PYQs",
+            "Thu": "LR(0), SLR(1) parsing: items, closure, goto, table construction – lecture + problems",
+            "Fri": "CLR(1), LALR(1) parsing: differences, table construction – lecture + PYQs",
+            "Sat": "Syntax-directed translation + 3-address code + code optimization (peephole, DAG) + symbol table + full Compiler Design PYQ set (timed) + 30 min Aptitude",
+            "Sun": "Compiler Design full revision + mock mini-test: TOC + Compiler Design + planning"
+          }
+        },
+        {
+          "week": 9,
+          "subject": "Operating Systems – Process Management + Memory",
+          "topics": [
+            "Processes, threads, PCB, process states",
+            "CPU scheduling: FCFS, SJF, SRTF, Round Robin, Priority",
+            "Process synchronization: semaphores, mutex, monitors",
+            "Critical section problem, Peterson's solution",
+            "Deadlock: conditions, prevention, avoidance, detection, recovery",
+            "Banker's algorithm",
+            "Memory management: contiguous allocation, fragmentation",
+            "Paging: page tables, TLB, multi-level paging",
+            "Virtual memory, demand paging",
+            "Page replacement: FIFO, LRU, Optimal, Belady's anomaly"
+          ],
+          "daily_targets": {
+            "Mon": "Processes vs threads, PCB, process states + CPU scheduling: FCFS, SJF, SRTF, RR, Priority – Gantt chart PYQs – lecture from scratch + PYQs",
+            "Tue": "Process synchronization: semaphores (counting + binary), mutex, monitors + critical section + Peterson's solution – lecture + DPP",
+            "Wed": "Deadlock: 4 conditions, prevention, avoidance (Banker's algorithm), detection, recovery – lecture + PYQs",
+            "Thu": "Memory management: contiguous allocation, internal/external fragmentation + paging: page tables, TLB, address translation – lecture + problems",
+            "Fri": "Multi-level paging + virtual memory, demand paging, page fault handling – lecture + PYQs",
+            "Sat": "Page replacement algorithms (FIFO, LRU, Optimal, Belady's anomaly) + OS Process + Memory PYQ set (timed) + 30 min Aptitude",
+            "Sun": "Mock test 3: + Compiler Design + OS (partial) added to mock scope (full 3 hr) + analysis"
+          }
+        },
+        {
+          "week": 10,
+          "subject": "Operating Systems – File Systems + I/O + DBMS",
+          "topics": [
+            "File systems: inode structure, directory, allocation methods (contiguous, linked, indexed)",
+            "Disk scheduling: FCFS, SSTF, SCAN, C-SCAN, LOOK",
+            "RAID levels (0,1,5)",
+            "I/O subsystem, device drivers, interrupts",
+            "ER model",
+            "Relational model, relational algebra",
+            "SQL",
+            "Normalization: 1NF to BCNF",
+            "Transactions: ACID, serializability, 2PL",
+            "Indexing: B-tree, B+-tree, hashing"
+          ],
+          "daily_targets": {
+            "Mon": "File systems: inode, directory structure, contiguous/linked/indexed allocation + disk scheduling (FCFS, SSTF, SCAN, C-SCAN) – lecture from scratch + PYQs",
+            "Tue": "RAID levels + I/O subsystem + full OS PYQ set (last 10 years, timed) – all OS topics",
+            "Wed": "ER model: entities, attributes, relationships, weak entities, ER-to-relational mapping + relational algebra: select, project, join, division – lecture from scratch + PYQs",
+            "Thu": "SQL: DDL, DML, joins (inner/outer/cross/self), subqueries, aggregation, GROUP BY, HAVING – lecture + DPP",
+            "Fri": "Normalization: functional dependencies, 1NF, 2NF, 3NF, BCNF, decomposition (lossy/lossless), dependency preservation – lecture + PYQs",
+            "Sat": "Transactions (ACID, serializability, conflict serializability, 2PL) + Indexing (B-tree, B+-tree) + full DBMS PYQ set (timed) + 30 min Aptitude",
+            "Sun": "Mock test 4: all subjects covered so far (full 3 hr) + analysis"
+          }
+        },
+        {
+          "week": 11,
+          "subject": "Computer Networks",
+          "topics": [
+            "OSI model: 7 layers, functions",
+            "TCP/IP model: 5 layers",
+            "Physical layer basics",
+            "Data link layer: framing, error detection (CRC, Hamming), error correction",
+            "MAC protocols: ALOHA, CSMA/CD, CSMA/CA",
+            "Network layer: IPv4 addressing, subnetting, CIDR, NAT",
+            "Routing algorithms: distance vector (RIP), link state (OSPF), BGP",
+            "Transport layer: TCP (3-way handshake, flow control, congestion control), UDP",
+            "Application layer: DNS, HTTP, FTP, SMTP, DHCP, SNMP"
+          ],
+          "daily_targets": {
+            "Mon": "OSI + TCP/IP models (every layer function, protocols at each layer) + Physical layer (Nyquist, Shannon) – lecture from scratch + PYQs",
+            "Tue": "Data link layer: framing, error detection (CRC, Hamming code), error correction + ARQ protocols (Stop-and-Wait, Go-Back-N, Selective Repeat) – lecture + DPP",
+            "Wed": "MAC protocols: Pure ALOHA, Slotted ALOHA, CSMA/CD, CSMA/CA + Ethernet + MAC addresses – lecture + PYQs",
+            "Thu": "Network layer: IPv4 addressing, subnetting, CIDR, NAT + routing algorithms (RIP, OSPF, BGP) – lecture + problems",
+            "Fri": "Transport layer: TCP (3-way handshake, 4-way teardown, sliding window, flow control, congestion control – slow start, AIMD) + UDP – lecture + PYQs",
+            "Sat": "Application layer (DNS, HTTP/HTTPS, FTP, SMTP, DHCP) + full Computer Networks PYQ set (last 10 years, timed) + 30 min Aptitude",
+            "Sun": "Mock test 5: full syllabus except CO&A + Aptitude (full 3 hr) + analysis"
+          }
+        }
+      ],
+      "phase_end_milestone": "Algorithms + TOC + Compiler + OS + DBMS + Networks PYQs done. Mock 5 score > 50%. Only CO&A remaining."
+    },
+    {
+      "phase": 3,
+      "title": "Computer Organization & Architecture + General Aptitude + Full Revision + Mocks",
+      "weeks": "12-13",
+      "dates": "Jan 10 – Jan 31, 2027",
+      "subjects": ["Computer Organization & Architecture", "General Aptitude", "All subjects – revision + mock tests"],
+      "note": "Final sprint. CO&A in week 12. Week 13 is pure revision + mocks. No new topics after Jan 20.",
+      "weekly_plan": [
+        {
+          "week": 12,
+          "subject": "Computer Organization & Architecture + General Aptitude Sprint",
+          "topics": [
+            "Number representation: 2's complement, BCD, IEEE 754 floating point",
+            "ALU design, fast adders",
+            "Instruction formats, addressing modes",
+            "CPU: datapath, instruction cycle, hardwired vs microprogrammed control",
+            "Pipelining: stages, structural/data/control hazards, forwarding, stalling",
+            "Cache memory: direct mapped, set-associative, fully associative, replacement policies, write policies",
+            "Main memory: DRAM, address calculation",
+            "I/O organization: polling, interrupts, DMA",
+            "Aptitude: verbal, numerical, analytical reasoning"
+          ],
+          "daily_targets": {
+            "Mon": "Number representation (2's complement, BCD, IEEE 754) + ALU design + instruction formats + addressing modes – lecture from scratch + PYQs",
+            "Tue": "CPU: datapath, instruction cycle, hardwired vs microprogrammed control unit – lecture + DPP",
+            "Wed": "Pipelining: 5-stage pipeline, structural/data/control hazards, data forwarding, branch prediction, stalling – lecture + PYQs",
+            "Thu": "Cache memory: direct mapped, set-associative, fully associative mapping + replacement policies (LRU, FIFO, Random) + write policies (write-through, write-back) – lecture + problems",
+            "Fri": "Main memory organization, DRAM, address calculation + I/O: polling, interrupt-driven, DMA – lecture + PYQs",
+            "Sat": "Full CO&A PYQ set (last 10 years, timed) + Aptitude: verbal ability + numerical ability + analytical reasoning PYQ blitz (last 5 years) + 30 min Aptitude",
+            "Sun": "Mock test 6: FULL SYLLABUS including CO&A + Aptitude (full 3 hr, exam conditions) + analysis"
+          }
+        },
+        {
+          "week": 13,
+          "subject": "Full Revision + Intensive Mocks + Exam",
+          "topics": ["Targeted weak area revision, formula sheets, full mocks, exam"],
+          "daily_targets": {
+            "Mon": "Weakest 2 subjects from Mock 6 – deep drill (3 hrs each: re-study from basics + PYQs)",
+            "Tue": "Mock test 7 (full syllabus + Aptitude, 3 hr, exact exam conditions – morning slot)",
+            "Wed": "Mock 7 analysis + all wrong answers re-attempt + error log",
+            "Thu": "Mock test 8 (full syllabus + Aptitude, 3 hr, exact exam conditions)",
+            "Fri": "Mock 8 analysis + formula sheet revision: Engg Math + DL + DS + Algorithms + TOC + Compiler",
+            "Sat": "Formula sheet revision: OS + DBMS + Networks + CO&A + Aptitude + 30 min Aptitude PYQ blitz",
+            "Sun": "GATE CS/IT 2027 EXAM"
+          }
+        }
+      ],
+      "phase_end_milestone": "8+ full mocks done. All 11 subjects covered from scratch. Formula sheets ready."
+    }
+  ],
+  "mock_schedule": [
+    { "mock": 1, "week": 5, "date_approx": "Nov 28", "scope": "Engg Math + Digital Logic + DS", "duration_min": 90 },
+    { "mock": 2, "week": 7, "date_approx": "Dec 12", "scope": "Engg Math + DL + DS + Algorithms + TOC", "duration_min": 180 },
+    { "mock": 3, "week": 9, "date_approx": "Dec 26", "scope": "+ Compiler Design + OS (Process + Memory)", "duration_min": 180 },
+    { "mock": 4, "week": 10, "date_approx": "Jan 2", "scope": "All covered so far (up to DBMS)", "duration_min": 180 },
+    { "mock": 5, "week": 11, "date_approx": "Jan 9", "scope": "Full syllabus except CO&A + Aptitude", "duration_min": 180 },
+    { "mock": 6, "week": 12, "date_approx": "Jan 16", "scope": "Full syllabus + CO&A + Aptitude", "duration_min": 180 },
+    { "mock": 7, "week": 13, "date_approx": "Jan 20", "scope": "Full syllabus + Aptitude – exam conditions", "duration_min": 180 },
+    { "mock": 8, "week": 13, "date_approx": "Jan 23", "scope": "Full syllabus + Aptitude – exam conditions", "duration_min": 180 }
+  ],
+  "weekly_targets_summary": [
+    { "week": 1, "focus": "Engg Math – Linear Algebra + Calculus", "pyq_goal": "LA + Calculus PYQs (last 10 years)" },
+    { "week": 2, "focus": "Engg Math – Probability + Discrete Math", "pyq_goal": "Full Engg Math PYQ set timed" },
+    { "week": 3, "focus": "Digital Logic (complete)", "pyq_goal": "Full Digital Logic PYQ set (last 10 years)" },
+    { "week": 4, "focus": "DS – C + Linear DS + Hashing", "pyq_goal": "C + Linear DS PYQs" },
+    { "week": 5, "focus": "DS – Trees + Graphs", "pyq_goal": "Full DS PYQ set + Mock 1 (Engg Math + DL + DS)" },
+    { "week": 6, "focus": "Algorithms (complete)", "pyq_goal": "Full Algorithms PYQ set (last 10 years)" },
+    { "week": 7, "focus": "Theory of Computation (complete)", "pyq_goal": "Full TOC PYQ set + Mock 2" },
+    { "week": 8, "focus": "Compiler Design (complete)", "pyq_goal": "Full Compiler Design PYQ set" },
+    { "week": 9, "focus": "OS – Process + Memory Management", "pyq_goal": "OS Process + Memory PYQs + Mock 3" },
+    { "week": 10, "focus": "OS – File/I/O + DBMS (complete)", "pyq_goal": "Full OS + DBMS PYQ set + Mock 4" },
+    { "week": 11, "focus": "Computer Networks (complete)", "pyq_goal": "Full Networks PYQ set + Mock 5 full syllabus" },
+    { "week": 12, "focus": "CO&A (complete) + Aptitude Sprint", "pyq_goal": "Full CO&A PYQ set + Mock 6 full syllabus" },
+    { "week": 13, "focus": "Weak area revision + Mocks 7 + 8 + Exam", "pyq_goal": "8 full mocks done + formula sheets" }
+  ]
+}

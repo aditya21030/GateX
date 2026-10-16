@@ -1,0 +1,1312 @@
+{
+  "exam": "GATE CSIT 2026 - Advanced Conceptual & Analytical Test",
+  "subjects": [
+    {
+      "name": "Engineering Mathematics",
+      "questions": [
+        {
+          "id": "EM_01",
+          "type": "MSQ",
+          "question": "Let A be a 5×5 real symmetric matrix with characteristic polynomial p(λ) = (λ-1)^3(λ-2)^2. Let B = A^3 - 4A^2 + 5I. Consider the following statements:\n\nS1: The trace of B is 14.\nS2: The determinant of B is 0.\nS3: B is positive definite.\nS4: The rank of B is 3.\n\nWhich of the following statements are necessarily true?",
+          "options": [
+            "S1: The trace of B is 14.",
+            "S2: The determinant of B is 0.",
+            "S3: B is positive definite.",
+            "S4: The rank of B is 3."
+          ],
+          "answer": ["S2: The determinant of B is 0.", "S4: The rank of B is 3."]
+        },
+        {
+          "id": "EM_02",
+          "type": "MCQ",
+          "question": "Let X and Y be independent random variables with X ~ Binomial(5, 0.5) and Y ~ Poisson(3). Define Z = X + Y. What is the exact expression for P(Z = 3)? Also determine if Z follows a standard distribution.",
+          "options": [
+            "P(Z=3) = Σ_{k=0}^{3} C(5,k)(0.5)^5 * e^{-3}3^{3-k}/(3-k)!; Z is not a standard distribution.",
+            "P(Z=3) = Σ_{k=0}^{3} C(5,k)(0.5)^k(0.5)^{5-k} * e^{-3}3^{3-k}/(3-k)!; Z is Poisson.",
+            "P(Z=3) = e^{-3}3^3/3! * C(5,3)(0.5)^5; Z is Binomial.",
+            "P(Z=3) = Σ_{k=0}^{3} C(5,k)(0.5)^5 * e^{-3}3^{3-k}/(3-k)!; Z is not a standard distribution."
+          ],
+          "answer": "P(Z=3) = Σ_{k=0}^{3} C(5,k)(0.5)^5 * e^{-3}3^{3-k}/(3-k)!; Z is not a standard distribution."
+        },
+        {
+          "id": "EM_03",
+          "type": "NAT",
+          "question": "A fair coin is tossed until either 3 consecutive heads appear or 3 consecutive tails appear. What is the expected number of tosses? (Give your answer as a rational number in decimal form rounded to 3 decimal places).",
+          "answer": "7.000"
+        },
+        {
+          "id": "EM_04",
+          "type": "MSQ",
+          "question": "Consider the function f(x,y) = x^2 y^2 - 4x^2 - 4y^2 + 8. Which of the following statements about the critical points and their nature are correct?",
+          "options": [
+            "(0,0) is a local maximum.",
+            "(2,2) and (-2,-2) are local minima.",
+            "(2,-2) and (-2,2) are saddle points.",
+            "The Hessian matrix at (0,0) is positive definite."
+          ],
+          "answer": [
+            "(0,0) is a local maximum.",
+            "(2,2) and (-2,-2) are local minima.",
+            "(2,-2) and (-2,2) are saddle points."
+          ]
+        },
+        {
+          "id": "EM_05",
+          "type": "MCQ",
+          "question": "Let A be a 4×4 matrix over R with eigenvalues 1, 2, 3, and 4. Let B be a matrix obtained by interchanging the first and third rows of A. Which of the following statements is true?",
+          "options": [
+            "Trace(B) = trace(A) and det(B) = det(A).",
+            "Trace(B) ≠ trace(A) and det(B) = det(A).",
+            "Trace(B) = trace(A) and det(B) = -det(A).",
+            "Trace(B) ≠ trace(A) and det(B) = -det(A)."
+          ],
+          "answer": "Trace(B) = trace(A) and det(B) = -det(A)."
+        },
+        {
+          "id": "EM_06",
+          "type": "NAT",
+          "question": "Let X have a uniform distribution over the interval [0, 2]. Define Y = X^2. What is the probability that Y > 1 given that X > 0.5? (Round to 4 decimal places).",
+          "answer": "0.6667"
+        },
+        {
+          "id": "EM_07",
+          "type": "MSQ",
+          "question": "Which of the following statements about convergence of sequences of functions are true?",
+          "options": [
+            "Pointwise convergence implies uniform convergence.",
+            "Uniform convergence implies pointwise convergence.",
+            "If f_n converges uniformly to f and each f_n is continuous, then f is continuous.",
+            "If f_n converges pointwise to f and each f_n is continuous, then f is continuous."
+          ],
+          "answer": [
+            "Uniform convergence implies pointwise convergence.",
+            "If f_n converges uniformly to f and each f_n is continuous, then f is continuous."
+          ]
+        },
+        {
+          "id": "EM_08",
+          "type": "MCQ",
+          "question": "In a hypothesis test, the null hypothesis H0: μ = 0 is tested against H1: μ ≠ 0 using a sample of size 25. The sample mean is 1.5 and the sample variance is 4. What is the p-value and the conclusion at α = 0.05?",
+          "options": [
+            "p-value ≈ 0.01; reject H0.",
+            "p-value ≈ 0.02; reject H0.",
+            "p-value ≈ 0.05; fail to reject H0.",
+            "p-value ≈ 0.10; fail to reject H0."
+          ],
+          "answer": "p-value ≈ 0.01; reject H0."
+        },
+        {
+          "id": "EM_09",
+          "type": "NAT",
+          "question": "A 3×3 matrix A has eigenvalues 2, 3, and -1. What is the determinant of A^2 + A - 6I?",
+          "answer": "0"
+        },
+        {
+          "id": "EM_10",
+          "type": "MSQ",
+          "question": "Consider the following statements regarding Markov chains:\n\nS1: A finite Markov chain always has at least one stationary distribution.\nS2: An irreducible aperiodic Markov chain always converges to a stationary distribution.\nS3: The expected return time to a state in an irreducible chain is finite.\nS4: A periodic chain always has multiple stationary distributions.\n\nWhich of the following are correct?",
+          "options": [
+            "S1: A finite Markov chain always has at least one stationary distribution.",
+            "S2: An irreducible aperiodic Markov chain always converges to a stationary distribution.",
+            "S3: The expected return time to a state in an irreducible chain is finite.",
+            "S4: A periodic chain always has multiple stationary distributions."
+          ],
+          "answer": [
+            "S1: A finite Markov chain always has at least one stationary distribution.",
+            "S2: An irreducible aperiodic Markov chain always converges to a stationary distribution.",
+            "S3: The expected return time to a state in an irreducible chain is finite."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Digital Logic",
+      "questions": [
+        {
+          "id": "DL_01",
+          "type": "MCQ",
+          "question": "A digital circuit implements the function F(A,B,C,D) = Σm(0,2,5,7,8,10,13,15) using a 4-to-1 multiplexer with A and B as select lines (A is MSB). The inputs I0, I1, I2, I3 are functions of C and D. Which of the following input assignments correctly implements F?",
+          "options": [
+            "I0 = C'D' + CD, I1 = C'D + CD', I2 = C'D' + CD, I3 = C'D + CD'",
+            "I0 = C'D' + CD, I1 = C'D + CD', I2 = C'D + CD', I3 = C'D' + CD",
+            "I0 = C'D' + CD, I1 = C'D + CD', I2 = C'D' + CD, I3 = C'D + CD'",
+            "I0 = C'D' + CD, I1 = C'D + CD', I2 = C'D + CD', I3 = C'D' + CD"
+          ],
+          "answer": "I0 = C'D' + CD, I1 = C'D + CD', I2 = C'D' + CD, I3 = C'D + CD'"
+        },
+        {
+          "id": "DL_02",
+          "type": "MSQ",
+          "question": "A synchronous sequential circuit has two JK flip-flops with inputs J1 = x, K1 = x', J2 = x'Q1, K2 = x Q1. The output z = Q1 Q2'. Starting from state Q1Q2 = 00, what are the possible next states for input x = 1? Which states are reachable from the initial state?",
+          "options": [
+            "For x=1: Q1Q2 = 10",
+            "For x=1: Q1Q2 = 11",
+            "State 00 is reachable.",
+            "State 01 is reachable."
+          ],
+          "answer": [
+            "For x=1: Q1Q2 = 10",
+            "State 00 is reachable.",
+            "State 01 is reachable."
+          ]
+        },
+        {
+          "id": "DL_03",
+          "type": "NAT",
+          "question": "A 4-bit carry-lookahead adder uses full adders and carry lookahead logic. Each full adder has a propagation delay of 2 ns for sum and 1 ns for carry. The carry lookahead logic has a delay of 3 ns. What is the worst-case delay (in ns) for the sum output of the most significant bit?",
+          "answer": "8"
+        },
+        {
+          "id": "DL_04",
+          "type": "MCQ",
+          "question": "A 3-bit counter using D flip-flops is designed to count in the sequence 0, 2, 4, 6, 1, 3, 5, 7. Unused states are treated as don't-care conditions. The input equations for D2 (MSB), D1, and D0 are derived. Which of the following equations for D1 is correct?",
+          "options": [
+            "D1 = Q1'Q0 + Q1Q0'",
+            "D1 = Q1'Q0' + Q1Q0",
+            "D1 = Q1'Q0 + Q1'Q0'",
+            "D1 = Q1Q0 + Q1'Q0'"
+          ],
+          "answer": "D1 = Q1'Q0 + Q1'Q0'"
+        },
+        {
+          "id": "DL_05",
+          "type": "MSQ",
+          "question": "Which of the following statements about latches and flip-flops are correct?",
+          "options": [
+            "A latch is level-sensitive, while a flip-flop is edge-triggered.",
+            "A D flip-flop can be constructed from two D latches in a master-slave configuration.",
+            "A JK flip-flop has a race condition when both J and K are 1 and the clock is high.",
+            "A T flip-flop toggles its output when T=1 and clock edge occurs."
+          ],
+          "answer": [
+            "A latch is level-sensitive, while a flip-flop is edge-triggered.",
+            "A D flip-flop can be constructed from two D latches in a master-slave configuration.",
+            "A T flip-flop toggles its output when T=1 and clock edge occurs."
+          ]
+        },
+        {
+          "id": "DL_06",
+          "type": "MCQ",
+          "question": "The Boolean function F(A,B,C) = ΠM(0,2,4,6) (maxterm list) can be implemented using a 3-to-8 decoder with active low outputs and a single NOR gate. Which of the following is the correct connection?",
+          "options": [
+            "Connect outputs corresponding to minterms 1,3,5,7 to NOR.",
+            "Connect outputs corresponding to minterms 0,2,4,6 to NOR.",
+            "Connect outputs corresponding to maxterms 1,3,5,7 to NOR.",
+            "Connect outputs corresponding to maxterms 0,2,4,6 to NOR."
+          ],
+          "answer": "Connect outputs corresponding to minterms 1,3,5,7 to NOR."
+        },
+        {
+          "id": "DL_07",
+          "type": "NAT",
+          "question": "A 4-bit binary ripple counter using negative-edge-triggered T flip-flops is initially cleared. How many clock pulses are required to reach the state 1010?",
+          "answer": "10"
+        },
+        {
+          "id": "DL_08",
+          "type": "MSQ",
+          "question": "Consider the following combinational circuits: half adder, full adder, 2-to-4 decoder, 4-to-1 multiplexer. Which of these circuits can be used to implement any Boolean function of two variables?",
+          "options": [
+            "Half adder",
+            "Full adder",
+            "2-to-4 decoder with appropriate OR gates",
+            "4-to-1 multiplexer"
+          ],
+          "answer": [
+            "2-to-4 decoder with appropriate OR gates",
+            "4-to-1 multiplexer"
+          ]
+        },
+        {
+          "id": "DL_09",
+          "type": "MCQ",
+          "question": "A sequence detector is designed to detect the overlapping pattern '101' in a serial input stream. The state diagram has three states: S0 (no partial match), S1 (matched '1'), S2 (matched '10'). What is the output for the input sequence 10101?",
+          "options": [
+            "0 0 1 0 1",
+            "0 0 1 0 0",
+            "0 1 0 1 0",
+            "0 0 1 1 0"
+          ],
+          "answer": "0 0 1 0 1"
+        },
+        {
+          "id": "DL_10",
+          "type": "NAT",
+          "question": "In a 4-bit binary multiplier using AND gates and full adders, how many full adders are required? (Assume no carry into the least significant stage).",
+          "answer": "12"
+        }
+      ]
+    },
+    {
+      "name": "Computer Organization and Architecture",
+      "questions": [
+        {
+          "id": "COA_01",
+          "type": "MCQ",
+          "question": "A CPU has a 32-bit address bus and a 16-bit data bus. The word size is 16 bits. The memory is byte-addressable. What is the maximum size of directly addressable memory in bytes? If the CPU uses a 2-way set associative cache with 64 sets and a block size of 32 bytes, how many bits are used for the tag, index, and offset?",
+          "options": [
+            "Addressable memory = 4 GB, Tag=20, Index=6, Offset=5",
+            "Addressable memory = 4 GB, Tag=21, Index=6, Offset=5",
+            "Addressable memory = 4 GB, Tag=20, Index=5, Offset=5",
+            "Addressable memory = 4 GB, Tag=21, Index=5, Offset=6"
+          ],
+          "answer": "Addressable memory = 4 GB, Tag=20, Index=6, Offset=5"
+        },
+        {
+          "id": "COA_02",
+          "type": "MSQ",
+          "question": "Consider a pipelined processor with 5 stages having latencies: IF=200ps, ID=150ps, EX=250ps, MEM=300ps, WB=200ps. The pipeline uses a clock period equal to the maximum stage latency plus 50ps for latch overhead. Assuming no hazards, what is the speedup over a non-pipelined implementation? Which of the following statements are true?",
+          "options": [
+            "The clock cycle time is 350ps.",
+            "The speedup over non-pipelined is approximately 4.0.",
+            "The throughput of the pipeline is 2.86×10^9 instructions per second.",
+            "If the pipeline is filled with 100 instructions, the total time is 350ps × (100+5-1)."
+          ],
+          "answer": [
+            "The clock cycle time is 350ps.",
+            "The throughput of the pipeline is 2.86×10^9 instructions per second.",
+            "If the pipeline is filled with 100 instructions, the total time is 350ps × (100+5-1)."
+          ]
+        },
+        {
+          "id": "COA_03",
+          "type": "NAT",
+          "question": "A computer has a 4-way set associative cache with 256 KB data capacity. The block size is 64 bytes. The physical address is 32 bits. What is the number of bits in the tag field?",
+          "answer": "16"
+        },
+        {
+          "id": "COA_04",
+          "type": "MCQ",
+          "question": "A machine has a 32-bit architecture. The instruction format is: Opcode (6 bits), Register1 (5 bits), Register2 (5 bits), and Immediate (16 bits). The machine has 32 general-purpose registers. Which addressing mode is used when the effective address is the sum of the contents of Register1 and the sign-extended immediate value?",
+          "options": [
+            "Register indirect with displacement",
+            "Indexed addressing",
+            "Base plus offset",
+            "Relative addressing"
+          ],
+          "answer": "Base plus offset"
+        },
+        {
+          "id": "COA_05",
+          "type": "MSQ",
+          "question": "Which of the following statements about virtual memory are true?",
+          "options": [
+            "Virtual memory allows programs to be larger than physical memory.",
+            "Page tables are used to map virtual addresses to physical addresses.",
+            "A TLB (Translation Lookaside Buffer) is a hardware cache for page table entries.",
+            "Demand paging loads entire program into memory before execution."
+          ],
+          "answer": [
+            "Virtual memory allows programs to be larger than physical memory.",
+            "Page tables are used to map virtual addresses to physical addresses.",
+            "A TLB (Translation Lookaside Buffer) is a hardware cache for page table entries."
+          ]
+        },
+        {
+          "id": "COA_06",
+          "type": "MCQ",
+          "question": "Consider a 5-stage pipelined processor with forwarding and hazard detection. The following sequence of instructions is executed: \nI1: ADD R1, R2, R3\nI2: SUB R4, R1, R5\nI3: AND R6, R1, R7\nI4: OR R8, R4, R9\nHow many stalls (if any) are needed if no forwarding is available and the processor uses operand forwarding?",
+          "options": [
+            "No forwarding: 2 stalls; with forwarding: 0 stalls",
+            "No forwarding: 3 stalls; with forwarding: 1 stall",
+            "No forwarding: 2 stalls; with forwarding: 1 stall",
+            "No forwarding: 3 stalls; with forwarding: 0 stalls"
+          ],
+          "answer": "No forwarding: 2 stalls; with forwarding: 0 stalls"
+        },
+        {
+          "id": "COA_07",
+          "type": "NAT",
+          "question": "A disk drive has 8 double-sided platters, each surface has 200 tracks, and each track has 50 sectors of 512 bytes. The disk rotates at 7200 rpm. What is the maximum data transfer rate in bytes per second (assuming continuous reading)?",
+          "answer": "30720000"
+        },
+        {
+          "id": "COA_08",
+          "type": "MSQ",
+          "question": "Which of the following are valid addressing modes in a typical RISC architecture?",
+          "options": [
+            "Register direct",
+            "Immediate",
+            "Register indirect",
+            "Memory to memory"
+          ],
+          "answer": [
+            "Register direct",
+            "Immediate",
+            "Register indirect"
+          ]
+        },
+        {
+          "id": "COA_09",
+          "type": "MCQ",
+          "question": "A CPU has a 16-bit instruction format with following fields: Opcode (4 bits), two register operands (3 bits each), and an immediate operand (6 bits). The immediate operand is used as an offset in a base-plus-index addressing mode. If the base register contains 0x1000 and the index register contains 0x0020, and the immediate field is 0x0C (12 decimal), what is the effective address?",
+          "options": [
+            "0x102C",
+            "0x112C",
+            "0x1030",
+            "0x102C"
+          ],
+          "answer": "0x102C"
+        },
+        {
+          "id": "COA_10",
+          "type": "NAT",
+          "question": "In a 4-stage pipeline (F, D, X, W) with branch instructions that take effect in the X stage, and we have a branch taken with no branch prediction (always assume not taken). What is the branch penalty in terms of wasted cycles? Assume we flush the instructions in the pipeline.",
+          "answer": "3"
+        }
+      ]
+    },
+    {
+      "name": "Programming and Data Structures",
+      "questions": [
+        {
+          "id": "PDS_01",
+          "type": "MCQ",
+          "question": "Consider the following C program:\n\n```c\n#include <stdio.h>\nint fun(int n, int *fp) {\n    int t, f;\n    if (n <= 1) {\n        *fp = 1;\n        return 1;\n    }\n    t = fun(n-1, fp);\n    f = t + *fp;\n    *fp = t;\n    return f;\n}\nint main() {\n    int x = 0;\n    printf(\"%d\\n\", fun(5, &x));\n    return 0;\n}\n```\nWhat is the output?",
+          "options": [
+            "8",
+            "10",
+            "13",
+            "15"
+          ],
+          "answer": "8"
+        },
+        {
+          "id": "PDS_02",
+          "type": "MSQ",
+          "question": "Which of the following statements about binary search trees (BST) are correct?",
+          "options": [
+            "Inorder traversal of a BST yields sorted order.",
+            "The worst-case time complexity for search, insert, and delete is O(n) for an unbalanced BST.",
+            "AVL trees guarantee O(log n) time for these operations.",
+            "A BST with n nodes has exactly n-1 edges."
+          ],
+          "answer": [
+            "Inorder traversal of a BST yields sorted order.",
+            "The worst-case time complexity for search, insert, and delete is O(n) for an unbalanced BST.",
+            "AVL trees guarantee O(log n) time for these operations.",
+            "A BST with n nodes has exactly n-1 edges."
+          ]
+        },
+        {
+          "id": "PDS_03",
+          "type": "NAT",
+          "question": "What is the output of the following C code?\n\n```c\n#include <stdio.h>\nint main() {\n    int a[5] = {1,2,3,4,5};\n    int *p = a;\n    printf(\"%d, %d, %d\", *p + 2, *(p+2), *(p+3)-1);\n    return 0;\n}\n```",
+          "answer": "3,3,4"
+        },
+        {
+          "id": "PDS_04",
+          "type": "MCQ",
+          "question": "A hash table of size 10 uses open addressing with linear probing. The hash function is h(k) = k mod 10. Insert keys 22, 31, 43, 54, 61, 73 in that order. What is the average number of probes required for a successful search of all keys?",
+          "options": [
+            "1.0",
+            "1.5",
+            "2.0",
+            "2.5"
+          ],
+          "answer": "2.0"
+        },
+        {
+          "id": "PDS_05",
+          "type": "MSQ",
+          "question": "Which of the following data structures can be used to implement a priority queue efficiently?",
+          "options": [
+            "Array (unsorted)",
+            "Linked list (sorted)",
+            "Binary heap",
+            "AVL tree"
+          ],
+          "answer": [
+            "Binary heap",
+            "AVL tree"
+          ]
+        },
+        {
+          "id": "PDS_06",
+          "type": "MCQ",
+          "question": "Consider a recursive function that computes the nth Fibonacci number. The recurrence is F(n) = F(n-1) + F(n-2). What is the time complexity of a naive recursive implementation and the space complexity (excluding call stack)?",
+          "options": [
+            "O(2^n) time, O(1) space",
+            "O(2^n) time, O(n) space",
+            "O(n) time, O(1) space",
+            "O(n) time, O(n) space"
+          ],
+          "answer": "O(2^n) time, O(1) space"
+        },
+        {
+          "id": "PDS_07",
+          "type": "NAT",
+          "question": "A complete binary tree has 1024 nodes. What is the number of leaf nodes?",
+          "answer": "512"
+        },
+        {
+          "id": "PDS_08",
+          "type": "MSQ",
+          "question": "Which of the following operations can be performed in O(1) time on a stack implemented using an array, assuming it is not full?",
+          "options": [
+            "push",
+            "pop",
+            "peek",
+            "is_empty"
+          ],
+          "answer": [
+            "push",
+            "pop",
+            "peek",
+            "is_empty"
+          ]
+        },
+        {
+          "id": "PDS_09",
+          "type": "MCQ",
+          "question": "Given a linked list with a loop, how can we detect the start of the loop? Floyd's cycle detection algorithm uses two pointers, slow and fast. If the slow pointer moves one step and fast moves two steps, and they meet at a point, then to find the start, we reset slow to head and move both one step at a time. What is the number of steps required to reach the start from the meeting point?",
+          "options": [
+            "The distance from head to start equals the distance from meeting point to start.",
+            "The distance from head to start equals the distance from meeting point to start plus some multiple of the loop length.",
+            "It depends on the loop length.",
+            "It is always equal to the number of nodes in the loop."
+          ],
+          "answer": "The distance from head to start equals the distance from meeting point to start."
+        },
+        {
+          "id": "PDS_10",
+          "type": "NAT",
+          "question": "What is the output of the following C program?\n\n```c\n#include <stdio.h>\nint main() {\n    int i = 0, j = 0;\n    for (i = 0; i < 3; i++)\n        for (j = 0; j < 3; j++)\n            if (i == j) continue;\n            else printf(\"%d%d \", i, j);\n    return 0;\n}\n```",
+          "answer": "01 02 10 12 20 21"
+        }
+      ]
+    },
+    {
+      "name": "Algorithms",
+      "questions": [
+        {
+          "id": "ALG_01",
+          "type": "MCQ",
+          "question": "Consider the following recurrence: T(n) = 3T(n/2) + n^2. Which case of the Master Theorem applies and what is the solution?",
+          "options": [
+            "Case 1: Θ(n^2)",
+            "Case 2: Θ(n^2 log n)",
+            "Case 3: Θ(n^2)",
+            "Case 3: Θ(n^3)"
+          ],
+          "answer": "Case 3: Θ(n^2)"
+        },
+        {
+          "id": "ALG_02",
+          "type": "MSQ",
+          "question": "Which of the following problems can be solved optimally using a greedy algorithm?",
+          "options": [
+            "Activity selection",
+            "Fractional knapsack",
+            "0/1 knapsack",
+            "Huffman coding"
+          ],
+          "answer": [
+            "Activity selection",
+            "Fractional knapsack",
+            "Huffman coding"
+          ]
+        },
+        {
+          "id": "ALG_03",
+          "type": "NAT",
+          "question": "What is the minimum number of colors needed to color a graph that is a complete bipartite graph K_{3,3}?",
+          "answer": "2"
+        },
+        {
+          "id": "ALG_04",
+          "type": "MCQ",
+          "question": "Consider the following statements about dynamic programming:\n\nS1: Dynamic programming is used when the problem has overlapping subproblems and optimal substructure.\nS2: Memoization is a top-down approach and tabulation is bottom-up.\nS3: The Fibonacci sequence can be computed using DP.\n\nWhich of the following is correct?",
+          "options": [
+            "Only S1 and S2 are correct.",
+            "Only S2 and S3 are correct.",
+            "All S1, S2, S3 are correct.",
+            "None are correct."
+          ],
+          "answer": "All S1, S2, S3 are correct."
+        },
+        {
+          "id": "ALG_05",
+          "type": "MSQ",
+          "question": "Which of the following sorting algorithms are comparison-based and have a worst-case time complexity of O(n log n)?",
+          "options": [
+            "Merge sort",
+            "Heap sort",
+            "Quick sort (with random pivot)",
+            "Insertion sort"
+          ],
+          "answer": [
+            "Merge sort",
+            "Heap sort"
+          ]
+        },
+        {
+          "id": "ALG_06",
+          "type": "MCQ",
+          "question": "In Dijkstra's algorithm for finding shortest paths from a single source, which of the following is the correct data structure for the priority queue to achieve O((V+E) log V) time?",
+          "options": [
+            "Binary heap",
+            "Fibonacci heap",
+            "Array",
+            "Linked list"
+          ],
+          "answer": "Binary heap"
+        },
+        {
+          "id": "ALG_07",
+          "type": "NAT",
+          "question": "What is the number of edges in a minimum spanning tree of a graph with V vertices?",
+          "answer": "V-1"
+        },
+        {
+          "id": "ALG_08",
+          "type": "MSQ",
+          "question": "Which of the following graph algorithms can be used to detect cycles in a directed graph?",
+          "options": [
+            "DFS (with three colors)",
+            "Topological sort (Kahn's algorithm)",
+            "Bellman-Ford algorithm",
+            "Floyd-Warshall algorithm"
+          ],
+          "answer": [
+            "DFS (with three colors)",
+            "Topological sort (Kahn's algorithm)"
+          ]
+        },
+        {
+          "id": "ALG_09",
+          "type": "MCQ",
+          "question": "Consider the matrix chain multiplication problem for matrices with dimensions: A1 (5×10), A2 (10×3), A3 (3×12), A4 (12×5). What is the minimum number of scalar multiplications needed to compute the product?",
+          "options": [
+            "360",
+            "390",
+            "420",
+            "450"
+          ],
+          "answer": "390"
+        },
+        {
+          "id": "ALG_10",
+          "type": "NAT",
+          "question": "In the Ford-Fulkerson algorithm for maximum flow, if we use Edmonds-Karp (BFS for augmenting path), what is the time complexity in terms of V and E? (Assume integer capacities).",
+          "answer": "O(VE^2)"
+        }
+      ]
+    },
+    {
+      "name": "Theory of Computation",
+      "questions": [
+        {
+          "id": "TOC_01",
+          "type": "MCQ",
+          "question": "Which of the following languages is not context-free?",
+          "options": [
+            "L = {a^n b^n c^n | n ≥ 0}",
+            "L = {a^i b^j c^k | i=j or j=k}",
+            "L = {w w^R | w ∈ {a,b}*}",
+            "L = {a^n b^n | n ≥ 0}"
+          ],
+          "answer": "L = {a^n b^n c^n | n ≥ 0}"
+        },
+        {
+          "id": "TOC_02",
+          "type": "MSQ",
+          "question": "Which of the following statements about regular languages are true?",
+          "options": [
+            "Every finite language is regular.",
+            "The union of two regular languages is regular.",
+            "The complement of a regular language is regular.",
+            "The language {a^n b^n | n ≥ 0} is regular."
+          ],
+          "answer": [
+            "Every finite language is regular.",
+            "The union of two regular languages is regular.",
+            "The complement of a regular language is regular."
+          ]
+        },
+        {
+          "id": "TOC_03",
+          "type": "NAT",
+          "question": "What is the minimum number of states in a DFA that accepts the language of all strings over {0,1} that contain an even number of 0's and an odd number of 1's?",
+          "answer": "4"
+        },
+        {
+          "id": "TOC_04",
+          "type": "MCQ",
+          "question": "Consider the grammar:\nS → AB | ε\nA → aA | a\nB → bB | b\nWhat is the language generated by this grammar?",
+          "options": [
+            "a^+ b^+",
+            "a^* b^*",
+            "a^+ b^* | a^* b^+",
+            "a^+ b^* ∪ a^* b^+"
+          ],
+          "answer": "a^+ b^* ∪ a^* b^+"
+        },
+        {
+          "id": "TOC_05",
+          "type": "MSQ",
+          "question": "Which of the following are true for a pushdown automaton (PDA)?",
+          "options": [
+            "A PDA has a stack and can recognize context-free languages.",
+            "Deterministic PDA can recognize all context-free languages.",
+            "Non-deterministic PDA is more powerful than deterministic PDA.",
+            "Every language accepted by a PDA is context-free."
+          ],
+          "answer": [
+            "A PDA has a stack and can recognize context-free languages.",
+            "Non-deterministic PDA is more powerful than deterministic PDA.",
+            "Every language accepted by a PDA is context-free."
+          ]
+        },
+        {
+          "id": "TOC_06",
+          "type": "MCQ",
+          "question": "Which of the following is undecidable for a Turing machine?",
+          "options": [
+            "Whether the language accepted is empty.",
+            "Whether a given input string is accepted.",
+            "Whether two Turing machines accept the same language.",
+            "Whether the machine halts on a given input."
+          ],
+          "answer": "Whether two Turing machines accept the same language."
+        },
+        {
+          "id": "TOC_07",
+          "type": "NAT",
+          "question": "How many states are required in a DFA to recognize the language L = {w ∈ {0,1}* | w ends with 00 or 11}?",
+          "answer": "5"
+        },
+        {
+          "id": "TOC_08",
+          "type": "MSQ",
+          "question": "Which of the following problems are decidable for a context-free grammar?",
+          "options": [
+            "Whether the grammar generates an empty language.",
+            "Whether the grammar generates a finite language.",
+            "Whether the grammar is ambiguous.",
+            "Whether the grammar generates a given string."
+          ],
+          "answer": [
+            "Whether the grammar generates an empty language.",
+            "Whether the grammar generates a given string."
+          ]
+        },
+        {
+          "id": "TOC_09",
+          "type": "MCQ",
+          "question": "Consider the following CFG:\nS → aS | bS | ε\nWhich of the following is true?",
+          "options": [
+            "The grammar is ambiguous.",
+            "The grammar is unambiguous.",
+            "The language is regular.",
+            "The language is not regular."
+          ],
+          "answer": "The language is regular."
+        },
+        {
+          "id": "TOC_10",
+          "type": "NAT",
+          "question": "What is the pumping lemma constant (pumping length) for the regular language L = {0^n 1^n | n ≥ 0}? (This language is not regular, but if we assume it is, what is the minimal p?)",
+          "answer": "0"
+        }
+      ]
+    },
+    {
+      "name": "Compiler Design",
+      "questions": [
+        {
+          "id": "CD_01",
+          "type": "MCQ",
+          "question": "Consider the following grammar:\nE → E + T | T\nT → T * F | F\nF → (E) | id\n\nWhich of the following is the FIRST set of the non-terminal E?",
+          "options": [
+            "{ (, id }",
+            "{ (, id, + }",
+            "{ (, id, *, + }",
+            "{ (, id, * }"
+          ],
+          "answer": "{ (, id }"
+        },
+        {
+          "id": "CD_02",
+          "type": "MSQ",
+          "question": "Which of the following are true about LR parsers?",
+          "options": [
+            "LR parsers are bottom-up parsers.",
+            "SLR parser is more powerful than LALR parser.",
+            "Canonical LR parser has more states than LALR.",
+            "LR parsers can handle all context-free grammars."
+          ],
+          "answer": [
+            "LR parsers are bottom-up parsers.",
+            "Canonical LR parser has more states than LALR."
+          ]
+        },
+        {
+          "id": "CD_03",
+          "type": "NAT",
+          "question": "In a certain programming language, the grammar is ambiguous. A shift-reduce parser is used. If a conflict occurs, what action is usually taken to resolve it? (Enter the answer as a number: 1 for shift, 2 for reduce, 3 for both, 4 for error).",
+          "answer": "1"
+        },
+        {
+          "id": "CD_04",
+          "type": "MCQ",
+          "question": "Consider the following grammar for arithmetic expressions:\nE → E + T | T\nT → T * F | F\nF → (E) | id\nWhich of the following is the associativity of the + operator?",
+          "options": [
+            "Left associative",
+            "Right associative",
+            "Not associative",
+            "Cannot be determined"
+          ],
+          "answer": "Left associative"
+        },
+        {
+          "id": "CD_05",
+          "type": "MSQ",
+          "question": "Which of the following are phases of a compiler?",
+          "options": [
+            "Lexical analysis",
+            "Syntax analysis",
+            "Semantic analysis",
+            "Code generation"
+          ],
+          "answer": [
+            "Lexical analysis",
+            "Syntax analysis",
+            "Semantic analysis",
+            "Code generation"
+          ]
+        },
+        {
+          "id": "CD_06",
+          "type": "MCQ",
+          "question": "In a compiler, the symbol table is used during which phase(s)?",
+          "options": [
+            "Only lexical analysis",
+            "Only syntax analysis",
+            "All phases from lexical analysis to code generation",
+            "Only semantic analysis"
+          ],
+          "answer": "All phases from lexical analysis to code generation"
+        },
+        {
+          "id": "CD_07",
+          "type": "NAT",
+          "question": "Consider the expression: a = b + c * d. How many temporary variables are required in three-address code if we use the simplest translation?",
+          "answer": "2"
+        },
+        {
+          "id": "CD_08",
+          "type": "MSQ",
+          "question": "Which of the following are code optimization techniques?",
+          "options": [
+            "Constant folding",
+            "Dead code elimination",
+            "Loop unrolling",
+            "Inlining"
+          ],
+          "answer": [
+            "Constant folding",
+            "Dead code elimination",
+            "Loop unrolling",
+            "Inlining"
+          ]
+        },
+        {
+          "id": "CD_09",
+          "type": "MCQ",
+          "question": "Consider the following grammar:\nS → aS | aSbS | ε\nThis grammar is ambiguous. Which of the following is a correct unambiguous grammar for the same language?",
+          "options": [
+            "S → aS | aSbS | ε (no change)",
+            "S → aS | ε ; S → bS | ε",
+            "S → aS | aSbS | ε with precedence rules",
+            "The language is inherently ambiguous."
+          ],
+          "answer": "The language is inherently ambiguous."
+        },
+        {
+          "id": "CD_10",
+          "type": "NAT",
+          "question": "In a recursive descent parser, the grammar must be ______. (Fill in the blank with a term: e.g., LL(1), LR(0), etc.)",
+          "answer": "LL(1)"
+        }
+      ]
+    },
+    {
+      "name": "Operating Systems",
+      "questions": [
+        {
+          "id": "OS_01",
+          "type": "MCQ",
+          "question": "Consider the following set of processes with arrival times and CPU burst times:\nP1: arrival=0, burst=5\nP2: arrival=1, burst=3\nP3: arrival=2, burst=1\nP4: arrival=3, burst=2\nIf we use the Shortest Job First (SJF) scheduling (non-preemptive), what is the average waiting time?",
+          "options": [
+            "2.0",
+            "2.5",
+            "3.0",
+            "3.5"
+          ],
+          "answer": "3.0"
+        },
+        {
+          "id": "OS_02",
+          "type": "MSQ",
+          "question": "Which of the following are necessary conditions for a deadlock to occur?",
+          "options": [
+            "Mutual exclusion",
+            "Hold and wait",
+            "No preemption",
+            "Circular wait"
+          ],
+          "answer": [
+            "Mutual exclusion",
+            "Hold and wait",
+            "No preemption",
+            "Circular wait"
+          ]
+        },
+        {
+          "id": "OS_03",
+          "type": "NAT",
+          "question": "In a paging system, the page size is 4 KB. The physical memory is 256 MB, and the logical address space is 2^32 bytes. How many bits are used for the page number and offset? (Enter as page bits, offset bits: e.g., 20,12)",
+          "answer": "20,12"
+        },
+        {
+          "id": "OS_04",
+          "type": "MCQ",
+          "question": "Consider the following code for a bounded buffer producer-consumer problem using semaphores:\n\nSemaphore empty = n, full = 0, mutex = 1;\nProducer:\nwait(empty);\nwait(mutex);\n// produce\nsignal(mutex);\nsignal(full);\n\nConsumer:\nwait(full);\nwait(mutex);\n// consume\nsignal(mutex);\nsignal(empty);\n\nWhat would happen if the order of wait(empty) and wait(mutex) were swapped in the producer?",
+          "options": [
+            "No effect.",
+            "Possible deadlock.",
+            "Race condition on buffer.",
+            "Buffer overflow."
+          ],
+          "answer": "Possible deadlock."
+        },
+        {
+          "id": "OS_05",
+          "type": "MSQ",
+          "question": "Which of the following are true about virtual memory?",
+          "options": [
+            "Demand paging brings pages into memory only when needed.",
+            "Thrashing occurs when the system spends too much time swapping.",
+            "Page replacement algorithms include LRU and FIFO.",
+            "Virtual memory is always slower than physical memory."
+          ],
+          "answer": [
+            "Demand paging brings pages into memory only when needed.",
+            "Thrashing occurs when the system spends too much time swapping.",
+            "Page replacement algorithms include LRU and FIFO."
+          ]
+        },
+        {
+          "id": "OS_06",
+          "type": "MCQ",
+          "question": "Which of the following scheduling algorithms is preemptive?",
+          "options": [
+            "SJF (non-preemptive)",
+            "Round Robin",
+            "FCFS",
+            "Priority scheduling (non-preemptive)"
+          ],
+          "answer": "Round Robin"
+        },
+        {
+          "id": "OS_07",
+          "type": "NAT",
+          "question": "In a file system, a file has 10 direct block pointers, one single indirect, one double indirect, and one triple indirect. Block size is 1 KB and block number is 4 bytes. What is the maximum file size (in KB)?",
+          "answer": "16843018"
+        },
+        {
+          "id": "OS_08",
+          "type": "MSQ",
+          "question": "Which of the following are true about semaphores?",
+          "options": [
+            "A binary semaphore can be used for mutual exclusion.",
+            "Counting semaphore can have a value greater than 1.",
+            "Semaphores are used for synchronization between processes.",
+            "Semaphore operations are atomic."
+          ],
+          "answer": [
+            "A binary semaphore can be used for mutual exclusion.",
+            "Counting semaphore can have a value greater than 1.",
+            "Semaphores are used for synchronization between processes.",
+            "Semaphore operations are atomic."
+          ]
+        },
+        {
+          "id": "OS_09",
+          "type": "MCQ",
+          "question": "Consider the following page reference string: 1 2 3 4 2 1 5 6 2 1 2 3 7 6 3 2 1 2 3 6. Using the Optimal page replacement algorithm with 3 frames, how many page faults occur?",
+          "options": [
+            "10",
+            "11",
+            "12",
+            "13"
+          ],
+          "answer": "11"
+        },
+        {
+          "id": "OS_10",
+          "type": "NAT",
+          "question": "What is the turnaround time of a process P that arrives at time 0, has a CPU burst of 8, and is scheduled using Round Robin with time quantum 3, assuming no context switch overhead?",
+          "answer": "12"
+        }
+      ]
+    },
+    {
+      "name": "Database Management Systems",
+      "questions": [
+        {
+          "id": "DB_01",
+          "type": "MCQ",
+          "question": "Consider the relation R(A, B, C, D) with functional dependencies:\nA → B, B → C, C → D, and D → A.\nWhat is the highest normal form of R?",
+          "options": [
+            "1NF",
+            "2NF",
+            "3NF",
+            "BCNF"
+          ],
+          "answer": "BCNF"
+        },
+        {
+          "id": "DB_02",
+          "type": "MSQ",
+          "question": "Which of the following are true about SQL?",
+          "options": [
+            "SELECT statement can have a WHERE clause.",
+            "GROUP BY is used to group rows with same values.",
+            "HAVING is used to filter groups.",
+            "ORDER BY sorts the result."
+          ],
+          "answer": [
+            "SELECT statement can have a WHERE clause.",
+            "GROUP BY is used to group rows with same values.",
+            "HAVING is used to filter groups.",
+            "ORDER BY sorts the result."
+          ]
+        },
+        {
+          "id": "DB_03",
+          "type": "NAT",
+          "question": "Given a relation R(A,B,C) with functional dependencies: A → B, B → C. What is the number of superkeys that contain A? (Assume A is not necessarily a candidate key).",
+          "answer": "4"
+        },
+        {
+          "id": "DB_04",
+          "type": "MCQ",
+          "question": "Consider the following schedule S:\nT1: R(X), W(X), R(Y)\nT2: R(X), R(Y), W(X)\nWhich of the following is true about S?",
+          "options": [
+            "It is conflict serializable.",
+            "It is not conflict serializable.",
+            "It is view serializable.",
+            "Both (B) and (C)."
+          ],
+          "answer": "Both (B) and (C)."
+        },
+        {
+          "id": "DB_05",
+          "type": "MSQ",
+          "question": "Which of the following are valid isolation levels in SQL?",
+          "options": [
+            "READ UNCOMMITTED",
+            "READ COMMITTED",
+            "REPEATABLE READ",
+            "SERIALIZABLE"
+          ],
+          "answer": [
+            "READ UNCOMMITTED",
+            "READ COMMITTED",
+            "REPEATABLE READ",
+            "SERIALIZABLE"
+          ]
+        },
+        {
+          "id": "DB_06",
+          "type": "MCQ",
+          "question": "A database has a B+ tree index on the attribute 'age' with order 4 (max children per node). The number of keys in a leaf node is between 2 and 3. Initially the tree is empty. Insert the keys 10, 20, 30, 40, 50, 60, 70, 80 in order. How many leaf nodes are there after all insertions?",
+          "options": [
+            "3",
+            "4",
+            "5",
+            "6"
+          ],
+          "answer": "4"
+        },
+        {
+          "id": "DB_07",
+          "type": "NAT",
+          "question": "Write a SQL query to find the second highest salary from a table 'Employee' (id, salary). (Assume only one second highest exists). What is the number of subqueries needed?",
+          "answer": "2"
+        },
+        {
+          "id": "DB_08",
+          "type": "MSQ",
+          "question": "Which of the following are ACID properties?",
+          "options": [
+            "Atomicity",
+            "Consistency",
+            "Isolation",
+            "Durability"
+          ],
+          "answer": [
+            "Atomicity",
+            "Consistency",
+            "Isolation",
+            "Durability"
+          ]
+        },
+        {
+          "id": "DB_09",
+          "type": "MCQ",
+          "question": "In the ER model, an entity type 'Employee' has attributes: SSN (key), Name, Salary. It has a relationship 'WorksFor' with 'Department'. If the relationship is many-to-one from Employee to Department, how is the foreign key represented?",
+          "options": [
+            "Add Department key as foreign key in Employee.",
+            "Add Employee key as foreign key in Department.",
+            "Create a separate table for relationship.",
+            "Both (A) and (C) are possible."
+          ],
+          "answer": "Add Department key as foreign key in Employee."
+        },
+        {
+          "id": "DB_10",
+          "type": "NAT",
+          "question": "Consider the relational algebra expression: σ_salary > 50000 (π_name, salary (Employee)). How many projection attributes are involved?",
+          "answer": "2"
+        }
+      ]
+    },
+    {
+      "name": "Computer Networks",
+      "questions": [
+        {
+          "id": "CN_01",
+          "type": "MCQ",
+          "question": "In the OSI model, which layer is responsible for end-to-end communication and flow control?",
+          "options": [
+            "Transport layer",
+            "Network layer",
+            "Data link layer",
+            "Session layer"
+          ],
+          "answer": "Transport layer"
+        },
+        {
+          "id": "CN_02",
+          "type": "MSQ",
+          "question": "Which of the following routing algorithms are dynamic (adaptive)?",
+          "options": [
+            "Distance vector routing",
+            "Link state routing",
+            "Static routing",
+            "Flooding"
+          ],
+          "answer": [
+            "Distance vector routing",
+            "Link state routing"
+          ]
+        },
+        {
+          "id": "CN_03",
+          "type": "NAT",
+          "question": "Given an IP address 192.168.1.0/24, how many subnets are possible if we borrow 3 bits from the host part?",
+          "answer": "8"
+        },
+        {
+          "id": "CN_04",
+          "type": "MCQ",
+          "question": "In TCP, which field is used for flow control?",
+          "options": [
+            "Sequence number",
+            "Acknowledgement number",
+            "Window size",
+            "Urgent pointer"
+          ],
+          "answer": "Window size"
+        },
+        {
+          "id": "CN_05",
+          "type": "MSQ",
+          "question": "Which of the following are application layer protocols?",
+          "options": [
+            "HTTP",
+            "FTP",
+            "SMTP",
+            "TCP"
+          ],
+          "answer": [
+            "HTTP",
+            "FTP",
+            "SMTP"
+          ]
+        },
+        {
+          "id": "CN_06",
+          "type": "MCQ",
+          "question": "Consider a network with bandwidth 10 Mbps and propagation delay 20 ms. What is the maximum window size (in packets) for Stop-and-Wait protocol to achieve 100% utilization? Assume packet size is 1000 bytes.",
+          "options": [
+            "1",
+            "25",
+            "50",
+            "100"
+          ],
+          "answer": "25"
+        },
+        {
+          "id": "CN_07",
+          "type": "NAT",
+          "question": "In IPv4, what is the total number of possible IP addresses?",
+          "answer": "4294967296"
+        },
+        {
+          "id": "CN_08",
+          "type": "MSQ",
+          "question": "Which of the following are true about CSMA/CD?",
+          "options": [
+            "It is used in Ethernet.",
+            "It detects collisions.",
+            "It uses backoff algorithm.",
+            "It is a deterministic protocol."
+          ],
+          "answer": [
+            "It is used in Ethernet.",
+            "It detects collisions.",
+            "It uses backoff algorithm."
+          ]
+        },
+        {
+          "id": "CN_09",
+          "type": "MCQ",
+          "question": "In distance vector routing, the count-to-infinity problem can be mitigated by:",
+          "options": [
+            "Split horizon",
+            "Poison reverse",
+            "Triggered updates",
+            "All of the above"
+          ],
+          "answer": "All of the above"
+        },
+        {
+          "id": "CN_10",
+          "type": "NAT",
+          "question": "What is the header length of a TCP segment (in bytes) if the data offset field is 5?",
+          "answer": "20"
+        }
+      ]
+    },
+    {
+      "name": "General Aptitude",
+      "questions": [
+        {
+          "id": "GA_01",
+          "type": "MCQ",
+          "question": "Read the following passage and answer the question:\n\n\"The recent advancements in machine learning have led to a proliferation of AI systems in critical sectors like healthcare, finance, and criminal justice. These systems, while promising, have been criticized for their 'black box' nature, where even their creators cannot fully explain how they arrive at decisions. This opacity poses a significant challenge to accountability. If an AI system makes a mistake in medical diagnosis or loan approval, who is responsible? The developer, the user, or the algorithm itself? Furthermore, these systems often inherit biases present in their training data, leading to discriminatory outcomes. Proponents of explainable AI (XAI) argue that we need systems that can provide human-understandable justifications for their decisions. However, achieving interpretability often comes at the cost of performance, leading to a trade-off that is not always easy to navigate.\"\n\nWhich of the following best captures the central argument of the passage?",
+          "options": [
+            "AI systems are better than humans in all critical sectors.",
+            "The benefits of AI systems outweigh their drawbacks, so we should focus on performance.",
+            "AI systems pose challenges due to their lack of transparency and potential bias, and there is a trade-off between interpretability and performance.",
+            "Only the developers of AI systems should be held accountable for any mistakes."
+          ],
+          "answer": "AI systems pose challenges due to their lack of transparency and potential bias, and there is a trade-off between interpretability and performance."
+        },
+        {
+          "id": "GA_02",
+          "type": "MSQ",
+          "question": "Consider the following statements:\n\nS1: All engineers are problem solvers.\nS2: Some problem solvers are creative.\nS3: No creative person is an engineer.\n\nWhich of the following conclusions can be logically derived from these statements?\n\nA) Some engineers are not creative.\nB) Some problem solvers are not creative.\nC) All problem solvers are engineers.\nD) Some creative persons are not engineers.",
+          "options": [
+            "A) Some engineers are not creative.",
+            "B) Some problem solvers are not creative.",
+            "C) All problem solvers are engineers.",
+            "D) Some creative persons are not engineers."
+          ],
+          "answer": [
+            "A) Some engineers are not creative.",
+            "D) Some creative persons are not engineers."
+          ]
+        },
+        {
+          "id": "GA_03",
+          "type": "NAT",
+          "question": "A company has 12 employees, of which 7 are men and 5 are women. A team of 4 must be formed with at least 2 men and at least 1 woman. If the team must include exactly one of two specific employees, A (man) and B (woman), and A and B refuse to work together, in how many ways can the team be formed?",
+          "answer": "165"
+        },
+        {
+          "id": "GA_04",
+          "type": "MCQ",
+          "question": "A man starts from point P and walks 10 km north, then 15 km east, then 10 km south, and then 15 km west. He then takes a left turn and walks 20 km, followed by a right turn and walks 15 km. Finally, he turns left again and walks 20 km. In which direction and at what distance is he from point P?",
+          "options": [
+            "He is 15 km west of P.",
+            "He is at the starting point P.",
+            "He is 15 km north of P.",
+            "He is 15 km east of P."
+          ],
+          "answer": "He is 15 km west of P."
+        },
+        {
+          "id": "GA_05",
+          "type": "MSQ",
+          "question": "Which of the following statements are semantically and logically similar to the statement: \"The manager should either approve the budget or postpone the project, but not both.\"?",
+          "options": [
+            "The manager should approve the budget if and only if he does not postpone the project.",
+            "The manager should not approve the budget only if he postpones the project.",
+            "It is not possible that the manager approves the budget and postpones the project.",
+            "Either the manager approves the budget, or he postpones the project."
+          ],
+          "answer": [
+            "The manager should approve the budget if and only if he does not postpone the project.",
+            "It is not possible that the manager approves the budget and postpones the project."
+          ]
+        },
+        {
+          "id": "GA_06",
+          "type": "MCQ",
+          "question": "In a certain language, 'FORTUNE' is coded as 'QSPVYJK' and 'WEALTH' is coded as 'YCVNVJ'. Based on this pattern, what is the code for 'PROSPERITY'?",
+          "options": [
+            "RTQURGKVKA",
+            "RTQURGKVKZ",
+            "RSQURGKVKA",
+            "RTQURGJVKA"
+          ],
+          "answer": "RTQURGKVKA"
+        },
+        {
+          "id": "GA_07",
+          "type": "NAT",
+          "question": "A and B can complete a piece of work in 12 days and 18 days respectively. They begin working together, but A leaves after some days and B finishes the remaining work in 8 days. After how many days did A leave? (Answer as a rational number, e.g., 4/3).",
+          "answer": "4"
+        },
+        {
+          "id": "GA_08",
+          "type": "MSQ",
+          "question": "Consider the following data set representing the daily sales (in Rs.) of a shop for 10 days: 250, 280, 310, 290, 270, 300, 320, 260, 330, 340.\n\nWhich of the following statements are true about this data?\n\nA) The mean is greater than the median.\nB) The median is 295.\nC) The range is 90.\nD) The interquartile range is 50.",
+          "options": [
+            "A) The mean is greater than the median.",
+            "B) The median is 295.",
+            "C) The range is 90.",
+            "D) The interquartile range is 50."
+          ],
+          "answer": [
+            "B) The median is 295.",
+            "C) The range is 90."
+          ]
+        },
+        {
+          "id": "GA_09",
+          "type": "MCQ",
+          "question": "A sum of money amounts to Rs. 2420 in 2 years and Rs. 2662 in 3 years when compounded annually. What is the rate of interest per annum? Also, what is the principal?",
+          "options": [
+            "Rate = 8%, Principal = Rs. 2000",
+            "Rate = 9%, Principal = Rs. 2000",
+            "Rate = 10%, Principal = Rs. 2000",
+            "Rate = 10%, Principal = Rs. 2200"
+          ],
+          "answer": "Rate = 10%, Principal = Rs. 2000"
+        },
+        {
+          "id": "GA_10",
+          "type": "NAT",
+          "question": "A man has 5 friends. In how many ways can he invite one or more of them to a dinner party such that exactly 2 of his friends are not invited?",
+          "answer": "10"
+        }
+      ]
+    }
+  ]
+}
