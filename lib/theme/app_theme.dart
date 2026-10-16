@@ -10,6 +10,7 @@ class AppTheme {
   static const Color textPrimary = Color(0xFFFFFFFF);
   static const Color textSecondary = Color(0xFF9090A0);
   static const Color error = Color(0xFFFF5C5C);
+  static const Color warning = Color(0xFFFFB74D);
   static const Color success = Color(0xFF4CAF50);
 
   // Light Theme configuration
