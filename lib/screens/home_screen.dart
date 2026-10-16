@@ -123,49 +123,45 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             ),
           // Pro Pass Pill
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 4.0),
+            padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
             child: InkWell(
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const ProUpgradeScreen()));
               },
               borderRadius: BorderRadius.circular(12),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFB300).withValues(alpha: 0.18),
+                  color: AppTheme.surface,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFFFB300).withValues(alpha: 0.5)),
+                  border: Border.all(
+                    color: provider.isPro
+                        ? AppTheme.secondary.withValues(alpha: 0.5)
+                        : Colors.white.withValues(alpha: 0.12),
+                  ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.workspace_premium_rounded, size: 14, color: Color(0xFFFFB300)),
+                    Icon(
+                      provider.isPro ? Icons.workspace_premium_rounded : Icons.star_border_rounded,
+                      size: 14,
+                      color: provider.isPro ? AppTheme.secondary : AppTheme.textSecondary,
+                    ),
                     const SizedBox(width: 4),
                     Text(
-                      provider.isPro ? 'PRO' : 'GO PRO',
-                      style: const TextStyle(
-                        color: Color(0xFFFFB300),
-                        fontSize: 10,
+                      provider.isPro ? 'PRO' : 'PRO PASS',
+                      style: TextStyle(
+                        color: provider.isPro ? AppTheme.secondary : AppTheme.textPrimary,
+                        fontSize: 11,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 0.8,
+                        letterSpacing: 0.5,
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.flash_on, color: Colors.amber),
-            onPressed: () {
-              ScaffoldMessenger.of(context).clearSnackBars();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('You are on a $daysLeft days countdown! Keep grinding!'),
-                  backgroundColor: AppTheme.primary,
-                ),
-              );
-            },
           ),
         ],
       ),
@@ -420,12 +416,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    isSprint ? '⚡ 90-DAY CRUNCH SPRINT' : 'STANDARD SYLLABUS PLAN',
+                    isSprint ? '90-DAY SPRINT PLAN' : 'STANDARD SYLLABUS PLAN',
                     style: TextStyle(
                       color: isSprint ? AppTheme.secondary : context.textColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
-                      letterSpacing: 1.1,
+                      letterSpacing: 0.8,
                     ),
                   ),
                 ],
@@ -437,15 +433,17 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: isSprint ? AppTheme.secondary.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.08),
+                    color: isSprint ? AppTheme.secondary.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: isSprint ? AppTheme.secondary : Colors.white24),
+                    border: Border.all(
+                      color: isSprint ? AppTheme.secondary.withValues(alpha: 0.5) : Colors.white.withValues(alpha: 0.12),
+                    ),
                   ),
                   child: Text(
                     isSprint ? 'Switch to Full' : 'Switch to Sprint',
                     style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
                       color: isSprint ? AppTheme.secondary : AppTheme.textSecondary,
                     ),
                   ),
@@ -456,18 +454,18 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           if (isSprint) ...[
             const SizedBox(height: 12),
             const Text(
-              'High-Yield Target Sequence (~70 Marks)',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
+              'High-Yield Focus Areas',
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.white),
             ),
             const SizedBox(height: 8),
             Wrap(
               spacing: 6,
               runSpacing: 6,
               children: [
-                _buildPriorityChip('Aptitude 15M', AppTheme.primary),
-                _buildPriorityChip('Prob & Stats 18M', AppTheme.secondary),
-                _buildPriorityChip('Machine Learning 20M', Colors.amber),
-                _buildPriorityChip('Linear Algebra 13M', Colors.blueAccent),
+                _buildPriorityChip('Aptitude (15M)', AppTheme.primary),
+                _buildPriorityChip('Prob & Stats (18M)', AppTheme.secondary),
+                _buildPriorityChip('Machine Learning (20M)', Colors.amber),
+                _buildPriorityChip('Linear Algebra (13M)', Colors.blueAccent),
               ],
             ),
             const SizedBox(height: 14),
@@ -496,24 +494,19 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppTheme.secondary.withValues(alpha: 0.18),
-                      AppTheme.primary.withValues(alpha: 0.15),
-                    ],
-                  ),
+                  color: AppTheme.surface,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppTheme.secondary.withValues(alpha: 0.4)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                 ),
                 child: Row(
                   children: [
                     Container(
                       padding: const EdgeInsets.all(8),
-                      decoration: const BoxDecoration(
-                        color: AppTheme.secondary,
+                      decoration: BoxDecoration(
+                        color: AppTheme.secondary.withValues(alpha: 0.15),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.play_arrow_rounded, color: AppTheme.background, size: 20),
+                      child: const Icon(Icons.play_arrow_rounded, color: AppTheme.secondary, size: 20),
                     ),
                     const SizedBox(width: 12),
                     const Expanded(

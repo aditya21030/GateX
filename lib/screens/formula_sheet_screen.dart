@@ -1857,7 +1857,7 @@ class _FlashcardDeckViewState extends State<_FlashcardDeckView> with SingleTicke
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          '🔄 ${_reviewNames.length} Review',
+                          '${_reviewNames.length} Review',
                           style: const TextStyle(color: AppTheme.warning, fontSize: 11, fontWeight: FontWeight.bold),
                         ),
                       ),

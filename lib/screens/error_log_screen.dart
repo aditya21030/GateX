@@ -80,33 +80,25 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                   ),
                 );
               },
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(12),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFE53935), Color(0xFFC2185B)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                  color: AppTheme.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: AppTheme.primary.withValues(alpha: 0.35),
                   ),
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.red.withValues(alpha: 0.25),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
                 ),
                 child: Row(
                   children: [
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: AppTheme.primary.withValues(alpha: 0.15),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.flash_on_rounded, color: Colors.white, size: 20),
+                      child: const Icon(Icons.play_arrow_rounded, color: AppTheme.primary, size: 20),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -114,20 +106,20 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            'Practice My Mistakes (Custom Quiz)',
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                            'Practice Mistakes Quiz',
+                            style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold, fontSize: 14),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             filteredEntries.isEmpty
                                 ? 'Log errors below to build custom drill tests'
-                                : 'Generate CBT test from ${filteredEntries.length} logged mistake${filteredEntries.length > 1 ? "s" : ""}',
-                            style: TextStyle(color: Colors.white.withValues(alpha: 0.85), fontSize: 11),
+                                : 'Generate test from ${filteredEntries.length} logged mistake${filteredEntries.length > 1 ? "s" : ""}',
+                            style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11),
                           ),
                         ],
                       ),
                     ),
-                    const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white, size: 14),
+                    const Icon(Icons.arrow_forward_ios_rounded, color: AppTheme.textSecondary, size: 14),
                   ],
                 ),
               ),

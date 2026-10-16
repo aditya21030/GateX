@@ -411,11 +411,11 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.lock_outline_rounded, size: 11, color: Color(0xFFFFB300)),
-                    SizedBox(width: 3),
-                    Text(
-                      'PRO or 🎬 AD',
-                      style: TextStyle(color: Color(0xFFFFB300), fontSize: 9, fontWeight: FontWeight.bold),
+                    Icon(Icons.lock_outline_rounded, size: 11, color: AppTheme.secondary),
+                    const SizedBox(width: 3),
+                    const Text(
+                      'PRO',
+                      style: TextStyle(color: AppTheme.secondary, fontSize: 10, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),

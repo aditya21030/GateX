@@ -88,7 +88,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final appProvider = Provider.of<AppProvider>(context, listen: false);
     final bool isReturningUser = authProvider.isLoggedIn && appProvider.selectedExam != null;
-    final int delayMs = isReturningUser ? 800 : 2000;
+    final int delayMs = isReturningUser ? 600 : 1200;
 
     _controller = AnimationController(
       vsync: this,

@@ -208,17 +208,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final newPasswordController = TextEditingController();
     bool isUpdating = false;
     String? errorMessage;
-    String? errorQuote;
-
-    final List<String> iitQuotes = [
-      "Keep pushing, IIT Bombay is waiting for you!",
-      "A wrong answer is just a step closer to IIT Delhi.",
-      "Don't give up, IISc Bangalore needs minds like yours.",
-      "Stay focused! Your IIT dream is alive.",
-      "Every mistake is a lesson for IIT Madras.",
-      "IIT Kanpur rewards persistence. Try again!",
-      "Success at IIT Roorkee demands resilience."
-    ];
 
     showModalBottomSheet(
       context: context,
@@ -278,21 +267,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ],
                           ),
-                          if (errorQuote != null) ...[
-                            const SizedBox(height: 8),
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: AppTheme.error.withOpacity(0.05),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                errorQuote!,
-                                style: TextStyle(color: AppTheme.error.withOpacity(0.8), fontSize: 11, fontStyle: FontStyle.italic),
-                              ),
-                            ),
-                          ],
                         ],
                       ),
                     ),
@@ -315,7 +289,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         setSheetState(() {
                           isUpdating = false;
                           errorMessage = e.toString().replaceAll('Exception: ', '');
-                          errorQuote = iitQuotes[Random().nextInt(iitQuotes.length)];
                         });
                       }
                     },
