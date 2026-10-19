@@ -358,10 +358,11 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
 
     return InkWell(
       onTap: () async {
+        final messenger = ScaffoldMessenger.of(this.context);
         Navigator.pop(context);
         if (isLocked) {
           final shouldProceed = await AdService().promptWatchRewardedAd(
-            context: context,
+            context: this.context,
             perkTitle: '$difficulty Mock Test (Pro)',
             perkDescription:
                 'Full-length $difficulty CBT Mocks are unlocked with GateX Pro Pass (₹199 one-time). Alternatively, watch a short 20s ad to unlock this mock attempt for free!',
@@ -369,9 +370,11 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
           if (!shouldProceed) return;
         }
 
+        if (!mounted) return;
+
         final questions = _generateFullMock(provider, difficulty);
         if (questions.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
+          messenger.showSnackBar(
             SnackBar(
               content: Text('$difficulty mock questions are loading!'),
               backgroundColor: AppTheme.primary,
@@ -409,8 +412,8 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.lock_outline_rounded, size: 11, color: AppTheme.secondary),
-                    const SizedBox(width: 3),
-                    const Text(
+                    SizedBox(width: 3),
+                    Text(
                       'PRO',
                       style: TextStyle(color: AppTheme.secondary, fontSize: 10, fontWeight: FontWeight.bold),
                     ),

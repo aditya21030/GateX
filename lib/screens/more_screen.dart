@@ -491,12 +491,14 @@ class MoreScreen extends StatelessWidget {
       final hourStr = picked.hour.toString().padLeft(2, '0');
       final minStr = picked.minute.toString().padLeft(2, '0');
       provider.updateNotificationSettings(provider.notificationsEnabled, '$hourStr:$minStr');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Daily study reminder rescheduled to $hourStr:$minStr!'),
-          backgroundColor: AppTheme.success,
-        ),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Daily study reminder rescheduled to $hourStr:$minStr!'),
+            backgroundColor: AppTheme.success,
+          ),
+        );
+      }
     }
   }
 

@@ -321,7 +321,9 @@ class AppProvider with ChangeNotifier {
       if (cloudCsitMocks.isNotEmpty) {
         // Merge cloud mocks with local mocks, avoiding duplicates by ID
         final Map<String, PYQ> mergedCsitMocks = { for (var pyq in csitMockQuestions) pyq.id: pyq };
-        for (var pyq in cloudCsitMocks) mergedCsitMocks[pyq.id] = pyq;
+        for (var pyq in cloudCsitMocks) {
+          mergedCsitMocks[pyq.id] = pyq;
+        }
         _csitMockQuestions = mergedCsitMocks.values.toList();
       } else {
         _csitMockQuestions = [...csitMockQuestions];
@@ -329,7 +331,9 @@ class AppProvider with ChangeNotifier {
 
       if (cloudDaMocks.isNotEmpty) {
         final Map<String, PYQ> mergedDaMocks = { for (var pyq in daMockQuestions) pyq.id: pyq };
-        for (var pyq in cloudDaMocks) mergedDaMocks[pyq.id] = pyq;
+        for (var pyq in cloudDaMocks) {
+          mergedDaMocks[pyq.id] = pyq;
+        }
         _daMockQuestions = mergedDaMocks.values.toList();
       } else {
         _daMockQuestions = [...daMockQuestions];
@@ -469,6 +473,74 @@ class AppProvider with ChangeNotifier {
       notifyListeners();
       _updateScheduledNotifications();
     }
+  }
+
+  // Agile Checklist: Get Topic Status
+  TopicStatus getTopicStatus(String subject, String topic) {
+    final index = _topics.indexWhere((t) => t.subjectName == subject && t.topicName == topic);
+    if (index != -1) return _topics[index];
+    final key = '${subject}_$topic';
+    if (_storage.topicStatusBox.containsKey(key)) {
+      final raw = Map<dynamic, dynamic>.from(_storage.topicStatusBox.get(key));
+      final parsed = TopicStatus.fromMap(raw);
+      _topics.add(parsed);
+      return parsed;
+    }
+    return TopicStatus(topicName: topic, subjectName: subject);
+  }
+
+  // Agile Checklist: Toggle specific milestone (concept, pyq, revise)
+  Future<void> toggleTopicMilestone(String subject, String topic, String milestone) async {
+    final key = '${subject}_$topic';
+    final current = getTopicStatus(subject, topic);
+
+    bool concept = current.conceptWatched;
+    bool pyq = current.pyqSolved;
+    bool revise = current.revisedOnce;
+
+    if (milestone == 'concept') {
+      concept = !concept;
+    } else if (milestone == 'pyq') {
+      pyq = !pyq;
+    } else if (milestone == 'revise') {
+      revise = !revise;
+    }
+
+    final isAllDone = concept && pyq && revise;
+    final updated = current.copyWith(
+      conceptWatched: concept,
+      pyqSolved: pyq,
+      revisedOnce: revise,
+      isCompleted: isAllDone,
+    );
+
+    final idx = _topics.indexWhere((t) => t.subjectName == subject && t.topicName == topic);
+    if (idx != -1) {
+      _topics[idx] = updated;
+    } else {
+      _topics.add(updated);
+    }
+
+    await _storage.topicStatusBox.put(key, updated.toMap());
+    CloudSyncService().pushToCloud('topicStatus', key, updated.toMap());
+    notifyListeners();
+    _updateScheduledNotifications();
+  }
+
+  // Agile Checklist: Subject Completion Progress
+  double getSubjectProgress(String subject, List<String> topics) {
+    if (topics.isEmpty) return 0.0;
+    double totalPoints = 0;
+    for (final topic in topics) {
+      final st = getTopicStatus(subject, topic);
+      double p = 0;
+      if (st.conceptWatched) p += 0.333;
+      if (st.pyqSolved) p += 0.333;
+      if (st.revisedOnce) p += 0.334;
+      if (st.isCompleted) p = 1.0;
+      totalPoints += p;
+    }
+    return (totalPoints / topics.length).clamp(0.0, 1.0);
   }
 
   // Update Topic Note

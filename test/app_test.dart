@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:gateda/theme/app_theme.dart';
+import 'package:gateda/models/models.dart';
 
 class EstimationNode {
   final double marks;
@@ -459,6 +460,53 @@ void main() {
 
       final score = calculateMockScoreDryRun(questions, userAnswers);
       expect(score, 2.0); // Both q1 and q2 are scored
+    });
+  });
+
+  group('Agile Syllabus Checklist Tests', () {
+    test('Topic milestone tracking (Concept, PYQ, Revise)', () {
+      final initial = TopicStatus(topicName: 'Eigenvalues', subjectName: 'Linear Algebra');
+      expect(initial.conceptWatched, false);
+      expect(initial.pyqSolved, false);
+      expect(initial.revisedOnce, false);
+      expect(initial.isCompleted, false);
+
+      // Mark concept watched
+      final step1 = initial.copyWith(conceptWatched: true);
+      expect(step1.conceptWatched, true);
+      expect(step1.isCompleted, false);
+
+      // Mark PYQ solved
+      final step2 = step1.copyWith(pyqSolved: true);
+      expect(step2.pyqSolved, true);
+      expect(step2.isCompleted, false);
+
+      // Mark revised once -> All complete!
+      final step3 = step2.copyWith(revisedOnce: true, isCompleted: true);
+      expect(step3.conceptWatched, true);
+      expect(step3.pyqSolved, true);
+      expect(step3.revisedOnce, true);
+      expect(step3.isCompleted, true);
+    });
+
+    test('TopicStatus serialization backwards compatibility', () {
+      // Legacy map with only isCompleted = true
+      final legacyMap = {
+        'topicName': 'Bayes Theorem',
+        'subjectName': 'Probability and Statistics',
+        'isCompleted': true,
+      };
+      final parsed = TopicStatus.fromMap(legacyMap);
+      expect(parsed.isCompleted, true);
+      expect(parsed.conceptWatched, true);
+      expect(parsed.pyqSolved, true);
+      expect(parsed.revisedOnce, true);
+
+      // Serialized map contains all milestone keys
+      final serialized = parsed.toMap();
+      expect(serialized['conceptWatched'], true);
+      expect(serialized['pyqSolved'], true);
+      expect(serialized['revisedOnce'], true);
     });
   });
 }

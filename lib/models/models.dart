@@ -9,10 +9,17 @@ class TopicStatus {
   final DateTime? dateAddedToRevision;
   final DateTime? lastRevisedDate;
 
+  final bool conceptWatched;
+  final bool pyqSolved;
+  final bool revisedOnce;
+
   TopicStatus({
     required this.topicName,
     required this.subjectName,
     this.isCompleted = false,
+    this.conceptWatched = false,
+    this.pyqSolved = false,
+    this.revisedOnce = false,
     this.note = '',
     this.difficulty = 'Medium',
     this.inRevisionQueue = false,
@@ -25,6 +32,9 @@ class TopicStatus {
     String? topicName,
     String? subjectName,
     bool? isCompleted,
+    bool? conceptWatched,
+    bool? pyqSolved,
+    bool? revisedOnce,
     String? note,
     String? difficulty,
     bool? inRevisionQueue,
@@ -36,6 +46,9 @@ class TopicStatus {
       topicName: topicName ?? this.topicName,
       subjectName: subjectName ?? this.subjectName,
       isCompleted: isCompleted ?? this.isCompleted,
+      conceptWatched: conceptWatched ?? this.conceptWatched,
+      pyqSolved: pyqSolved ?? this.pyqSolved,
+      revisedOnce: revisedOnce ?? this.revisedOnce,
       note: note ?? this.note,
       difficulty: difficulty ?? this.difficulty,
       inRevisionQueue: inRevisionQueue ?? this.inRevisionQueue,
@@ -50,6 +63,9 @@ class TopicStatus {
       'topicName': topicName,
       'subjectName': subjectName,
       'isCompleted': isCompleted,
+      'conceptWatched': conceptWatched,
+      'pyqSolved': pyqSolved,
+      'revisedOnce': revisedOnce,
       'note': note,
       'difficulty': difficulty,
       'inRevisionQueue': inRevisionQueue,
@@ -60,10 +76,14 @@ class TopicStatus {
   }
 
   factory TopicStatus.fromMap(Map<dynamic, dynamic> map) {
+    final isDone = map['isCompleted'] ?? false;
     return TopicStatus(
       topicName: map['topicName'] ?? '',
       subjectName: map['subjectName'] ?? '',
-      isCompleted: map['isCompleted'] ?? false,
+      isCompleted: isDone,
+      conceptWatched: map['conceptWatched'] ?? isDone,
+      pyqSolved: map['pyqSolved'] ?? isDone,
+      revisedOnce: map['revisedOnce'] ?? isDone,
       note: map['note'] ?? '',
       difficulty: map['difficulty'] ?? 'Medium',
       inRevisionQueue: map['inRevisionQueue'] ?? false,

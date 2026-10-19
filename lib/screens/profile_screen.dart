@@ -166,9 +166,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: 50,
                   child: OutlinedButton.icon(
                     onPressed: () async {
+                      final appProvider = Provider.of<AppProvider>(context, listen: false);
                       await authProvider.logout();
                       await StorageService().resetAllData();
-                      await Provider.of<AppProvider>(context, listen: false).init();
+                      await appProvider.init();
                       if (context.mounted) {
                         Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute(builder: (_) => const LoginScreen()),

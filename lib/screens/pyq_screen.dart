@@ -12,7 +12,8 @@ import '../widgets/virtual_calculator.dart';
 import '../widgets/question_discussion_sheet.dart';
 
 class PYQScreen extends StatefulWidget {
-  const PYQScreen({super.key});
+  final String? initialSubject;
+  const PYQScreen({super.key, this.initialSubject});
 
   @override
   State<PYQScreen> createState() => _PYQScreenState();
@@ -68,6 +69,9 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    if (widget.initialSubject != null) {
+      _selectedSubject = widget.initialSubject!;
+    }
   }
 
   @override

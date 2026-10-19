@@ -14,7 +14,35 @@ class ErrorLogScreen extends StatefulWidget {
 }
 
 class _ErrorLogScreenState extends State<ErrorLogScreen> {
-  String _selectedFilter = 'All';
+  String _selectedSubjectFilter = 'All';
+  String _selectedTagFilter = 'All';
+
+  static const List<Map<String, String>> taxonomyTags = [
+    {'name': 'All', 'label': 'All Mistakes', 'icon': '🎯'},
+    {'name': 'Conceptual Gap', 'label': 'Conceptual Gap', 'icon': '🧠'},
+    {'name': 'Calculation Error', 'label': 'Calculation Error', 'icon': '📐'},
+    {'name': 'Silly Mistake', 'label': 'Silly Mistake', 'icon': '🤦‍♂️'},
+    {'name': 'Formula Slip', 'label': 'Formula Slip', 'icon': '📝'},
+    {'name': 'Time Pressure', 'label': 'Time Pressure', 'icon': '⏳'},
+  ];
+
+  Color _getTagColor(String tag) {
+    if (tag.contains('Conceptual')) return AppTheme.primary;
+    if (tag.contains('Calculation')) return Colors.orangeAccent;
+    if (tag.contains('Silly')) return Colors.amber;
+    if (tag.contains('Formula')) return const Color(0xFFBA68C8);
+    if (tag.contains('Time')) return AppTheme.error;
+    return AppTheme.secondary;
+  }
+
+  String? _detectTagInText(String text) {
+    for (var tag in taxonomyTags) {
+      if (tag['name'] != 'All' && text.toLowerCase().contains(tag['name']!.toLowerCase())) {
+        return tag['name'];
+      }
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +52,17 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
     // Distinct subjects list for filters
     final filterSubjects = ['All', ...StorageService.syllabusData.keys];
 
-    // Filter items
-    final filteredEntries = _selectedFilter == 'All'
-        ? errorEntries
-        : errorEntries.where((e) => e.subject == _selectedFilter).toList();
+    // Filter items by Subject and Taxonomy Tag
+    final filteredEntries = errorEntries.where((e) {
+      final matchesSubject = _selectedSubjectFilter == 'All' || e.subject == _selectedSubjectFilter;
+      final matchesTag = _selectedTagFilter == 'All' ||
+          e.whyWrong.toLowerCase().contains(_selectedTagFilter.toLowerCase());
+      return matchesSubject && matchesTag;
+    }).toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Error Log'),
+        title: const Text('Mistake Notebook'),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,15 +71,15 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: Text(
-              'Review Your Mistakes',
-              style: AppTheme.poppinsBold(fontSize: 20),
+              'Targeted Mistake Notebook',
+              style: AppTheme.poppinsBold(fontSize: 18),
             ),
           ),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             child: Text(
-              'Questions you got wrong — review them regularly to build conceptual clarity.',
-              style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+              'Taxonomy-tagged questions you got wrong — review before mocks to eliminate recurring errors.',
+              style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
             ),
           ),
 
@@ -57,7 +88,9 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: InkWell(
               onTap: () {
-                final quizQuestions = provider.generateMistakesQuiz(subjectFilter: _selectedFilter);
+                final quizQuestions = provider.generateMistakesQuiz(
+                  subjectFilter: _selectedSubjectFilter,
+                );
                 if (quizQuestions.isEmpty) {
                   ScaffoldMessenger.of(context).clearSnackBars();
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -75,14 +108,16 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                     builder: (context) => MockTestRunnerScreen(
                       questions: quizQuestions,
                       duration: Duration(minutes: quizQuestions.length * 3),
-                      testName: _selectedFilter == 'All' ? 'My Mistakes Drill Test' : '$_selectedFilter Mistakes Drill',
+                      testName: _selectedSubjectFilter == 'All'
+                          ? 'Mistakes Drill Examination'
+                          : '$_selectedSubjectFilter Mistakes Drill',
                     ),
                   ),
                 );
               },
               borderRadius: BorderRadius.circular(12),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                 decoration: BoxDecoration(
                   color: AppTheme.surface,
                   borderRadius: BorderRadius.circular(12),
@@ -98,7 +133,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                         color: AppTheme.primary.withValues(alpha: 0.15),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.play_arrow_rounded, color: AppTheme.primary, size: 20),
+                      child: const Icon(Icons.flash_on_rounded, color: AppTheme.primary, size: 20),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -106,14 +141,14 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            'Practice Mistakes Quiz',
-                            style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold, fontSize: 14),
+                            '⚡ Practice My Mistakes in GATE CBT',
+                            style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold, fontSize: 13.5),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             filteredEntries.isEmpty
-                                ? 'Log errors below to build custom drill tests'
-                                : 'Generate test from ${filteredEntries.length} logged mistake${filteredEntries.length > 1 ? "s" : ""}',
+                                ? 'Log mistakes to generate custom CBT drills'
+                                : 'Launch CBT mock test from ${filteredEntries.length} logged mistake${filteredEntries.length > 1 ? "s" : ""}',
                             style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11),
                           ),
                         ],
@@ -126,66 +161,52 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
             ),
           ),
 
-          // Filters row
-          const SizedBox(height: 12),
-          SizedBox(
-            height: 40,
+          // 1. Taxonomy Tag Filter Strip
+          Container(
+            height: 36,
+            margin: const EdgeInsets.only(top: 4, bottom: 4),
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemCount: filterSubjects.length,
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              itemCount: taxonomyTags.length,
               itemBuilder: (context, index) {
-                final subj = filterSubjects[index];
-                final isSelected = _selectedFilter == subj;
-                final count = subj == 'All'
-                    ? errorEntries.length
-                    : errorEntries.where((e) => e.subject == subj).length;
+                final tag = taxonomyTags[index];
+                final isSelected = _selectedTagFilter == tag['name'];
+                final icon = tag['icon']!;
+                final label = tag['label']!;
+                final tagColor = _getTagColor(tag['name']!);
+
                 return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 3),
                   child: InkWell(
                     onTap: () {
                       setState(() {
-                        _selectedFilter = subj;
+                        _selectedTagFilter = tag['name']!;
                       });
                     },
-                    borderRadius: BorderRadius.circular(20),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    borderRadius: BorderRadius.circular(18),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
-                        color: isSelected ? AppTheme.secondary.withOpacity(0.12) : AppTheme.surface,
-                        borderRadius: BorderRadius.circular(20),
+                        color: isSelected ? tagColor.withValues(alpha: 0.2) : AppTheme.surface,
+                        borderRadius: BorderRadius.circular(18),
                         border: Border.all(
-                          color: isSelected ? AppTheme.secondary : AppTheme.textSecondary.withOpacity(0.2),
+                          color: isSelected ? tagColor : Colors.white.withValues(alpha: 0.08),
                           width: isSelected ? 1.5 : 1.0,
                         ),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          Text(icon, style: const TextStyle(fontSize: 12)),
+                          const SizedBox(width: 5),
                           Text(
-                            subj,
+                            label,
                             style: TextStyle(
-                              color: isSelected ? AppTheme.secondary : AppTheme.textPrimary,
+                              color: isSelected ? Colors.white : AppTheme.textSecondary,
+                              fontSize: 11,
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: isSelected ? AppTheme.secondary : AppTheme.background,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              '$count',
-                              style: TextStyle(
-                                color: isSelected ? Colors.white : AppTheme.textSecondary,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 10,
-                              ),
                             ),
                           ),
                         ],
@@ -196,7 +217,67 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
               },
             ),
           ),
-          const SizedBox(height: 12),
+
+          // 2. Subject Filter Strip
+          SizedBox(
+            height: 32,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              itemCount: filterSubjects.length,
+              itemBuilder: (context, index) {
+                final subj = filterSubjects[index];
+                final isSelected = _selectedSubjectFilter == subj;
+                final count = subj == 'All'
+                    ? errorEntries.length
+                    : errorEntries.where((e) => e.subject == subj).length;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 3),
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        _selectedSubjectFilter = subj;
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(14),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isSelected ? AppTheme.secondary.withValues(alpha: 0.15) : AppTheme.background,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: isSelected ? AppTheme.secondary : Colors.white.withValues(alpha: 0.06),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            subj,
+                            style: TextStyle(
+                              color: isSelected ? AppTheme.secondary : AppTheme.textSecondary,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              fontSize: 11,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '($count)',
+                            style: TextStyle(
+                              color: isSelected ? AppTheme.secondary : AppTheme.textSecondary.withValues(alpha: 0.6),
+                              fontSize: 9.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 8),
 
           // Log List
           Expanded(
@@ -207,20 +288,20 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                       children: [
                         Icon(
                           Icons.check_circle_outline_rounded,
-                          size: 64,
-                          color: AppTheme.secondary.withOpacity(0.5),
+                          size: 56,
+                          color: AppTheme.secondary.withValues(alpha: 0.4),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 14),
                         Text(
-                          _selectedFilter == 'All'
+                          _selectedSubjectFilter == 'All' && _selectedTagFilter == 'All'
                               ? 'Your error log is clean! 🎉'
-                              : 'No error logs for $_selectedFilter!',
-                          style: AppTheme.poppinsBold(fontSize: 16, color: AppTheme.textPrimary),
+                              : 'No matching mistakes found',
+                          style: AppTheme.poppinsBold(fontSize: 15, color: AppTheme.textPrimary),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Add items using the + button below.',
-                          style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'Mistakes logged during PYQs and Mock Tests will appear here.',
+                          style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                         ),
                       ],
                     ),
@@ -247,20 +328,18 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
 
   Widget _buildErrorCard(BuildContext context, AppProvider provider, dynamic entry) {
     final formattedDate = DateFormat('MMM dd, yyyy').format(entry.dateAdded);
+    final detectedTag = _detectTagInText(entry.whyWrong);
+    final tagColor = detectedTag != null ? _getTagColor(detectedTag) : null;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: AppTheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: entry.isRevised ? AppTheme.success.withOpacity(0.3) : AppTheme.error.withOpacity(0.3), width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: entry.isRevised ? AppTheme.success.withOpacity(0.05) : AppTheme.error.withOpacity(0.05),
-            blurRadius: 10,
-            spreadRadius: 2,
-          ),
-        ],
+        border: Border.all(
+          color: entry.isRevised ? AppTheme.success.withValues(alpha: 0.3) : AppTheme.error.withValues(alpha: 0.3),
+          width: 1.5,
+        ),
       ),
       child: ExpansionTile(
         collapsedTextColor: AppTheme.textPrimary,
@@ -272,60 +351,78 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
           children: [
             Row(
               children: [
-                Flexible(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                // Subject Tag
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primary.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    entry.subject,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: AppTheme.primary,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                if (detectedTag != null) ...[
+                  const SizedBox(width: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                     decoration: BoxDecoration(
-                      color: AppTheme.primary.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(12),
+                      color: tagColor!.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: tagColor.withValues(alpha: 0.3)),
                     ),
                     child: Text(
-                      entry.subject,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: AppTheme.primary,
-                        fontSize: 10,
+                      detectedTag,
+                      style: TextStyle(
+                        color: tagColor,
+                        fontSize: 9.5,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
+                ],
+                const Spacer(),
                 Text(
                   formattedDate,
-                  style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11),
+                  style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10.5),
                 ),
-                const Spacer(),
+                const SizedBox(width: 6),
                 if (entry.isRevised)
-                  const Icon(Icons.check_circle, color: AppTheme.success, size: 18)
+                  const Icon(Icons.check_circle, color: AppTheme.success, size: 16)
                 else
-                  const Icon(Icons.error_outline, color: AppTheme.error, size: 18),
+                  const Icon(Icons.error_outline, color: AppTheme.error, size: 16),
               ],
             ),
             const SizedBox(height: 8),
             Text(
               entry.topic,
-              style: AppTheme.poppinsBold(fontSize: 15),
+              style: AppTheme.poppinsBold(fontSize: 14),
             ),
           ],
         ),
         subtitle: Padding(
-          padding: const EdgeInsets.only(top: 6.0),
+          padding: const EdgeInsets.only(top: 4.0),
           child: Text(
             entry.questionText,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+            style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
           ),
         ),
         children: [
           Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Divider(height: 1, color: Colors.white12),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
                 const Text(
                   'QUESTION:',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: AppTheme.textSecondary, letterSpacing: 1.1),
@@ -333,37 +430,37 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                 const SizedBox(height: 6),
                 Text(
                   entry.questionText,
-                  style: const TextStyle(fontSize: 14, color: AppTheme.textPrimary, height: 1.4),
+                  style: const TextStyle(fontSize: 13.5, color: AppTheme.textPrimary, height: 1.4),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
                 const Text(
-                  'WHY I GOT IT WRONG:',
+                  'ROOT CAUSE / WHY I GOT IT WRONG:',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: AppTheme.error, letterSpacing: 1.1),
                 ),
                 const SizedBox(height: 6),
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: AppTheme.error.withOpacity(0.08),
+                    color: AppTheme.error.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppTheme.error.withOpacity(0.2)),
+                    border: Border.all(color: AppTheme.error.withValues(alpha: 0.2)),
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.lightbulb_outline, color: AppTheme.error, size: 20),
-                      const SizedBox(width: 12),
+                      const Icon(Icons.lightbulb_outline, color: AppTheme.error, size: 18),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           entry.whyWrong,
-                          style: const TextStyle(fontSize: 14, color: AppTheme.textPrimary, fontStyle: FontStyle.italic, height: 1.4),
+                          style: const TextStyle(fontSize: 13, color: AppTheme.textPrimary, fontStyle: FontStyle.italic, height: 1.4),
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -374,26 +471,26 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                       icon: Icon(
                         entry.isRevised ? Icons.undo : Icons.check_circle_outline,
                         color: entry.isRevised ? AppTheme.textSecondary : AppTheme.success,
-                        size: 20,
+                        size: 18,
                       ),
                       label: Text(
                         entry.isRevised ? 'Mark Pending' : 'Mark as Revised',
                         style: TextStyle(
                           color: entry.isRevised ? AppTheme.textSecondary : AppTheme.success,
                           fontWeight: FontWeight.bold,
-                          fontSize: 13,
+                          fontSize: 12,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
                     TextButton.icon(
                       onPressed: () {
                         _showDeleteConfirmDialog(context, provider, entry.id);
                       },
-                      icon: const Icon(Icons.delete_outline, color: AppTheme.error, size: 20),
+                      icon: const Icon(Icons.delete_outline, color: AppTheme.error, size: 18),
                       label: const Text(
                         'Delete',
-                        style: TextStyle(color: AppTheme.error, fontWeight: FontWeight.bold, fontSize: 13),
+                        style: TextStyle(color: AppTheme.error, fontWeight: FontWeight.bold, fontSize: 12),
                       ),
                     ),
                   ],
@@ -443,27 +540,27 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                           width: 40,
                           height: 4,
                           decoration: BoxDecoration(
-                            color: AppTheme.textSecondary.withOpacity(0.3),
+                            color: Colors.white24,
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 14),
                       Text(
-                        'Add Error Log Entry',
-                        style: AppTheme.poppinsBold(fontSize: 18),
+                        'Log a Mistake to Journal',
+                        style: AppTheme.poppinsBold(fontSize: 16),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 14),
 
                       // Subject Dropdown
-                      const Text('Subject', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                      const Text('Subject', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                       const SizedBox(height: 6),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         decoration: BoxDecoration(
                           color: AppTheme.surface,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: AppTheme.textSecondary.withOpacity(0.2)),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
@@ -473,7 +570,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                             items: StorageService.syllabusData.keys.map((sub) {
                               return DropdownMenuItem<String>(
                                 value: sub,
-                                child: Text(sub),
+                                child: Text(sub, style: const TextStyle(fontSize: 13)),
                               );
                             }).toList(),
                             onChanged: (val) {
@@ -489,76 +586,96 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                       const SizedBox(height: 12),
 
                       // Topic
-                      const Text('Topic', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                      const Text('Topic', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                       const SizedBox(height: 6),
                       TextFormField(
                         controller: topicController,
-                        style: const TextStyle(color: AppTheme.textPrimary),
+                        style: const TextStyle(color: AppTheme.textPrimary, fontSize: 13),
                         decoration: InputDecoration(
-                          hintText: 'e.g., Eigenvalues & Eigenvectors',
-                          hintStyle: const TextStyle(color: AppTheme.textSecondary),
+                          hintText: 'e.g., Eigenvalues / Bayes Theorem',
+                          hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                           filled: true,
                           fillColor: AppTheme.surface,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide.none,
-                          ),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
                         ),
                         validator: (val) => val == null || val.trim().isEmpty ? 'Please enter a topic' : null,
                       ),
                       const SizedBox(height: 12),
 
                       // Question Text
-                      const Text('Question Text', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                      const Text('Question Text', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                       const SizedBox(height: 6),
                       TextFormField(
                         controller: questionController,
-                        style: const TextStyle(color: AppTheme.textPrimary),
-                        maxLines: 3,
+                        style: const TextStyle(color: AppTheme.textPrimary, fontSize: 13),
+                        maxLines: 2,
                         decoration: InputDecoration(
-                          hintText: 'Paste or write the question here...',
-                          hintStyle: const TextStyle(color: AppTheme.textSecondary),
+                          hintText: 'Paste or summarize the question...',
+                          hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                           filled: true,
                           fillColor: AppTheme.surface,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide.none,
-                          ),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
                         ),
-                        validator: (val) => val == null || val.trim().isEmpty ? 'Please enter the question' : null,
+                        validator: (val) => val == null || val.trim().isEmpty ? 'Please enter question details' : null,
                       ),
                       const SizedBox(height: 12),
 
-                      // Why Wrong
-                      const Text('Why I got it wrong?', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.error)),
+                      // Quick Taxonomy Tag Chips
+                      const Text('Why did you get it wrong? (Select error type):', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppTheme.error)),
+                      const SizedBox(height: 6),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
+                        children: [
+                          '🧠 Conceptual Gap',
+                          '📐 Calculation Error',
+                          '🤦‍♂️ Silly Mistake',
+                          '📝 Formula Slip',
+                          '⏳ Time Pressure',
+                        ].map((tag) {
+                          return ActionChip(
+                            label: Text(tag, style: const TextStyle(fontSize: 11)),
+                            backgroundColor: AppTheme.surface,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                            ),
+                            onPressed: () {
+                              setModalState(() {
+                                final cleanTag = tag.split(' ').sublist(1).join(' ');
+                                if (!whyWrongController.text.contains(cleanTag)) {
+                                  whyWrongController.text = '[$cleanTag]: ${whyWrongController.text}'.trim();
+                                }
+                              });
+                            },
+                          );
+                        }).toList(),
+                      ),
                       const SizedBox(height: 6),
                       TextFormField(
                         controller: whyWrongController,
-                        style: const TextStyle(color: AppTheme.textPrimary),
+                        style: const TextStyle(color: AppTheme.textPrimary, fontSize: 13),
                         maxLines: 3,
                         decoration: InputDecoration(
-                          hintText: 'e.g., Calculation mistake or forgot that the eigenvalues product equals the determinant.',
-                          hintStyle: const TextStyle(color: AppTheme.textSecondary),
+                          hintText: 'e.g., [Conceptual Gap]: Forgot that eigenvectors of distinct eigenvalues are linearly independent.',
+                          hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                           filled: true,
                           fillColor: AppTheme.surface,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide.none,
-                          ),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
                         ),
-                        validator: (val) => val == null || val.trim().isEmpty ? 'Please explain why you got it wrong' : null,
+                        validator: (val) => val == null || val.trim().isEmpty ? 'Please describe why you got it wrong' : null,
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 18),
 
                       // Save Button
                       SizedBox(
                         width: double.infinity,
+                        height: 46,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppTheme.primary,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
                           onPressed: () {
                             if (formKey.currentState!.validate()) {
@@ -571,16 +688,16 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Error log entry saved successfully!'),
+                                  content: Text('Mistake added to notebook!'),
                                   backgroundColor: AppTheme.success,
                                 ),
                               );
                             }
                           },
-                          child: const Text('Save Entry', style: TextStyle(fontWeight: FontWeight.bold)),
+                          child: const Text('Save to Mistake Journal', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
@@ -598,8 +715,9 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
       builder: (context) {
         return AlertDialog(
           backgroundColor: AppTheme.surface,
-          title: const Text('Delete Entry'),
-          content: const Text('Are you sure you want to delete this error log entry? This action cannot be undone.'),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text('Delete Entry?'),
+          content: const Text('Are you sure you want to remove this mistake from your notebook?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -611,7 +729,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                 provider.deleteErrorLogEntry(id);
                 Navigator.pop(context);
               },
-              child: const Text('Delete', style: TextStyle(color: AppTheme.textPrimary)),
+              child: const Text('Delete', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ],
         );
