@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:gateda/theme/app_theme.dart';
 import 'package:gateda/models/models.dart';
+import 'package:gateda/models/branch_model.dart';
 
 class EstimationNode {
   final double marks;
@@ -507,6 +508,38 @@ void main() {
       expect(serialized['conceptWatched'], true);
       expect(serialized['pyqSolved'], true);
       expect(serialized['revisedOnce'], true);
+    });
+  });
+
+  group('Multi-Branch Scalable Architecture Tests', () {
+    test('Active branches DA, CSIT, and BOTH are available', () {
+      final da = BranchRegistry.getBranch('DA');
+      expect(da.isAvailable, true);
+      expect(da.subjects.contains('Machine Learning'), true);
+      expect(da.subjects.contains('Probability and Statistics'), true);
+
+      final csit = BranchRegistry.getBranch('CSIT');
+      expect(csit.isAvailable, true);
+      expect(csit.subjects.contains('Algorithms'), true);
+      expect(csit.subjects.contains('Computer Networks'), true);
+
+      final both = BranchRegistry.getBranch('BOTH');
+      expect(both.isAvailable, true);
+    });
+
+    test('Upcoming branches (ECE, EE, ME, CE) are flagged for next season waitlist', () {
+      final ec = BranchRegistry.getBranch('EC');
+      expect(ec.isAvailable, false);
+      expect(ec.badgeText, 'NEXT SEASON');
+
+      final ee = BranchRegistry.getBranch('EE');
+      expect(ee.isAvailable, false);
+
+      final me = BranchRegistry.getBranch('ME');
+      expect(me.isAvailable, false);
+
+      final ce = BranchRegistry.getBranch('CE');
+      expect(ce.isAvailable, false);
     });
   });
 }
