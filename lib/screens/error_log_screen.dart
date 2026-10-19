@@ -6,6 +6,7 @@ import '../providers/app_provider.dart';
 import '../services/storage_service.dart';
 import '../theme/app_theme.dart';
 import 'mock_test_runner_screen.dart';
+import '../widgets/neu_widgets.dart';
 
 class ErrorLogScreen extends StatefulWidget {
   const ErrorLogScreen({super.key});
@@ -96,96 +97,74 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header titles
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: Text(
-              'Targeted Mistake Notebook',
-              style: AppTheme.poppinsBold(fontSize: 18),
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Text(
-              'Taxonomy-tagged questions you got wrong — review before mocks to eliminate recurring errors.',
-              style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
-            ),
-          ),
-
           // Practice Mistakes Action Banner
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: InkWell(
-              onTap: () {
-                final quizQuestions = provider.generateMistakesQuiz(
-                  subjectFilter: _selectedSubjectFilter,
-                );
-                if (quizQuestions.isEmpty) {
-                  ScaffoldMessenger.of(context).clearSnackBars();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('No mistake entries found for this filter. Add errors or take mock tests first!'),
-                      backgroundColor: AppTheme.warning,
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                  return;
-                }
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MockTestRunnerScreen(
-                      questions: quizQuestions,
-                      duration: Duration(minutes: quizQuestions.length * 3),
-                      testName: _selectedSubjectFilter == 'All'
-                          ? 'Mistakes Drill Examination'
-                          : '$_selectedSubjectFilter Mistakes Drill',
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            child: NeuContainer(
+              borderRadius: 20,
+              padding: const EdgeInsets.all(14),
+              child: Row(
+                children: [
+                  const NeuIconTile(
+                    icon: Icons.bolt_rounded,
+                    iconColor: AppTheme.accentFlame,
+                    size: 42,
+                    iconSize: 22,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Mistakes CBT Drill',
+                          style: AppTheme.poppinsBold(fontSize: 14, color: context.textColor),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          filteredEntries.isEmpty
+                              ? 'Log mistakes to generate drills'
+                              : '${filteredEntries.length} logged mistake${filteredEntries.length > 1 ? "s" : ""} ready',
+                          style: TextStyle(color: context.textSecondaryColor, fontSize: 11.5),
+                        ),
+                      ],
                     ),
                   ),
-                );
-              },
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                decoration: BoxDecoration(
-                  color: AppTheme.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: AppTheme.primary.withValues(alpha: 0.35),
+                  NeuButton(
+                    isPrimary: true,
+                    borderRadius: 14,
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    onPressed: () {
+                      final quizQuestions = provider.generateMistakesQuiz(
+                        subjectFilter: _selectedSubjectFilter,
+                      );
+                      if (quizQuestions.isEmpty) {
+                        ScaffoldMessenger.of(context).clearSnackBars();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('No mistake entries found for this filter.'),
+                            backgroundColor: AppTheme.warning,
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                        return;
+                      }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MockTestRunnerScreen(
+                            questions: quizQuestions,
+                            duration: Duration(minutes: quizQuestions.length * 3),
+                            testName: _selectedSubjectFilter == 'All'
+                                ? 'Mistakes Drill'
+                                : '$_selectedSubjectFilter Mistakes',
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Text('Start ⚡', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
                   ),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: AppTheme.primary.withValues(alpha: 0.15),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.flash_on_rounded, color: AppTheme.primary, size: 20),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            '⚡ Practice My Mistakes in GATE CBT',
-                            style: TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold, fontSize: 13.5),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            filteredEntries.isEmpty
-                                ? 'Log mistakes to generate custom CBT drills'
-                                : 'Launch CBT mock test from ${filteredEntries.length} logged mistake${filteredEntries.length > 1 ? "s" : ""}',
-                            style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Icon(Icons.arrow_forward_ios_rounded, color: AppTheme.textSecondary, size: 14),
-                  ],
-                ),
+                ],
               ),
             ),
           ),
@@ -218,7 +197,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
-                        color: isSelected ? tagColor.withValues(alpha: 0.2) : AppTheme.surface,
+                        color: isSelected ? tagColor.withValues(alpha: 0.2) : context.surfaceColor,
                         borderRadius: BorderRadius.circular(18),
                         border: Border.all(
                           color: isSelected ? tagColor : Colors.white.withValues(alpha: 0.08),
@@ -360,21 +339,18 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
     final detectedTag = _detectTagInText(entry.whyWrong);
     final tagColor = detectedTag != null ? _getTagColor(detectedTag) : null;
 
-    return Container(
+    return NeuContainer(
       margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: entry.isRevised ? AppTheme.success.withValues(alpha: 0.3) : AppTheme.error.withValues(alpha: 0.3),
-          width: 1.5,
-        ),
-      ),
+      borderRadius: 18,
+      padding: EdgeInsets.zero,
+      isRecessed: entry.isRevised,
       child: ExpansionTile(
-        collapsedTextColor: AppTheme.textPrimary,
-        collapsedIconColor: AppTheme.textSecondary,
-        textColor: entry.isRevised ? AppTheme.success : AppTheme.error,
-        iconColor: entry.isRevised ? AppTheme.success : AppTheme.error,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        collapsedTextColor: context.textColor,
+        collapsedIconColor: context.textSecondaryColor,
+        textColor: entry.isRevised ? AppTheme.accentMint : AppTheme.accentCoral,
+        iconColor: entry.isRevised ? AppTheme.accentMint : AppTheme.accentCoral,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

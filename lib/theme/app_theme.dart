@@ -2,46 +2,60 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Color Palette (Clean Navy & Electric Blue)
-  static const Color background = Color(0xFF0A0E21);
-  static const Color primary = Color(0xFF2962FF);
-  static const Color secondary = Color(0xFF00D4AA);
-  static const Color surface = Color(0xFF1D1E33);
+  // Brand & Accent Color Palette
+  static const Color background = Color(0xFF12111A);
+  static const Color surface = Color(0xFF1A1828);
+  static const Color surfaceElevated = Color(0xFF221F33);
+  static const Color primary = Color(0xFF7C3AED); // Vibrant Purple Brand (as reference)
+  static const Color primaryLight = Color(0xFF9061F9);
+  static const Color secondary = Color(0xFF00D4AA); // Mint Teal
   static const Color textPrimary = Color(0xFFFFFFFF);
-  static const Color textSecondary = Color(0xFFB0BEC5);
+  static const Color textSecondary = Color(0xFF94A3B8);
   static const Color error = Color(0xFFFF5252);
   static const Color warning = Color(0xFFFFB74D);
-  static const Color success = Color(0xFF4CAF50);
+  static const Color success = Color(0xFF00D4AA);
+
+  // Gamification & Accent Tokens (from UI Reference)
+  static const Color accentPurple = Color(0xFF7C3AED); // Vibrant Purple
+  static const Color accentFlame = Color(0xFFFF7A00); // Streak Orange
+  static const Color accentGold = Color(0xFFFFB300); // XP / Trophy Gold
+  static const Color accentCoral = Color(0xFFFF4757); // Target Coral
+  static const Color accentCyan = Color(0xFF00B4D8); // Diamonds Azure
+  static const Color accentMint = Color(0xFF10B981); // Emerald Mint
+
+  // Border & Divider Tokens
+  static const Color borderDark = Color(0x18FFFFFF);
+  static const Color borderLight = Color(0x0F000000);
 
   // Light Theme configuration
   static ThemeData get lightTheme {
     return ThemeData(
       brightness: Brightness.light,
-      scaffoldBackgroundColor: const Color(0xFFF5F5FA),
+      scaffoldBackgroundColor: const Color(0xFFEFF3F8),
       primaryColor: primary,
       colorScheme: const ColorScheme.light(
         primary: primary,
         secondary: secondary,
-        surface: Colors.white,
+        surface: Color(0xFFEFF3F8),
         error: error,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
-        onSurface: Color(0xFF1A1A24),
+        onSurface: Color(0xFF1E293B),
       ),
       cardTheme: const CardThemeData(
-        color: Colors.white,
-        elevation: 1,
+        color: Color(0xFFEFF3F8),
+        elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
+          borderRadius: BorderRadius.all(Radius.circular(22)),
         ),
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: primary,
+        backgroundColor: Color(0xFFEFF3F8),
         elevation: 0,
         centerTitle: false,
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: Color(0xFF1E293B)),
         titleTextStyle: TextStyle(
-          color: Colors.white,
+          color: Color(0xFF1E293B),
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
@@ -253,9 +267,13 @@ class AppTheme {
 // Extension to easily access dynamic theme colors anywhere in the app
 extension ThemeContextExtension on BuildContext {
   Color get colorBackground => Theme.of(this).scaffoldBackgroundColor;
+  Color get scaffoldBackground => colorBackground;
   Color get colorSurface => Theme.of(this).colorScheme.surface;
+  Color get surfaceColor => colorSurface;
+  Color get colorSurfaceElevated => isDarkMode ? AppTheme.surfaceElevated : const Color(0xFFF0F2F6);
   Color get colorPrimary => Theme.of(this).colorScheme.primary;
   Color get colorSecondary => Theme.of(this).colorScheme.secondary;
+  Color get colorBorder => isDarkMode ? AppTheme.borderDark : AppTheme.borderLight;
   Color get textColor => Theme.of(this).brightness == Brightness.dark ? AppTheme.textPrimary : const Color(0xFF1A1A24);
   Color get textSecondaryColor => Theme.of(this).brightness == Brightness.dark ? AppTheme.textSecondary : const Color(0xFF6A6A7A);
   

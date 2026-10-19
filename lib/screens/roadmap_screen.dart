@@ -4,6 +4,7 @@ import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
 import '../models/models.dart';
 import '../data/roadmap_data.dart';
+import '../widgets/neu_widgets.dart';
 
 class RoadmapScreen extends StatelessWidget {
   const RoadmapScreen({super.key});
@@ -48,6 +49,7 @@ class RoadmapScreen extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        backgroundColor: context.scaffoldBackground,
         body: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 800),
@@ -59,17 +61,17 @@ class RoadmapScreen extends StatelessWidget {
                     expandedHeight: 250.0,
                     floating: false,
                     pinned: true,
-                    backgroundColor: AppTheme.background,
+                    backgroundColor: context.scaffoldBackground,
                     flexibleSpace: FlexibleSpaceBar(
                       titlePadding: const EdgeInsets.only(left: 24, bottom: 80),
                       title: Text(
                         'GATE ${provider.activeExam} Roadmap',
-                        style: AppTheme.poppinsBold(fontSize: 18),
+                        style: AppTheme.poppinsBold(fontSize: 18, color: context.textColor),
                       ),
                       background: Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [AppTheme.primary.withOpacity(0.2), AppTheme.background],
+                            colors: [AppTheme.primary.withOpacity(0.15), context.scaffoldBackground],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                           ),
@@ -228,21 +230,17 @@ class RoadmapScreen extends StatelessWidget {
       physics: const BouncingScrollPhysics(),
       children: [
         // Meta Info
-        Container(
+        NeuContainer(
+          borderRadius: 18,
           padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: AppTheme.primary.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppTheme.primary.withOpacity(0.3)),
-          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('${meta['exam']} - ${meta['roadmap_type']} Roadmap', style: AppTheme.poppinsBold(fontSize: 18, color: AppTheme.primary)),
+              Text('${meta['exam']} - ${meta['roadmap_type']} Roadmap', style: AppTheme.poppinsBold(fontSize: 16, color: AppTheme.primary)),
               const SizedBox(height: 8),
-              Text('Target: ${meta['target']}', style: TextStyle(color: context.textColor, fontSize: 14)),
+              Text('Target: ${meta['target']}', style: TextStyle(color: context.textColor, fontSize: 13)),
               const SizedBox(height: 4),
-              Text('Duration: ${meta['start_date']} to ${meta['end_date']} (${meta['total_weeks']} weeks)', style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+              Text('Duration: ${meta['start_date']} to ${meta['end_date']} (${meta['total_weeks']} weeks)', style: TextStyle(color: context.textSecondaryColor, fontSize: 11.5)),
               if (meta['note'] != null) ...[
                 const SizedBox(height: 12),
                 Container(
@@ -251,7 +249,7 @@ class RoadmapScreen extends StatelessWidget {
                     color: Colors.orange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(meta['note'], style: const TextStyle(color: Colors.orange, fontSize: 12, fontStyle: FontStyle.italic)),
+                  child: Text(meta['note'], style: const TextStyle(color: Colors.orange, fontSize: 11, fontStyle: FontStyle.italic)),
                 ),
               ],
             ],
@@ -270,25 +268,22 @@ class RoadmapScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Phase ${phase['phase']}: ${phase['title']}', style: AppTheme.poppinsBold(fontSize: 20, color: AppTheme.secondary)),
+          Text('Phase ${phase['phase']}: ${phase['title']}', style: AppTheme.poppinsBold(fontSize: 18, color: AppTheme.secondary)),
           const SizedBox(height: 4),
-          Text('Weeks ${phase['weeks']} (${phase['dates']})', style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
-          const SizedBox(height: 16),
+          Text('Weeks ${phase['weeks']} (${phase['dates']})', style: TextStyle(color: context.textSecondaryColor, fontSize: 12)),
+          const SizedBox(height: 14),
           ...weeklyPlan.map((week) => _buildWeekTile(context, week)).toList(),
           if (phase['phase_end_milestone'] != null) ...[
-            const SizedBox(height: 16),
-            Container(
+            const SizedBox(height: 14),
+            NeuContainer(
+              isRecessed: true,
+              borderRadius: 12,
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: AppTheme.success.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppTheme.success.withOpacity(0.3)),
-              ),
               child: Row(
                 children: [
-                  const Icon(Icons.flag_rounded, color: AppTheme.success),
-                  const SizedBox(width: 12),
-                  Expanded(child: Text(phase['phase_end_milestone'], style: TextStyle(color: context.textColor, fontSize: 13))),
+                  const Icon(Icons.flag_rounded, color: AppTheme.success, size: 20),
+                  const SizedBox(width: 10),
+                  Expanded(child: Text(phase['phase_end_milestone'], style: TextStyle(color: context.textColor, fontSize: 12.5))),
                 ],
               ),
             ),
@@ -300,24 +295,21 @@ class RoadmapScreen extends StatelessWidget {
 
   Widget _buildWeekTile(BuildContext context, dynamic week) {
     final dailyTargets = week['daily_targets'] as Map<String, dynamic>;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: context.colorSurface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: context.textColor.withOpacity(0.05)),
-        ),
-        child: Theme(
-          data: ThemeData(dividerColor: Colors.transparent),
-          child: ExpansionTile(
-            collapsedIconColor: AppTheme.primary,
-            iconColor: AppTheme.secondary,
-            title: Text('Week ${week['week']}: ${week['subject'] ?? week['title'] ?? 'Week Plan'}', style: TextStyle(color: context.textColor, fontWeight: FontWeight.bold, fontSize: 15)),
-            subtitle: week['topics'] != null 
-              ? Text((week['topics'] as List).join(', '), style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12), maxLines: 1, overflow: TextOverflow.ellipsis)
-              : null,
-            childrenPadding: const EdgeInsets.all(16).copyWith(top: 0),
+    return NeuContainer(
+      borderRadius: 16,
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          tilePadding: EdgeInsets.zero,
+          collapsedIconColor: context.textSecondaryColor,
+          iconColor: AppTheme.secondary,
+          title: Text('Week ${week['week']}: ${week['subject'] ?? week['title'] ?? 'Week Plan'}', style: TextStyle(color: context.textColor, fontWeight: FontWeight.bold, fontSize: 14)),
+          subtitle: week['topics'] != null 
+            ? Text((week['topics'] as List).join(', '), style: TextStyle(color: context.textSecondaryColor, fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis)
+            : null,
+          childrenPadding: const EdgeInsets.all(12).copyWith(top: 0),
             children: [
               const Divider(color: Colors.white12),
               const SizedBox(height: 8),
@@ -339,8 +331,7 @@ class RoadmapScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 }
 
@@ -486,12 +477,15 @@ class _SubjectExpansionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
+    return NeuContainer(
+      borderRadius: 18,
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
-          collapsedIconColor: AppTheme.textSecondary,
+          tilePadding: EdgeInsets.zero,
+          collapsedIconColor: context.textSecondaryColor,
           iconColor: AppTheme.secondary,
           leading: Container(
             padding: const EdgeInsets.all(8),

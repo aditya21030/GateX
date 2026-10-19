@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
+import '../widgets/neu_widgets.dart';
 
 class FormulaSheetScreen extends StatefulWidget {
   const FormulaSheetScreen({super.key});
@@ -1561,14 +1562,10 @@ class _FormulaDisplayBoxState extends State<_FormulaDisplayBox> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF12121A),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppTheme.textPrimary.withValues(alpha: 0.04)),
-      ),
+    return NeuContainer(
+      isRecessed: true,
+      borderRadius: 10,
+      padding: const EdgeInsets.all(10),
       child: RawScrollbar(
         controller: _scrollController,
         thumbColor: AppTheme.secondary.withValues(alpha: 0.3),
@@ -1580,10 +1577,10 @@ class _FormulaDisplayBoxState extends State<_FormulaDisplayBox> {
           scrollDirection: Axis.horizontal,
           physics: const BouncingScrollPhysics(),
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
+            padding: const EdgeInsets.only(bottom: 6.0),
             child: Text(
               widget.formula,
-              style: AppTheme.monospaceStyle(fontSize: 12.0, color: AppTheme.textPrimary),
+              style: AppTheme.monospaceStyle(fontSize: 12.0, color: context.textColor),
               softWrap: false,
             ),
           ),
@@ -1592,9 +1589,6 @@ class _FormulaDisplayBoxState extends State<_FormulaDisplayBox> {
     );
   }
 }
-
-
-  
 
 
 class _FormulaItem {
@@ -1622,11 +1616,11 @@ class _FormulaCardGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+    return NeuContainer(
+      margin: const EdgeInsets.only(bottom: 14),
+      borderRadius: 20,
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
@@ -1651,8 +1645,8 @@ class _FormulaCardGroup extends StatelessWidget {
                         Expanded(
                           child: Text(
                             item.name,
-                            style: const TextStyle(
-                              color: AppTheme.textPrimary,
+                            style: TextStyle(
+                              color: context.textColor,
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
                             ),
@@ -1685,7 +1679,6 @@ class _FormulaCardGroup extends StatelessWidget {
             }),
           ],
         ),
-      ),
     );
   }
 }
@@ -1978,28 +1971,9 @@ class _FlashcardDeckViewState extends State<_FlashcardDeckView> with SingleTicke
   }
 
   Widget _buildCardFront(_FormulaItem item, String sectionTitle, bool isMastered, bool needsReview) {
-    return Container(
-      constraints: const BoxConstraints(minHeight: 280),
+    return NeuContainer(
+      borderRadius: 22,
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isMastered
-              ? AppTheme.success.withValues(alpha: 0.4)
-              : needsReview
-                  ? AppTheme.warning.withValues(alpha: 0.4)
-                  : AppTheme.secondary.withValues(alpha: 0.25),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.25),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -2040,7 +2014,7 @@ class _FlashcardDeckViewState extends State<_FlashcardDeckView> with SingleTicke
               Text(
                 item.name,
                 textAlign: TextAlign.center,
-                style: AppTheme.poppinsBold(fontSize: 20, color: Colors.white),
+                style: AppTheme.poppinsBold(fontSize: 20, color: context.textColor),
               ),
               const SizedBox(height: 12),
               Text(
@@ -2048,19 +2022,17 @@ class _FlashcardDeckViewState extends State<_FlashcardDeckView> with SingleTicke
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 12,
-                  color: AppTheme.textSecondary.withValues(alpha: 0.8),
+                  color: context.textSecondaryColor,
                   height: 1.4,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 28),
-          Container(
+          NeuContainer(
+            isRecessed: true,
+            borderRadius: 14,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(16),
-            ),
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -2079,24 +2051,9 @@ class _FlashcardDeckViewState extends State<_FlashcardDeckView> with SingleTicke
   }
 
   Widget _buildCardBack(_FormulaItem item, String sectionTitle) {
-    return Container(
-      constraints: const BoxConstraints(minHeight: 280),
+    return NeuContainer(
+      borderRadius: 22,
       padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        color: const Color(0xFF161622),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AppTheme.secondary.withValues(alpha: 0.5),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.35),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -2107,7 +2064,7 @@ class _FlashcardDeckViewState extends State<_FlashcardDeckView> with SingleTicke
               Expanded(
                 child: Text(
                   item.name,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: context.textColor),
                 ),
               ),
               IconButton(

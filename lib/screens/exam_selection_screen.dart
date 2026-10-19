@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
+import '../widgets/neu_widgets.dart';
 import '../models/branch_model.dart';
 import '../main.dart';
 
@@ -21,79 +22,67 @@ class _ExamSelectionScreenState extends State<ExamSelectionScreen> {
   void _showWaitlistModal(BuildContext context, BranchConfig branch) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppTheme.surface,
+      backgroundColor: context.scaffoldBackground,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setSheetState) {
             final joined = _waitlistJoined.contains(branch.code);
             return Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.all(20.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: branch.accentColor.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(branch.icon, color: branch.accentColor, size: 28),
-                      ),
+                      NeuIconTile(icon: branch.icon, iconColor: branch.accentColor, size: 44, iconSize: 22),
                       const SizedBox(width: 14),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(branch.title, style: AppTheme.poppinsBold(fontSize: 18)),
-                            Text(branch.subtitle, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                            Text(branch.title, style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor)),
+                            Text(branch.subtitle, style: TextStyle(color: context.textSecondaryColor, fontSize: 12)),
                           ],
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close_rounded, color: Colors.white70),
+                        icon: Icon(Icons.close_rounded, color: context.textSecondaryColor),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppTheme.background,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-                    ),
+                  NeuContainer(
+                    isRecessed: true,
+                    borderRadius: 16,
+                    padding: const EdgeInsets.all(14),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Row(
                           children: [
-                            Icon(Icons.rocket_launch_rounded, color: AppTheme.secondary, size: 16),
+                            Icon(Icons.rocket_launch_rounded, color: AppTheme.accentPurple, size: 16),
                             SizedBox(width: 8),
-                            Text('Curating for Next Season', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.secondary)),
+                            Text('Curating for Next Season', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.accentPurple)),
                           ],
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'We are currently compiling official IIT master question papers, LaTeX formulas, and high-yield mocks for ${branch.title}. Join the priority waitlist to get early beta access!',
-                          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12, height: 1.4),
+                          'We are compiling official IIT master question papers, LaTeX formulas, and high-yield mocks for ${branch.title}. Join the priority waitlist to get early beta access!',
+                          style: TextStyle(color: context.textSecondaryColor, fontSize: 12, height: 1.4),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 20),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: joined ? AppTheme.success : AppTheme.primary,
-                      minimumSize: const Size(double.infinity, 48),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
+                  NeuButton(
+                    isPrimary: !joined,
+                    borderRadius: 14,
+                    height: 48,
                     onPressed: joined
                         ? null
                         : () {
@@ -105,17 +94,23 @@ class _ExamSelectionScreenState extends State<ExamSelectionScreen> {
                             ScaffoldMessenger.of(this.context).showSnackBar(
                               SnackBar(
                                 content: Text('🎉 Joined the ${branch.title} priority waitlist! We will notify you.'),
-                                backgroundColor: AppTheme.success,
+                                backgroundColor: AppTheme.accentMint,
                               ),
                             );
                             Future.delayed(const Duration(milliseconds: 600), () {
                               if (context.mounted) Navigator.pop(context);
                             });
                           },
-                    icon: Icon(joined ? Icons.check_circle_rounded : Icons.notifications_active_rounded, size: 18),
-                    label: Text(
-                      joined ? 'Waitlist Joined' : 'Join Priority Waitlist',
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(joined ? Icons.check_circle_rounded : Icons.notifications_active_rounded, size: 18, color: joined ? AppTheme.accentMint : Colors.white),
+                        const SizedBox(width: 8),
+                        Text(
+                          joined ? 'Waitlist Joined' : 'Join Priority Waitlist',
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: joined ? AppTheme.accentMint : Colors.white),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -187,59 +182,60 @@ class _ExamSelectionScreenState extends State<ExamSelectionScreen> {
     final branches = BranchRegistry.allBranches;
 
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: context.scaffoldBackground,
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               // Header Icon
               Center(
-                child: Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primary.withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
+                child: NeuContainer(
+                  borderRadius: 24,
+                  padding: const EdgeInsets.all(16),
+                  child: const Icon(
+                    Icons.school_rounded,
+                    size: 40,
+                    color: AppTheme.accentPurple,
                   ),
-                  child: const Icon(Icons.school_rounded, size: 52, color: AppTheme.primary),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 18),
 
               // Title
               Text(
-                'Select Your Target Exam',
-                style: AppTheme.poppinsBold(fontSize: 24),
+                'Target GATE Exam',
+                style: AppTheme.poppinsBold(fontSize: 22, color: context.textColor),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 8),
-              const Text(
-                'Customize your study dashboard, official CBT test runner, and high-yield PYQ syllabus.',
+              const SizedBox(height: 6),
+              Text(
+                'Select your branch to customize questions, CBT mocks & analytics',
                 style: TextStyle(
-                  color: AppTheme.textSecondary,
+                  color: context.textSecondaryColor,
                   fontSize: 13,
-                  height: 1.45,
+                  height: 1.4,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 24),
 
-              // Live Branches Section
+              // Live Branches Section Header
               Row(
                 children: [
                   Container(
                     width: 7,
                     height: 7,
-                    decoration: const BoxDecoration(color: AppTheme.success, shape: BoxShape.circle),
+                    decoration: const BoxDecoration(color: AppTheme.accentMint, shape: BoxShape.circle),
                   ),
                   const SizedBox(width: 8),
-                  const Text(
-                    'ACTIVE BRANCHES (SEASON 2026-2027)',
+                  Text(
+                    'ACTIVE BRANCHES (2026-2027)',
                     style: TextStyle(
-                      color: AppTheme.textSecondary,
+                      color: context.textSecondaryColor,
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.8,
@@ -253,9 +249,9 @@ class _ExamSelectionScreenState extends State<ExamSelectionScreen> {
                 return _buildBranchCard(context, branch);
               }),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 18),
 
-              // Upcoming Branches Section
+              // Upcoming Branches Section Header
               Row(
                 children: [
                   Container(
@@ -264,10 +260,10 @@ class _ExamSelectionScreenState extends State<ExamSelectionScreen> {
                     decoration: BoxDecoration(color: Colors.amber.shade400, shape: BoxShape.circle),
                   ),
                   const SizedBox(width: 8),
-                  const Text(
-                    'EXPANDING NEXT YEAR (WAITLIST)',
+                  Text(
+                    'WAITLIST (COMING SOON)',
                     style: TextStyle(
-                      color: AppTheme.textSecondary,
+                      color: context.textSecondaryColor,
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.8,
@@ -281,7 +277,7 @@ class _ExamSelectionScreenState extends State<ExamSelectionScreen> {
                 return _buildBranchCard(context, branch);
               }),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -293,9 +289,9 @@ class _ExamSelectionScreenState extends State<ExamSelectionScreen> {
     final isLive = branch.isAvailable;
     final isWaitlist = _waitlistJoined.contains(branch.code);
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: GestureDetector(
         onTap: () {
           HapticFeedback.selectionClick();
           if (isLive) {
@@ -304,26 +300,16 @@ class _ExamSelectionScreenState extends State<ExamSelectionScreen> {
             _showWaitlistModal(context, branch);
           }
         },
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isLive ? AppTheme.surface : AppTheme.surface.withValues(alpha: 0.5),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isLive ? branch.accentColor.withValues(alpha: 0.35) : Colors.white.withValues(alpha: 0.08),
-              width: 1.5,
-            ),
-          ),
+        child: NeuContainer(
+          borderRadius: 18,
+          padding: const EdgeInsets.all(14),
           child: Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: branch.accentColor.withValues(alpha: isLive ? 0.18 : 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(branch.icon, color: isLive ? branch.accentColor : Colors.white60, size: 26),
+              NeuIconTile(
+                icon: branch.icon,
+                iconColor: branch.accentColor,
+                size: 42,
+                iconSize: 22,
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -335,9 +321,9 @@ class _ExamSelectionScreenState extends State<ExamSelectionScreen> {
                         Text(
                           branch.title,
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 15,
                             fontWeight: FontWeight.bold,
-                            color: isLive ? Colors.white : Colors.white70,
+                            color: context.textColor,
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -345,12 +331,12 @@ class _ExamSelectionScreenState extends State<ExamSelectionScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: (isLive ? branch.accentColor : Colors.amber).withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
                             isWaitlist ? 'WAITLISTED' : branch.badgeText,
                             style: TextStyle(
-                              color: isWaitlist ? AppTheme.secondary : (isLive ? branch.accentColor : Colors.amber),
+                              color: isWaitlist ? AppTheme.accentPurple : (isLive ? branch.accentColor : Colors.amber),
                               fontSize: 9,
                               fontWeight: FontWeight.bold,
                             ),
@@ -361,9 +347,9 @@ class _ExamSelectionScreenState extends State<ExamSelectionScreen> {
                     const SizedBox(height: 3),
                     Text(
                       branch.subtitle,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: AppTheme.textSecondary,
+                        color: context.textSecondaryColor,
                       ),
                     ),
                   ],
@@ -371,8 +357,8 @@ class _ExamSelectionScreenState extends State<ExamSelectionScreen> {
               ),
               Icon(
                 isLive ? Icons.arrow_forward_ios_rounded : Icons.notifications_none_rounded,
-                color: isLive ? branch.accentColor : AppTheme.textSecondary,
-                size: 16,
+                color: isLive ? branch.accentColor : context.textSecondaryColor,
+                size: 15,
               ),
             ],
           ),

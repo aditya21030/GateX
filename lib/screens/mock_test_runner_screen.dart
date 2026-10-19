@@ -8,6 +8,7 @@ import '../theme/app_theme.dart';
 import '../providers/app_provider.dart';
 import '../services/ad_service.dart';
 import '../widgets/virtual_calculator.dart';
+import '../widgets/neu_widgets.dart';
 
 enum GateQuestionStatus {
   notVisited,
@@ -1227,7 +1228,7 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
 
                 // TCS iON Official Bottom Action Bar
                 Container(
-                  color: AppTheme.surface,
+                  color: context.scaffoldBackground,
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   child: SafeArea(
                     top: false,
@@ -1239,17 +1240,14 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                             // 1. Mark for Review & Next
                             Expanded(
                               flex: 3,
-                              child: OutlinedButton(
-                                style: OutlinedButton.styleFrom(
-                                  side: const BorderSide(color: Color(0xFFBA68C8)),
-                                  foregroundColor: const Color(0xFFBA68C8),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                  padding: const EdgeInsets.symmetric(vertical: 11),
-                                ),
+                              child: NeuButton(
                                 onPressed: _markForReviewAndNext,
+                                isPrimary: false,
+                                borderRadius: 12,
+                                height: 42,
                                 child: const Text(
                                   'Mark & Next',
-                                  style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: Color(0xFFBA68C8)),
                                 ),
                               ),
                             ),
@@ -1257,49 +1255,42 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
 
                             // 2. Clear Response
                             Expanded(
-                              flex: 3,
-                              child: OutlinedButton(
-                                style: OutlinedButton.styleFrom(
-                                  side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
-                                  foregroundColor: AppTheme.error,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                  padding: const EdgeInsets.symmetric(vertical: 11),
-                                ),
+                              flex: 2,
+                              child: NeuButton(
                                 onPressed: _clearCurrentAnswer,
+                                isPrimary: false,
+                                borderRadius: 12,
+                                height: 42,
                                 child: const Text(
                                   'Clear',
-                                  style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: AppTheme.error),
                                 ),
                               ),
                             ),
                             const SizedBox(width: 8),
 
                             // 3. Question Palette Trigger
-                            IconButton(
-                              style: IconButton.styleFrom(
-                                backgroundColor: AppTheme.background,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            GestureDetector(
+                              onTap: _showQuestionsMapSheet,
+                              child: const NeuContainer(
+                                borderRadius: 12,
+                                padding: EdgeInsets.all(10),
+                                child: Icon(Icons.grid_view_rounded, color: AppTheme.accentPurple, size: 20),
                               ),
-                              icon: const Icon(Icons.grid_view_rounded, color: AppTheme.secondary, size: 20),
-                              tooltip: 'Open GATE Question Palette',
-                              onPressed: _showQuestionsMapSheet,
                             ),
                             const SizedBox(width: 8),
 
                             // 4. Save & Next
                             Expanded(
                               flex: 4,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppTheme.primary,
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                  padding: const EdgeInsets.symmetric(vertical: 11),
-                                ),
+                              child: NeuButton(
                                 onPressed: _saveAndNext,
+                                isPrimary: true,
+                                borderRadius: 12,
+                                height: 42,
                                 child: Text(
-                                  _currentIndex == widget.questions.length - 1 ? 'Save & Submit' : 'Save & Next',
-                                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                  _currentIndex == widget.questions.length - 1 ? 'Submit' : 'Save & Next',
+                                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
                                 ),
                               ),
                             ),
@@ -1402,18 +1393,9 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
             ? _msqSelections[q.id]!.contains(letter)
             : _userAnswers[q.id] == letter;
 
-        return Card(
-          margin: const EdgeInsets.only(bottom: 8.0),
-          color: isSelected ? AppTheme.primary.withValues(alpha: 0.12) : AppTheme.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-            side: BorderSide(
-              color: isSelected ? AppTheme.primary : Colors.white.withValues(alpha: 0.06),
-              width: isSelected ? 1.5 : 1,
-            ),
-          ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(10),
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 10.0),
+          child: GestureDetector(
             onTap: () {
               HapticFeedback.selectionClick();
               setState(() {
@@ -1434,29 +1416,29 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                 }
               });
             },
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
+            child: NeuContainer(
+              isRecessed: isSelected,
+              borderRadius: 14,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 28,
-                    height: 28,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: isSelected ? AppTheme.primary : AppTheme.background,
-                      shape: q.type == 'MSQ' ? BoxShape.rectangle : BoxShape.circle,
-                      borderRadius: q.type == 'MSQ' ? BorderRadius.circular(6) : null,
-                      border: Border.all(
-                        color: isSelected ? AppTheme.primary : AppTheme.textSecondary.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Text(
-                      letter,
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : AppTheme.textSecondary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
+                  NeuContainer(
+                    isRecessed: !isSelected,
+                    borderRadius: q.type == 'MSQ' ? 6 : 14,
+                    padding: const EdgeInsets.all(5),
+                    child: SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: Center(
+                        child: Text(
+                          letter,
+                          style: TextStyle(
+                            color: isSelected ? AppTheme.accentPurple : context.textColor,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -1465,7 +1447,7 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                     child: _buildQuestionText(
                       option,
                       isExplanation: true,
-                      textColor: isSelected ? AppTheme.primary : AppTheme.textPrimary,
+                      textColor: isSelected ? AppTheme.accentPurple : context.textColor,
                     ),
                   ),
                 ],
@@ -1483,37 +1465,35 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Enter your numerical answer (NAT):',
-          style: TextStyle(fontSize: 12, color: AppTheme.textSecondary, fontWeight: FontWeight.bold),
+        Text(
+          'Numerical Answer (NAT):',
+          style: TextStyle(fontSize: 12, color: context.textSecondaryColor, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-          style: const TextStyle(color: AppTheme.textPrimary, fontSize: 16, fontWeight: FontWeight.bold),
-          decoration: InputDecoration(
-            hintText: 'e.g., 14.5 or -0.33',
-            hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 14),
-            filled: true,
-            fillColor: AppTheme.surface,
-            prefixIcon: const Icon(Icons.pin, size: 18, color: AppTheme.secondary),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: AppTheme.textPrimary.withValues(alpha: 0.05)),
+        const SizedBox(height: 10),
+        NeuContainer(
+          isRecessed: true,
+          borderRadius: 14,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+          child: TextFormField(
+            controller: controller,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+            style: TextStyle(color: context.textColor, fontSize: 16, fontWeight: FontWeight.bold),
+            decoration: InputDecoration(
+              hintText: 'e.g. 14.5 or -0.33',
+              hintStyle: TextStyle(color: context.textSecondaryColor, fontSize: 14),
+              border: InputBorder.none,
+              isDense: true,
+              contentPadding: const EdgeInsets.symmetric(vertical: 12),
+              prefixIcon: const Icon(Icons.pin_rounded, size: 18, color: AppTheme.accentPurple),
             ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: AppTheme.primary, width: 1.5),
-            ),
+            onChanged: (val) {
+              if (val.trim().isNotEmpty) {
+                _userAnswers[q.id] = val.trim();
+              } else {
+                _userAnswers.remove(q.id);
+              }
+            },
           ),
-          onChanged: (val) {
-            if (val.trim().isNotEmpty) {
-              _userAnswers[q.id] = val.trim();
-            } else {
-              _userAnswers.remove(q.id);
-            }
-          },
         ),
       ],
     );
@@ -1627,9 +1607,11 @@ https://github.com/aditya21030/GateX''';
           child: Column(
             children: [
               // Scorecard Hero Banner
-              Card(
-                margin: const EdgeInsets.all(16),
-                child: Padding(
+              // Scorecard Hero Banner in NeuContainer
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: NeuContainer(
+                  borderRadius: 20,
                   padding: const EdgeInsets.all(18.0),
                   child: Column(
                     children: [
@@ -1638,17 +1620,17 @@ https://github.com/aditya21030/GateX''';
                         children: [
                           Text(
                             widget.testName.toUpperCase(),
-                            style: const TextStyle(color: AppTheme.secondary, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.1),
+                            style: const TextStyle(color: AppTheme.accentPurple, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.1),
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: AppTheme.primary.withValues(alpha: 0.15),
+                              color: AppTheme.accentPurple.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
                               'AIR: $predictedAir',
-                              style: const TextStyle(color: AppTheme.primary, fontSize: 11, fontWeight: FontWeight.bold),
+                              style: const TextStyle(color: AppTheme.accentPurple, fontSize: 11, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ],
@@ -1659,47 +1641,47 @@ https://github.com/aditya21030/GateX''';
                         children: [
                           Text(
                             totalScore.toStringAsFixed(2),
-                            style: AppTheme.timerStyle(fontSize: 44, color: AppTheme.secondary),
+                            style: AppTheme.timerStyle(fontSize: 44, color: AppTheme.accentPurple),
                           ),
                           Text(
                             ' / ${maxPossibleMarks.toStringAsFixed(0)}',
-                            style: const TextStyle(color: AppTheme.textSecondary, fontSize: 18),
+                            style: TextStyle(color: context.textSecondaryColor, fontSize: 18),
                           ),
                         ],
                       ),
                       Text(
                         iitChance,
-                        style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                        style: TextStyle(color: context.textSecondaryColor, fontSize: 12),
                       ),
                       const SizedBox(height: 14),
-                      const Divider(color: AppTheme.background),
+                      Divider(color: context.isDarkMode ? Colors.white12 : Colors.black12),
                       const SizedBox(height: 10),
 
                       // Metric Grid Strip
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          _buildResultMiniStat('Accuracy', '${accuracy.toStringAsFixed(0)}%', AppTheme.primary),
-                          _buildResultMiniStat('Correct', '$correctCount', AppTheme.success),
+                          _buildResultMiniStat('Accuracy', '${accuracy.toStringAsFixed(0)}%', AppTheme.accentPurple),
+                          _buildResultMiniStat('Correct', '$correctCount', AppTheme.accentMint),
                           _buildResultMiniStat('Incorrect', '$incorrectCount', AppTheme.error),
-                          _buildResultMiniStat('Skipped', '$unattemptedCount', AppTheme.textSecondary),
+                          _buildResultMiniStat('Skipped', '$unattemptedCount', context.textSecondaryColor),
                         ],
                       ),
 
                       if (_isFullMock) ...[
                         const SizedBox(height: 12),
-                        const Divider(color: AppTheme.background),
+                        Divider(color: context.isDarkMode ? Colors.white12 : Colors.black12),
                         const SizedBox(height: 8),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             Text(
                               'General Aptitude: ${gaScore.toStringAsFixed(2)} / 15.00',
-                              style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary, fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 11, color: context.textSecondaryColor, fontWeight: FontWeight.bold),
                             ),
                             Text(
                               'Subject Core: ${coreScore.toStringAsFixed(2)} / 85.00',
-                              style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary, fontWeight: FontWeight.bold),
+                              style: TextStyle(fontSize: 11, color: context.textSecondaryColor, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -1754,29 +1736,25 @@ https://github.com/aditya21030/GateX''';
   Widget _buildReviewFilterChip(String label, String filterKey) {
     final isSelected = _reviewFilter == filterKey;
     return Expanded(
-      child: InkWell(
+      child: GestureDetector(
         onTap: () {
+          HapticFeedback.selectionClick();
           setState(() {
             _reviewFilter = filterKey;
           });
         },
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: isSelected ? AppTheme.primary : AppTheme.surface,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: isSelected ? AppTheme.primary : Colors.white.withValues(alpha: 0.08),
-            ),
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 10.5,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected ? Colors.white : AppTheme.textSecondary,
+        child: NeuContainer(
+          isRecessed: isSelected,
+          borderRadius: 10,
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 10.5,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                color: isSelected ? AppTheme.accentPurple : context.textSecondaryColor,
+              ),
             ),
           ),
         ),
@@ -1898,9 +1876,10 @@ class _MockQuestionReviewCardState extends State<_MockQuestionReviewCard> {
         ? 'Skipped'
         : (isCorrect ? 'Correct' : 'Incorrect');
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: NeuContainer(
+        borderRadius: 18,
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -7,14 +7,16 @@ import 'providers/pomodoro_provider.dart';
 import 'providers/auth_provider.dart';
 import 'services/notification_service.dart';
 import 'services/ad_service.dart';
+import 'services/storage_service.dart';
 import 'theme/app_theme.dart';
 import 'screens/home_screen.dart';
 import 'screens/planner_screen.dart';
 import 'screens/pyq_screen.dart';
-import 'screens/roadmap_screen.dart';
+import 'screens/mock_tracker_screen.dart';
 import 'screens/more_screen.dart';
 import 'screens/exam_selection_screen.dart';
 import 'screens/auth_screen.dart';
+import 'screens/onboarding_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -143,7 +145,8 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
         Widget nextScreen;
         if (!isLoggedIn) {
-          nextScreen = const AuthScreen();
+          final hasSeenOnboarding = StorageService().prefs.getBool('has_seen_onboarding') ?? false;
+          nextScreen = hasSeenOnboarding ? const AuthScreen() : const OnboardingScreen();
         } else if (hasSelectedExam) {
           nextScreen = const MainNavigationScaffold();
         } else {
@@ -305,7 +308,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   }
 }
 
-// 2. CORE NAVIGATION SCAFFOLD (5 main tabs)
+// 2. CORE NAVIGATION SCAFFOLD (5 Exam-Priority Tabs)
 class MainNavigationScaffold extends StatelessWidget {
   const MainNavigationScaffold({super.key});
 
@@ -317,7 +320,7 @@ class MainNavigationScaffold extends StatelessWidget {
       const HomeScreen(),
       const PlannerScreen(),
       const PYQScreen(),
-      const RoadmapScreen(),
+      const MockTrackerScreen(),
       const MoreScreen(),
     ];
 
@@ -328,24 +331,24 @@ class MainNavigationScaffold extends StatelessWidget {
         label: 'Home',
       ),
       _NavItem(
-        icon: Icons.calendar_month_outlined,
-        activeIcon: Icons.calendar_month_rounded,
-        label: 'Planner',
+        icon: Icons.checklist_rtl_rounded,
+        activeIcon: Icons.checklist_rtl_rounded,
+        label: 'Checklist',
       ),
       _NavItem(
-        icon: Icons.book_outlined,
-        activeIcon: Icons.book_rounded,
-        label: 'PYQs',
+        icon: Icons.menu_book_outlined,
+        activeIcon: Icons.menu_book_rounded,
+        label: 'PYQ Bank',
       ),
       _NavItem(
-        icon: Icons.map_outlined,
-        activeIcon: Icons.map_rounded,
-        label: 'Roadmap',
+        icon: Icons.sports_score_outlined,
+        activeIcon: Icons.sports_score_rounded,
+        label: 'Mock Arena',
       ),
       _NavItem(
         icon: Icons.grid_view_outlined,
         activeIcon: Icons.grid_view_rounded,
-        label: 'More',
+        label: 'Hub',
       ),
     ];
 
@@ -355,19 +358,26 @@ class MainNavigationScaffold extends StatelessWidget {
         children: screens,
       ),
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: AppTheme.surface,
+        decoration: BoxDecoration(
+          color: context.colorSurface,
           border: Border(
             top: BorderSide(
-              color: Color(0x18FFFFFF),
+              color: context.colorBorder,
               width: 1,
             ),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: context.isDarkMode ? 0.35 : 0.05),
+              blurRadius: 12,
+              offset: const Offset(0, -2),
+            ),
+          ],
         ),
         child: SafeArea(
           top: false,
           child: SizedBox(
-            height: 60,
+            height: 64,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: List.generate(navItems.length, (index) {
@@ -380,24 +390,41 @@ class MainNavigationScaffold extends StatelessWidget {
                     },
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          isSelected ? item.activeIcon : item.icon,
-                          color: isSelected ? AppTheme.primary : AppTheme.textSecondary,
-                          size: 24,
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          item.label,
-                          style: TextStyle(
-                            color: isSelected ? AppTheme.primary : AppTheme.textSecondary,
-                            fontSize: 11,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? AppTheme.accentPurple.withValues(alpha: 0.16)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Icon(
+                              isSelected ? item.activeIcon : item.icon,
+                              color: isSelected ? AppTheme.accentPurple : context.textSecondaryColor,
+                              size: 22,
+                            ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 3),
+                          Text(
+                            item.label,
+                            style: TextStyle(
+                              color: isSelected ? AppTheme.accentPurple : context.textSecondaryColor,
+                              fontSize: 10.5,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                              letterSpacing: isSelected ? 0.2 : 0.0,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );

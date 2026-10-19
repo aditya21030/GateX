@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
 import '../data/common_syllabus_data.dart';
+import '../widgets/neu_widgets.dart';
 
 class WeightageItem {
   final String subject;
@@ -99,36 +100,36 @@ class WeightageScreen extends StatelessWidget {
     ),
     WeightageItem(
       subject: 'Engineering Mathematics',
-      expectedMarks: '10–13',
-      percentage: 0.115,
+      expectedMarks: '13',
+      percentage: 0.13,
+      priority: 'Fixed',
+      priorityColor: AppTheme.primary,
+    ),
+    WeightageItem(
+      subject: 'Programming & Data Structures',
+      expectedMarks: '10–12',
+      percentage: 0.11,
       priority: 'Very High',
       priorityColor: AppTheme.error,
     ),
     WeightageItem(
-      subject: 'Data Structures & Algorithms',
-      expectedMarks: '10–13',
-      percentage: 0.115,
+      subject: 'Algorithms',
+      expectedMarks: '8–10',
+      percentage: 0.09,
       priority: 'Very High',
       priorityColor: AppTheme.error,
     ),
     WeightageItem(
-      subject: 'Operating Systems',
+      subject: 'Operating System',
       expectedMarks: '8–10',
       percentage: 0.09,
       priority: 'High',
       priorityColor: Colors.orange,
     ),
     WeightageItem(
-      subject: 'Computer Organization & Architecture (COA)',
-      expectedMarks: '7–10',
-      percentage: 0.085,
-      priority: 'High',
-      priorityColor: Colors.orange,
-    ),
-    WeightageItem(
-      subject: 'Theory of Computation (TOC)',
-      expectedMarks: '7–9',
-      percentage: 0.08,
+      subject: 'Computer Networks',
+      expectedMarks: '8–10',
+      percentage: 0.09,
       priority: 'High',
       priorityColor: Colors.orange,
     ),
@@ -140,11 +141,18 @@ class WeightageScreen extends StatelessWidget {
       priorityColor: Colors.orange,
     ),
     WeightageItem(
-      subject: 'Computer Networks',
+      subject: 'Theory of Computation',
       expectedMarks: '7–9',
       percentage: 0.08,
-      priority: 'Medium',
-      priorityColor: Colors.amber,
+      priority: 'High',
+      priorityColor: Colors.orange,
+    ),
+    WeightageItem(
+      subject: 'Computer Organization & Architecture (COA)',
+      expectedMarks: '8–10',
+      percentage: 0.09,
+      priority: 'High',
+      priorityColor: Colors.orange,
     ),
     WeightageItem(
       subject: 'Compiler Design',
@@ -183,8 +191,11 @@ class WeightageScreen extends StatelessWidget {
     final weightageList = isCSIT ? _csitWeightageList : _daWeightageList;
 
     return Scaffold(
+      backgroundColor: context.scaffoldBackground,
       appBar: AppBar(
-        title: const Text('Subject Weightage'),
+        title: Text('Subject Weightage', style: AppTheme.poppinsBold(fontSize: 18, color: context.textColor)),
+        backgroundColor: context.scaffoldBackground,
+        elevation: 0,
       ),
       body: Center(
         child: ConstrainedBox(
@@ -193,55 +204,26 @@ class WeightageScreen extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             children: [
-              Text(
-                'Syllabus Weightage Analysis',
-                style: AppTheme.poppinsBold(fontSize: 20),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 4.0, bottom: 20.0),
-                child: Text(
-                  'Understand the expected marks distribution, priority levels, and critical focus areas for the GATE DA exam.',
-                  style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
-                ),
-              ),
-
-              // 1. KEY INSIGHT CONTAINER (Fire highlighted card)
-              Container(
-                width: double.infinity,
+              // 1. KEY INSIGHT CONTAINER
+              NeuContainer(
+                borderRadius: 20,
                 padding: const EdgeInsets.all(16),
-                margin: const EdgeInsets.only(bottom: 24),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: LinearGradient(
-                    colors: [
-                      AppTheme.secondary.withOpacity(0.12),
-                      Colors.orange.withOpacity(0.08),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  border: Border.all(
-                    color: AppTheme.secondary.withOpacity(0.3),
-                    width: 1.5,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.secondary.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
+                margin: const EdgeInsets.only(bottom: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.local_fire_department_rounded, color: AppTheme.secondary, size: 22),
-                        const SizedBox(width: 8),
+                        const NeuIconTile(
+                          icon: Icons.local_fire_department_rounded,
+                          iconColor: AppTheme.accentFlame,
+                          size: 38,
+                          iconSize: 20,
+                        ),
+                        const SizedBox(width: 10),
                         Text(
                           'KEY INSIGHT',
-                          style: AppTheme.poppinsBold(fontSize: 14, color: AppTheme.secondary),
+                          style: AppTheme.poppinsBold(fontSize: 13, color: AppTheme.accentFlame),
                         ),
                       ],
                     ),
@@ -250,17 +232,17 @@ class WeightageScreen extends StatelessWidget {
                       isCSIT 
                         ? 'DSA + MATH = ~30% OF TOTAL MARKS.'
                         : 'MACHINE LEARNING + PROBABILITY & STATISTICS = ~40% OF TOTAL MARKS.',
-                      style: AppTheme.poppinsBold(fontSize: 13, color: AppTheme.textPrimary),
+                      style: AppTheme.poppinsBold(fontSize: 13, color: context.textColor),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     Text(
                       isCSIT
                         ? 'Mastering Data Structures, Algorithms, and Engineering Mathematics provides a huge baseline. Without these core pillars, advancing in other systems subjects becomes much harder.'
                         : 'These two subjects alone decide your rank. Every other subject helps you — but these two make or break you. Your preparation schedule must allocate at least 40% of total study time here.',
-                      style: const TextStyle(
-                        fontSize: 13,
+                      style: TextStyle(
+                        fontSize: 12,
                         height: 1.4,
-                        color: AppTheme.textPrimary,
+                        color: context.textSecondaryColor,
                       ),
                     ),
                   ],
@@ -269,47 +251,44 @@ class WeightageScreen extends StatelessWidget {
 
               if (provider.selectedExam == 'BOTH') ...[
                 // COMMON SYLLABUS BLOCK
-                const SizedBox(height: 8),
                 Text(
                   'Common Syllabus (CS & DA)',
-                  style: AppTheme.poppinsBold(fontSize: 18),
+                  style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 4.0, bottom: 16.0),
+                Padding(
+                  padding: const EdgeInsets.only(top: 4.0, bottom: 14.0),
                   child: Text(
-                    'These subjects and topics overlap. Mastering them gives you a huge advantage in both exams.',
-                    style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+                    'These subjects overlap between CS and DA.',
+                    style: TextStyle(color: context.textSecondaryColor, fontSize: 12),
                   ),
                 ),
                 ...CommonSyllabusData.data['subjects'].map<Widget>((subject) {
-                  return Container(
+                  return NeuContainer(
                     margin: const EdgeInsets.only(bottom: 12),
-                    decoration: BoxDecoration(
-                      color: AppTheme.surface,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: AppTheme.textPrimary.withOpacity(0.05)),
-                    ),
+                    borderRadius: 16,
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     child: Theme(
-                      data: ThemeData(dividerColor: Colors.transparent),
+                      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                       child: ExpansionTile(
-                        collapsedIconColor: AppTheme.primary,
+                        collapsedIconColor: context.textSecondaryColor,
                         iconColor: AppTheme.secondary,
+                        tilePadding: EdgeInsets.zero,
                         title: Row(
                           children: [
-                            const Icon(Icons.merge_type_rounded, color: AppTheme.secondary, size: 20),
-                            const SizedBox(width: 12),
+                            const Icon(Icons.merge_type_rounded, color: AppTheme.secondary, size: 18),
+                            const SizedBox(width: 10),
                             Expanded(
                               child: Text(
                                 subject['title'],
-                                style: const TextStyle(color: AppTheme.textPrimary, fontWeight: FontWeight.bold, fontSize: 15),
+                                style: AppTheme.poppinsBold(fontSize: 14, color: context.textColor),
                               ),
                             ),
                           ],
                         ),
-                        childrenPadding: const EdgeInsets.all(16).copyWith(top: 0),
+                        childrenPadding: const EdgeInsets.only(bottom: 8),
                         children: [
-                          const Divider(color: Colors.white12),
-                          const SizedBox(height: 12),
+                          Divider(color: context.isDarkMode ? Colors.white10 : Colors.black12),
+                          const SizedBox(height: 8),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -317,35 +296,35 @@ class WeightageScreen extends StatelessWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('CS Topics', style: TextStyle(color: AppTheme.primary, fontWeight: FontWeight.bold, fontSize: 12)),
-                                    const SizedBox(height: 8),
+                                    const Text('CS Topics', style: TextStyle(color: AppTheme.primary, fontWeight: FontWeight.bold, fontSize: 11)),
+                                    const SizedBox(height: 6),
                                     ...((subject['subtopics']['CS'] as List).map((topic) => Padding(
-                                      padding: const EdgeInsets.only(bottom: 6.0),
+                                      padding: const EdgeInsets.only(bottom: 4.0),
                                       child: Row(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          const Text('• ', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
-                                          Expanded(child: Text(topic.toString(), style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12))),
+                                          Text('• ', style: TextStyle(color: context.textSecondaryColor, fontSize: 11)),
+                                          Expanded(child: Text(topic.toString(), style: TextStyle(color: context.textSecondaryColor, fontSize: 11))),
                                         ],
                                       ),
                                     ))),
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 16),
+                              const SizedBox(width: 12),
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('DA Topics', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 12)),
-                                    const SizedBox(height: 8),
+                                    const Text('DA Topics', style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold, fontSize: 11)),
+                                    const SizedBox(height: 6),
                                     ...((subject['subtopics']['DA'] as List).map((topic) => Padding(
-                                      padding: const EdgeInsets.only(bottom: 6.0),
+                                      padding: const EdgeInsets.only(bottom: 4.0),
                                       child: Row(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          const Text('• ', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
-                                          Expanded(child: Text(topic.toString(), style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12))),
+                                          Text('• ', style: TextStyle(color: context.textSecondaryColor, fontSize: 11)),
+                                          Expanded(child: Text(topic.toString(), style: TextStyle(color: context.textSecondaryColor, fontSize: 11))),
                                         ],
                                       ),
                                     ))),
@@ -359,7 +338,7 @@ class WeightageScreen extends StatelessWidget {
                     ),
                   );
                 }).toList(),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
               ],
 
               // 2. WEIGHTAGE LIST
@@ -376,125 +355,103 @@ class WeightageScreen extends StatelessWidget {
   Widget _buildWeightageCard(BuildContext context, WeightageItem item) {
     final pctString = '${(item.percentage * 100).toStringAsFixed(0)}%';
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: item.priorityColor.withOpacity(0.3), width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: item.priorityColor.withOpacity(0.05),
-            blurRadius: 10,
-            spreadRadius: 2,
+    return NeuContainer(
+      borderRadius: 18,
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Subject name & expected marks
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  item.subject,
+                  style: AppTheme.poppinsBold(fontSize: 14.5, color: context.textColor),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: item.priorityColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  item.expectedMarks,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 11,
+                    color: item.priorityColor,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Subject name & expected marks
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Text(
-                    item.subject,
-                    style: AppTheme.poppinsBold(fontSize: 15),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppTheme.background,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    item.expectedMarks,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                      color: AppTheme.textPrimary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
-            // Progress bar and details row
-            Row(
-              children: [
-                // Weightage Percentage label
-                SizedBox(
-                  width: 50,
-                  child: Text(
-                    pctString,
-                    style: AppTheme.timerStyle(fontSize: 16, color: item.priorityColor),
-                  ),
+          // Progress bar and details row
+          Row(
+            children: [
+              // Weightage Percentage label
+              SizedBox(
+                width: 44,
+                child: Text(
+                  pctString,
+                  style: AppTheme.poppinsBold(fontSize: 15, color: item.priorityColor),
                 ),
-                const SizedBox(width: 8),
+              ),
+              const SizedBox(width: 6),
 
-                // Linear weightage indicator
-                Expanded(
-                  child: Container(
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: AppTheme.background,
-                      borderRadius: BorderRadius.circular(5),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppTheme.textPrimary.withOpacity(0.2),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: FractionallySizedBox(
-                      alignment: Alignment.centerLeft,
-                      widthFactor: item.percentage,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: item.priorityColor,
-                          borderRadius: BorderRadius.circular(5),
-                          boxShadow: [
-                            BoxShadow(
-                              color: item.priorityColor.withOpacity(0.6),
-                              blurRadius: 8,
-                            ),
-                          ],
+              // Linear weightage indicator well
+              Expanded(
+                child: NeuContainer(
+                  isRecessed: true,
+                  borderRadius: 6,
+                  padding: EdgeInsets.zero,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: SizedBox(
+                      height: 8,
+                      child: FractionallySizedBox(
+                        alignment: Alignment.centerLeft,
+                        widthFactor: item.percentage.clamp(0.0, 1.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: item.priorityColor,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
+              ),
+              const SizedBox(width: 12),
 
-                // Priority Badge
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: item.priorityColor.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    item.priority.toUpperCase(),
-                    style: TextStyle(
-                      color: item.priorityColor,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.8,
-                    ),
+              // Priority Badge
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: item.priorityColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  item.priority.toUpperCase(),
+                  style: TextStyle(
+                    color: item.priorityColor,
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.6,
                   ),
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

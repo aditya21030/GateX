@@ -10,6 +10,7 @@ import '../services/ad_service.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../widgets/virtual_calculator.dart';
 import '../widgets/question_discussion_sheet.dart';
+import '../widgets/neu_widgets.dart';
 
 class PYQScreen extends StatefulWidget {
   final String? initialSubject;
@@ -159,77 +160,68 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                   child: Row(
                     children: [
                       Expanded(
-                        child: TextField(
-                          controller: _searchController,
-                          style: TextStyle(color: context.textColor),
-                          decoration: InputDecoration(
-                            hintText: 'Search by keyword, topic, or year...',
-                            hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
-                            prefixIcon: const Icon(Icons.search, color: AppTheme.textSecondary, size: 20),
-                            suffixIcon: _searchQuery.isNotEmpty
-                                ? IconButton(
-                                    icon: const Icon(Icons.clear, color: AppTheme.textSecondary, size: 18),
-                                    onPressed: () {
-                                      setState(() {
-                                        _searchController.clear();
-                                        _searchQuery = '';
-                                      });
-                                    },
-                                  )
-                                : null,
-                            filled: true,
-                            fillColor: context.colorSurface,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
+                        child: NeuContainer(
+                          isRecessed: true,
+                          borderRadius: 16,
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                          child: TextField(
+                            controller: _searchController,
+                            style: TextStyle(color: context.textColor, fontSize: 13),
+                            decoration: InputDecoration(
+                              hintText: 'Search keyword, topic, or year...',
+                              hintStyle: TextStyle(color: context.textSecondaryColor, fontSize: 13),
+                              prefixIcon: Icon(Icons.search, color: context.textSecondaryColor, size: 20),
+                              suffixIcon: _searchQuery.isNotEmpty
+                                  ? IconButton(
+                                      icon: Icon(Icons.clear, color: context.textSecondaryColor, size: 18),
+                                      onPressed: () {
+                                        setState(() {
+                                          _searchController.clear();
+                                          _searchQuery = '';
+                                        });
+                                      },
+                                    )
+                                  : null,
+                              border: InputBorder.none,
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
                             ),
+                            onChanged: (val) {
+                              setState(() {
+                                _searchQuery = val;
+                              });
+                            },
                           ),
-                          onChanged: (val) {
-                            setState(() {
-                              _searchQuery = val;
-                            });
-                          },
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      // Filter Button with Badge
-                      InkWell(
+                      const SizedBox(width: 10),
+                      // Filter Button
+                      GestureDetector(
                         onTap: () => _showComprehensiveFilterSheet(subjectsList, yearsList, difficultiesList),
-                        borderRadius: BorderRadius.circular(12),
-                        child: Container(
-                          height: 48,
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          decoration: BoxDecoration(
-                            color: _activeFilterCount > 0
-                                ? AppTheme.primary.withValues(alpha: 0.15)
-                                : context.colorSurface,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: _activeFilterCount > 0
-                                  ? AppTheme.primary
-                                  : Colors.white.withValues(alpha: 0.08),
-                            ),
-                          ),
+                        child: NeuContainer(
+                          height: 46,
+                          borderRadius: 16,
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          color: _activeFilterCount > 0 ? AppTheme.accentPurple.withValues(alpha: 0.15) : null,
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
                                 Icons.tune_rounded,
-                                size: 20,
-                                color: _activeFilterCount > 0 ? AppTheme.primary : AppTheme.textSecondary,
+                                size: 19,
+                                color: _activeFilterCount > 0 ? AppTheme.accentPurple : context.textSecondaryColor,
                               ),
                               if (_activeFilterCount > 0) ...[
                                 const SizedBox(width: 6),
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                   decoration: const BoxDecoration(
-                                    color: AppTheme.primary,
+                                    color: AppTheme.accentPurple,
                                     shape: BoxShape.circle,
                                   ),
                                   child: Text(
                                     '$_activeFilterCount',
-                                    style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                                    style: const TextStyle(color: Colors.white, fontSize: 10.5, fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ],
@@ -851,11 +843,11 @@ class _PYQCardState extends State<_PYQCard> {
     final pyq = widget.pyq;
     final provider = widget.provider;
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+    return NeuContainer(
+      margin: const EdgeInsets.only(bottom: 14),
+      borderRadius: 20,
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header: badges and bookmarks
@@ -990,42 +982,126 @@ class _PYQCardState extends State<_PYQCard> {
             _getQuestionTextWidget(),
             if (pyq.hasImage && pyq.imagePath != null) ...[
               const SizedBox(height: 12),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  color: context.textColor.withOpacity(0.05),
-                  padding: const EdgeInsets.all(8),
-                  child: pyq.imagePath!.startsWith('http')
-                    ? Image.network(
-                        pyq.imagePath!,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, color: Colors.grey, size: 50),
-                      )
-                    : Image.asset(
-                        pyq.imagePath!,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            padding: const EdgeInsets.all(16),
+              GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (dialogCtx) => Dialog(
+                      backgroundColor: Colors.transparent,
+                      insetPadding: const EdgeInsets.all(12),
+                      child: Stack(
+                        alignment: Alignment.topRight,
+                        children: [
+                          Container(
                             decoration: BoxDecoration(
-                              color: AppTheme.error.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
+                              color: context.colorSurface,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: context.colorBorder),
                             ),
-                            child: Row(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(Icons.broken_image_outlined, color: AppTheme.error),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    'Diagram image not found yet. It will load once added to assets/images/.',
-                                    style: TextStyle(color: AppTheme.error, fontSize: 12, fontWeight: FontWeight.bold),
+                                Text(
+                                  'Pinch to Zoom Diagram',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: context.textSecondaryColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: InteractiveViewer(
+                                    panEnabled: true,
+                                    minScale: 0.8,
+                                    maxScale: 4.0,
+                                    child: pyq.imagePath!.startsWith('http')
+                                        ? Image.network(
+                                            pyq.imagePath!,
+                                            fit: BoxFit.contain,
+                                            errorBuilder: (context, error, stackTrace) =>
+                                                const Icon(Icons.broken_image, color: Colors.grey, size: 50),
+                                          )
+                                        : Image.asset(
+                                            pyq.imagePath!,
+                                            fit: BoxFit.contain,
+                                            errorBuilder: (context, error, stackTrace) =>
+                                                const Icon(Icons.broken_image, color: Colors.grey, size: 50),
+                                          ),
                                   ),
                                 ),
                               ],
                             ),
-                          );
-                        },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.close_rounded, color: Colors.white),
+                            onPressed: () => Navigator.pop(dialogCtx),
+                          ),
+                        ],
                       ),
+                    ),
+                  );
+                },
+                child: Stack(
+                  alignment: Alignment.bottomRight,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        color: context.textColor.withOpacity(0.05),
+                        padding: const EdgeInsets.all(8),
+                        child: pyq.imagePath!.startsWith('http')
+                          ? Image.network(
+                              pyq.imagePath!,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, color: Colors.grey, size: 50),
+                            )
+                          : Image.asset(
+                              pyq.imagePath!,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.error.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Row(
+                                    children: [
+                                      Icon(Icons.broken_image_outlined, color: AppTheme.error),
+                                      SizedBox(width: 8),
+                                      Expanded(
+                                        child: Text(
+                                          'Diagram image not found yet. It will load once added to assets/images/.',
+                                          style: TextStyle(color: AppTheme.error, fontSize: 12, fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.all(6),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.7),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.zoom_in_rounded, size: 12, color: Colors.white),
+                          SizedBox(width: 3),
+                          Text('Zoom', style: TextStyle(color: Colors.white, fontSize: 9.5, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -1154,7 +1230,6 @@ class _PYQCardState extends State<_PYQCard> {
             ],
           ],
         ),
-      ),
     );
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import '../theme/app_theme.dart';
+import '../widgets/neu_widgets.dart';
 import 'formula_sheet_screen.dart';
 import 'weightage_screen.dart';
 
@@ -10,57 +11,48 @@ class ResourcesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: context.scaffoldBackground,
       appBar: AppBar(
-        title: const Text('Revision Resources & Guides'),
+        title: Text(
+          'Revision Resources & Guides',
+          style: AppTheme.poppinsBold(fontSize: 17, color: context.textColor),
+        ),
         elevation: 0,
-        backgroundColor: AppTheme.surface,
+        backgroundColor: context.scaffoldBackground,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         physics: const BouncingScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // 1. HERO HEADER
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: AppTheme.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.08),
-                ),
-              ),
+            NeuContainer(
+              borderRadius: 20,
+              padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primary.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(Icons.menu_book_rounded, size: 28, color: AppTheme.primary),
+                  const NeuIconTile(
+                    icon: Icons.menu_book_rounded,
+                    iconColor: AppTheme.primary,
+                    size: 44,
+                    iconSize: 22,
                   ),
-                  const SizedBox(width: 16),
-                  const Expanded(
+                  const SizedBox(width: 14),
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Formula & Cheat Sheets',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.textPrimary,
-                          ),
+                          style: AppTheme.poppinsBold(fontSize: 14, color: context.textColor),
                         ),
-                        SizedBox(height: 4),
+                        const SizedBox(height: 3),
                         Text(
                           'Curated formulas, probability tables, and rapid recall sheets for revision.',
                           style: TextStyle(
-                            fontSize: 12,
-                            color: AppTheme.textSecondary,
+                            fontSize: 11.5,
+                            color: context.textSecondaryColor,
                             height: 1.3,
                           ),
                         ),
@@ -70,65 +62,56 @@ class ResourcesScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
             // 2. CORE FORMULA REFERENCE SHORTCUT
-            Container(
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: AppTheme.surface,
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: AppTheme.secondary.withValues(alpha: 0.3)),
-              ),
+            NeuContainer(
+              borderRadius: 20,
+              padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppTheme.secondary.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(Icons.functions_rounded, color: AppTheme.secondary, size: 28),
+                  const NeuIconTile(
+                    icon: Icons.functions_rounded,
+                    iconColor: AppTheme.secondary,
+                    size: 44,
+                    iconSize: 22,
                   ),
                   const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Interactive Formula Book',
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),
+                          style: AppTheme.poppinsBold(fontSize: 14, color: context.textColor),
                         ),
-                        const SizedBox(height: 4),
-                        const Text(
+                        const SizedBox(height: 3),
+                        Text(
                           '1,500+ formulas with full derivations for DA and CS/IT.',
-                          style: TextStyle(fontSize: 11, color: AppTheme.textSecondary),
+                          style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
                         ),
                       ],
                     ),
                   ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.secondary,
-                      foregroundColor: AppTheme.background,
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    ),
+                  NeuButton(
+                    isPrimary: true,
+                    borderRadius: 12,
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     onPressed: () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => const FormulaSheetScreen()));
                     },
-                    child: const Text('OPEN', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                    child: const Text('OPEN', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.white)),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
             // 3. CURATED QUICK-STUDY CARDS
-            const Text(
+            Text(
               'HIGH-YIELD REVISION GUIDES',
               style: TextStyle(
-                color: AppTheme.textSecondary,
+                color: context.textSecondaryColor,
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
@@ -196,23 +179,25 @@ class ResourcesScreen extends StatelessWidget {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const WeightageScreen()));
               },
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 20),
 
             // 4. SHARE TOOL
-            OutlinedButton.icon(
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              icon: const Icon(Icons.share_outlined, size: 18),
-              label: const Text('Share Study Guides with Friends'),
+            NeuButton(
+              borderRadius: 14,
+              padding: const EdgeInsets.symmetric(vertical: 14),
               onPressed: () {
                 Share.share(
                   'Preparing for GATE DA / CSIT? Check out GateX for high-yield formula sheets, past year questions with LaTeX solutions, and full CBT mock tests: https://play.google.com/store/apps/details?id=com.gatex.gateda',
                 );
               },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.share_outlined, size: 16, color: context.textColor),
+                  const SizedBox(width: 8),
+                  Text('Share Study Guides with Friends', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor)),
+                ],
+              ),
             ),
             const SizedBox(height: 24),
           ],
@@ -229,45 +214,39 @@ class ResourcesScreen extends StatelessWidget {
     required String subtitle,
     required VoidCallback onTap,
   }) {
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppTheme.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-        ),
+      child: NeuContainer(
+        borderRadius: 18,
+        padding: const EdgeInsets.all(14),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 0.12),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: iconColor, size: 22),
+            NeuIconTile(
+              icon: icon,
+              iconColor: iconColor,
+              size: 40,
+              iconSize: 20,
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
+                    style: AppTheme.poppinsBold(fontSize: 13.5, color: context.textColor),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary, height: 1.3),
+                    style: TextStyle(fontSize: 11, color: context.textSecondaryColor, height: 1.3),
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios_rounded, color: AppTheme.textSecondary, size: 14),
+            const SizedBox(width: 6),
+            Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor, size: 18),
           ],
         ),
       ),
@@ -277,7 +256,7 @@ class ResourcesScreen extends StatelessWidget {
   void _showDistributionModal(BuildContext context) {
     _showSheetModal(
       context,
-      title: 'Probability Distributions Quick Reference',
+      title: 'Probability Distributions',
       items: const [
         (
           title: 'Bernoulli Distribution',
@@ -350,12 +329,16 @@ class ResourcesScreen extends StatelessWidget {
           details: '• ROC curve plots True Positive Rate (Sensitivity) vs False Positive Rate (1 - Specificity).\n• AUC = 1.0 (Perfect model), AUC = 0.5 (Random guessing).',
         ),
         (
-          title: 'L1 (Lasso) vs L2 (Ridge) Regularization',
-          details: '• L1 Penalty = λ * ∑|w_i| -> Produces sparse weights, performs feature selection.\n• L2 Penalty = λ * ∑w_i² -> Shrinks weights toward zero, handles multicollinearity.',
+          title: 'Regression Metrics',
+          details: '• MSE = (1/n) ∑ (y_i - ŷ_i)²\n• RMSE = sqrt(MSE)\n• MAE = (1/n) ∑ |y_i - ŷ_i|\n• R² Score = 1 - (SS_res / SS_tot)',
         ),
         (
-          title: 'Bias-Variance Decomposition',
-          details: 'Total Expected Error = Bias² + Variance + Irreducible Error (Noise)\n• High Bias: Underfitting (model too simplistic)\n• High Variance: Overfitting (model captures noise in train set)',
+          title: 'Bias-Variance Tradeoff',
+          details: '• Total Error = Bias² + Variance + Irreducible Error (σ²)\n• High Bias: Underfitting. Solution: Add features, increase model complexity.\n• High Variance: Overfitting. Solution: More data, regularization (L1/L2), reduce features.',
+        ),
+        (
+          title: 'Regularization (L1 vs L2)',
+          details: '• L1 (Lasso): Loss + λ ∑|w_i|. Induces sparsity (feature selection).\n• L2 (Ridge): Loss + λ ∑(w_i)². Shrinks weights towards zero smoothly.',
         ),
       ],
     );
@@ -364,27 +347,27 @@ class ResourcesScreen extends StatelessWidget {
   void _showCalculusModal(BuildContext context) {
     _showSheetModal(
       context,
-      title: 'Calculus & Optimization Super-Sheet',
+      title: 'Calculus & Optimization',
       items: const [
         (
           title: 'Gradient & Directional Derivative',
-          details: '• Gradient ∇f = [∂f/∂x1, ∂f/∂x2, ..., ∂f/∂xn]^T\n• Direction of steepest ascent = ∇f / ||∇f||\n• Directional derivative in direction u: D_u f = ∇f · u',
+          details: '• Gradient ∇f = [∂f/∂x₁, ∂f/∂x₂, ..., ∂f/∂x_n]^T\n• Direction of steepest ascent: ∇f(x)\n• Direction of steepest descent: -∇f(x)\n• Directional derivative in direction u: D_u f = ∇f · u (where |u| = 1)',
         ),
         (
-          title: 'Hessian Matrix & Convexity Test',
-          details: '• Hessian H_ij = ∂²f / (∂xi ∂xj)\n• A function f is convex iff H is Positive Semi-Definite (all eigenvalues λ_i ≥ 0).\n• Strictly convex iff H is Positive Definite (all λ_i > 0) -> Unique global minimum!',
+          title: 'Hessian Matrix & Curvature',
+          details: '• H_ij = ∂²f / (∂x_i ∂x_j)\n• Symmetric if second derivatives are continuous.\n• H is Positive Definite (all eigenvalues > 0) => Local Minimum\n• H is Negative Definite (all eigenvalues < 0) => Local Maximum\n• H is Indefinite (both positive and negative eigenvalues) => Saddle Point',
         ),
         (
-          title: 'Critical Points Classification',
-          details: 'At stationary point ∇f(x*) = 0:\n• H > 0 (Positive Definite) => Local Minimum\n• H < 0 (Negative Definite) => Local Maximum\n• H has both positive and negative eigenvalues => Saddle Point',
-        ),
-        (
-          title: 'Gradient Descent Convergence',
-          details: '• Update: θ_{t+1} = θ_t - η ∇f(θ_t)\n• Learning rate η must satisfy 0 < η < 2/L where L is Lipschitz constant of ∇f.\n• Momentum update: v_{t+1} = β v_t + η ∇f(θ_t), θ_{t+1} = θ_t - v_{t+1}',
+          title: 'Convexity Conditions',
+          details: '• f is convex iff f(λx + (1-λ)y) ≤ λf(x) + (1-λ)f(y) for λ ∈ [0, 1]\n• First-order condition: f(y) ≥ f(x) + ∇f(x)^T (y - x)\n• Second-order condition: Hessian H(x) ≥ 0 (positive semi-definite) everywhere.',
         ),
         (
           title: 'Taylor Series Expansion (Multivariable)',
           details: 'f(x + Δx) ≈ f(x) + ∇f(x)^T Δx + (1/2) Δx^T H(x) Δx',
+        ),
+        (
+          title: 'Gradient Descent Convergence',
+          details: '• Update rule: x_{t+1} = x_t - η ∇f(x_t)\n• Learning rate too high: Diverges\n• Learning rate too low: Slow convergence\n• For convex L-smooth functions, converges with rate O(1/t) with η ≤ 1/L.',
         ),
       ],
     );
@@ -393,23 +376,27 @@ class ResourcesScreen extends StatelessWidget {
   void _showLossFunctionsModal(BuildContext context) {
     _showSheetModal(
       context,
-      title: 'ML Loss Functions & Gradients',
+      title: 'Loss Functions & Gradients',
       items: const [
         (
-          title: 'Mean Squared Error (MSE / L2 Loss)',
-          details: '• L(y, ŷ) = (1/2n) ∑ (y_i - ŷ_i)²\n• Gradient: ∂L/∂ŷ = -(y - ŷ)\n• Properties: Smooth, differentiable everywhere; sensitive to outliers.',
+          title: 'Mean Squared Error (MSE)',
+          details: '• Formula: L = (1/2) (y - ŷ)²\n• Gradient: ∂L/∂ŷ = -(y - ŷ)\n• Note: Convex, differentiable, sensitive to outliers.',
         ),
         (
-          title: 'Binary Cross-Entropy (Log Loss)',
-          details: '• L(y, p) = - [ y log(p) + (1-y) log(1-p) ]\n• For logistic regression p = σ(z): ∂L/∂z = p - y\n• Convex optimization problem with guaranteed global minimum.',
+          title: 'Binary Cross-Entropy (BCE / Log Loss)',
+          details: '• Formula: L = -[y ln(ŷ) + (1-y) ln(1-ŷ)]\n• When paired with Sigmoid (ŷ = σ(z)): ∂L/∂z = ŷ - y\n• Note: Heavily penalizes confident wrong predictions.',
         ),
         (
-          title: 'Categorical Cross-Entropy & Softmax',
-          details: '• Softmax: p_i = e^(z_i) / ∑ e^(z_j)\n• Loss: L = - ∑ y_i log(p_i)\n• Gradient: ∂L/∂z_i = p_i - y_i (elegant residual subtraction)',
+          title: 'Categorical Cross-Entropy',
+          details: '• Formula: L = -∑ y_c ln(ŷ_c)\n• When paired with Softmax (ŷ_c = exp(z_c)/∑ exp(z_j)): ∂L/∂z_k = ŷ_k - y_k\n• Used for multi-class classification.',
         ),
         (
-          title: 'Hinge Loss (Support Vector Machines)',
-          details: '• L(y, f(x)) = max(0, 1 - y * f(x))  where y ∈ {-1, +1}\n• Zero loss if y*f(x) ≥ 1 (correct and beyond margin)\n• Subgradient: -y*x if y*f(x) < 1, else 0',
+          title: 'Hinge Loss (SVM)',
+          details: '• Formula: L = max(0, 1 - y * ŷ) where y ∈ {-1, +1}\n• Zero loss when prediction is correct and beyond margin (y*ŷ ≥ 1).\n• Sub-gradient: -y if y*ŷ < 1, else 0.',
+        ),
+        (
+          title: 'KL Divergence (Relative Entropy)',
+          details: '• D_KL(P || Q) = ∑ P(x) ln(P(x) / Q(x))\n• Non-negative: D_KL(P || Q) ≥ 0 (Gibbs inequality)\n• Asymmetric: D_KL(P || Q) ≠ D_KL(Q || P)',
         ),
       ],
     );
@@ -423,39 +410,45 @@ class ResourcesScreen extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppTheme.surface,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (context) {
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.72,
-          minChildSize: 0.4,
-          maxChildSize: 0.94,
-          expand: false,
+          initialChildSize: 0.85,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
           builder: (context, scrollController) {
-            return Padding(
-              padding: const EdgeInsets.all(20.0),
+            return Container(
+              decoration: BoxDecoration(
+                color: context.scaffoldBackground,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              ),
               child: ListView(
                 controller: scrollController,
-                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.all(20),
                 children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: context.textSecondaryColor.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: Text(
                           title,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.white),
+                          style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor),
                         ),
                       ),
-                      TextButton.icon(
-                        style: TextButton.styleFrom(
-                          foregroundColor: AppTheme.secondary,
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          backgroundColor: AppTheme.secondary.withValues(alpha: 0.12),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        ),
-                        icon: const Icon(Icons.share_rounded, size: 15),
-                        label: const Text('Share', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                      NeuButton(
+                        borderRadius: 10,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         onPressed: () {
                           final buffer = StringBuffer();
                           buffer.writeln('📚 GATE DA Revision Sheet: $title\n');
@@ -463,9 +456,17 @@ class ResourcesScreen extends StatelessWidget {
                             buffer.writeln('▪ ${it.title}');
                             buffer.writeln('${it.details}\n');
                           }
-                          buffer.writeln('Shared via GateX (GATE DA Prep App)');
+                          buffer.writeln('Shared via GateX');
                           Share.share(buffer.toString());
                         },
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.share_rounded, size: 14, color: AppTheme.secondary),
+                            SizedBox(width: 4),
+                            Text('Share', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.secondary)),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -489,20 +490,17 @@ class _InfoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 14),
+    return NeuContainer(
+      margin: const EdgeInsets.only(bottom: 12),
+      borderRadius: 14,
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppTheme.background,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-      ),
+      isRecessed: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.secondary)),
           const SizedBox(height: 6),
-          Text(details, style: const TextStyle(fontSize: 12, color: Colors.white, height: 1.4)),
+          Text(details, style: TextStyle(fontSize: 12, color: context.textColor, height: 1.4)),
         ],
       ),
     );

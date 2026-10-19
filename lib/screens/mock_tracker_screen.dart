@@ -13,6 +13,7 @@ import '../data/csit_subjectwise_mock_data.dart';
 import '../data/minimock_data.dart';
 import 'mock_test_runner_screen.dart';
 import '../services/ad_service.dart';
+import '../widgets/neu_widgets.dart';
 
 class MockTrackerScreen extends StatefulWidget {
   const MockTrackerScreen({super.key});
@@ -51,9 +52,28 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
   }
 
   Color _getScoreColor(double score) {
-    if (score >= 75) return AppTheme.success;
-    if (score >= 50) return Colors.amber;
-    return AppTheme.error;
+    if (score >= 75) return AppTheme.accentMint;
+    if (score >= 50) return AppTheme.accentGold;
+    return AppTheme.accentCoral;
+  }
+
+  List<PYQ> _generateRapidFire(AppProvider provider) {
+    List<PYQ> pool = [];
+    if (provider.activeExam == 'DA') {
+      if (daMiniMockQuestions.isNotEmpty) {
+        pool = List.from(daMiniMockQuestions);
+      } else {
+        pool = List.from(provider.pyqs);
+      }
+    } else {
+      if (csitMiniMockQuestions.isNotEmpty) {
+        pool = List.from(csitMiniMockQuestions);
+      } else {
+        pool = List.from(provider.pyqs);
+      }
+    }
+    pool.shuffle();
+    return pool.take(min(5, pool.length)).toList();
   }
 
   List<PYQ> _generateMiniMock(AppProvider provider) {
@@ -129,16 +149,24 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     final mocks = provider.mockLogs;
 
     return Scaffold(
+      backgroundColor: context.colorBackground,
       appBar: AppBar(
-        title: const Text('Mock Test'),
+        backgroundColor: context.colorSurface,
+        elevation: 0,
+        title: Text(
+          'Mock Arena',
+          style: AppTheme.poppinsBold(fontSize: 20, color: context.textColor),
+        ),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: AppTheme.secondary,
-          labelColor: AppTheme.secondary,
-          unselectedLabelColor: AppTheme.textSecondary,
+          indicatorColor: AppTheme.accentPurple,
+          indicatorWeight: 3,
+          labelColor: AppTheme.accentPurple,
+          unselectedLabelColor: context.textSecondaryColor,
+          labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
           tabs: const [
-            Tab(text: 'Take Test'),
-            Tab(text: 'Analytics & Logs'),
+            Tab(text: 'Test Arena', icon: Icon(Icons.sports_score_rounded, size: 20)),
+            Tab(text: 'Score Curve & History', icon: Icon(Icons.show_chart_rounded, size: 20)),
           ],
         ),
       ),
@@ -156,11 +184,32 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
       ),
       floatingActionButton: _tabController.index == 1
           ? FloatingActionButton(
+              backgroundColor: AppTheme.accentPurple,
+              foregroundColor: Colors.white,
               onPressed: () => _showAddMockSheet(context, provider),
               tooltip: 'Log External Test',
               child: const Icon(Icons.add),
             )
           : null,
+    );
+  }
+
+  Widget _buildRulePill(String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     );
   }
 
@@ -172,142 +221,193 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
       physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.all(16),
       children: [
-        // Top Banner / Rules
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+        // Top CBT Rules - Compact Neumorphic Strip
+        NeuContainer(
+          borderRadius: 18,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          child: Row(
+            children: [
+              const NeuIconTile(
+                icon: Icons.gavel_rounded,
+                iconColor: AppTheme.accentPurple,
+                size: 38,
+                iconSize: 18,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.info_outline, color: AppTheme.secondary, size: 20),
-                    const SizedBox(width: 8),
                     Text(
-                      'Exam Practice Instructions',
-                      style: AppTheme.poppinsBold(fontSize: 14),
+                      'CBT Simulator Rules',
+                      style: AppTheme.poppinsBold(fontSize: 13, color: context.textColor),
+                    ),
+                    const SizedBox(height: 4),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      children: [
+                        _buildRulePill('+1 / +2 Marks', AppTheme.accentMint),
+                        _buildRulePill('-0.33 / -0.66 Neg', AppTheme.accentCoral),
+                        _buildRulePill('Zero Neg MSQ/NAT', AppTheme.accentGold),
+                      ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                const Text(
-                  '• Questions are pulled directly from the official GATE DA question bank.\n'
-                  '• Marking Scheme: +1.0 for correct answers.\n'
-                  '• Negative Marking: -0.33 for wrong MCQ answers; 0.0 for MSQ and NAT.\n'
-                  '• Results will be auto-saved and traced on your Performance Analytics chart.',
-                  style: TextStyle(fontSize: 12, height: 1.5, color: AppTheme.textSecondary),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
+
+        // 0. 10-MINUTE RAPID FIRE
+        _buildTestOptionCard(
+          title: 'Daily Rapid Fire',
+          duration: '10 Mins',
+          questionsCount: '5 Questions',
+          badgeText: 'INSTANT RECALL',
+          badgeColor: AppTheme.accentPurple,
+          icon: Icons.bolt_rounded,
+          iconColor: AppTheme.accentPurple,
+          isPrimary: true,
+          buttonText: 'Start 10m Sprint ⚡',
+          onTap: () {
+            final questions = _generateRapidFire(provider);
+            _startTest(questions, const Duration(minutes: 10), 'Daily Rapid Fire');
+          },
+        ),
+        const SizedBox(height: 14),
 
         // 1. MINI MOCK TEST
         _buildTestOptionCard(
           title: 'Mini Mock Test',
-          duration: '30 Minutes',
+          duration: '30 Mins',
           questionsCount: '15 Questions',
           badgeText: 'RECOMMENDED',
           badgeColor: AppTheme.primary,
-          description: 'A balanced practice test covering all subjects. Excellent for quick revisions.',
           icon: Icons.checklist_rtl_rounded,
           iconColor: AppTheme.primary,
+          isPrimary: false,
+          buttonText: 'Start 30m Test 🎯',
           onTap: () {
             final questions = _generateMiniMock(provider);
             _startTest(questions, const Duration(minutes: 30), 'App Mini Mock');
           },
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
 
         // 2. SUBJECT-WISE PRACTICE TEST
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.amber.withValues(alpha: 0.15),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.topic_outlined, color: Colors.amber, size: 24),
+        NeuContainer(
+          borderRadius: 20,
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const NeuIconTile(
+                    icon: Icons.topic_outlined,
+                    iconColor: AppTheme.accentGold,
+                    size: 44,
+                    iconSize: 22,
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Subject Practice Test',
+                                style: AppTheme.poppinsBold(fontSize: 15, color: context.textColor),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: AppTheme.accentGold.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Text(
+                                'DEEP DIVE',
+                                style: TextStyle(color: AppTheme.accentGold, fontSize: 9, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          '10 Questions • 20 Minutes',
+                          style: TextStyle(color: context.textSecondaryColor, fontSize: 12, fontWeight: FontWeight.w500),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Subject Practice Test', style: AppTheme.poppinsBold(fontSize: 16)),
-                          const SizedBox(height: 4),
-                          const Text('10 Questions · 20 Minutes', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
-                        ],
-                      ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              NeuContainer(
+                isRecessed: true,
+                borderRadius: 14,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: _selectedSubject,
+                    isExpanded: true,
+                    dropdownColor: context.colorSurface,
+                    style: TextStyle(color: context.textColor, fontSize: 13, fontWeight: FontWeight.w500),
+                    icon: Icon(Icons.arrow_drop_down_rounded, color: context.textSecondaryColor),
+                    items: subjects.map((sub) {
+                      return DropdownMenuItem(value: sub, child: Text(sub));
+                    }).toList(),
+                    onChanged: (val) {
+                      setState(() {
+                        _selectedSubject = val;
+                      });
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+              NeuButton(
+                isPrimary: false,
+                onPressed: () {
+                  if (_selectedSubject != null) {
+                    final questions = _generateSubjectMock(_selectedSubject!, provider);
+                    _startTest(questions, const Duration(minutes: 20), '$_selectedSubject Practice');
+                  }
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.play_arrow_rounded, color: AppTheme.accentGold, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Start Subject Test',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
-                const Text('Choose Subject to Test:', style: TextStyle(fontSize: 12, color: AppTheme.textSecondary, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                DropdownButtonFormField<String>(
-                  initialValue: _selectedSubject,
-                  isExpanded: true,
-                  dropdownColor: AppTheme.surface,
-                  style: const TextStyle(color: AppTheme.textPrimary, fontSize: 13),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: AppTheme.background,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-                  ),
-                  items: subjects.map((sub) {
-                    return DropdownMenuItem(value: sub, child: Text(sub));
-                  }).toList(),
-                  onChanged: (val) {
-                    setState(() {
-                      _selectedSubject = val;
-                    });
-                  },
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.amber,
-                      foregroundColor: AppTheme.background,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    onPressed: () {
-                      if (_selectedSubject != null) {
-                        final questions = _generateSubjectMock(_selectedSubject!, provider);
-                        _startTest(questions, const Duration(minutes: 20), '$_selectedSubject Practice');
-                      }
-                    },
-                    child: const Text('Start Subject Test', style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
 
         // 3. FULL LENGTH MOCK TEST
         _buildTestOptionCard(
-          title: 'Full-Length Mock Test',
-          duration: '180 Minutes',
+          title: 'Full CBT Mock',
+          duration: '180 Mins',
           questionsCount: '65 Questions',
           badgeText: 'GATE REAL REPLICA',
-          badgeColor: AppTheme.success,
-          description: 'Attempt a complete, 65-question practice paper simulating the actual GATE exam layout.',
+          badgeColor: AppTheme.accentMint,
           icon: Icons.quiz_rounded,
-          iconColor: AppTheme.success,
+          iconColor: AppTheme.accentMint,
+          isPrimary: true,
+          gradient: const LinearGradient(colors: [Color(0xFF059669), Color(0xFF10B981)]),
+          buttonText: 'Launch 65-Q CBT Mock 🏆',
           onTap: () {
             _showMockDifficultySheet(context, provider);
           },
@@ -319,9 +419,9 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
   void _showMockDifficultySheet(BuildContext context, AppProvider provider) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppTheme.background,
+      backgroundColor: context.colorSurface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
       ),
       builder: (context) {
         return Padding(
@@ -331,20 +431,20 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Select Difficulty',
-                style: AppTheme.poppinsBold(fontSize: 18),
+                'Select Mock Difficulty',
+                style: AppTheme.poppinsBold(fontSize: 18, color: context.textColor),
               ),
-              const SizedBox(height: 8),
-              const Text(
-                'Choose the difficulty level for the Full-Length Mock Test.',
-                style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+              const SizedBox(height: 6),
+              Text(
+                'Choose difficulty tier for 65-question simulation.',
+                style: TextStyle(color: context.textSecondaryColor, fontSize: 13),
               ),
-              const SizedBox(height: 24),
-              _buildDifficultyOption(context, provider, 'Easy', Colors.green),
+              const SizedBox(height: 20),
+              _buildDifficultyOption(context, provider, 'Easy', AppTheme.accentMint),
               const SizedBox(height: 12),
-              _buildDifficultyOption(context, provider, 'Medium', Colors.amber),
+              _buildDifficultyOption(context, provider, 'Medium', AppTheme.accentGold),
               const SizedBox(height: 12),
-              _buildDifficultyOption(context, provider, 'Hard', Colors.red),
+              _buildDifficultyOption(context, provider, 'Hard', AppTheme.accentCoral),
               const SizedBox(height: 16),
             ],
           ),
@@ -356,8 +456,10 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
   Widget _buildDifficultyOption(BuildContext context, AppProvider provider, String difficulty, Color color) {
     final isLocked = difficulty != 'Easy' && !provider.isPro;
 
-    return InkWell(
-      onTap: () async {
+    return NeuButton(
+      isPrimary: false,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      onPressed: () async {
         final messenger = ScaffoldMessenger.of(this.context);
         Navigator.pop(context);
         if (isLocked) {
@@ -384,47 +486,38 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
         }
         _startTest(questions, const Duration(minutes: 180), 'App Full Mock - $difficulty');
       },
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          border: Border.all(color: color.withValues(alpha: 0.3)),
-          borderRadius: BorderRadius.circular(12),
-          color: color.withValues(alpha: 0.05),
-        ),
-        child: Row(
-          children: [
-            Icon(Icons.bar_chart_rounded, color: color),
-            const SizedBox(width: 16),
-            Text(
-              difficulty,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: color),
-            ),
-            if (isLocked) ...[
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFB300).withValues(alpha: 0.18),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.lock_outline_rounded, size: 11, color: AppTheme.secondary),
-                    SizedBox(width: 3),
-                    Text(
-                      'PRO',
-                      style: TextStyle(color: AppTheme.secondary, fontSize: 10, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
+      child: Row(
+        children: [
+          Icon(Icons.bar_chart_rounded, color: color, size: 20),
+          const SizedBox(width: 14),
+          Text(
+            difficulty,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: color),
+          ),
+          if (isLocked) ...[
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFB300).withValues(alpha: 0.18),
+                borderRadius: BorderRadius.circular(6),
               ),
-            ],
-            const Spacer(),
-            const Icon(Icons.chevron_right, color: AppTheme.textSecondary),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.lock_outline_rounded, size: 11, color: AppTheme.secondary),
+                  SizedBox(width: 3),
+                  Text(
+                    'PRO',
+                    style: TextStyle(color: AppTheme.secondary, fontSize: 9.5, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
           ],
-        ),
+          const Spacer(),
+          Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor, size: 20),
+        ],
       ),
     );
   }
@@ -433,95 +526,147 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     required String title,
     required String duration,
     required String questionsCount,
-    required String description,
     required String badgeText,
     required Color badgeColor,
     required IconData icon,
     required Color iconColor,
     required VoidCallback onTap,
+    bool isPrimary = false,
+    String? buttonText,
+    Gradient? gradient,
   }) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: iconColor.withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(icon, color: iconColor, size: 24),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(child: Text(title, style: AppTheme.poppinsBold(fontSize: 16))),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: badgeColor.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              badgeText,
-                              style: TextStyle(color: badgeColor, fontSize: 8, fontWeight: FontWeight.bold),
-                            ),
+    return NeuContainer(
+      borderRadius: 20,
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              NeuIconTile(
+                icon: icon,
+                iconColor: iconColor,
+                size: 44,
+                iconSize: 22,
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: AppTheme.poppinsBold(fontSize: 15, color: context.textColor),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text('$questionsCount · $duration', style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
-                    ],
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: badgeColor.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            badgeText,
+                            style: TextStyle(color: badgeColor, fontSize: 9, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      '$questionsCount • $duration',
+                      style: TextStyle(color: context.textSecondaryColor, fontSize: 12, fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          NeuButton(
+            isPrimary: isPrimary,
+            gradient: gradient,
+            onPressed: onTap,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  isPrimary ? Icons.play_arrow_rounded : Icons.arrow_forward_rounded,
+                  color: isPrimary ? Colors.white : AppTheme.accentPurple,
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  buttonText ?? 'Start Practice Exam',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: isPrimary ? Colors.white : context.textColor,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-            Text(description, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12, height: 1.4)),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: iconColor,
-                  foregroundColor: iconColor == AppTheme.success ? Colors.white : AppTheme.background,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                ),
-                onPressed: onTap,
-                child: const Text('Start Practice Exam', style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildAnalyticsTab(BuildContext context, AppProvider provider, List<MockTestLog> mocks) {
+    final double avgScore = mocks.isNotEmpty ? mocks.map((m) => m.score).reduce((a, b) => a + b) / mocks.length : 0.0;
+    final double bestScore = mocks.isNotEmpty ? mocks.map((m) => m.score).reduce(max) : 0.0;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Summary Benchmark Strip
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: _buildMetricTile(
+                  context: context,
+                  label: 'Tests Taken',
+                  value: '${mocks.length}',
+                  icon: Icons.assignment_turned_in_rounded,
+                  iconColor: AppTheme.accentPurple,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildMetricTile(
+                  context: context,
+                  label: 'Mock Average',
+                  value: mocks.isNotEmpty ? avgScore.toStringAsFixed(1) : 'N/A',
+                  icon: Icons.speed_rounded,
+                  iconColor: AppTheme.accentGold,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildMetricTile(
+                  context: context,
+                  label: 'Peak Score',
+                  value: mocks.isNotEmpty ? bestScore.toStringAsFixed(1) : 'N/A',
+                  icon: Icons.emoji_events_rounded,
+                  iconColor: AppTheme.accentMint,
+                ),
+              ),
+            ],
+          ),
+        ),
+
         // Performance graph
         if (mocks.isNotEmpty) ...[
-          const SizedBox(height: 16),
-          Container(
+          NeuContainer(
             height: 180,
             padding: const EdgeInsets.fromLTRB(16, 12, 24, 8),
             margin: const EdgeInsets.symmetric(horizontal: 16),
-            decoration: BoxDecoration(
-              color: AppTheme.surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppTheme.textSecondary.withValues(alpha: 0.1)),
-            ),
+            borderRadius: 20,
             child: LineChart(
               LineChartData(
                 minY: 0,
@@ -531,7 +676,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                   drawVerticalLine: false,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: AppTheme.textSecondary.withValues(alpha: 0.1),
+                      color: context.colorBorder,
                       strokeWidth: 1,
                     );
                   },
@@ -550,7 +695,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                         if (idx >= 0 && idx < mocks.length) {
                           return Text(
                             DateFormat('MM/dd').format(mocks[idx].dateTaken),
-                            style: const TextStyle(color: AppTheme.textSecondary, fontSize: 8, fontWeight: FontWeight.bold),
+                            style: TextStyle(color: context.textSecondaryColor, fontSize: 8.5, fontWeight: FontWeight.bold),
                           );
                         }
                         return const Text('');
@@ -565,7 +710,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                       getTitlesWidget: (value, meta) {
                         return Text(
                           value.toInt().toString(),
-                          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 8, fontWeight: FontWeight.bold),
+                          style: TextStyle(color: context.textSecondaryColor, fontSize: 8.5, fontWeight: FontWeight.bold),
                         );
                       },
                     ),
@@ -578,21 +723,21 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                       return FlSpot(index.toDouble(), mocks[index].score);
                     }),
                     isCurved: true,
-                    color: AppTheme.secondary,
+                    color: AppTheme.accentPurple,
                     barWidth: 3,
                     isStrokeCapRound: true,
                     dotData: FlDotData(
                       show: true,
                       getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
                         radius: 4,
-                        color: AppTheme.secondary,
+                        color: AppTheme.accentPurple,
                         strokeWidth: 1.5,
-                        strokeColor: AppTheme.background,
+                        strokeColor: context.colorSurface,
                       ),
                     ),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: AppTheme.secondary.withValues(alpha: 0.1),
+                      color: AppTheme.accentPurple.withValues(alpha: 0.15),
                     ),
                   ),
                 ],
@@ -600,35 +745,33 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
             ),
           ),
         ] else
-          Container(
-            height: 120,
+          NeuContainer(
+            isRecessed: true,
+            height: 110,
             width: double.infinity,
             alignment: Alignment.center,
-            margin: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppTheme.surface,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: const Column(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            borderRadius: 18,
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.show_chart, color: AppTheme.textSecondary, size: 32),
-                SizedBox(height: 8),
+                Icon(Icons.show_chart_rounded, color: context.textSecondaryColor, size: 28),
+                const SizedBox(height: 6),
                 Text(
-                  'No mock test logs yet.',
-                  style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+                  'No mock tests attempted yet.',
+                  style: TextStyle(color: context.textSecondaryColor, fontSize: 12),
                 ),
               ],
             ),
           ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         // History Title
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Text(
-            'Test History & Logs (${mocks.length})',
-            style: AppTheme.poppinsBold(fontSize: 16),
+            'Test History & Scores (${mocks.length})',
+            style: AppTheme.poppinsBold(fontSize: 15, color: context.textColor),
           ),
         ),
         const SizedBox(height: 8),
@@ -637,7 +780,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
               ? Center(
                   child: Text(
                     'Your exam history will show up here.',
-                    style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+                    style: TextStyle(color: context.textSecondaryColor, fontSize: 13),
                   ),
                 )
               : ListView.builder(
@@ -654,24 +797,65 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     );
   }
 
+  Widget _buildMetricTile({
+    required BuildContext context,
+    required String label,
+    required String value,
+    required IconData icon,
+    required Color iconColor,
+  }) {
+    return NeuContainer(
+      borderRadius: 16,
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              NeuIconTile(icon: icon, iconColor: iconColor, size: 26, iconSize: 14),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(color: context.textSecondaryColor, fontSize: 10.5, fontWeight: FontWeight.bold),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            value,
+            style: AppTheme.timerStyle(fontSize: 17, color: context.textColor),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildMockHistoryCard(BuildContext context, AppProvider provider, MockTestLog mock) {
     final formattedDate = DateFormat('MMM dd, yyyy').format(mock.dateTaken);
     final scoreCol = _getScoreColor(mock.score);
 
-    return Card(
+    return NeuContainer(
+      borderRadius: 18,
       margin: const EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.zero,
       child: ExpansionTile(
-        collapsedTextColor: AppTheme.textPrimary,
-        collapsedIconColor: AppTheme.textSecondary,
-        textColor: AppTheme.secondary,
-        iconColor: AppTheme.secondary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        collapsedTextColor: context.textColor,
+        collapsedIconColor: context.textSecondaryColor,
+        textColor: AppTheme.accentPurple,
+        iconColor: AppTheme.accentPurple,
         leading: Container(
-          width: 44,
-          height: 44,
+          width: 42,
+          height: 42,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: scoreCol.withValues(alpha: 0.12),
-            shape: BoxShape.circle,
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
             mock.score.toStringAsFixed(0),
@@ -680,68 +864,68 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
         ),
         title: Text(
           mock.name,
-          style: AppTheme.poppinsBold(fontSize: 13),
+          style: AppTheme.poppinsBold(fontSize: 13, color: context.textColor),
         ),
         subtitle: Text(
           formattedDate,
-          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11),
+          style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
         ),
         children: [
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(14.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Divider(height: 1, color: AppTheme.textSecondary),
-                const SizedBox(height: 12),
+                Divider(height: 1, color: context.colorBorder),
+                const SizedBox(height: 10),
 
                 // Weak subjects
                 if (mock.weakSubjects.isNotEmpty) ...[
                   const Text(
                     'WEAK AREAS IDENTIFIED:',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: AppTheme.error),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: AppTheme.accentCoral),
                   ),
                   const SizedBox(height: 6),
                   Wrap(
-                    spacing: 8,
-                    runSpacing: 6,
+                    spacing: 6,
+                    runSpacing: 4,
                     children: mock.weakSubjects.map((sub) {
                       return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: AppTheme.error.withValues(alpha: 0.12),
+                          color: AppTheme.accentCoral.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
                           sub,
-                          style: const TextStyle(color: AppTheme.error, fontSize: 9, fontWeight: FontWeight.bold),
+                          style: const TextStyle(color: AppTheme.accentCoral, fontSize: 9.5, fontWeight: FontWeight.bold),
                         ),
                       );
                     }).toList(),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                 ],
 
                 // Analysis notes
                 if (mock.notes.isNotEmpty) ...[
-                  const Text(
+                  Text(
                     'ANALYSIS & RETROSPECTIVE:',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: AppTheme.textSecondary),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: context.textSecondaryColor),
                   ),
                   const SizedBox(height: 6),
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: AppTheme.background,
+                      color: context.colorSurfaceElevated,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       mock.notes,
-                      style: const TextStyle(fontSize: 12, color: AppTheme.textPrimary, height: 1.4),
+                      style: TextStyle(fontSize: 12, color: context.textColor, height: 1.4),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                 ],
 
                 // Delete Action
@@ -752,13 +936,13 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                     onPressed: () {
                       provider.deleteMockTest(mock.id);
                     },
-                    icon: const Icon(Icons.delete_outline, size: 18),
+                    icon: const Icon(Icons.delete_outline, size: 16),
                     label: const Text('Delete Log', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
                   ),
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -776,7 +960,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppTheme.background,
+      backgroundColor: context.colorSurface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -803,7 +987,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                           width: 40,
                           height: 4,
                           decoration: BoxDecoration(
-                            color: AppTheme.textSecondary.withValues(alpha: 0.3),
+                            color: context.textSecondaryColor.withValues(alpha: 0.3),
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -811,20 +995,20 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                       const SizedBox(height: 16),
                       Text(
                         'Log External Mock Result',
-                        style: AppTheme.poppinsBold(fontSize: 18),
+                        style: AppTheme.poppinsBold(fontSize: 18, color: context.textColor),
                       ),
                       const SizedBox(height: 16),
 
-                      const Text('Mock Test Name / Source', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                      Text('Mock Test Name / Source', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor)),
                       const SizedBox(height: 6),
                       TextFormField(
                         controller: nameController,
-                        style: const TextStyle(color: AppTheme.textPrimary),
+                        style: TextStyle(color: context.textColor),
                         decoration: InputDecoration(
                           hintText: 'e.g., GO Classes Full Mock 3',
-                          hintStyle: const TextStyle(color: AppTheme.textSecondary),
+                          hintStyle: TextStyle(color: context.textSecondaryColor),
                           filled: true,
-                          fillColor: AppTheme.surface,
+                          fillColor: context.colorSurfaceElevated,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide.none,
@@ -834,17 +1018,17 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                       ),
                       const SizedBox(height: 12),
 
-                      const Text('Score (0 - 100)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                      Text('Score (0 - 100)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor)),
                       const SizedBox(height: 6),
                       TextFormField(
                         controller: scoreController,
-                        style: const TextStyle(color: AppTheme.textPrimary),
+                        style: TextStyle(color: context.textColor),
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
                         decoration: InputDecoration(
                           hintText: 'e.g., 68.5',
-                          hintStyle: const TextStyle(color: AppTheme.textSecondary),
+                          hintStyle: TextStyle(color: context.textSecondaryColor),
                           filled: true,
-                          fillColor: AppTheme.surface,
+                          fillColor: context.colorSurfaceElevated,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide.none,
@@ -874,11 +1058,11 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                             selected: isSelected,
                             label: Text(sub, style: const TextStyle(fontSize: 10)),
                             labelStyle: TextStyle(
-                              color: isSelected ? Colors.white : AppTheme.textPrimary,
+                              color: isSelected ? Colors.white : context.textColor,
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                             ),
-                            selectedColor: AppTheme.error,
-                            backgroundColor: AppTheme.surface,
+                            selectedColor: AppTheme.accentCoral,
+                            backgroundColor: context.colorSurfaceElevated,
                             onSelected: (selected) {
                               setModalState(() {
                                 if (selected) {
@@ -893,17 +1077,17 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                       ),
                       const SizedBox(height: 12),
 
-                      const Text('Analysis Notes', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                      Text('Analysis Notes', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor)),
                       const SizedBox(height: 6),
                       TextFormField(
                         controller: notesController,
                         maxLines: 3,
-                        style: const TextStyle(color: AppTheme.textPrimary),
+                        style: TextStyle(color: context.textColor),
                         decoration: InputDecoration(
                           hintText: 'Notes on errors, time management, etc.',
-                          hintStyle: const TextStyle(color: AppTheme.textSecondary),
+                          hintStyle: TextStyle(color: context.textSecondaryColor),
                           filled: true,
-                          fillColor: AppTheme.surface,
+                          fillColor: context.colorSurfaceElevated,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide.none,
@@ -916,7 +1100,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                         width: double.infinity,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primary,
+                            backgroundColor: AppTheme.accentPurple,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                             padding: const EdgeInsets.symmetric(vertical: 14),

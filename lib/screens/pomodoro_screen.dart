@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/pomodoro_provider.dart';
 import '../theme/app_theme.dart';
+import '../widgets/neu_widgets.dart';
 
 class PomodoroScreen extends StatelessWidget {
   const PomodoroScreen({super.key});
@@ -22,259 +24,124 @@ class PomodoroScreen extends StatelessWidget {
         : 1.0;
 
     final isStudy = provider.timerSessionType == 'Study Session';
-    final themeColor = isStudy ? AppTheme.primary : AppTheme.secondary;
+    final themeColor = isStudy ? AppTheme.accentPurple : AppTheme.accentMint;
 
     return Scaffold(
+      backgroundColor: context.scaffoldBackground,
       appBar: AppBar(
-        title: const Text('Pomodoro Focus Timer'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text('Focus Timer', style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor)),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: context.textColor),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
           child: Column(
             children: [
-              const SizedBox(height: 12),
-              // Session Status Header
-              Text(
-                provider.timerSessionType.toUpperCase(),
-                style: AppTheme.poppinsBold(
-                  fontSize: 22,
-                  color: themeColor,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Stay focused, keep distractions away.',
-                style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
-              ),
-              const SizedBox(height: 24),
-              // Current Task Input
+              // Session Status Pill
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppTheme.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white10),
+                  color: themeColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(20),
                 ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isStudy ? Icons.local_fire_department_rounded : Icons.coffee_rounded,
+                      size: 16,
+                      color: themeColor,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      provider.timerSessionType.toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: themeColor,
+                        letterSpacing: 0.8,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 18),
+
+              // Current Task Input in Recessed Well
+              NeuContainer(
+                isRecessed: true,
+                borderRadius: 16,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
                 child: TextField(
                   controller: TextEditingController(text: provider.currentTaskName)
                     ..selection = TextSelection.collapsed(offset: provider.currentTaskName.length),
                   onChanged: (val) => provider.setCurrentTask(val),
-                  style: const TextStyle(color: AppTheme.textPrimary, fontSize: 15),
+                  style: TextStyle(color: context.textColor, fontSize: 14),
                   decoration: InputDecoration(
-                    hintText: 'What are you focusing on?',
-                    hintStyle: TextStyle(color: AppTheme.textSecondary.withOpacity(0.5)),
+                    hintText: 'What topic are you studying? (e.g. Linear Algebra)',
+                    hintStyle: TextStyle(color: context.textSecondaryColor, fontSize: 13),
                     border: InputBorder.none,
-                    icon: Icon(Icons.track_changes, color: themeColor),
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                    icon: Icon(Icons.track_changes_rounded, color: themeColor, size: 20),
                   ),
                 ),
               ),
-              const SizedBox(height: 36),
+              const SizedBox(height: 32),
 
-              // 1. CIRCULAR COUNTDOWN TIMER
+              // 1. NEUMORPHIC CIRCULAR COUNTDOWN DIAL
               Center(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // Outer Glow Effect
-                    Container(
-                      width: 250,
-                      height: 250,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: themeColor.withOpacity(0.08),
-                            blurRadius: 40,
-                            spreadRadius: 5,
-                          )
-                        ],
-                      ),
-                    ),
-                    // Track Circle (Background)
-                    SizedBox(
-                      width: 230,
-                      height: 230,
-                      child: CircularProgressIndicator(
-                        value: 1.0,
-                        strokeWidth: 10,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          AppTheme.surface,
-                        ),
-                      ),
-                    ),
-                    // Active Timer Progress
-                    SizedBox(
-                      width: 230,
-                      height: 230,
-                      child: CircularProgressIndicator(
-                        value: progress,
-                        strokeWidth: 10,
-                        valueColor: AlwaysStoppedAnimation<Color>(themeColor),
-                      ),
-                    ),
-                    // Timer Text Content
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          _formatTime(provider.timerSecondsRemaining),
-                          style: AppTheme.timerStyle(fontSize: 48, color: themeColor),
-                        ),
-                        const SizedBox(height: 6),
-                        Icon(
-                          isStudy ? Icons.local_library_outlined : Icons.coffee_outlined,
-                          color: AppTheme.textSecondary,
-                          size: 24,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 40),
-
-              // 2. CONTROLS
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Reset Button
-                  IconButton(
-                    onPressed: provider.resetTimer,
-                    iconSize: 32,
-                    color: AppTheme.textSecondary,
-                    icon: const Icon(Icons.replay_circle_filled_rounded),
-                    tooltip: 'Reset Timer',
-                  ),
-                  const SizedBox(width: 24),
-                  // Play/Pause Button
-                  GestureDetector(
-                    onTap: () {
-                      if (provider.isTimerRunning) {
-                        provider.pauseTimer();
-                      } else {
-                        provider.startTimer();
-                      }
-                    },
-                    child: Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: themeColor,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: themeColor.withOpacity(0.35),
-                            blurRadius: 16,
-                            spreadRadius: 2,
-                          )
-                        ],
-                      ),
-                      child: Icon(
-                        provider.isTimerRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                        color: AppTheme.textPrimary,
-                        size: 40,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 24),
-                  // Skip Session
-                  IconButton(
-                    onPressed: () {
-                      // Skip current session type (Toggle study/break)
-                      if (isStudy) {
-                        provider.configureTimer(5, 'Break');
-                      } else {
-                        provider.configureTimer(25, 'Study Session');
-                      }
-                    },
-                    iconSize: 32,
-                    color: AppTheme.textSecondary,
-                    icon: const Icon(Icons.skip_next_rounded),
-                    tooltip: 'Skip Session',
-                  ),
-                ],
-              ),
-              const SizedBox(height: 40),
-
-              // 3. PRESETS ROW
-              Text(
-                'Focus Intervals',
-                style: AppTheme.poppinsBold(fontSize: 16),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildPresetButton(context, provider, 25, 5, '25/5 min'),
-                  const SizedBox(width: 12),
-                  _buildPresetButton(context, provider, 50, 10, '50/10 min'),
-                  const SizedBox(width: 12),
-                  _buildCustomPresetButton(context, provider),
-                ],
-              ),
-              const SizedBox(height: 40),
-
-              // 4. FOCUS STATS
-              Container(
-                decoration: BoxDecoration(
-                  color: AppTheme.surface.withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.white10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.textPrimary.withOpacity(0.2),
-                      blurRadius: 10,
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-                  child: Row(
+                child: SizedBox(
+                  width: 240,
+                  height: 240,
+                  child: Stack(
+                    alignment: Alignment.center,
                     children: [
-                      // Completed Pomodoros
-                      Expanded(
-                        child: Column(
-                          children: [
-                            const Text(
-                              'Completed Today',
-                              style: TextStyle(color: AppTheme.textSecondary, fontSize: 12, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text('🍅 ', style: TextStyle(fontSize: 20)),
-                                Text(
-                                  '${provider.completedPomodorosToday} Sessions',
-                                  style: AppTheme.poppinsBold(fontSize: 16, color: AppTheme.textPrimary),
-                                ),
-                              ],
-                            ),
-                          ],
+                      // Recessed Outer Well
+                      NeuContainer(
+                        isRecessed: true,
+                        borderRadius: 120,
+                        padding: const EdgeInsets.all(12),
+                        child: const SizedBox.expand(),
+                      ),
+                      // Progress Ring
+                      SizedBox(
+                        width: 216,
+                        height: 216,
+                        child: CircularProgressIndicator(
+                          value: progress,
+                          strokeWidth: 8,
+                          backgroundColor: Colors.transparent,
+                          valueColor: AlwaysStoppedAnimation<Color>(themeColor),
                         ),
                       ),
-                      Container(width: 1, height: 50, color: Colors.white12),
-                      // Focus Time
-                      Expanded(
+                      // Extruded Center Dial
+                      NeuContainer(
+                        borderRadius: 90,
+                        padding: const EdgeInsets.all(28),
                         child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
-                              'Total Focus Time',
-                              style: TextStyle(color: AppTheme.textSecondary, fontSize: 12, fontWeight: FontWeight.bold),
+                            Text(
+                              _formatTime(provider.timerSecondsRemaining),
+                              style: AppTheme.timerStyle(fontSize: 38, color: context.textColor),
                             ),
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.hourglass_bottom, size: 20, color: AppTheme.secondary),
-                                const SizedBox(width: 6),
-                                Text(
-                                  '${provider.totalFocusMinutesToday} mins',
-                                  style: AppTheme.poppinsBold(fontSize: 16, color: AppTheme.secondary),
-                                ),
-                              ],
+                            const SizedBox(height: 4),
+                            Text(
+                              isStudy ? 'STUDY' : 'REST',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: themeColor,
+                                letterSpacing: 1.2,
+                              ),
                             ),
                           ],
                         ),
@@ -282,7 +149,143 @@ class PomodoroScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-              )
+              ),
+              const SizedBox(height: 36),
+
+              // 2. CONTROLS (Reset, Play/Pause, Skip)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Reset Button
+                  GestureDetector(
+                    onTap: () {
+                      HapticFeedback.mediumImpact();
+                      provider.resetTimer();
+                    },
+                    child: NeuContainer(
+                      borderRadius: 16,
+                      padding: const EdgeInsets.all(14),
+                      child: Icon(Icons.replay_rounded, size: 22, color: context.textSecondaryColor),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+
+                  // Main Play/Pause Button
+                  GestureDetector(
+                    onTap: () {
+                      HapticFeedback.mediumImpact();
+                      if (provider.isTimerRunning) {
+                        provider.pauseTimer();
+                      } else {
+                        provider.startTimer();
+                      }
+                    },
+                    child: NeuContainer(
+                      borderRadius: 34,
+                      padding: const EdgeInsets.all(18),
+                      child: Icon(
+                        provider.isTimerRunning ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                        color: themeColor,
+                        size: 34,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+
+                  // Skip Session Button
+                  GestureDetector(
+                    onTap: () {
+                      HapticFeedback.mediumImpact();
+                      if (isStudy) {
+                        provider.configureTimer(5, 'Break');
+                      } else {
+                        provider.configureTimer(25, 'Study Session');
+                      }
+                    },
+                    child: NeuContainer(
+                      borderRadius: 16,
+                      padding: const EdgeInsets.all(14),
+                      child: Icon(Icons.skip_next_rounded, size: 22, color: context.textSecondaryColor),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
+
+              // 3. PRESETS ROW
+              Text(
+                'Focus Intervals',
+                style: AppTheme.poppinsBold(fontSize: 14, color: context.textColor),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildPresetButton(context, provider, 25, 5, '25/5 min'),
+                  const SizedBox(width: 10),
+                  _buildPresetButton(context, provider, 50, 10, '50/10 min'),
+                  const SizedBox(width: 10),
+                  _buildCustomPresetButton(context, provider),
+                ],
+              ),
+              const SizedBox(height: 28),
+
+              // 4. FOCUS STATS IN NEUCONTAINER
+              NeuContainer(
+                borderRadius: 20,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: Row(
+                  children: [
+                    // Completed Pomodoros
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text(
+                            'COMPLETED TODAY',
+                            style: TextStyle(color: context.textSecondaryColor, fontSize: 10.5, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text('🍅 ', style: TextStyle(fontSize: 16)),
+                              Text(
+                                '${provider.completedPomodorosToday}',
+                                style: AppTheme.poppinsBold(fontSize: 18, color: context.textColor),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(width: 1, height: 40, color: context.isDarkMode ? Colors.white12 : Colors.black12),
+                    // Focus Time
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text(
+                            'TOTAL FOCUS TIME',
+                            style: TextStyle(color: context.textSecondaryColor, fontSize: 10.5, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.timer_outlined, size: 16, color: AppTheme.accentPurple),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${provider.totalFocusMinutesToday}m',
+                                style: AppTheme.poppinsBold(fontSize: 18, color: AppTheme.accentPurple),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -292,45 +295,42 @@ class PomodoroScreen extends StatelessWidget {
 
   Widget _buildPresetButton(BuildContext context, PomodoroProvider provider, int studyMin, int breakMin, String label) {
     final isSelected = provider.timerTotalSeconds == (studyMin * 60) && provider.timerSessionType == 'Study Session';
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? AppTheme.primary : AppTheme.surface,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: BorderSide(
-            color: isSelected ? Colors.transparent : AppTheme.textSecondary.withOpacity(0.2),
-          ),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      ),
-      onPressed: () {
+
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
         provider.configureTimer(studyMin, 'Study Session');
       },
-      child: Text(
-        label,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+      child: NeuContainer(
+        isRecessed: isSelected,
+        borderRadius: 14,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12.5,
+            color: isSelected ? AppTheme.accentPurple : context.textColor,
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildCustomPresetButton(BuildContext context, PomodoroProvider provider) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppTheme.surface,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: BorderSide(
-            color: AppTheme.textSecondary.withOpacity(0.2),
+    return GestureDetector(
+      onTap: () => _showCustomTimerDialog(context, provider),
+      child: NeuContainer(
+        borderRadius: 14,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        child: Text(
+          'Custom',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12.5,
+            color: context.textColor,
           ),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      ),
-      onPressed: () => _showCustomTimerDialog(context, provider),
-      child: const Text(
-        'Custom',
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
       ),
     );
   }
@@ -341,22 +341,31 @@ class PomodoroScreen extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: AppTheme.surface,
-          title: const Text('Set Custom Timer'),
+          backgroundColor: context.scaffoldBackground,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Text('Custom Study Duration', style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Enter study duration in minutes:'),
-              const SizedBox(height: 12),
-              TextField(
-                controller: customTimeController,
-                keyboardType: TextInputType.number,
-                autofocus: true,
-                style: const TextStyle(color: AppTheme.textPrimary),
-                decoration: const InputDecoration(
-                  suffixText: 'minutes',
-                  border: OutlineInputBorder(),
+              Text('Enter study duration in minutes:', style: TextStyle(color: context.textSecondaryColor, fontSize: 13)),
+              const SizedBox(height: 14),
+              NeuContainer(
+                isRecessed: true,
+                borderRadius: 14,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+                child: TextField(
+                  controller: customTimeController,
+                  keyboardType: TextInputType.number,
+                  autofocus: true,
+                  style: TextStyle(color: context.textColor, fontSize: 15),
+                  decoration: InputDecoration(
+                    suffixText: 'mins',
+                    suffixStyle: TextStyle(color: context.textSecondaryColor, fontSize: 13),
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
                 ),
               ),
             ],
@@ -364,16 +373,19 @@ class PomodoroScreen extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel', style: TextStyle(color: AppTheme.textSecondary)),
+              child: Text('Cancel', style: TextStyle(color: context.textSecondaryColor)),
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primary),
+            NeuButton(
+              isPrimary: true,
+              borderRadius: 12,
+              height: 38,
+              padding: const EdgeInsets.symmetric(horizontal: 18),
               onPressed: () {
                 final mins = int.tryParse(customTimeController.text) ?? 45;
                 provider.configureTimer(mins, 'Study Session');
                 Navigator.pop(context);
               },
-              child: const Text('Set Timer', style: TextStyle(color: AppTheme.textPrimary)),
+              child: const Text('Set Timer', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
             ),
           ],
         );

@@ -1,14 +1,18 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
+import '../widgets/neu_widgets.dart';
 import 'error_log_screen.dart';
 import 'formula_sheet_screen.dart';
-import 'mock_tracker_screen.dart';
 import 'pro_upgrade_screen.dart';
 import 'community_screen.dart';
+import 'score_estimator_screen.dart';
+import 'mock_test_runner_screen.dart';
 import '../models/models.dart';
+import '../data/minimock_data.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,52 +22,98 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String? _tempActiveExam;
+  List<PYQ> _generateRapidFireQuestions(AppProvider provider) {
+    List<PYQ> pool = [];
+    if (provider.activeExam == 'DA') {
+      if (daMiniMockQuestions.isNotEmpty) {
+        pool = List.from(daMiniMockQuestions);
+      } else {
+        pool = List.from(provider.pyqs);
+      }
+    } else {
+      if (csitMiniMockQuestions.isNotEmpty) {
+        pool = List.from(csitMiniMockQuestions);
+      } else {
+        pool = List.from(provider.pyqs);
+      }
+    }
+    pool.shuffle();
+    return pool.take(min(5, pool.length)).toList();
+  }
+
+  void _startRapidFire(AppProvider provider) {
+    HapticFeedback.mediumImpact();
+    final questions = _generateRapidFireQuestions(provider);
+    if (questions.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Loading questions for Daily Rapid Fire...'),
+          backgroundColor: AppTheme.primary,
+        ),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MockTestRunnerScreen(
+          questions: questions,
+          duration: const Duration(minutes: 10),
+          testName: 'Daily Rapid Fire (10 Min)',
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AppProvider>(context);
-    final today = DateTime.now();
-    final examDate = DateTime(2027, 2, 1);
-    final daysLeft = max(0, examDate.difference(today).inDays);
-    final weeksLeft = (daysLeft / 7).floor();
-    final monthsLeft = (daysLeft / 30.4).floor();
 
-    // Determine Urgency Color
-    Color urgencyColor;
-    if (daysLeft > 200) {
-      urgencyColor = AppTheme.success;
+    // GATE 2027 Countdown
+    final now = DateTime.now();
+    final gateExamDate = DateTime(2027, 2, 1);
+    final daysLeft = max(0, gateExamDate.difference(now).inDays);
+    final weeksLeft = (daysLeft / 7).ceil();
+    final monthsLeft = (daysLeft / 30).floor();
+
+    final Color urgencyColor;
+    if (daysLeft >= 180) {
+      urgencyColor = AppTheme.accentMint;
     } else if (daysLeft >= 100) {
-      urgencyColor = AppTheme.warning;
+      urgencyColor = AppTheme.accentGold;
     } else {
-      urgencyColor = AppTheme.error;
+      urgencyColor = AppTheme.accentCoral;
     }
 
     // Today's topics from planner
+    final today = DateTime.now();
     final todayTopics = provider.getTopicsForDate(today);
-    final hasTodayPlan = todayTopics.isNotEmpty;
-    final todayTopic = hasTodayPlan ? todayTopics[0] : null;
+    final todayTopic = todayTopics.isNotEmpty ? todayTopics[0] : null;
 
     final completedTopicsCount = provider.topics.where((t) => t.isCompleted).length;
+    final totalTopicsCount = provider.topics.isNotEmpty ? provider.topics.length : 1;
     final completedPYQsCount = provider.pyqs.where((p) => p.isCompleted).length;
     final mocksCount = provider.mockLogs.length;
 
     return Scaffold(
+      backgroundColor: context.scaffoldBackground,
       appBar: AppBar(
+        backgroundColor: context.scaffoldBackground,
+        elevation: 0,
         title: Row(
           children: [
             Text(
               'GateX',
-              style: AppTheme.poppinsBold(fontSize: 22),
+              style: AppTheme.poppinsBold(fontSize: 22, color: context.textColor),
             ),
             if (provider.selectedExam == 'BOTH')
               Container(
-                margin: const EdgeInsets.only(left: 12),
-                height: 32,
+                margin: const EdgeInsets.only(left: 10),
+                height: 30,
                 decoration: BoxDecoration(
-                  color: AppTheme.surface,
+                  color: context.colorSurfaceElevated,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -78,40 +128,35 @@ class _HomeScreenState extends State<HomeScreen> {
                 margin: const EdgeInsets.only(left: 10),
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: AppTheme.primary.withValues(alpha: 0.15),
+                  color: AppTheme.accentPurple.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppTheme.primary.withValues(alpha: 0.3)),
                 ),
                 child: Text(
                   provider.activeExam ?? 'DA',
                   style: const TextStyle(
-                    color: AppTheme.primary,
+                    color: AppTheme.accentPurple,
                     fontWeight: FontWeight.bold,
-                    fontSize: 12,
+                    fontSize: 11,
                   ),
                 ),
               ),
           ],
         ),
         actions: [
-          // Streak Badge
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 12.0),
+          // Tactile Streak Flame Pill
+          NeuContainer(
+            borderRadius: 16,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: AppTheme.surface,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-            ),
+            margin: const EdgeInsets.symmetric(vertical: 10.0),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.local_fire_department_rounded, size: 16, color: Colors.orange),
+                const Icon(Icons.local_fire_department_rounded, size: 16, color: AppTheme.accentFlame),
                 const SizedBox(width: 4),
                 Text(
                   '${provider.streak}d',
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: AppTheme.accentFlame,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -123,39 +168,30 @@ class _HomeScreenState extends State<HomeScreen> {
 
           // Pro Pass Pill
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
-            child: InkWell(
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
+            child: GestureDetector(
               onTap: () {
+                HapticFeedback.selectionClick();
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const ProUpgradeScreen()));
               },
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
+              child: NeuContainer(
+                borderRadius: 16,
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: provider.isPro ? AppTheme.primary.withValues(alpha: 0.15) : AppTheme.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: provider.isPro
-                        ? AppTheme.primary.withValues(alpha: 0.6)
-                        : Colors.white.withValues(alpha: 0.12),
-                  ),
-                ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       provider.isPro ? Icons.workspace_premium_rounded : Icons.star_border_rounded,
                       size: 14,
-                      color: provider.isPro ? AppTheme.primary : AppTheme.textSecondary,
+                      color: provider.isPro ? AppTheme.accentGold : context.textSecondaryColor,
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      provider.isPro ? 'PRO' : 'PRO PASS',
+                      provider.isPro ? 'PRO' : 'PASS',
                       style: TextStyle(
-                        color: provider.isPro ? Colors.white : AppTheme.textSecondary,
-                        fontSize: 11,
+                        color: provider.isPro ? AppTheme.accentGold : context.textSecondaryColor,
+                        fontSize: 10.5,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
                       ),
                     ),
                   ],
@@ -163,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 6),
         ],
       ),
       body: Center(
@@ -175,30 +211,33 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 1. SLEEK COUNTDOWN HERO CARD
-                _buildCountdownCard(context, provider, daysLeft, weeksLeft, monthsLeft, urgencyColor),
+                // 1. NEUMORPHIC STREAK & WEEKDAY HERO
+                _buildStreakHero(context, provider),
                 const SizedBox(height: 16),
 
-                // 2. TODAY'S TARGET CARD
-                _buildTodayPlanCard(context, provider, todayTopic),
+                // 2. ⚡ 10-MINUTE DAILY RAPID FIRE SPRINT
+                _buildRapidFireSprint(context, provider),
                 const SizedBox(height: 16),
 
-                // 3. STATS STRIP
-                _buildStatsStrip(completedTopicsCount, provider.topics.length, completedPYQsCount, mocksCount),
+                // 3. GATE 2027 COUNTDOWN
+                _buildCountdown(context, provider, daysLeft, weeksLeft, monthsLeft, urgencyColor),
+                const SizedBox(height: 16),
+
+                // 4. DAILY MISSIONS (Minimal text, clear progress)
+                _buildDailyMissions(context, provider, todayTopic),
+                const SizedBox(height: 16),
+
+                // 5. COMPACT 3-STAT NEUMORPHIC CARDS
+                _buildStatsGrid(context, completedTopicsCount, totalTopicsCount, completedPYQsCount, mocksCount),
                 const SizedBox(height: 20),
 
-                // 4. CORE STUDY TOOLS (2x2 GRID)
-                Text(
-                  'Study Tools',
-                  style: AppTheme.poppinsBold(fontSize: 16),
-                ),
-                const SizedBox(height: 10),
-                _buildStudyToolsGrid(context, provider),
+                // 6. CORE STUDY TOOLS (2x2 Tactile Grid)
+                _buildToolsGrid(context, provider),
                 const SizedBox(height: 16),
 
-                // 5. PEER DOUBT SOLVING BANNER
+                // 7. PEER DOUBT COMMUNITY BANNER
                 _buildCommunityBanner(context),
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
               ],
             ),
           ),
@@ -207,7 +246,170 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildCountdownCard(
+  // 1. NEUMORPHIC STREAK HERO (Minimal Text, Tactile Day Buttons)
+  Widget _buildStreakHero(BuildContext context, AppProvider provider) {
+    final streak = provider.streak;
+    final todayWeekday = DateTime.now().weekday; // 1 = Mon, 7 = Sun
+    const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+    return NeuContainer(
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFF9F43), Color(0xFFFF5252)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.accentFlame.withValues(alpha: 0.35),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: const Icon(Icons.local_fire_department_rounded, color: Colors.white, size: 26),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '$streak Days Straight! 🔥',
+                      style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      streak > 1 ? 'Streak active • AIR on track' : 'Solve 1 PYQ today to build streak',
+                      style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // 7 Tactile Weekday Pills
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: List.generate(7, (index) {
+              final dayNum = index + 1;
+              final isToday = dayNum == todayWeekday;
+              final isCompleted = dayNum <= todayWeekday && (todayWeekday - dayNum) < streak;
+
+              return Column(
+                children: [
+                  NeuContainer(
+                    width: 38,
+                    height: 38,
+                    borderRadius: 19,
+                    isRecessed: !isCompleted && !isToday,
+                    padding: EdgeInsets.zero,
+                    color: isCompleted
+                        ? AppTheme.accentFlame
+                        : (isToday ? AppTheme.accentFlame.withValues(alpha: 0.15) : null),
+                    alignment: Alignment.center,
+                    child: isCompleted
+                        ? const Icon(Icons.check_rounded, color: Colors.white, size: 18)
+                        : Text(
+                            weekDays[index],
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: isToday ? AppTheme.accentFlame : context.textSecondaryColor,
+                            ),
+                          ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    weekDays[index],
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                      color: isToday ? AppTheme.accentFlame : context.textSecondaryColor,
+                    ),
+                  ),
+                ],
+              );
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 2. ⚡ 10-MINUTE RAPID FIRE SPRINT
+  Widget _buildRapidFireSprint(BuildContext context, AppProvider provider) {
+    return NeuContainer(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        children: [
+          const NeuIconTile(
+            icon: Icons.bolt_rounded,
+            iconColor: AppTheme.accentPurple,
+            size: 44,
+            iconSize: 24,
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Daily Rapid Fire',
+                  style: AppTheme.poppinsBold(fontSize: 14, color: context.textColor),
+                ),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppTheme.accentPurple.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Text(
+                        '5 Qs • 10m',
+                        style: TextStyle(color: AppTheme.accentPurple, fontSize: 9.5, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Quick Drill',
+                      style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          NeuButton(
+            isPrimary: true,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            borderRadius: 14,
+            onPressed: () => _startRapidFire(provider),
+            child: const Text(
+              'Sprint ⚡',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 3. GATE 2027 COUNTDOWN
+  Widget _buildCountdown(
     BuildContext context,
     AppProvider provider,
     int daysLeft,
@@ -229,408 +431,308 @@ class _HomeScreenState extends State<HomeScreen> {
       prepPercentRemaining = (daysRemaining / totalPrepDays).clamp(0.0, 1.0);
     }
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: urgencyColor,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      examName.toUpperCase(),
-                      style: const TextStyle(
-                        color: AppTheme.textSecondary,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.0,
-                      ),
-                    ),
-                  ],
+    return NeuContainer(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                examName,
+                style: TextStyle(
+                  color: context.textSecondaryColor,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.8,
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.06),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: const Text(
-                    '1 Feb 2027',
-                    style: TextStyle(
-                      color: AppTheme.textSecondary,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: urgencyColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-              ],
-            ),
-            const SizedBox(height: 14),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  '$daysLeft',
+                child: Text(
+                  '$daysLeft Days Left',
                   style: TextStyle(
-                    fontSize: 42,
-                    fontWeight: FontWeight.bold,
                     color: urgencyColor,
-                    letterSpacing: -1.0,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                const Text(
-                  'Days Left',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  '$weeksLeft wks  •  $monthsLeft mos',
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: AppTheme.textSecondary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: LinearProgressIndicator(
-                value: prepPercentRemaining,
-                minHeight: 6,
-                backgroundColor: Colors.white.withValues(alpha: 0.08),
-                valueColor: AlwaysStoppedAnimation<Color>(urgencyColor),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTodayPlanCard(BuildContext context, AppProvider provider, TopicStatus? todayTopic) {
-    final completed = todayTopic?.isCompleted ?? false;
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "TODAY'S TARGET",
-                  style: TextStyle(
-                    color: AppTheme.textSecondary,
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 1.0,
                   ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: completed
-                        ? AppTheme.success.withValues(alpha: 0.15)
-                        : AppTheme.primary.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    completed ? "Completed" : "Scheduled",
-                    style: TextStyle(
-                      color: completed ? AppTheme.success : AppTheme.primary,
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            if (todayTopic != null) ...[
-              Text(
-                '${todayTopic.subjectName} — ${todayTopic.topicName}',
-                style: AppTheme.poppinsBold(fontSize: 15),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                'Estimated: 2.5 hours  •  ${todayTopic.difficulty} Difficulty',
-                style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
-              ),
-              const SizedBox(height: 14),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: completed ? AppTheme.surface : AppTheme.primary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: BorderSide(
-                            color: completed ? Colors.white.withValues(alpha: 0.15) : Colors.transparent,
-                          ),
-                        ),
-                      ),
-                      onPressed: () {
-                        provider.setSelectedIndex(1); // Open Planner tab
-                      },
-                      child: Text(
-                        completed ? "View in Planner" : "Start Study Session",
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ] else ...[
-              const Text(
-                'No target assigned for today! Practice PYQs or take a mock test.',
-                style: TextStyle(color: Colors.white, fontSize: 14),
-              ),
-              const SizedBox(height: 12),
-              OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                ),
-                onPressed: () => provider.setSelectedIndex(2), // PYQs tab
-                child: const Text(
-                  'Practice PYQs',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               ),
             ],
-          ],
-        ),
+          ),
+          const SizedBox(height: 12),
+          NeuProgressBar(
+            progress: prepPercentRemaining,
+            progressColor: urgencyColor,
+            height: 8,
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '$weeksLeft wks remaining',
+                style: TextStyle(color: context.textSecondaryColor, fontSize: 10.5),
+              ),
+              Text(
+                '1 Feb 2027',
+                style: TextStyle(color: context.textSecondaryColor, fontSize: 10.5, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildStatsStrip(int topicsDone, int totalTopics, int pyqsSolved, int mocksCount) {
-    return Row(
-      children: [
-        _buildStatTile('Topics Covered', '$topicsDone / $totalTopics'),
-        const SizedBox(width: 10),
-        _buildStatTile('PYQs Solved', '$pyqsSolved'),
-        const SizedBox(width: 10),
-        _buildStatTile('Mocks Taken', '$mocksCount'),
-      ],
+  // 4. DAILY MISSIONS (Minimal Text, Tactile Rows)
+  Widget _buildDailyMissions(BuildContext context, AppProvider provider, TopicStatus? todayTopic) {
+    final bool topicDone = todayTopic?.isCompleted ?? false;
+    final int pyqsSolved = provider.pyqs.where((p) => p.isCompleted).length;
+    final bool pyqTargetDone = pyqsSolved >= 5;
+    final bool mockTaken = provider.mockLogs.isNotEmpty;
+
+    int missionsDone = 0;
+    if (topicDone) missionsDone++;
+    if (pyqTargetDone) missionsDone++;
+    if (mockTaken) missionsDone++;
+
+    return NeuContainer(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'DAILY MISSIONS',
+                style: TextStyle(
+                  color: context.textSecondaryColor,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.0,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: missionsDone == 3
+                      ? AppTheme.accentMint.withValues(alpha: 0.15)
+                      : AppTheme.accentPurple.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '$missionsDone / 3 Done',
+                  style: TextStyle(
+                    color: missionsDone == 3 ? AppTheme.accentMint : AppTheme.accentPurple,
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+
+          // Mission 1: Syllabus Topic
+          _buildMissionRow(
+            context: context,
+            icon: Icons.menu_book_rounded,
+            iconColor: AppTheme.accentCyan,
+            title: todayTopic != null ? todayTopic.topicName : 'Cover Daily Topic',
+            ratioText: topicDone ? '1/1' : '0/1',
+            progress: topicDone ? 1.0 : 0.0,
+            isCompleted: topicDone,
+            onTap: () => provider.setSelectedIndex(1),
+          ),
+          const SizedBox(height: 10),
+
+          // Mission 2: Solve 5 PYQs
+          _buildMissionRow(
+            context: context,
+            icon: Icons.checklist_rtl_rounded,
+            iconColor: AppTheme.accentGold,
+            title: 'Solve 5 PYQs',
+            ratioText: '${min(5, pyqsSolved)}/5',
+            progress: (pyqsSolved / 5.0).clamp(0.0, 1.0),
+            isCompleted: pyqTargetDone,
+            onTap: () => provider.setSelectedIndex(2),
+          ),
+          const SizedBox(height: 10),
+
+          // Mission 3: Test or Sprint
+          _buildMissionRow(
+            context: context,
+            icon: Icons.sports_score_rounded,
+            iconColor: AppTheme.accentCoral,
+            title: 'Attempt 1 Test or Sprint',
+            ratioText: mockTaken ? '1/1' : '0/1',
+            progress: mockTaken ? 1.0 : 0.0,
+            isCompleted: mockTaken,
+            onTap: () => _startRapidFire(provider),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildStatTile(String label, String value) {
-    return Expanded(
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 14.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: const TextStyle(
-                  color: AppTheme.textSecondary,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
+  Widget _buildMissionRow({
+    required BuildContext context,
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String ratioText,
+    required double progress,
+    required bool isCompleted,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          color: context.colorSurfaceElevated,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          children: [
+            NeuIconTile(
+              icon: icon,
+              iconColor: iconColor,
+              size: 34,
+              iconSize: 16,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: isCompleted ? AppTheme.accentMint : context.textColor,
+                  decoration: isCompleted ? TextDecoration.lineThrough : null,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 6),
-              Text(
-                value,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStudyToolsGrid(BuildContext context, AppProvider provider) {
-    final tools = [
-      _StudyTool(
-        title: 'PYQs Bank',
-        subtitle: 'Year & Subject wise',
-        icon: Icons.assignment_outlined,
-        color: AppTheme.primary,
-        onTap: () => provider.setSelectedIndex(2),
-      ),
-      _StudyTool(
-        title: 'Mock Tests',
-        subtitle: 'Full & Mini Mocks',
-        icon: Icons.assessment_outlined,
-        color: AppTheme.secondary,
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const MockTrackerScreen()),
-        ),
-      ),
-      _StudyTool(
-        title: 'Formula Sheets',
-        subtitle: 'Key Concept Recall',
-        icon: Icons.functions_rounded,
-        color: Colors.amber,
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const FormulaSheetScreen()),
-        ),
-      ),
-      _StudyTool(
-        title: 'Error Log',
-        subtitle: 'Target Weak Areas',
-        icon: Icons.error_outline_rounded,
-        color: AppTheme.error,
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const ErrorLogScreen()),
-        ),
-      ),
-    ];
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: tools.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: 2.2,
-      ),
-      itemBuilder: (context, index) {
-        final tool = tools[index];
-        return Card(
-          child: InkWell(
-            onTap: tool.onTap,
-            borderRadius: BorderRadius.circular(16),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 12.0),
-              child: Row(
+            ),
+            const SizedBox(width: 8),
+            SizedBox(
+              width: 50,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: tool.color.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(10),
+                  Text(
+                    ratioText,
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: isCompleted ? AppTheme.accentMint : context.textSecondaryColor,
                     ),
-                    child: Icon(tool.icon, color: tool.color, size: 20),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          tool.title,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          tool.subtitle,
-                          style: const TextStyle(
-                            color: AppTheme.textSecondary,
-                            fontSize: 10,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
+                  const SizedBox(height: 3),
+                  NeuProgressBar(
+                    progress: progress,
+                    progressColor: isCompleted ? AppTheme.accentMint : iconColor,
+                    height: 4,
                   ),
                 ],
               ),
             ),
-          ),
-        );
-      },
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildCommunityBanner(BuildContext context) {
-    return Card(
-      child: InkWell(
+  // 5. COMPACT 3-STAT NEUMORPHIC CARDS
+  Widget _buildStatsGrid(
+    BuildContext context,
+    int topicsDone,
+    int totalTopics,
+    int pyqsSolved,
+    int mocksCount,
+  ) {
+    return Row(
+      children: [
+        _buildStatTile(
+          context: context,
+          icon: Icons.checklist_rtl_rounded,
+          iconColor: AppTheme.accentPurple,
+          label: 'Syllabus',
+          value: '${((topicsDone / totalTopics) * 100).toStringAsFixed(0)}%',
+          onTap: () => Provider.of<AppProvider>(context, listen: false).setSelectedIndex(1),
+        ),
+        const SizedBox(width: 10),
+        _buildStatTile(
+          context: context,
+          icon: Icons.menu_book_rounded,
+          iconColor: AppTheme.accentGold,
+          label: 'PYQs',
+          value: '$pyqsSolved',
+          onTap: () => Provider.of<AppProvider>(context, listen: false).setSelectedIndex(2),
+        ),
+        const SizedBox(width: 10),
+        _buildStatTile(
+          context: context,
+          icon: Icons.sports_score_rounded,
+          iconColor: AppTheme.accentMint,
+          label: 'Mocks',
+          value: '$mocksCount',
+          onTap: () => Provider.of<AppProvider>(context, listen: false).setSelectedIndex(3),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatTile({
+    required BuildContext context,
+    required IconData icon,
+    required Color iconColor,
+    required String label,
+    required String value,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: GestureDetector(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const CommunityScreen()),
-          );
+          HapticFeedback.selectionClick();
+          onTap();
         },
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
+        child: NeuContainer(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+          borderRadius: 18,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: AppTheme.secondary.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.forum_rounded, color: AppTheme.secondary, size: 24),
+              NeuIconTile(
+                icon: icon,
+                iconColor: iconColor,
+                size: 32,
+                iconSize: 16,
               ),
-              const SizedBox(width: 14),
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Peer Doubt Solving',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 2),
-                    Text(
-                      'Discuss tricky concepts & shortcuts with rankers',
-                      style: TextStyle(
-                        color: AppTheme.textSecondary,
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
-                ),
+              const SizedBox(height: 8),
+              Text(
+                value,
+                style: AppTheme.timerStyle(fontSize: 16, color: context.textColor),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              const Icon(Icons.chevron_right, color: AppTheme.textSecondary),
+              const SizedBox(height: 1),
+              Text(
+                label,
+                style: TextStyle(color: context.textSecondaryColor, fontSize: 10.5, fontWeight: FontWeight.bold),
+              ),
             ],
           ),
         ),
@@ -638,54 +740,166 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSwitchButton(BuildContext context, AppProvider provider, String title) {
-    final currentExam = _tempActiveExam ?? provider.activeExam;
-    final isActive = currentExam == title;
+  // 6. 2x2 TACTILE STUDY TOOLS GRID
+  Widget _buildToolsGrid(BuildContext context, AppProvider provider) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _buildToolTile(
+                context: context,
+                icon: Icons.functions_rounded,
+                iconColor: AppTheme.accentCyan,
+                label: 'Formulas',
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FormulaSheetScreen())),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _buildToolTile(
+                context: context,
+                icon: Icons.calculate_outlined,
+                iconColor: AppTheme.accentGold,
+                label: 'Estimator',
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ScoreEstimatorScreen())),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(
+              child: _buildToolTile(
+                context: context,
+                icon: Icons.error_outline_rounded,
+                iconColor: AppTheme.accentCoral,
+                label: 'Mistakes',
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ErrorLogScreen())),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _buildToolTile(
+                context: context,
+                icon: Icons.forum_rounded,
+                iconColor: AppTheme.accentMint,
+                label: 'Doubts',
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CommunityScreen())),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 
+  Widget _buildToolTile({
+    required BuildContext context,
+    required IconData icon,
+    required Color iconColor,
+    required String label,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: () {
-        if (!isActive) {
-          setState(() => _tempActiveExam = title);
-          Future.delayed(const Duration(milliseconds: 150), () {
-            if (mounted) {
-              provider.setActiveExam(title);
-              setState(() => _tempActiveExam = null);
-            }
-          });
-        }
+        HapticFeedback.selectionClick();
+        onTap();
       },
+      child: NeuContainer(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        borderRadius: 18,
+        child: Row(
+          children: [
+            NeuIconTile(
+              icon: icon,
+              iconColor: iconColor,
+              size: 34,
+              iconSize: 18,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                label,
+                style: AppTheme.poppinsBold(fontSize: 12.5, color: context.textColor),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor, size: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // 7. PEER DOUBT COMMUNITY BANNER
+  Widget _buildCommunityBanner(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const CommunityScreen()));
+      },
+      child: NeuContainer(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        borderRadius: 18,
+        child: Row(
+          children: [
+            const NeuIconTile(
+              icon: Icons.forum_rounded,
+              iconColor: AppTheme.accentMint,
+              size: 38,
+              iconSize: 20,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Peer Doubt Community',
+                    style: AppTheme.poppinsBold(fontSize: 13, color: context.textColor),
+                  ),
+                  Text(
+                    'Ask & solve exam doubts with aspirants',
+                    style: TextStyle(color: context.textSecondaryColor, fontSize: 10.5),
+                  ),
+                ],
+              ),
+            ),
+            NeuButton(
+              isPrimary: true,
+              borderRadius: 12,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: const Text('Join', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSwitchButton(BuildContext context, AppProvider provider, String exam) {
+    final isSelected = provider.activeExam == exam;
+    return GestureDetector(
+      onTap: () => provider.setActiveExam(exam),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
-          color: isActive ? AppTheme.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
+          color: isSelected ? AppTheme.accentPurple : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Text(
-          title,
+          exam,
           style: TextStyle(
-            color: isActive ? Colors.white : AppTheme.textSecondary,
-            fontSize: 12,
-            fontWeight: isActive ? FontWeight.bold : FontWeight.w600,
+            color: isSelected ? Colors.white : context.textSecondaryColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 11,
           ),
         ),
       ),
     );
   }
-}
-
-class _StudyTool {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final Color color;
-  final VoidCallback onTap;
-
-  const _StudyTool({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.color,
-    required this.onTap,
-  });
 }

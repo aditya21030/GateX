@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
 import '../utils/math_markdown_builder.dart';
+import '../widgets/neu_widgets.dart';
 
 class CommunityPost {
   final String id;
@@ -753,14 +754,21 @@ class _CommunityScreenState extends State<CommunityScreen> {
     }
 
     return Scaffold(
+      backgroundColor: context.scaffoldBackground,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: Text(
           'Peer Learning & Doubts',
-          style: AppTheme.poppinsBold(fontSize: 20),
+          style: AppTheme.poppinsBold(fontSize: 18, color: context.textColor),
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: context.textColor),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: AppTheme.primary,
+        backgroundColor: AppTheme.accentPurple,
         onPressed: _openNewPostSheet,
         icon: const Icon(Icons.edit_note_rounded, color: Colors.white),
         label: const Text('Ask a Doubt', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
@@ -768,41 +776,34 @@ class _CommunityScreenState extends State<CommunityScreen> {
       body: Column(
         children: [
           // Channel selector strip
-          Container(
+          SizedBox(
             height: 48,
-            color: AppTheme.surface,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               itemCount: _channels.length,
               itemBuilder: (context, index) {
                 final ch = _channels[index];
                 final isSelected = ch == _selectedChannel;
                 return Padding(
-                  padding: const EdgeInsets.only(right: 6),
-                  child: InkWell(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: GestureDetector(
                     onTap: () {
                       HapticFeedback.selectionClick();
                       setState(() {
                         _selectedChannel = ch;
                       });
                     },
-                    borderRadius: BorderRadius.circular(16),
-                    child: Container(
+                    child: NeuContainer(
+                      isRecessed: isSelected,
+                      borderRadius: 14,
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: isSelected ? AppTheme.primary : AppTheme.background,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: isSelected ? AppTheme.primary : Colors.white.withValues(alpha: 0.1),
-                        ),
-                      ),
                       child: Text(
                         ch,
                         style: TextStyle(
-                          color: isSelected ? Colors.white : AppTheme.textSecondary,
-                          fontSize: 12,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          color: isSelected ? AppTheme.accentPurple : context.textSecondaryColor,
+                          fontSize: 11.5,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                         ),
                       ),
                     ),
@@ -814,36 +815,36 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
           // Search and Filters
           Padding(
-            padding: const EdgeInsets.fromLTRB(14, 10, 14, 6),
+            padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
             child: Row(
               children: [
                 Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: (val) => setState(() => _searchQuery = val.trim()),
-                    style: const TextStyle(color: Colors.white, fontSize: 13),
-                    decoration: InputDecoration(
-                      hintText: 'Search discussions or shortcuts...',
-                      hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
-                      prefixIcon: const Icon(Icons.search, size: 16, color: AppTheme.textSecondary),
-                      filled: true,
-                      fillColor: AppTheme.surface,
-                      isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                  child: NeuContainer(
+                    isRecessed: true,
+                    borderRadius: 14,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                    child: TextField(
+                      controller: _searchController,
+                      onChanged: (val) => setState(() => _searchQuery = val.trim()),
+                      style: TextStyle(color: context.textColor, fontSize: 13),
+                      decoration: InputDecoration(
+                        hintText: 'Search discussions or shortcuts...',
+                        hintStyle: TextStyle(color: context.textSecondaryColor, fontSize: 12),
+                        prefixIcon: Icon(Icons.search, size: 16, color: context.textSecondaryColor),
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
                 PopupMenuButton<String>(
-                  color: AppTheme.surface,
-                  icon: Container(
+                  color: context.scaffoldBackground,
+                  icon: NeuContainer(
+                    borderRadius: 12,
                     padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppTheme.surface,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(Icons.filter_list_rounded, size: 18, color: AppTheme.secondary),
+                    child: const Icon(Icons.filter_list_rounded, size: 18, color: AppTheme.accentPurple),
                   ),
                   onSelected: (val) => setState(() => _selectedFilter = val),
                   itemBuilder: (context) => [
@@ -860,11 +861,11 @@ class _CommunityScreenState extends State<CommunityScreen> {
           // Discussions List
           Expanded(
             child: filteredPosts.isEmpty
-                ? const Center(
-                    child: Text('No doubts found in this channel.', style: TextStyle(color: AppTheme.textSecondary)),
+                ? Center(
+                    child: Text('No doubts found in this channel.', style: TextStyle(color: context.textSecondaryColor)),
                   )
                 : ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(14, 6, 14, 80),
+                    padding: const EdgeInsets.fromLTRB(14, 4, 14, 80),
                     physics: const BouncingScrollPhysics(),
                     itemCount: filteredPosts.length,
                     itemBuilder: (context, index) {
@@ -879,17 +880,12 @@ class _CommunityScreenState extends State<CommunityScreen> {
   }
 
   Widget _buildPostCard(BuildContext context, CommunityPost post) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
-      ),
-      child: InkWell(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: GestureDetector(
         onTap: () => _openThreadDetail(post),
-        borderRadius: BorderRadius.circular(14),
-        child: Padding(
+        child: NeuContainer(
+          borderRadius: 18,
           padding: const EdgeInsets.all(14),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -899,12 +895,12 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                     decoration: BoxDecoration(
-                      color: AppTheme.primary.withValues(alpha: 0.12),
+                      color: AppTheme.accentPurple.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
                       post.channel,
-                      style: const TextStyle(color: AppTheme.primary, fontSize: 10, fontWeight: FontWeight.bold),
+                      style: const TextStyle(color: AppTheme.accentPurple, fontSize: 10, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -912,35 +908,35 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: AppTheme.secondary.withValues(alpha: 0.12),
+                        color: AppTheme.accentMint.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.check_circle_rounded, size: 10, color: AppTheme.secondary),
+                          Icon(Icons.check_circle_rounded, size: 10, color: AppTheme.accentMint),
                           SizedBox(width: 3),
-                          Text('SOLVED', style: TextStyle(color: AppTheme.secondary, fontSize: 9, fontWeight: FontWeight.bold)),
+                          Text('SOLVED', style: TextStyle(color: AppTheme.accentMint, fontSize: 9, fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
                   const Spacer(),
                   Text(
                     DateFormat('MMM d').format(post.createdAt),
-                    style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11),
+                    style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
                   ),
                 ],
               ),
               const SizedBox(height: 10),
               Text(
                 post.title,
-                style: AppTheme.poppinsBold(fontSize: 15),
+                style: AppTheme.poppinsBold(fontSize: 14.5, color: context.textColor),
               ),
               const SizedBox(height: 6),
               MarkdownBody(
                 data: post.content,
                 styleSheet: MarkdownStyleSheet(
-                  p: const TextStyle(color: Colors.white70, fontSize: 13, height: 1.4),
+                  p: TextStyle(color: context.textSecondaryColor, fontSize: 13, height: 1.4),
                 ),
                 extensionSet: md.ExtensionSet(
                   [BlockMathSyntax(), ...md.ExtensionSet.gitHubFlavored.blockSyntaxes],
@@ -956,16 +952,16 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 children: [
                   CircleAvatar(
                     radius: 10,
-                    backgroundColor: Colors.white.withValues(alpha: 0.1),
+                    backgroundColor: AppTheme.accentPurple.withValues(alpha: 0.2),
                     child: Text(
                       post.authorName.isNotEmpty ? post.authorName[0] : 'U',
-                      style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+                      style: const TextStyle(color: AppTheme.accentPurple, fontSize: 9, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(width: 6),
                   Text(
                     post.authorName,
-                    style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11),
+                    style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
                   ),
                   if (post.isPro) ...[
                     const SizedBox(width: 4),
@@ -973,7 +969,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   ],
                   const Spacer(),
                   // Upvotes
-                  InkWell(
+                  GestureDetector(
                     onTap: () {
                       HapticFeedback.selectionClick();
                       setState(() {
@@ -986,21 +982,20 @@ class _CommunityScreenState extends State<CommunityScreen> {
                         }
                       });
                     },
-                    borderRadius: BorderRadius.circular(6),
-                    child: Padding(
+                    child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                       child: Row(
                         children: [
                           Icon(
                             post.isUpvoted ? Icons.thumb_up_alt_rounded : Icons.thumb_up_alt_outlined,
                             size: 13,
-                            color: post.isUpvoted ? AppTheme.secondary : Colors.white70,
+                            color: post.isUpvoted ? AppTheme.accentPurple : context.textSecondaryColor,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             '${post.upvotes}',
                             style: TextStyle(
-                              color: post.isUpvoted ? AppTheme.secondary : Colors.white,
+                              color: post.isUpvoted ? AppTheme.accentPurple : context.textSecondaryColor,
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
                             ),
@@ -1013,11 +1008,11 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   // Replies
                   Row(
                     children: [
-                      const Icon(Icons.mode_comment_outlined, size: 13, color: Colors.white70),
+                      Icon(Icons.mode_comment_outlined, size: 13, color: context.textSecondaryColor),
                       const SizedBox(width: 4),
                       Text(
                         '${post.replyCount}',
-                        style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                        style: TextStyle(color: context.textSecondaryColor, fontSize: 11, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),

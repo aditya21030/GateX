@@ -8,6 +8,7 @@ import '../data/study_plan.dart';
 import '../models/models.dart';
 import '../services/storage_service.dart';
 import 'pyq_screen.dart';
+import '../widgets/neu_widgets.dart';
 
 class PlannerScreen extends StatefulWidget {
   const PlannerScreen({super.key});
@@ -326,17 +327,22 @@ class _PlannerScreenState extends State<PlannerScreen> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        backgroundColor: context.colorBackground,
         appBar: AppBar(
+          backgroundColor: context.colorSurface,
+          elevation: 0,
           title: Text(
             'Syllabus & Planner',
-            style: AppTheme.poppinsBold(fontSize: 20),
+            style: AppTheme.poppinsBold(fontSize: 20, color: context.textColor),
           ),
-          bottom: const TabBar(
-            indicatorColor: AppTheme.secondary,
-            labelColor: AppTheme.secondary,
-            unselectedLabelColor: AppTheme.textSecondary,
+          bottom: TabBar(
+            indicatorColor: AppTheme.accentPurple,
+            indicatorWeight: 3,
+            labelColor: AppTheme.accentPurple,
+            unselectedLabelColor: context.textSecondaryColor,
+            labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
             indicatorSize: TabBarIndicatorSize.tab,
-            tabs: [
+            tabs: const [
               Tab(text: 'Agile Checklist'),
               Tab(text: 'Daily Plan'),
               Tab(text: 'Phase Runway'),
@@ -378,101 +384,89 @@ class _PlannerScreenState extends State<PlannerScreen> {
     return Column(
       children: [
         // Summary & Search Header
-        Container(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-          decoration: BoxDecoration(
-            color: AppTheme.surface,
-            border: Border(bottom: BorderSide(color: Colors.white.withValues(alpha: 0.08))),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Overall Progress Bar
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Syllabus Mastery',
-                    style: AppTheme.poppinsBold(fontSize: 13, color: Colors.white70),
-                  ),
-                  Text(
-                    '$masteredTopics / $totalTopics Topics (${(overallProgress * 100).toStringAsFixed(0)}%)',
-                    style: const TextStyle(
-                      color: AppTheme.secondary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
-                  value: overallProgress,
-                  minHeight: 6,
-                  backgroundColor: Colors.white.withValues(alpha: 0.08),
-                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.secondary),
-                ),
-              ),
-              const SizedBox(height: 12),
-              // Search Bar
-              TextField(
-                controller: _searchController,
-                onChanged: (val) {
-                  setState(() {
-                    _checklistSearchQuery = val.trim();
-                  });
-                },
-                style: const TextStyle(color: Colors.white, fontSize: 13),
-                decoration: InputDecoration(
-                  hintText: 'Search topics (e.g. Eigenvalues, Bayes, Pipelining)...',
-                  hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
-                  prefixIcon: const Icon(Icons.search, size: 18, color: AppTheme.textSecondary),
-                  suffixIcon: _checklistSearchQuery.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.close, size: 16, color: Colors.white70),
-                          onPressed: () {
-                            _searchController.clear();
-                            setState(() {
-                              _checklistSearchQuery = '';
-                            });
-                          },
-                        )
-                      : null,
-                  filled: true,
-                  fillColor: AppTheme.background,
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: AppTheme.secondary),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              // Filter Chips
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+          child: NeuContainer(
+            borderRadius: 20,
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Overall Progress Bar
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildFilterChip('All', 'All'),
-                    _buildFilterChip('Unfinished', 'Unfinished'),
-                    _buildFilterChip('Concept Left', '🎬 Concept Left'),
-                    _buildFilterChip('PYQ Left', '📝 PYQ Left'),
-                    _buildFilterChip('Needs Revision', '🔄 Needs Revision'),
+                    Text(
+                      'Syllabus Mastery',
+                      style: AppTheme.poppinsBold(fontSize: 13, color: context.textColor),
+                    ),
+                    Text(
+                      '$masteredTopics / $totalTopics (${(overallProgress * 100).toStringAsFixed(0)}%)',
+                      style: const TextStyle(
+                        color: AppTheme.accentMint,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 8),
+                NeuProgressBar(
+                  progress: overallProgress,
+                  progressColor: AppTheme.accentMint,
+                  height: 8,
+                ),
+                const SizedBox(height: 12),
+                // Search Bar
+                NeuContainer(
+                  isRecessed: true,
+                  borderRadius: 14,
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: (val) {
+                      setState(() {
+                        _checklistSearchQuery = val.trim();
+                      });
+                    },
+                    style: TextStyle(color: context.textColor, fontSize: 13),
+                    decoration: InputDecoration(
+                      hintText: 'Search topics (e.g. Eigenvalues, Bayes)...',
+                      hintStyle: TextStyle(color: context.textSecondaryColor, fontSize: 13),
+                      prefixIcon: Icon(Icons.search, size: 18, color: context.textSecondaryColor),
+                      suffixIcon: _checklistSearchQuery.isNotEmpty
+                          ? IconButton(
+                              icon: Icon(Icons.close, size: 16, color: context.textSecondaryColor),
+                              onPressed: () {
+                                _searchController.clear();
+                                setState(() {
+                                  _checklistSearchQuery = '';
+                                });
+                              },
+                            )
+                          : null,
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                // Filter Chips
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      _buildFilterChip('All', 'All'),
+                      _buildFilterChip('Unfinished', 'Unfinished'),
+                      _buildFilterChip('Concept Left', '🎬 Concept Left'),
+                      _buildFilterChip('PYQ Left', '📝 PYQ Left'),
+                      _buildFilterChip('Needs Revision', '🔄 Needs Revision'),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
 
@@ -516,21 +510,16 @@ class _PlannerScreenState extends State<PlannerScreen> {
 
               final weightageInfo = _getSubjectWeightageBadge(subject, isCSIT);
 
-              return Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                decoration: BoxDecoration(
-                  color: AppTheme.surface,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: progress == 1.0
-                        ? AppTheme.secondary.withValues(alpha: 0.3)
-                        : Colors.white.withValues(alpha: 0.08),
-                  ),
-                ),
+              return NeuContainer(
+                borderRadius: 18,
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: EdgeInsets.zero,
                 child: Theme(
                   data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                   child: ExpansionTile(
                     initiallyExpanded: isExpanded,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                    collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                     onExpansionChanged: (expanded) {
                       setState(() {
                         if (expanded) {
@@ -546,7 +535,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
                         Expanded(
                           child: Text(
                             subject,
-                            style: AppTheme.poppinsBold(fontSize: 14),
+                            style: AppTheme.poppinsBold(fontSize: 14, color: context.textColor),
                           ),
                         ),
                         Container(
@@ -572,25 +561,19 @@ class _PlannerScreenState extends State<PlannerScreen> {
                       child: Row(
                         children: [
                           Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(3),
-                              child: LinearProgressIndicator(
-                                value: progress,
-                                minHeight: 4,
-                                backgroundColor: Colors.white.withValues(alpha: 0.06),
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  progress == 1.0 ? AppTheme.secondary : AppTheme.primary,
-                                ),
-                              ),
+                            child: NeuProgressBar(
+                              progress: progress,
+                              progressColor: progress == 1.0 ? AppTheme.accentMint : AppTheme.accentPurple,
+                              height: 6,
                             ),
                           ),
                           const SizedBox(width: 10),
                           Text(
                             '$masteredInSubject/${allTopics.length} (${(progress * 100).toStringAsFixed(0)}%)',
                             style: TextStyle(
-                              color: progress == 1.0 ? AppTheme.secondary : AppTheme.textSecondary,
+                              color: progress == 1.0 ? AppTheme.accentMint : context.textSecondaryColor,
                               fontSize: 11,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
@@ -697,20 +680,11 @@ class _PlannerScreenState extends State<PlannerScreen> {
   Widget _buildTopicChecklistItem(BuildContext context, AppProvider provider, String subject, String topic, TopicStatus status) {
     final isFullyMastered = status.conceptWatched && status.pyqSolved && status.revisedOnce;
 
-    return Container(
+    return NeuContainer(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: isFullyMastered
-            ? AppTheme.secondary.withValues(alpha: 0.05)
-            : AppTheme.background.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: isFullyMastered
-              ? AppTheme.secondary.withValues(alpha: 0.25)
-              : Colors.white.withValues(alpha: 0.05),
-        ),
-      ),
+      isRecessed: isFullyMastered,
+      borderRadius: 14,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -722,7 +696,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: isFullyMastered ? FontWeight.bold : FontWeight.w500,
-                    color: isFullyMastered ? Colors.white : Colors.white.withValues(alpha: 0.85),
+                    color: isFullyMastered ? AppTheme.accentMint : context.textColor,
                   ),
                 ),
               ),
@@ -885,54 +859,48 @@ class _PlannerScreenState extends State<PlannerScreen> {
 
           return GestureDetector(
             onTap: () => _selectDate(date),
-            child: Container(
+            child: NeuContainer(
               width: 58,
-              margin: const EdgeInsets.symmetric(horizontal: 5),
-              decoration: BoxDecoration(
-                color: isSelected ? AppTheme.primary : AppTheme.surface,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isToday
-                      ? AppTheme.secondary
-                      : (isSelected ? Colors.transparent : Colors.white10),
-                  width: isToday ? 2.0 : 1.0,
-                ),
-              ),
+              borderRadius: 14,
+              margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              isRecessed: isSelected,
+              color: isSelected ? AppTheme.accentPurple : null,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     isToday ? 'TODAY' : (matchedItem != null ? 'DAY ${matchedItem.day}' : 'DAY'),
                     style: TextStyle(
-                      color: isToday ? AppTheme.secondary : (isSelected ? Colors.white70 : AppTheme.textSecondary),
-                      fontSize: 8,
+                      color: isSelected ? Colors.white : (isToday ? AppTheme.secondary : context.textSecondaryColor),
+                      fontSize: 8.5,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 3),
                   Text(
                     DateFormat('d').format(date),
                     style: AppTheme.timerStyle(
-                      fontSize: 18,
-                      color: isSelected ? Colors.white : Colors.white,
+                      fontSize: 17,
+                      color: isSelected ? Colors.white : context.textColor,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 1),
                   Text(
                     DateFormat('E').format(date).toUpperCase(),
                     style: TextStyle(
-                      color: isSelected ? Colors.white60 : AppTheme.textSecondary,
-                      fontSize: 9,
-                      fontWeight: FontWeight.w500,
+                      color: isSelected ? Colors.white70 : context.textSecondaryColor,
+                      fontSize: 8.5,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   if (isCompleted) ...[
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 3),
                     Container(
-                      width: 6,
-                      height: 6,
-                      decoration: const BoxDecoration(
-                        color: AppTheme.secondary,
+                      width: 5,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.white : AppTheme.accentMint,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -966,147 +934,143 @@ class _PlannerScreenState extends State<PlannerScreen> {
       if (recommendedTopic != null) break;
     }
 
-    return Container(
+    return NeuContainer(
       width: double.infinity,
-      constraints: const BoxConstraints(maxWidth: 800),
-      child: Card(
-        color: AppTheme.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: AppTheme.secondary.withValues(alpha: 0.2), width: 1.5),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      borderRadius: 22,
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppTheme.secondary.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppTheme.secondary.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  'AGILE DAILY TARGET',
+                  style: AppTheme.monospaceStyle(
+                    fontSize: 11,
+                    color: AppTheme.secondary,
+                  ).copyWith(fontWeight: FontWeight.bold),
+                ),
+              ),
+              Text(
+                DateFormat('EEEE, MMM d, yyyy').format(selectedDate),
+                style: TextStyle(
+                  color: context.textSecondaryColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (recommendedTopic != null) ...[
+            Text(
+              recommendedSubject!.toUpperCase(),
+              style: const TextStyle(
+                color: AppTheme.secondary,
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              recommendedTopic,
+              style: AppTheme.poppinsBold(fontSize: 20, color: context.textColor),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Track your concept milestones below:',
+              style: TextStyle(color: context.textSecondaryColor, fontSize: 13),
+            ),
+            const SizedBox(height: 16),
+            Builder(
+              builder: (context) {
+                final status = provider.getTopicStatus(recommendedSubject!, recommendedTopic!);
+                return Row(
+                  children: [
+                    _buildMilestonePill(
+                      label: 'Concept',
+                      icon: Icons.play_circle_fill_rounded,
+                      isDone: status.conceptWatched,
+                      activeColor: const Color(0xFF2962FF),
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        provider.toggleTopicMilestone(recommendedSubject!, recommendedTopic!, 'concept');
+                      },
                     ),
-                    child: Text(
-                      'AGILE DAILY TARGET',
-                      style: AppTheme.monospaceStyle(
-                        fontSize: 11,
-                        color: AppTheme.secondary,
-                      ).copyWith(fontWeight: FontWeight.bold),
+                    const SizedBox(width: 8),
+                    _buildMilestonePill(
+                      label: 'PYQ',
+                      icon: Icons.assignment_turned_in_rounded,
+                      isDone: status.pyqSolved,
+                      activeColor: const Color(0xFFFF9100),
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        provider.toggleTopicMilestone(recommendedSubject!, recommendedTopic!, 'pyq');
+                      },
                     ),
+                    const SizedBox(width: 8),
+                    _buildMilestonePill(
+                      label: 'Revise',
+                      icon: Icons.sync_rounded,
+                      isDone: status.revisedOnce,
+                      activeColor: const Color(0xFF00D4AA),
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        provider.toggleTopicMilestone(recommendedSubject!, recommendedTopic!, 'revise');
+                      },
+                    ),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 20),
+            NeuButton(
+              isPrimary: true,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PYQScreen(initialSubject: recommendedSubject),
                   ),
+                );
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.white),
+                  const SizedBox(width: 8),
                   Text(
-                    DateFormat('EEEE, MMM d, yyyy').format(selectedDate),
-                    style: const TextStyle(
-                      color: AppTheme.textSecondary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    'Solve $recommendedSubject PYQs',
+                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              if (recommendedTopic != null) ...[
-                Text(
-                  recommendedSubject!.toUpperCase(),
-                  style: const TextStyle(
-                    color: AppTheme.secondary,
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
-                  ),
+            ),
+          ] else ...[
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Column(
+                  children: [
+                    const Icon(Icons.emoji_events_rounded, color: AppTheme.accentMint, size: 48),
+                    const SizedBox(height: 12),
+                    Text('All Syllabus Topics Mastered!', style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor)),
+                    const SizedBox(height: 6),
+                    Text('Take a full-length mock test to assess your examination readiness.', style: TextStyle(color: context.textSecondaryColor, fontSize: 13)),
+                  ],
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  recommendedTopic,
-                  style: AppTheme.poppinsBold(fontSize: 20),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  'This is your next high-priority concept. Track your mastery via the 3 active milestones below:',
-                  style: TextStyle(color: AppTheme.textSecondary, fontSize: 13, height: 1.4),
-                ),
-                const SizedBox(height: 16),
-                Builder(
-                  builder: (context) {
-                    final status = provider.getTopicStatus(recommendedSubject!, recommendedTopic!);
-                    return Row(
-                      children: [
-                        _buildMilestonePill(
-                          label: 'Concept',
-                          icon: Icons.play_circle_fill_rounded,
-                          isDone: status.conceptWatched,
-                          activeColor: const Color(0xFF2962FF),
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            provider.toggleTopicMilestone(recommendedSubject!, recommendedTopic!, 'concept');
-                          },
-                        ),
-                        const SizedBox(width: 8),
-                        _buildMilestonePill(
-                          label: 'PYQ',
-                          icon: Icons.assignment_turned_in_rounded,
-                          isDone: status.pyqSolved,
-                          activeColor: const Color(0xFFFF9100),
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            provider.toggleTopicMilestone(recommendedSubject!, recommendedTopic!, 'pyq');
-                          },
-                        ),
-                        const SizedBox(width: 8),
-                        _buildMilestonePill(
-                          label: 'Revise',
-                          icon: Icons.sync_rounded,
-                          isDone: status.revisedOnce,
-                          activeColor: const Color(0xFF00D4AA),
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            provider.toggleTopicMilestone(recommendedSubject!, recommendedTopic!, 'revise');
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primary,
-                    minimumSize: const Size(double.infinity, 44),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PYQScreen(initialSubject: recommendedSubject),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.arrow_forward_rounded, size: 16),
-                  label: Text('Solve $recommendedSubject PYQs'),
-                ),
-              ] else ...[
-                const Center(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20),
-                    child: Column(
-                      children: [
-                        Icon(Icons.emoji_events_rounded, color: AppTheme.secondary, size: 48),
-                        SizedBox(height: 12),
-                        Text('All Syllabus Topics Mastered!', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                        SizedBox(height: 6),
-                        Text('Take a full-length mock test to assess your examination readiness.', style: TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
