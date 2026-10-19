@@ -22,7 +22,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       subtitle: 'Master DA & CSIT syllabus, solve 15+ years PYQs, and ace GATE in one place.',
     ),
     (
-      title: 'Practice with real\nGATE CBT simulation',
+      title: 'Target your dream\nIIT & top percentile',
       subtitle: 'Official TCS iON interface with virtual calculator, real timing, and instant AIR rank.',
     ),
     (
@@ -57,6 +57,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
   }
 
+  void _onPrevious() {
+    if (_currentPage > 0) {
+      HapticFeedback.lightImpact();
+      setState(() => _currentPage--);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,115 +72,139 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF070709),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Top Bar with Starburst Logo and Skip Action
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const SizedBox(width: 44), // spacer for balance
-                  const TopBrandStar(),
-                  TextButton(
-                    onPressed: () => _completeOnboarding(toSignUp: false),
-                    style: TextButton.styleFrom(
-                      foregroundColor: Colors.white60,
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    ),
-                    child: Text(
-                      'Skip',
-                      style: GoogleFonts.outfit(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Middle Visual Area: 3D Floating IIT Cards Stage
-            Expanded(
-              flex: 5,
-              child: FloatingIITCardsStage(slideIndex: _currentPage),
-            ),
-
-            // Bottom Area: Neon Glow Sheet matching reference screens
-            NeonGlowSheet(
-              hasGlow: !isLastSlide,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(28, 28, 28, 32),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+        child: GestureDetector(
+          onHorizontalDragEnd: (details) {
+            if (details.primaryVelocity != null) {
+              if (details.primaryVelocity! < -200) {
+                _onNext();
+              } else if (details.primaryVelocity! > 200) {
+                _onPrevious();
+              }
+            }
+          },
+          child: Column(
+            children: [
+              // Top Bar: Clean minimal header (no starburst logo as requested)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Minimalist Dash Page Indicators (-- - -)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(_slides.length, (i) {
-                        final isActive = i == _currentPage;
-                        return AnimatedContainer(
-                          duration: const Duration(milliseconds: 240),
-                          margin: const EdgeInsets.symmetric(horizontal: 3),
-                          width: isActive ? 20 : 6,
-                          height: 3.5,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(2),
-                            color: isActive
-                                ? Colors.white
-                                : Colors.white.withValues(alpha: 0.25),
-                          ),
-                        );
-                      }),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Title
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 280),
-                      child: Text(
-                        currentSlide.title,
-                        key: ValueKey(_currentPage),
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.outfit(
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          height: 1.25,
-                          letterSpacing: -0.4,
-                        ),
+                    Text(
+                      'GateX',
+                      style: GoogleFonts.outfit(
+                        color: Colors.white.withValues(alpha: 0.85),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.8,
                       ),
                     ),
-                    const SizedBox(height: 12),
-
-                    // Subtitle
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 280),
+                    TextButton(
+                      onPressed: () => _completeOnboarding(toSignUp: false),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white60,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      ),
                       child: Text(
-                        currentSlide.subtitle,
-                        key: ValueKey('sub_$_currentPage'),
-                        textAlign: TextAlign.center,
+                        'Skip',
                         style: GoogleFonts.outfit(
-                          fontSize: 13,
-                          color: Colors.white.withValues(alpha: 0.65),
-                          height: 1.45,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 32),
-
-                    // Primary Action Button (White in slide 3, dark pill in 1 & 2)
-                    SleekCapsuleButton(
-                      label: isLastSlide ? 'Get Started' : 'Next',
-                      isWhite: isLastSlide,
-                      onPressed: _onNext,
                     ),
                   ],
                 ),
               ),
-            ),
-          ],
+
+              // Middle Visual Area: 3D Floating IIT Cards (Slide 0) or 3D IIT Monument (Slide 1 & 2)
+              Expanded(
+                flex: 5,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 350),
+                  child: CurvedMinimalIITCardsStage(
+                    key: ValueKey(_currentPage),
+                    slideIndex: _currentPage,
+                  ),
+                ),
+              ),
+
+              // Bottom Area: Neon Glow Sheet matching reference screens
+              NeonGlowSheet(
+                hasGlow: !isLastSlide,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(28, 26, 28, 30),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Minimalist Dash Page Indicators (-- - -)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(_slides.length, (i) {
+                          final isActive = i == _currentPage;
+                          return AnimatedContainer(
+                            duration: const Duration(milliseconds: 240),
+                            margin: const EdgeInsets.symmetric(horizontal: 3),
+                            width: isActive ? 20 : 6,
+                            height: 3.5,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(2),
+                              color: isActive
+                                  ? Colors.white
+                                  : Colors.white.withValues(alpha: 0.25),
+                            ),
+                          );
+                        }),
+                      ),
+                      const SizedBox(height: 22),
+
+                      // Title
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 280),
+                        child: Text(
+                          currentSlide.title,
+                          key: ValueKey(_currentPage),
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.outfit(
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            height: 1.25,
+                            letterSpacing: -0.4,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Subtitle
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 280),
+                        child: Text(
+                          currentSlide.subtitle,
+                          key: ValueKey('sub_$_currentPage'),
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.outfit(
+                            fontSize: 13,
+                            color: Colors.white.withValues(alpha: 0.65),
+                            height: 1.45,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 28),
+
+                      // Primary Action Button (White in slide 3, dark pill in 1 & 2)
+                      SleekCapsuleButton(
+                        label: isLastSlide ? 'Get Started' : 'Next',
+                        isWhite: isLastSlide,
+                        onPressed: _onNext,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

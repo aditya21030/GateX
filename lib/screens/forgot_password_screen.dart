@@ -62,24 +62,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       backgroundColor: const Color(0xFF6B38FF),
       body: Column(
         children: [
-          // Top Electric Purple Stage with back action
-          Stack(
-            children: [
-              const AuthPurpleHeader(),
-              SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 12.0, top: 8.0),
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios_new_rounded,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                    onPressed: () => Navigator.pop(context),
-                  ),
+          // Top Electric Purple Stage with 3D IIT Asset and Back Button
+          AuthPurpleHeaderWithIIT(
+            action: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.18),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.25),
+                  width: 1,
                 ),
               ),
-            ],
+              child: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: Colors.white,
+                  size: 18,
+                ),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            targetIIT: 'GATE ACCESS',
+            airRank: 'SECURE RECOVERY',
           ),
 
           // Bottom White Sheet (Matches Screen 4)
@@ -103,39 +107,46 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Sparkle Icon + Title
+                    // Header Badge + Title
                     Row(
                       children: [
-                        Icon(
-                          Icons.auto_awesome_rounded,
-                          size: 24,
-                          color: isDark ? const Color(0xFF9D65FF) : const Color(0xFF6B38FF),
+                        Container(
+                          padding: const EdgeInsets.all(7),
+                          decoration: BoxDecoration(
+                            color: (isDark ? const Color(0xFF9D65FF) : const Color(0xFF6B38FF)).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Icon(
+                            _isSent ? Icons.mark_email_read_rounded : Icons.lock_reset_rounded,
+                            size: 19,
+                            color: isDark ? const Color(0xFF9D65FF) : const Color(0xFF6B38FF),
+                          ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 10),
                         Text(
                           _isSent ? 'Check Email' : 'Reset Password',
                           style: GoogleFonts.outfit(
-                            fontSize: 27,
+                            fontSize: 25,
                             fontWeight: FontWeight.bold,
                             color: isDark ? Colors.white : const Color(0xFF121214),
-                            letterSpacing: -0.5,
+                            letterSpacing: -0.4,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
 
                     Text(
                       _isSent
                           ? 'Instructions to reset your password have been sent to ${_emailController.text.trim()}.'
                           : 'Enter your registered email and we\'ll send you a password recovery link.',
                       style: GoogleFonts.outfit(
-                        fontSize: 13.5,
+                        fontSize: 13,
                         color: isDark ? Colors.white60 : const Color(0xFF757480),
                         height: 1.4,
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 22),
 
                     // Error message if any
                     if (_errorMessage != null) ...[
@@ -167,9 +178,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       CleanAuthInputField(
                         controller: _emailController,
                         hintText: 'Enter your email',
+                        prefixIcon: Icon(
+                          Icons.mail_outline_rounded,
+                          size: 19,
+                          color: isDark ? Colors.white38 : const Color(0xFF888894),
+                        ),
                         keyboardType: TextInputType.emailAddress,
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 22),
 
                       // Solid Black Pill Button: [ Send Reset Link ]
                       SolidBlackPillButton(
@@ -212,7 +228,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 22),
 
                       // Resend Link Button
                       SolidBlackPillButton(
@@ -221,7 +237,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         onPressed: _sendResetLink,
                       ),
                     ],
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 18),
 
                     // Back to Log In
                     Center(

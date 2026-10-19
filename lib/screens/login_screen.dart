@@ -155,10 +155,13 @@ class _LoginScreenState extends State<LoginScreen> {
       backgroundColor: const Color(0xFF6B38FF),
       body: Column(
         children: [
-          // Top Electric Purple Stage (Matches Screen 4)
-          const AuthPurpleHeader(),
+          // Top Electric Purple Stage with 3D IIT Asset
+          const AuthPurpleHeaderWithIIT(
+            targetIIT: 'TARGET IIT',
+            airRank: 'GATE 2027',
+          ),
 
-          // Bottom White Sheet (Matches Screen 4)
+          // Bottom White Sheet (Refined Neumorphic/Clean UI)
           Expanded(
             child: Container(
               width: double.infinity,
@@ -181,25 +184,40 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Sparkle Icon + Title
+                      // Header Badge + Title
                       Row(
                         children: [
-                          Icon(
-                            Icons.auto_awesome_rounded,
-                            size: 24,
-                            color: isDark ? const Color(0xFF9D65FF) : const Color(0xFF6B38FF),
+                          Container(
+                            padding: const EdgeInsets.all(7),
+                            decoration: BoxDecoration(
+                              color: (isDark ? const Color(0xFF9D65FF) : const Color(0xFF6B38FF)).withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Icon(
+                              Icons.auto_awesome_rounded,
+                              size: 19,
+                              color: isDark ? const Color(0xFF9D65FF) : const Color(0xFF6B38FF),
+                            ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 10),
                           Text(
                             'Welcome Back',
                             style: GoogleFonts.outfit(
-                              fontSize: 27,
+                              fontSize: 25,
                               fontWeight: FontWeight.bold,
                               color: isDark ? Colors.white : const Color(0xFF121214),
-                              letterSpacing: -0.5,
+                              letterSpacing: -0.4,
                             ),
                           ),
                         ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Sign in to continue your GATE preparation',
+                        style: GoogleFonts.outfit(
+                          fontSize: 13,
+                          color: isDark ? Colors.white60 : const Color(0xFF6E6E78),
+                        ),
                       ),
                       const SizedBox(height: 18),
 
@@ -207,6 +225,36 @@ class _LoginScreenState extends State<LoginScreen> {
                       GoogleAuthPillButton(
                         onPressed: _isLoading ? null : _googleLogin,
                         isLoading: _isLoading,
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Clean subtle divider
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Divider(
+                              color: isDark ? Colors.white12 : const Color(0xFFE5E5EA),
+                              thickness: 1,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 14),
+                            child: Text(
+                              'or continue with email',
+                              style: GoogleFonts.outfit(
+                                fontSize: 12,
+                                color: isDark ? Colors.white38 : const Color(0xFF8E8E98),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              color: isDark ? Colors.white12 : const Color(0xFFE5E5EA),
+                              thickness: 1,
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 16),
 
@@ -239,6 +287,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       CleanAuthInputField(
                         controller: _emailController,
                         hintText: 'Enter your email',
+                        prefixIcon: Icon(
+                          Icons.mail_outline_rounded,
+                          size: 19,
+                          color: isDark ? Colors.white38 : const Color(0xFF888894),
+                        ),
                         keyboardType: TextInputType.emailAddress,
                       ),
                       const SizedBox(height: 12),
@@ -248,6 +301,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         controller: _passwordController,
                         hintText: 'Password',
                         obscureText: !_isPasswordVisible,
+                        prefixIcon: Icon(
+                          Icons.lock_outline_rounded,
+                          size: 19,
+                          color: isDark ? Colors.white38 : const Color(0xFF888894),
+                        ),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _isPasswordVisible ? Icons.visibility_off_rounded : Icons.visibility_rounded,
@@ -284,7 +342,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 18),
 
                       // Solid Black Pill Button: [ Log In ]
                       SolidBlackPillButton(
@@ -294,25 +352,43 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 12),
 
-                      // Explore as Guest
+                      // Explore as Guest Button
                       InkWell(
                         onTap: _continueAsGuest,
-                        borderRadius: BorderRadius.circular(20),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Center(
-                            child: Text(
-                              'Explore as Guest',
-                              style: GoogleFonts.outfit(
-                                color: isDark ? Colors.white60 : const Color(0xFF6E6E78),
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.w600,
-                              ),
+                        borderRadius: BorderRadius.circular(22),
+                        child: Container(
+                          height: 48,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(22),
+                            border: Border.all(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.12)
+                                  : const Color(0xFFE4E4E8),
+                              width: 1,
                             ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.explore_outlined,
+                                size: 18,
+                                color: isDark ? Colors.white70 : const Color(0xFF5A5A66),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Explore as Guest',
+                                style: GoogleFonts.outfit(
+                                  color: isDark ? Colors.white70 : const Color(0xFF5A5A66),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 14),
 
                       // Footer: Don't have an account? Sign Up
                       Row(

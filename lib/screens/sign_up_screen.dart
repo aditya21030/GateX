@@ -172,8 +172,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
       backgroundColor: const Color(0xFF6B38FF),
       body: Column(
         children: [
-          // Top Electric Purple Stage (Matches Screen 4)
-          const AuthPurpleHeader(),
+          // Top Electric Purple Stage with 3D IIT Asset and back button
+          AuthPurpleHeaderWithIIT(
+            action: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.18),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.25),
+                  width: 1,
+                ),
+              ),
+              child: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: Colors.white,
+                  size: 18,
+                ),
+                onPressed: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  } else {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    );
+                  }
+                },
+              ),
+            ),
+            targetIIT: 'IIT BOMBAY',
+            airRank: 'AIR 1 TARGET',
+          ),
 
           // Bottom White Sheet (Matches Screen 4: Get Started)
           Expanded(
@@ -198,25 +228,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Sparkle Icon + Title "Get Started" (Exactly as Screen 4)
+                      // Header Badge + Title
                       Row(
                         children: [
-                          Icon(
-                            Icons.auto_awesome_rounded,
-                            size: 24,
-                            color: isDark ? const Color(0xFF9D65FF) : const Color(0xFF6B38FF),
+                          Container(
+                            padding: const EdgeInsets.all(7),
+                            decoration: BoxDecoration(
+                              color: (isDark ? const Color(0xFF9D65FF) : const Color(0xFF6B38FF)).withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Icon(
+                              Icons.auto_awesome_rounded,
+                              size: 19,
+                              color: isDark ? const Color(0xFF9D65FF) : const Color(0xFF6B38FF),
+                            ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: 10),
                           Text(
                             'Get Started',
                             style: GoogleFonts.outfit(
-                              fontSize: 27,
+                              fontSize: 25,
                               fontWeight: FontWeight.bold,
                               color: isDark ? Colors.white : const Color(0xFF121214),
-                              letterSpacing: -0.5,
+                              letterSpacing: -0.4,
                             ),
                           ),
                         ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Create an account to start your structured GATE journey',
+                        style: GoogleFonts.outfit(
+                          fontSize: 13,
+                          color: isDark ? Colors.white60 : const Color(0xFF6E6E78),
+                        ),
                       ),
                       const SizedBox(height: 18),
 
@@ -224,6 +269,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       GoogleAuthPillButton(
                         onPressed: _isLoading ? null : _googleLogin,
                         isLoading: _isLoading,
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Clean subtle divider
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Divider(
+                              color: isDark ? Colors.white12 : const Color(0xFFE5E5EA),
+                              thickness: 1,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 14),
+                            child: Text(
+                              'or sign up with email',
+                              style: GoogleFonts.outfit(
+                                fontSize: 12,
+                                color: isDark ? Colors.white38 : const Color(0xFF8E8E98),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              color: isDark ? Colors.white12 : const Color(0xFFE5E5EA),
+                              thickness: 1,
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 16),
 
@@ -255,7 +330,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       // Username / Full Name
                       CleanAuthInputField(
                         controller: _nameController,
-                        hintText: 'Username',
+                        hintText: 'Full Name',
+                        prefixIcon: Icon(
+                          Icons.person_outline_rounded,
+                          size: 19,
+                          color: isDark ? Colors.white38 : const Color(0xFF888894),
+                        ),
                         keyboardType: TextInputType.name,
                       ),
                       const SizedBox(height: 12),
@@ -264,27 +344,51 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       CleanAuthInputField(
                         controller: _emailController,
                         hintText: 'Enter your email',
+                        prefixIcon: Icon(
+                          Icons.mail_outline_rounded,
+                          size: 19,
+                          color: isDark ? Colors.white38 : const Color(0xFF888894),
+                        ),
                         keyboardType: TextInputType.emailAddress,
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 14),
 
-                      // Target Branch Selector Pills
+                      // Target Branch Section
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4, bottom: 8),
+                        child: Text(
+                          'TARGET EXAM STREAM',
+                          style: GoogleFonts.outfit(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white54 : const Color(0xFF6E6E78),
+                            letterSpacing: 0.8,
+                          ),
+                        ),
+                      ),
+
+                      // Target Branch Selector Pills (No overflow, clean 2-line cards)
                       Row(
                         children: [
-                          _buildBranchPill('DA (Data Science)', 'DA', isDark),
+                          _buildBranchPill('GATE DA', 'Data & AI', 'DA', isDark),
                           const SizedBox(width: 8),
-                          _buildBranchPill('CS / IT', 'CSIT', isDark),
+                          _buildBranchPill('GATE CS', 'Comp Sci', 'CSIT', isDark),
                           const SizedBox(width: 8),
-                          _buildBranchPill('Both', 'BOTH', isDark),
+                          _buildBranchPill('DA + CS', 'Dual Target', 'BOTH', isDark),
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 14),
 
                       // Password
                       CleanAuthInputField(
                         controller: _passwordController,
-                        hintText: 'Password',
+                        hintText: 'Password (min 6 chars)',
                         obscureText: !_isPasswordVisible,
+                        prefixIcon: Icon(
+                          Icons.lock_outline_rounded,
+                          size: 19,
+                          color: isDark ? Colors.white38 : const Color(0xFF888894),
+                        ),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _isPasswordVisible ? Icons.visibility_off_rounded : Icons.visibility_rounded,
@@ -301,6 +405,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         controller: _confirmPasswordController,
                         hintText: 'Confirm password',
                         obscureText: !_isConfirmPasswordVisible,
+                        prefixIcon: Icon(
+                          Icons.lock_outline_rounded,
+                          size: 19,
+                          color: isDark ? Colors.white38 : const Color(0xFF888894),
+                        ),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _isConfirmPasswordVisible ? Icons.visibility_off_rounded : Icons.visibility_rounded,
@@ -312,7 +421,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       const SizedBox(height: 22),
 
-                      // Solid Black Pill Button: [ Get Started ] (Matches Screen 4)
+                      // Solid Black Pill Button: [ Get Started ]
                       SolidBlackPillButton(
                         label: 'Get Started',
                         isLoading: _isLoading,
@@ -349,7 +458,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 16),
                     ],
                   ),
                 ),
@@ -361,14 +470,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget _buildBranchPill(String label, String value, bool isDark) {
+  Widget _buildBranchPill(String title, String subtitle, String value, bool isDark) {
     final isSelected = _selectedBranch == value;
     return Expanded(
       child: GestureDetector(
         onTap: () => setState(() => _selectedBranch = value),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          height: 38,
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
           alignment: Alignment.center,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
@@ -378,18 +487,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
             border: Border.all(
               color: isSelected
                   ? Colors.transparent
-                  : (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.transparent),
+                  : (isDark ? Colors.white.withValues(alpha: 0.08) : const Color(0xFFE8E8EE)),
+              width: 1,
             ),
           ),
-          child: Text(
-            label,
-            style: GoogleFonts.outfit(
-              fontSize: 11.5,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-              color: isSelected
-                  ? (isDark ? const Color(0xFF0F1015) : Colors.white)
-                  : (isDark ? Colors.white70 : const Color(0xFF5A5A66)),
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.outfit(
+                  fontSize: 12.5,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                  color: isSelected
+                      ? (isDark ? const Color(0xFF0F1015) : Colors.white)
+                      : (isDark ? Colors.white : const Color(0xFF202028)),
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.outfit(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  color: isSelected
+                      ? (isDark ? const Color(0xFF5A5A66) : const Color(0xFFB0B0C0))
+                      : (isDark ? Colors.white38 : const Color(0xFF888894)),
+                ),
+              ),
+            ],
           ),
         ),
       ),
