@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
 
@@ -56,6 +57,17 @@ class _FormulaSheetScreenState extends State<FormulaSheetScreen> {
             style: AppTheme.poppinsBold(fontSize: 18),
           ),
           actions: [
+            IconButton(
+              icon: const Icon(Icons.share_rounded, size: 20),
+              tooltip: 'Share / Export Formulas',
+              onPressed: () {
+                final exam = provider.activeExam ?? 'DA';
+                Share.share(
+                  'GATE $exam Complete Formula & Concept Cheatsheet by GateX.\nIncludes Linear Algebra, Calculus, Probability & Stats, ML/AI, and Aptitude formulas.\nDownload now on Google Play Store!',
+                  subject: 'GATE $exam Formula Cheatsheet',
+                );
+              },
+            ),
             Padding(
               padding: const EdgeInsets.only(right: 12.0),
               child: Center(

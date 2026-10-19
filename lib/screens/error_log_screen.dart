@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 import '../providers/app_provider.dart';
 import '../services/storage_service.dart';
 import '../theme/app_theme.dart';
@@ -63,6 +64,34 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mistake Notebook'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share_rounded, size: 20),
+            tooltip: 'Export Mistake Notebook',
+            onPressed: () {
+              if (errorEntries.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('No mistakes recorded to export yet.')),
+                );
+                return;
+              }
+              final buffer = StringBuffer();
+              buffer.writeln('# GateX Personal Mistake Notebook');
+              buffer.writeln('Generated: ${DateFormat('yyyy-MM-dd').format(DateTime.now())}');
+              buffer.writeln('Total Recorded Mistakes: ${errorEntries.length}\n');
+              for (int i = 0; i < errorEntries.length; i++) {
+                final e = errorEntries[i];
+                buffer.writeln('## ${i + 1}. [${e.subject}] ${e.topic}');
+                buffer.writeln('**Question:** ${e.questionText}');
+                if (e.whyWrong.isNotEmpty) {
+                  buffer.writeln('**Root Cause:** ${e.whyWrong}');
+                }
+                buffer.writeln('---\n');
+              }
+              Share.share(buffer.toString(), subject: 'GateX Mistake Notebook');
+            },
+          ),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
