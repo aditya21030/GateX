@@ -1,212 +1,233 @@
-# GateX: Master Phase-Wise & Step-Wise Implementation Plan
+# GateX: End-to-End Master Rebuilding Plan
 
 ---
 
-## 1. Executive Summary & Product Architecture
+## 1. Executive Summary & Core Requirements
 
 * **Product Name**: GateX (`gateda`)
-* **Target Audience**: GATE Aspirants (Starting with **CS/IT** and **DSAI**, expanding to all engineering disciplines next cycle).
-* **Current Traction**: **350+ organic users**; traffic surging as the February exam approaches.
-* **Core Philosophy**: **100% Independent & Coaching-Free**. Zero third-party coaching partnerships, zero affiliate promotion. Revenue is generated via software utility (**GateX Season Pro Pass** powered by **RevenueCat**) and opt-in rewarded video ads.
-* **Key Pillars**:
-  1. **Exam Simulation**: Official GATE CBT interface, question palette, and virtual calculator.
-  2. **Active Learning**: Personal Error Log with automated weak-spot drills and active recall formula sheets.
-  3. **Peer Community**: Structured question-level doubt threads and subject boards (avoiding open chat spam).
-  4. **Multi-Branch Extensibility**: Modular branch architecture ready for ECE, EE, ME, and Civil.
+* **Target Audience**: GATE Aspirants (Active branches: **CS/IT** and **DSAI**; Scalable to **ECE, EE, ME, CE** next season).
+* **Current Status**: **350+ organic active users**; rapid influx expected ahead of the February exam.
+* **Core Philosophy**: **100% Independent & Coaching-Free**. Zero coaching affiliations, zero sponsored links.
+* **Monetization Engine**: **RevenueCat (`purchases_flutter`)** powering a high-conversion **GateX Season Pro Pass** (₹199 – ₹249 one-time purchase via Google Play In-App Billing / UPI), supplemented by non-intrusive rewarded video ads for free users.
+* **Primary Differentiators**:
+  1. **Official GATE CBT Simulation**: True 5-color examination palette, section switching, and floating virtual calculator.
+  2. **Active Learning & Mistake Repair**: Personal Error Log with automated weak-spot drills.
+  3. **Structured Community**: Question-level peer discussion threads (avoiding noisy chatroom spam).
+  4. **Automated Content Pipeline**: AI PDF question extraction & Google Sheets sync (eliminating manual JSON editing).
+  5. **Modular Multi-Branch Architecture**: Dynamic branch abstraction to launch ECE, EE, Mechanical, and Civil without rewriting UI code.
 
 ---
 
-## 2. Master Implementation Roadmap
+## 2. Comprehensive 6-Phase Rebuilding Schedule
 
 ```mermaid
 graph TD
-    subgraph Phase 1: Monetization & RevenueCat
-        A1[1.1 purchases_flutter SDK] --> A2[1.2 RevenueCat Initialization]
-        A2 --> A3[1.3 PurchaseService & Entitlement Guard]
-        A3 --> A4[1.4 Pro Paywall & 1-Tap UPI/Play Billing]
-        A4 --> A5[1.5 Offline Entitlement Caching & Restore]
-    end
+    P1["Phase 1: RevenueCat Billing & Monetization<br/>• purchases_flutter Integration<br/>• Entitlement Checking & Local Cache<br/>• Paywall UI with 1-Tap Google Play / UPI<br/>• Auto Ad Suspension for Pro Users"]
+    
+    P2["Phase 2: Official GATE CBT Simulator<br/>• 5-State Official Question Palette<br/>• Clear Response & Review & Next<br/>• Section Tabs: Aptitude (15M) vs Core (85M)<br/>• PiP Floating Virtual Calculator Polish"]
+    
+    P3["Phase 3: Automated PYQ Ingestion Pipeline<br/>• AI PDF Question Extractor Script<br/>• Admin Panel CSV / Google Sheets Sync<br/>• Dynamic Branch Question Bundles"]
+    
+    P4["Phase 4: Community & Doubt Solving<br/>• Question-Level Discussion Drawer<br/>• Firestore Upvote & LaTeX Solution Schema<br/>• Anti-Spam & Pro Ranker Gold Badge"]
+    
+    P5["Phase 5: Retention & High-Yield Tools<br/>• 9:00 AM Question of the Day Push<br/>• 1-Click Printable PDF Exports<br/>• Agile Checklist vs May-Start Timeline<br/>• De-clutter Pomodoro & Pre-Exam COAP"]
+    
+    P6["Phase 6: Multi-Branch Engine & Hardening<br/>• Modular BranchConfig Abstraction<br/>• NAT Floating-Point Tolerance Guard<br/>• App Bundle Size & Offline Verification"]
 
-    subgraph Phase 2: Official GATE CBT Simulation
-        B1[2.1 5-Color Official Question Palette] --> B2[2.2 Clear Response & Review Markers]
-        B2 --> B3[2.3 PiP Virtual Calculator Polish]
-        B3 --> B4[2.4 Shareable Telegram/WhatsApp Scorecard]
-    end
-
-    subgraph Phase 3: Community & Doubt Solving
-        C1[3.1 Question-Level Discussion Drawer] --> C2[3.2 Firestore Thread Schema & Upvotes]
-        C2 --> C3[3.3 Categorized Subject Boards]
-        C3 --> C4[3.4 Anti-Spam & Pro Ranker Badges]
-    end
-
-    subgraph Phase 4: Retention & High-Yield Tools
-        D1[4.1 Daily 9:00 AM Question Push] --> D2[4.2 1-Click Printable PDF Exports]
-        D2 --> D3[4.3 Agile Checklist vs Rigid Roadmap]
-        D3 --> D4[4.4 Remove Pomodoro/COAP Clutter]
-    end
-
-    subgraph Phase 5: Multi-Branch Architecture
-        E1[5.1 Modular BranchConfig Abstraction] --> E2[5.2 Dynamic JSON Data Loaders]
-        E2 --> E3[5.3 Multi-Exam Switcher & ECE/EE Scaling]
-    end
-
-    Phase 1 --> Phase 2 --> Phase 3 --> Phase 4 --> Phase 5
+    P1 --> P2 --> P3 --> P4 --> P5 --> P6
 ```
 
 ---
 
 ## Phase 1: RevenueCat Billing & Monetization Engine
 
-> **Objective**: Implement robust, enterprise-grade in-app monetization via RevenueCat (`purchases_flutter`). Supports 1-tap Google Play UPI, Card, and NetBanking payments in India, handles receipt validation, cross-device restores, and offline caching without custom backend infrastructure.
+> **Objective**: Implement secure, scalable in-app purchases via RevenueCat (`purchases_flutter`), enabling 1-tap UPI, PhonePe, Google Pay, and RuPay card checkouts on Android, with automated offline entitlement caching and ad suppression.
 
-### Step 1.1: Package Installation & Configuration
-* **Target File**: [`pubspec.yaml`](file:///d:/Flutter/Gate%20DA/pubspec.yaml)
+### Step 1.1: Dependency & Android Setup
+* **Target Files**: [`pubspec.yaml`](file:///d:/Flutter/Gate%20DA/pubspec.yaml), `android/app/build.gradle`
 * **Action**:
-  * Add `purchases_flutter: ^8.6.0` to dependencies.
+  * Add `purchases_flutter: ^8.6.0` to `dependencies`.
+  * Ensure `minSdkVersion >= 21` and Google Play Billing dependencies resolve cleanly.
   * Run `flutter pub get`.
-* **Verification**: Verify package compiles cleanly across Android targets.
 
-### Step 1.2: RevenueCat SDK Initialization with Firebase UID
+### Step 1.2: RevenueCat Initialization with Firebase User ID
 * **Target Files**: [`lib/main.dart`](file:///d:/Flutter/Gate%20DA/lib/main.dart), [`lib/services/purchase_service.dart`](file:///d:/Flutter/Gate%20DA/lib/services/purchase_service.dart)
 * **Action**:
-  * Initialize RevenueCat using `Purchases.configure(PurchasesConfiguration(apiKey)..appUserID = firebaseUser?.uid)`.
-  * Pass Firebase Auth UID so entitlements sync across devices, reinstalls, and platforms.
-  * Listen to `Purchases.addCustomerInfoUpdateListener` to dynamically update user state.
+  * Initialize RevenueCat SDK on app startup:
+    ```dart
+    await Purchases.configure(
+      PurchasesConfiguration(apiKey)..appUserID = FirebaseAuth.instance.currentUser?.uid
+    );
+    ```
+  * Synchronize user switching: When a user logs in via Google/Email, call `Purchases.logIn(user.uid)`; on logout, call `Purchases.logOut()`.
+  * Subscribe to `Purchases.addCustomerInfoUpdateListener` to update Pro state reactively.
 
-### Step 1.3: Refactor `PurchaseService` for Entitlement Checking
+### Step 1.3: Refactor `PurchaseService` for Entitlement Guarding
 * **Target File**: [`lib/services/purchase_service.dart`](file:///d:/Flutter/Gate%20DA/lib/services/purchase_service.dart)
 * **Action**:
   * Entitlement Identifier: `gatex_pro`
-  * Product Identifier: `gatex_pro_season_2027` (₹199 / ₹249 one-time non-renewing purchase).
-  * Method `checkProStatus()`: Checks `customerInfo.entitlements.active['gatex_pro'] != null`.
-  * Method `purchaseProPass()`: Calls `Purchases.purchasePackage(package)`.
-  * Method `restorePurchases()`: Calls `Purchases.restorePurchases()`.
-  * Automatic ad suspension: When `isPro == true`, trigger `AdService().setAdSuspended(true)`.
+  * Package Identifier: `$rc_annual` / `gatex_pro_season_2027` (₹199 / ₹249 one-time season purchase).
+  * `isPro`: Verified via `customerInfo.entitlements.active['gatex_pro'] != null`.
+  * When `isPro == true`:
+    * Call `AdService().setAdSuspended(true)`.
+    * Update Hive/SharedPreferences local cache so offline launches stay Pro.
+  * Implement `restorePurchases()`: Calls `Purchases.restorePurchases()`, syncs with Firestore, and returns user status.
 
-### Step 1.4: Paywall UI & Conversion Flow
+### Step 1.4: Production Paywall UI
 * **Target File**: [`lib/screens/pro_upgrade_screen.dart`](file:///d:/Flutter/Gate%20DA/lib/screens/pro_upgrade_screen.dart)
 * **Action**:
-  * Display real localized price from RevenueCat `Package.storeProduct.priceString` (e.g. `₹199.00`).
-  * Feature Breakdown:
-    * 10 Full-Length Exam Hall Mocks with live ranking.
-    * 100% Ad-Free experience.
-    * Unlimited Error Log Drills (custom quizzes generated from personal mistakes).
-    * Printable PDF Downloads (Formula sheets & Error notebook).
-    * Pro Ranker Community badge.
-  * One-tap purchase button with instant feedback and haptics.
-  * "Restore Purchases" button prominently placed for Play Store compliance.
+  * Fetch real-time localized price string directly from RevenueCat offerings (`offering.current.annual.storeProduct.priceString`).
+  * Display high-value perks:
+    1. 10 Full-Length All-India Mock Exams with CBT ranking.
+    2. 100% Ad-Free study experience.
+    3. Custom Mistake Drills (generate quizzes only from personal errors).
+    4. 1-Click Printable PDF Downloads (Formula sheets & Error log).
+    5. Gold "PRO Ranker" Community Badge.
+  * 1-Tap Google Play purchase button with native UPI/GPay sheet.
+  * Clear "Restore Purchases" button and Terms/Privacy links.
 
-### Step 1.5: Non-Intrusive Rewarded Ads for Free Tier
+### Step 1.5: Non-Intrusive Rewarded Ads (Free Tier Monetization)
 * **Target File**: [`lib/services/ad_service.dart`](file:///d:/Flutter/Gate%20DA/lib/services/ad_service.dart)
 * **Action**:
-  * Free users can unlock extra mock tests or restore a broken streak by watching an opt-in Rewarded Video Ad (`showRewardedAd`).
-  * Strict guardrail: Zero popups during active tests or study sessions.
+  * Free tier users can unlock additional mock test attempts by watching an opt-in Rewarded Video Ad (`showRewardedAd`).
+  * Enforce strict guardrail: **Zero interstitial ads during active tests or study timers**.
 
 ---
 
-## Phase 2: Official GATE CBT Simulation (Examination Engine)
+## Phase 2: Official GATE CBT Simulator (Examination Engine)
 
-> **Objective**: Replicate the exact visual and operational behavior of the official GATE computer-based test interface (TCS iON platform) so students experience zero unfamiliarity in the actual exam hall.
+> **Objective**: Replicate the exact visual and operational behavior of the official GATE Computer-Based Test (TCS iON CBT engine) so students experience zero unfamiliarity in the actual exam hall.
 
-### Step 2.1: Official 5-State Question Palette
+### Step 2.1: The Official 5-State Question Palette
 * **Target File**: [`lib/screens/mock_test_runner_screen.dart`](file:///d:/Flutter/Gate%20DA/lib/screens/mock_test_runner_screen.dart)
 * **Action**:
-  * Implement the official 5-color question palette:
-    1. 🟢 **Answered**: Marked with green polygon/pill.
-    2. 🔴 **Not Answered**: Marked with red pill (visited, but left blank).
-    3. 🟣 **Marked for Review**: Marked with purple circle (not answered).
-    4. 🟣🟢 **Answered & Marked for Review**: Purple circle with a green internal status dot (evaluated in final score).
+  * Implement the official 5 status indicators:
+    1. 🟢 **Answered**: Green polygon with question number.
+    2. 🔴 **Not Answered**: Red rectangle/pill (visited, left unanswered).
+    3. 🟣 **Marked for Review**: Purple circle (unanswered, marked for review).
+    4. 🟣🟢 **Answered & Marked for Review**: Purple circle with an inner green status dot (evaluated in final score!).
     5. ⚪ **Not Visited**: Neutral grey card.
-  * Display quick summary counters at the top of the question drawer: `Answered: 32`, `Not Answered: 18`, `Marked for Review: 5`.
+  * Top status counter bar in question drawer:
+    * `Answered: 32` | `Not Answered: 18` | `Marked: 5` | `Review+Ans: 3`
 
-### Step 2.2: Exam Controls & Real Marking Scheme
+### Step 2.2: Official Section Switching & Marking Logic
 * **Target File**: [`lib/screens/mock_test_runner_screen.dart`](file:///d:/Flutter/Gate%20DA/lib/screens/mock_test_runner_screen.dart)
 * **Action**:
-  * Add **"Clear Response"** button: Unchecks current choice and reverts question state to "Not Answered".
-  * Add **"Mark for Review & Next"** button.
-  * Enforce strict GATE marking logic:
-    * 1-mark MCQ: `+1` correct, `-0.33` wrong.
-    * 2-mark MCQ: `+2` correct, `-0.66` wrong.
-    * MSQ (Multiple Select): Full marks only if all correct choices selected; `0` negative marking.
-    * NAT (Numerical Answer Type): Evaluated with standard tolerance range; `0` negative marking.
+  * Add Section Tabs:
+    * **Section 1: General Aptitude** (Questions 1–10, 15 Marks).
+    * **Section 2: Subject Core** (Questions 11–65, 85 Marks).
+  * Action Buttons:
+    * **"Save & Next"**: Saves answer and moves forward.
+    * **"Clear Response"**: Clears selected radio/checkbox/NAT input and marks status as "Not Answered".
+    * **"Mark for Review & Next"**: Sets purple review state.
+  * Scoring calculation:
+    * 1-mark MCQ: `+1.0` correct, `-0.33` wrong.
+    * 2-mark MCQ: `+2.0` correct, `-0.66` wrong.
+    * MSQ: Full marks only if all correct options are selected; 0 negative marking.
+    * NAT: Evaluated within numerical tolerance range; 0 negative marking.
 
-### Step 2.3: PiP Floating Virtual Calculator
+### Step 2.3: Picture-in-Picture (PiP) Virtual Calculator Polish
 * **Target File**: [`lib/widgets/virtual_calculator.dart`](file:///d:/Flutter/Gate%20DA/lib/widgets/virtual_calculator.dart)
 * **Action**:
-  * Ensure keypad layout matches the official GATE desktop virtual calculator keys (trig, log, ln, powers, factorial).
-  * Draggable floating window with minimize button (48px pill) so students can calculate while reading question text.
+  * Keypad layout aligned with the official GATE desktop calculator keys (trig, inverse trig, log10, ln, powers, factorial).
+  * Floating draggable window with a minimize pill toggle (48px) so students can calculate while reading question text.
 
 ### Step 2.4: Shareable Telegram & WhatsApp Scorecard
 * **Target File**: [`lib/screens/mock_tracker_screen.dart`](file:///d:/Flutter/Gate%20DA/lib/screens/mock_tracker_screen.dart)
 * **Action**:
-  * Render an exportable graphic scorecard (Score, Rank Percentile, Accuracy, Subject Breakdown).
-  * Direct share button to WhatsApp, Telegram study groups, and LinkedIn.
+  * Generate an exportable high-resolution graphic scorecard (Score, Percentile, Accuracy %, Weak Subject Alert).
+  * Direct 1-tap share to WhatsApp, Telegram study channels, and LinkedIn.
 
 ---
 
-## Phase 3: In-App Community & Doubt Solving Engine
+## Phase 3: Automated PYQ Ingestion Pipeline & Cloud Sync
 
-> **Objective**: Create high-retention, distraction-free peer learning. Avoid noisy open chat rooms by structuring discussion around specific questions and organized subject channels.
+> **Objective**: Eliminate manual JSON typing. Build automated AI tools to extract official GATE papers from PDFs in 90 seconds and enable spreadsheet batch-upload in the admin panel.
 
-### Step 3.1: Question-Level Discussion Threads
+### Step 3.1: Python AI PDF Question Extractor
+* **Target File**: Create `tools/extract_gate_pdf.py`
+* **Action**:
+  * Input: Official IIT Master Question Paper PDF + Official Answer Key PDF.
+  * Process:
+    1. Parses questions and translates math into clean LaTeX (`$ ... $`).
+    2. Automatically crops diagrams/circuit images and uploads to Firebase Storage.
+    3. Matches questions with the answer key (MCQ options, NAT acceptable numerical range).
+    4. Outputs structured JSON ready for Firestore or SQLite.
+
+### Step 3.2: Admin Panel CSV / Google Sheets Sync
+* **Target Files**: [`admin_panel/src/pages/UploadPYQ.tsx`](file:///d:/Flutter/Gate%20DA/admin_panel/src/pages/UploadPYQ.tsx), `admin_panel/src/pages/ManagePYQs.tsx`
+* **Action**:
+  * Add a **"Upload CSV / Sync Google Sheet"** tab alongside JSON upload.
+  * Live KaTeX math preview window: As you edit a question, the mathematical equations render in real time on the right-hand panel.
+
+### Step 3.3: Dynamic Cloud Caching in Mobile App
+* **Target File**: [`lib/services/cloud_sync_service.dart`](file:///d:/Flutter/Gate%20DA/lib/services/cloud_sync_service.dart)
+* **Action**:
+  * When a user selects a branch, download that branch's question bundle (`.json.gz`) from Firebase Storage and cache it in local Hive storage.
+  * Base APK download stays lean (~20–25 MB) even when adding 10 branches!
+
+---
+
+## Phase 4: In-App Community & Peer Doubt Solving
+
+> **Objective**: Drive daily organic student retention through peer learning without creating noisy, unmoderated chatrooms.
+
+### Step 4.1: Question-Level Discussion Drawer
 * **Target Files**: [`lib/screens/pyq_screen.dart`](file:///d:/Flutter/Gate%20DA/lib/screens/pyq_screen.dart), [`lib/screens/mock_test_runner_screen.dart`](file:///d:/Flutter/Gate%20DA/lib/screens/mock_test_runner_screen.dart)
 * **Action**:
-  * Under every question and solution explanation, add a **"💬 Discuss (X)"** button.
-  * Tapping opens a bottom sheet with peer discussion, alternate shortcuts, and LaTeX math solutions.
+  * Place a **"💬 Discuss"** button under every PYQ and mock test question.
+  * Opens a sliding bottom sheet with peer discussions, alternative calculation shortcuts, and LaTeX solutions.
 
-### Step 3.2: Firestore Discussion Schema
+### Step 4.2: Discussion Firestore Schema & Upvoting
 * **Target File**: [`lib/services/cloud_sync_service.dart`](file:///d:/Flutter/Gate%20DA/lib/services/cloud_sync_service.dart)
 * **Schema**:
-  * Collection: `/questions/{questionId}/discussions`
-    * `authorId`: UID
+  * `/questions/{questionId}/discussions/{commentId}`:
+    * `authorUid`: String
     * `authorName`: String
-    * `isPro`: Boolean (grants Gold Badge)
+    * `isPro`: Boolean (displays Gold "PRO Ranker" badge)
     * `content`: Text (supports LaTeX syntax `$ ... $`)
     * `upvotes`: Number
     * `createdAt`: Timestamp
-* **Action**:
-  * Add upvote button so the best shortcuts rise to the top.
-  * Cache discussions locally in Hive so repeat views consume 0 Firebase reads.
+  * Local Hive caching: Discussion threads are cached locally to minimize Firestore read costs.
 
-### Step 3.3: Categorized Subject Boards
+### Step 4.3: Categorized Subject Boards & Anti-Spam Guardrails
 * **Target File**: Create `lib/screens/community_screen.dart`
 * **Channels**:
   * 📌 `#Machine-Learning-AI`
   * 📌 `#Linear-Algebra-Calculus`
-  * 📌 `#General-Aptitude`
-  * 📌 `#Mock-Test-Strategy`
-* **Anti-Spam Guardrails**:
-  * Rate-limit posting: Max 1 post per 2 minutes per user.
-  * Automated filter: Block Telegram links, promotional spam, and phone numbers.
+  * 📌 `#General-Aptitude-Tricks`
+  * 📌 `#Mock-Exam-Strategy`
+* **Anti-Spam Rules**:
+  * 2-minute post rate-limiting per user.
+  * Automated regex blocking external Telegram links (`t.me/`), WhatsApp links, and phone numbers.
 
 ---
 
-## Phase 4: Student Retention & High-Yield Daily Habits
+## Phase 5: Retention & High-Yield Daily Habits
 
-> **Objective**: Maximize daily active usage (DAU) and provide high-yield revision value during the final 90 days.
+> **Objective**: Turn GateX into a daily ritual for the 350+ users in the final 90 days before the exam.
 
-### Step 4.1: Automated 9:00 AM "Question of the Day" Push
+### Step 5.1: Automated 9:00 AM "Question of the Day" Push
 * **Target File**: [`lib/services/notification_service.dart`](file:///d:/Flutter/Gate%20DA/lib/services/notification_service.dart)
 * **Action**:
   * Schedule daily local notification at 9:00 AM with 1 high-yield conceptual question.
-  * Tapping opens the question directly with instant explanation feedback.
-  * Increases daily app launches by 40–60%.
+  * Tapping the notification launches the app directly into that question with instant explanation feedback.
 
-### Step 4.2: 1-Click Printable PDF Exports
+### Step 5.2: 1-Click Printable PDF Exports
 * **Target Files**: [`lib/screens/formula_sheet_screen.dart`](file:///d:/Flutter/Gate%20DA/lib/screens/formula_sheet_screen.dart), [`lib/screens/error_log_screen.dart`](file:///d:/Flutter/Gate%20DA/lib/screens/error_log_screen.dart)
 * **Action**:
-  * Allow Pro users to export their customized Error Log and Formula Cheatsheets as print-ready PDF files using `pdf` / `printing` or markdown converter.
-  * High perceived value for final week revision.
+  * Allow Pro users to export their customized Error Log and Formula Cheatsheets as print-ready PDF files.
+  * Students love printing physical summary sheets for the final 15 days before the exam.
 
-### Step 4.3: Agile Syllabus Checklist (Replacing Rigid May-Start Plans)
+### Step 5.3: Agile Syllabus Checklist (Replacing May-Start Timeline)
 * **Target File**: [`lib/screens/planner_screen.dart`](file:///d:/Flutter/Gate%20DA/lib/screens/planner_screen.dart)
 * **Action**:
   * Replace the static May-dated timeline with an **Agile Subject Checklist**:
     * Subjects grouped by high-weightage topics.
     * Checkboxes for: *Concept Watched*, *PYQ Solved*, *Revised Once*.
-    * Realistic for late-joining students who start in October or November.
+    * Practical for late-joining students who start in October or November.
 
-### Step 4.4: De-Clutter Secondary Utilities
+### Step 5.4: De-Clutter Secondary Utilities
 * **Target File**: [`lib/screens/more_screen.dart`](file:///d:/Flutter/Gate%20DA/lib/screens/more_screen.dart)
 * **Action**:
   * Move Pomodoro timer into secondary tools.
@@ -214,11 +235,11 @@ graph TD
 
 ---
 
-## Phase 5: Multi-Branch Scalable Architecture
+## Phase 6: Multi-Branch Scalable Architecture & Hardening
 
 > **Objective**: Prepare the codebase to expand from CS/IT + DSAI to ECE, EE, Mechanical, and Civil engineering next year with zero structural rewrites.
 
-### Step 5.1: Modular `BranchConfig` Data Abstraction
+### Step 6.1: Modular `BranchConfig` Data Abstraction
 * **Target File**: Create `lib/models/branch_model.dart`
 * **Model**:
   ```dart
@@ -231,35 +252,28 @@ graph TD
     final String pyqDataFile;
   }
   ```
+* Remove hardcoded `if (activeExam == 'DA')` checks across screens; inject `BranchConfig` dynamically via `AppProvider`.
 
-### Step 5.2: Dynamic Data Loaders
-* **Action**:
-  * Remove hardcoded `if (activeExam == 'DA') ... else ...` branches across screens.
-  * Inject `BranchConfig` via `AppProvider.activeBranch`.
-  * Adding a new branch next cycle requires adding only 1 configuration file and question bank JSON.
+### Step 6.2: Edge Cases, Bugs & Security Guardrails
+* **NAT Floating Point Range Evaluation**:
+  * Validate numerical answers against official GATE ranges `[lowerBound, upperBound]` or tolerance `abs(user - target) < 0.05`.
+* **RevenueCat Deferred Purchases**:
+  * Handle pending UPI transactions gracefully by registering a continuous customer info listener.
+* **Offline Hive to Cloud Conflict Resolution**:
+  * Timestamp-based Last-Write-Wins (LWW) merge policy in `StorageService.restoreFromCloud()`.
+* **Android 13+ Notification Permissions**:
+  * Check `Permission.notification.request()` explicitly and use `AndroidScheduleMode.exactAllowWhileIdle`.
 
----
-
-## 3. Edge Cases, Bugs & Guardrails Matrix
-
-| Area | Edge Case / Potential Bug | Architectural Defense & Guardrail |
-| :--- | :--- | :--- |
-| **Billing** | User purchases Pro, but app crashes before verification completes | RevenueCat handles transaction state restoration automatically; call `Purchases.restorePurchases()` on app start and listen to customer info stream. |
-| **Billing** | User switches phones or uninstalls and reinstalls app | RevenueCat links entitlement to Firebase UID. Calling `Purchases.logIn(user.uid)` immediately restores Pro status without user intervention. |
-| **Billing** | Offline device with no internet tries to check Pro status | RevenueCat SDK caches entitlement status locally on disk. Pro status remains active offline. |
-| **CBT Mock** | NAT questions with floating point rounding issues (e.g. `2.50` vs `2.5`) | Numerical answers parsed as doubles; validated against official GATE acceptance range `[lowerBound, upperBound]` or tolerance `abs(user - target) < 0.05`. |
-| **CBT Mock** | MSQ questions where student picks 2 of 3 correct options | MSQ evaluation strictly compares set equality `userAnswers.toSet() == correctAnswers.toSet()`. Partial answers yield `0` marks (official GATE rule). |
-| **Community**| Spamming links, abuse, or flood attacks in discussion threads | Firestore Security Rules limit writes; client enforces a 2-minute cooldown; regex blocks external URLs (`t.me/`, `wa.me/`, `http`). |
-| **Cloud Sync**| Offline edits to Error Log / Notes conflict with Cloud Firestore | Timestamp-based Last-Write-Wins (LWW) merge policy in `StorageService.restoreFromCloud()`. |
-| **Notifications** | Android 13+ fails to trigger 9:00 AM Question alert | Check `Permission.notification.request()` explicitly and use `AndroidScheduleMode.exactAllowWhileIdle` with timezone initialization. |
+### Step 6.3: Verification & Build Protocol
+* **Static Analysis**: `flutter analyze` must produce **0 compilation errors**.
+* **Logic Tests**: `flutter test` must pass **100% of test cases** (scoring, NAT, streak resets, RevenueCat entitlement mocks).
+* **Release Artifact**: Generate both universal APK and optimized Google Play App Bundle (`flutter build appbundle`).
 
 ---
 
-## 4. Verification & Testing Protocol
+## 3. Immediate Implementation Next Steps
 
-Every step will be validated against this quality gate:
-
-1. **Static Analysis**: `flutter analyze` must produce **0 compilation errors**.
-2. **Logic Tests**: `flutter test` must pass **100% of test cases** (scoring algorithms, NAT tolerances, streak resets, RevenueCat entitlement mocks).
-3. **Ergonomic Verification**: Physical release build test on small and large mobile screens (360dp to 440dp width) to guarantee zero UI clipping or keyboard overflow.
-4. **Offline Capability**: Turn on Airplane mode and verify that PYQ viewing, Mock testing, and Formula Sheets work with zero internet connectivity.
+1. **Step 1**: Install `purchases_flutter` and configure RevenueCat in [`lib/services/purchase_service.dart`](file:///d:/Flutter/Gate%20DA/lib/services/purchase_service.dart).
+2. **Step 2**: Rebuild [`lib/screens/pro_upgrade_screen.dart`](file:///d:/Flutter/Gate%20DA/lib/screens/pro_upgrade_screen.dart) with 1-tap Google Play / UPI checkout.
+3. **Step 3**: Upgrade [`lib/screens/mock_test_runner_screen.dart`](file:///d:/Flutter/Gate%20DA/lib/screens/mock_test_runner_screen.dart) to the official 5-color GATE CBT simulation palette.
+4. **Step 4**: Build the automated AI PDF extractor tool in `tools/extract_gate_pdf.py`.
