@@ -1,12 +1,10 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/app_provider.dart';
 import '../services/storage_service.dart';
 import '../theme/app_theme.dart';
-import '../utils/ui_utils.dart';
-import 'auth_screen.dart';
+import 'login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -173,7 +171,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       await Provider.of<AppProvider>(context, listen: false).init();
                       if (context.mounted) {
                         Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (_) => const AuthScreen()),
+                          MaterialPageRoute(builder: (_) => const LoginScreen()),
                           (route) => false,
                         );
                       }

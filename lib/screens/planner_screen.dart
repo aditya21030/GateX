@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/app_provider.dart';
-import '../services/storage_service.dart';
 import '../theme/app_theme.dart';
-import '../models/models.dart';
 import '../data/study_plan.dart';
 
 class PlannerScreen extends StatefulWidget {

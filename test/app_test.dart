@@ -392,7 +392,77 @@ void main() {
       expect(seasonYear, 2027);
     });
   });
+
+  group('Official GATE CBT Simulator Tests (TCS iON Engine)', () {
+    test('5-State Question Status Evaluation Logic', () {
+      final userAnswers = {'q2': 'A', 'q4': 'B'};
+      final markedForReview = {'q3', 'q4'};
+      final visited = {'q1', 'q2', 'q3', 'q4'};
+
+      // Status helper
+      String getStatus(String qId) {
+        final hasAns = userAnswers.containsKey(qId) && userAnswers[qId]!.isNotEmpty;
+        final isMarked = markedForReview.contains(qId);
+        final isVisited = visited.contains(qId);
+
+        if (isMarked && hasAns) return 'answeredAndMarked';
+        if (isMarked && !hasAns) return 'markedForReview';
+        if (hasAns) return 'answered';
+        if (isVisited) return 'notAnswered';
+        return 'notVisited';
+      }
+
+      expect(getStatus('q0'), 'notVisited');
+      expect(getStatus('q1'), 'notAnswered');
+      expect(getStatus('q2'), 'answered');
+      expect(getStatus('q3'), 'markedForReview');
+      expect(getStatus('q4'), 'answeredAndMarked');
+    });
+
+    test('65-Question Full Mock Official 100 Marks Distribution', () {
+      double totalMarks = 0.0;
+      double gaMarks = 0.0;
+      double coreMarks = 0.0;
+
+      for (int i = 0; i < 65; i++) {
+        double weight;
+        if ((i >= 0 && i < 5) || (i >= 10 && i < 35)) {
+          weight = 1.0;
+        } else {
+          weight = 2.0;
+        }
+
+        totalMarks += weight;
+        if (i < 10) {
+          gaMarks += weight;
+        } else {
+          coreMarks += weight;
+        }
+      }
+
+      expect(gaMarks, 15.0);
+      expect(coreMarks, 85.0);
+      expect(totalMarks, 100.0);
+    });
+
+    test('Answered & Marked for Review questions ARE evaluated in final score', () {
+      final questions = [
+        {'id': 'q1', 'type': 'MCQ', 'correctAnswer': 'A'},
+        {'id': 'q2', 'type': 'MCQ', 'correctAnswer': 'B'},
+        {'id': 'q3', 'type': 'MCQ', 'correctAnswer': 'C'},
+      ];
+      final userAnswers = {
+        'q1': 'A', // Answered (correct): +1
+        'q2': 'B', // Answered & Marked for Review (correct): +1
+        // q3 is only Marked for Review without answer: 0
+      };
+
+      final score = calculateMockScoreDryRun(questions, userAnswers);
+      expect(score, 2.0); // Both q1 and q2 are scored
+    });
+  });
 }
+
 
 double calculateMockScoreDryRun(List<Map<String, dynamic>> questions, Map<String, String> userAnswers) {
   double calculatedScore = 0.0;

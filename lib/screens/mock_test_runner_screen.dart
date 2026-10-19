@@ -2,12 +2,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../models/models.dart';
 import '../theme/app_theme.dart';
 import '../providers/app_provider.dart';
 import '../services/ad_service.dart';
 import '../widgets/virtual_calculator.dart';
-import 'error_log_screen.dart';
+
+enum GateQuestionStatus {
+  notVisited,
+  notAnswered,
+  answered,
+  markedForReview,
+  answeredAndMarked,
+}
 
 class MockTestRunnerScreen extends StatefulWidget {
   final List<PYQ> questions;
@@ -52,6 +60,12 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
   // NAT controllers: questionId -> Controller
   final Map<String, TextEditingController> _natControllers = {};
 
+  // Question Navigator section filter (0 = All, 1 = Section 1 GA, 2 = Section 2 Core)
+  int _navigatorSectionIndex = 0;
+
+  // Scorecard review filter ('All', 'Incorrect', 'Correct', 'Unattempted')
+  String _reviewFilter = 'All';
+
   static final Map<String, Widget> _questionWidgetCache = {};
 
   @override
@@ -60,7 +74,10 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
     AdService().setAdSuspended(true);
     _secondsRemaining = widget.duration.inSeconds;
     _startTime = DateTime.now();
-    _visitedQuestions.add(widget.questions[0].id);
+
+    if (widget.questions.isNotEmpty) {
+      _visitedQuestions.add(widget.questions[0].id);
+    }
 
     // Initialize NAT controllers
     for (var q in widget.questions) {
@@ -110,15 +127,97 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
     return '$minStr:$secStr';
   }
 
-  void _autoSubmitTest() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Time is up! Submitting your test automatically.'),
-        backgroundColor: AppTheme.error,
-        duration: Duration(seconds: 3),
-      ),
-    );
-    _calculateAndSubmit();
+  // --- Official GATE 5-State Status Helper ---
+  GateQuestionStatus _getQuestionStatus(int index) {
+    final q = widget.questions[index];
+    final hasAns = _userAnswers.containsKey(q.id) && _userAnswers[q.id]!.trim().isNotEmpty;
+    final isMarked = _markedForReview.contains(q.id);
+    final isVisited = _visitedQuestions.contains(q.id);
+
+    if (isMarked && hasAns) return GateQuestionStatus.answeredAndMarked;
+    if (isMarked && !hasAns) return GateQuestionStatus.markedForReview;
+    if (hasAns) return GateQuestionStatus.answered;
+    if (isVisited) return GateQuestionStatus.notAnswered;
+    return GateQuestionStatus.notVisited;
+  }
+
+  int get _answeredCount => widget.questions.where((q) {
+        final hasAns = _userAnswers.containsKey(q.id) && _userAnswers[q.id]!.trim().isNotEmpty;
+        final isMarked = _markedForReview.contains(q.id);
+        return hasAns && !isMarked;
+      }).length;
+
+  int get _answeredAndMarkedCount => widget.questions.where((q) {
+        final hasAns = _userAnswers.containsKey(q.id) && _userAnswers[q.id]!.trim().isNotEmpty;
+        final isMarked = _markedForReview.contains(q.id);
+        return hasAns && isMarked;
+      }).length;
+
+  int get _markedForReviewCount => widget.questions.where((q) {
+        final hasAns = _userAnswers.containsKey(q.id) && _userAnswers[q.id]!.trim().isNotEmpty;
+        final isMarked = _markedForReview.contains(q.id);
+        return !hasAns && isMarked;
+      }).length;
+
+  int get _notAnsweredCount => widget.questions.where((q) {
+        final hasAns = _userAnswers.containsKey(q.id) && _userAnswers[q.id]!.trim().isNotEmpty;
+        final isMarked = _markedForReview.contains(q.id);
+        final isVisited = _visitedQuestions.contains(q.id);
+        return !hasAns && !isMarked && isVisited;
+      }).length;
+
+  int get _notVisitedCount => widget.questions.where((q) {
+        return !_visitedQuestions.contains(q.id);
+      }).length;
+
+  bool get _isFullMock => widget.questions.length >= 65;
+
+  double _getQuestionWeight(int index) {
+    if (_isFullMock) {
+      if ((index >= 0 && index < 5) || (index >= 10 && index < 35)) {
+        return 1.0;
+      }
+      return 2.0;
+    }
+    return 1.0;
+  }
+
+  double _getQuestionNegativeMarks(int index) {
+    final q = widget.questions[index];
+    if (q.type != 'MCQ') return 0.0;
+    return _getQuestionWeight(index) / 3.0;
+  }
+
+  String _getSectionName(int index) {
+    final q = widget.questions[index];
+    if (_isFullMock) {
+      return index < 10 ? 'Section 1: General Aptitude' : 'Section 2: Subject Core';
+    }
+    if (q.subject.toLowerCase().contains('aptitude')) {
+      return 'Section 1: General Aptitude';
+    }
+    return q.subject;
+  }
+
+  void _syncCurrentInput() {
+    if (_currentIndex < 0 || _currentIndex >= widget.questions.length) return;
+    final q = widget.questions[_currentIndex];
+    if (!q.isMCQ) {
+      final text = _natControllers[q.id]?.text.trim() ?? '';
+      if (text.isNotEmpty) {
+        _userAnswers[q.id] = text;
+      } else {
+        _userAnswers.remove(q.id);
+      }
+    } else if (q.type == 'MSQ') {
+      final selections = _msqSelections[q.id];
+      if (selections != null && selections.isNotEmpty) {
+        final sorted = selections.toList()..sort();
+        _userAnswers[q.id] = sorted.join(';');
+      } else {
+        _userAnswers.remove(q.id);
+      }
+    }
   }
 
   void _clearCurrentAnswer() {
@@ -134,10 +233,72 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
     });
   }
 
+  void _saveAndNext() {
+    HapticFeedback.selectionClick();
+    _syncCurrentInput();
+    final q = widget.questions[_currentIndex];
+
+    setState(() {
+      // If answered, remove from marked for review to become explicitly Answered
+      if (_userAnswers.containsKey(q.id) && _userAnswers[q.id]!.trim().isNotEmpty) {
+        _markedForReview.remove(q.id);
+      }
+
+      if (_currentIndex < widget.questions.length - 1) {
+        _currentIndex++;
+        _visitedQuestions.add(widget.questions[_currentIndex].id);
+      } else {
+        _showSubmitConfirmation();
+      }
+    });
+  }
+
+  void _markForReviewAndNext() {
+    HapticFeedback.selectionClick();
+    _syncCurrentInput();
+    final q = widget.questions[_currentIndex];
+
+    setState(() {
+      _markedForReview.add(q.id);
+      if (_currentIndex < widget.questions.length - 1) {
+        _currentIndex++;
+        _visitedQuestions.add(widget.questions[_currentIndex].id);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Marked for Review. This is the last question.'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Color(0xFF7B1FA2),
+          ),
+        );
+      }
+    });
+  }
+
+  void _jumpToQuestion(int index) {
+    _syncCurrentInput();
+    setState(() {
+      _currentIndex = index;
+      _visitedQuestions.add(widget.questions[index].id);
+    });
+  }
+
+  void _autoSubmitTest() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Time is up! Submitting your examination automatically.'),
+        backgroundColor: AppTheme.error,
+        duration: Duration(seconds: 3),
+      ),
+    );
+    _calculateAndSubmit();
+  }
+
   void _calculateAndSubmit() {
     _timer?.cancel();
+    _syncCurrentInput();
 
-    // Sync all NAT inputs before calculating
+    // Sync all NAT inputs
     _natControllers.forEach((qId, controller) {
       final text = controller.text.trim();
       if (text.isNotEmpty) {
@@ -153,62 +314,68 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
       }
     });
 
-    double calculatedScore = 0.0;
+    double totalScore = 0.0;
+    double maxPossibleMarks = 0.0;
     int correctCount = 0;
     int incorrectCount = 0;
     int unattemptedCount = 0;
 
-    final Map<String, bool> answersCorrectness = {};
-    final Map<String, List<String>> subjectPerformance = {}; // subject -> [correct/total]
+    double gaScore = 0.0;
+    double coreScore = 0.0;
 
-    for (var q in widget.questions) {
+    final Map<String, List<int>> subjectPerformance = {}; // subject -> [correct, total]
+
+    for (int i = 0; i < widget.questions.length; i++) {
+      final q = widget.questions[i];
+      final weight = _getQuestionWeight(i);
+      maxPossibleMarks += weight;
+
       final uAns = _userAnswers[q.id];
-      final cAns = q.correctAnswer;
 
-      // Initialize subject tracking
-      if (!subjectPerformance.containsKey(q.subject)) {
-        subjectPerformance[q.subject] = ['0', '0']; // [correct, total]
-      }
-      final currentTotal = int.parse(subjectPerformance[q.subject]![1]);
-      subjectPerformance[q.subject]![1] = (currentTotal + 1).toString();
+      // Track subject performance
+      subjectPerformance.putIfAbsent(q.subject, () => [0, 0]);
+      subjectPerformance[q.subject]![1]++;
 
-      if (uAns == null || uAns.isEmpty) {
+      final isGa = _isFullMock ? i < 10 : q.subject.toLowerCase().contains('aptitude');
+
+      if (uAns == null || uAns.trim().isEmpty) {
         unattemptedCount++;
-        answersCorrectness[q.id] = false;
       } else {
         final isCorrect = q.isAnswerCorrect(uAns);
 
         if (isCorrect) {
           correctCount++;
-          calculatedScore += 1.0;
-          answersCorrectness[q.id] = true;
-
-          final currentCorrect = int.parse(subjectPerformance[q.subject]![0]);
-          subjectPerformance[q.subject]![0] = (currentCorrect + 1).toString();
+          totalScore += weight;
+          if (isGa) {
+            gaScore += weight;
+          } else {
+            coreScore += weight;
+          }
+          subjectPerformance[q.subject]![0]++;
         } else {
           incorrectCount++;
-          answersCorrectness[q.id] = false;
           if (q.type == 'MCQ') {
-            calculatedScore -= 1.0 / 3.0; // standard negative marking for MCQ
+            final penalty = weight / 3.0;
+            totalScore -= penalty;
+            if (isGa) {
+              gaScore -= penalty;
+            } else {
+              coreScore -= penalty;
+            }
           }
         }
       }
     }
 
-    // Limit score to >= 0
-    if (calculatedScore < 0) {
-      calculatedScore = 0.0;
-    }
+    if (totalScore < 0) totalScore = 0.0;
 
-    // Normalize score to percentage (0 - 100)
-    final double maxScore = widget.questions.length.toDouble();
-    final double percentageScore = (calculatedScore / maxScore) * 100.0;
+    final double percentageScore = maxPossibleMarks > 0 ? (totalScore / maxPossibleMarks) * 100.0 : 0.0;
 
-    // Identify weak subjects (where accuracy is < 50%)
+    // Identify weak subjects (< 50% accuracy)
     final List<String> weakSubjects = [];
     subjectPerformance.forEach((subject, counts) {
-      final double corr = double.parse(counts[0]);
-      final double tot = double.parse(counts[1]);
+      final corr = counts[0];
+      final tot = counts[1];
       if (tot > 0 && (corr / tot) < 0.5) {
         weakSubjects.add(subject);
       }
@@ -223,10 +390,9 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
       DateTime.now(),
       percentageScore,
       weakSubjects,
-      'In-App practice test completed.\nAccuracy: ${(correctCount / maxScore * 100).toStringAsFixed(1)}%\nCorrect: $correctCount, Incorrect: $incorrectCount, Unattempted: $unattemptedCount\nTime taken: $timeTakenMinutes mins',
+      'GATE CBT Mock Completed.\nScore: ${totalScore.toStringAsFixed(2)} / ${maxPossibleMarks.toStringAsFixed(0)} (Aptitude: ${gaScore.toStringAsFixed(1)}, Core: ${coreScore.toStringAsFixed(1)})\nAccuracy: ${(correctCount / (correctCount + incorrectCount > 0 ? correctCount + incorrectCount : 1) * 100).toStringAsFixed(1)}%\nCorrect: $correctCount, Incorrect: $incorrectCount, Unattempted: $unattemptedCount\nTime: $timeTakenMinutes mins',
     );
 
-    // Show Interstitial Ad right after they submit
     AdService().showInterstitialAd();
 
     setState(() {
@@ -242,17 +408,30 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
       builder: (context) {
         return AlertDialog(
           backgroundColor: AppTheme.surface,
-          title: const Text('Quit Mock Test?', style: TextStyle(color: AppTheme.error)),
-          content: const Text('Are you sure you want to exit? Your progress will be lost and this test will not be saved.'),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: AppTheme.error),
+              SizedBox(width: 8),
+              Text('Exit Mock Exam?', style: TextStyle(color: AppTheme.error, fontWeight: FontWeight.bold, fontSize: 16)),
+            ],
+          ),
+          content: const Text(
+            'Are you sure you want to exit? Your exam progress will be lost and this attempt will not be recorded.',
+            style: TextStyle(color: AppTheme.textSecondary, fontSize: 13, height: 1.4),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel', style: TextStyle(color: AppTheme.textSecondary)),
+              child: const Text('Resume Test', style: TextStyle(color: AppTheme.textSecondary)),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.error),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.error,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('Exit Test', style: TextStyle(color: AppTheme.textPrimary)),
+              child: const Text('Exit Exam', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ],
         );
@@ -263,59 +442,77 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
   }
 
   void _showSubmitConfirmation() {
-    // Sync inputs
-    _natControllers.forEach((qId, controller) {
-      final text = controller.text.trim();
-      if (text.isNotEmpty) {
-        _userAnswers[qId] = text;
-      } else {
-        _userAnswers.remove(qId);
-      }
-    });
-    _msqSelections.forEach((qId, selections) {
-      if (selections.isNotEmpty) {
-        final sorted = selections.toList()..sort();
-        _userAnswers[qId] = sorted.join(';');
-      } else {
-        _userAnswers.remove(qId);
-      }
-    });
-
-    final answeredCount = _userAnswers.length;
-    final unansweredCount = widget.questions.length - answeredCount;
-    final markedCount = _markedForReview.length;
+    _syncCurrentInput();
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           backgroundColor: AppTheme.surface,
-          title: const Text('Submit Test?'),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Row(
+            children: [
+              Icon(Icons.assignment_turned_in_rounded, color: AppTheme.secondary),
+              SizedBox(width: 8),
+              Text('Submit Examination?', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            ],
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Total Questions: ${widget.questions.length}'),
-              const SizedBox(height: 8),
-              Text('Answered: $answeredCount', style: const TextStyle(color: AppTheme.success, fontWeight: FontWeight.bold)),
-              Text('Unanswered: $unansweredCount', style: TextStyle(color: unansweredCount > 0 ? AppTheme.error : AppTheme.textSecondary)),
-              Text('Marked for Review: $markedCount', style: const TextStyle(color: Colors.purpleAccent)),
+              const Text(
+                'Review your attempt summary before final submission:',
+                style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+              ),
               const SizedBox(height: 16),
-              const Text('Do you want to submit and view your score?'),
+              Container(
+                decoration: BoxDecoration(
+                  color: AppTheme.background,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                child: Column(
+                  children: [
+                    _buildSubmitSummaryRow('Total Questions', '${widget.questions.length}', Colors.white),
+                    const Divider(color: Colors.white10, height: 16),
+                    _buildSubmitSummaryRow('🟢 Answered', '$_answeredCount', AppTheme.success),
+                    const SizedBox(height: 6),
+                    _buildSubmitSummaryRow('🟣🟢 Ans & Marked (Evaluated)', '$_answeredAndMarkedCount', const Color(0xFFBA68C8)),
+                    const SizedBox(height: 6),
+                    _buildSubmitSummaryRow('🟣 Marked for Review', '$_markedForReviewCount', const Color(0xFFBA68C8)),
+                    const SizedBox(height: 6),
+                    _buildSubmitSummaryRow('🔴 Not Answered', '$_notAnsweredCount', AppTheme.error),
+                    const SizedBox(height: 6),
+                    _buildSubmitSummaryRow('⚪ Not Visited', '$_notVisitedCount', AppTheme.textSecondary),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Note: Questions in "Answered & Marked for Review" will be evaluated for marks as per official GATE rules.',
+                style: TextStyle(color: AppTheme.textSecondary, fontSize: 11, fontStyle: FontStyle.italic),
+              ),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Go Back', style: TextStyle(color: AppTheme.textSecondary)),
+              child: const Text('Resume Test', style: TextStyle(color: AppTheme.textSecondary)),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.secondary),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.secondary,
+                foregroundColor: AppTheme.background,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+              ),
               onPressed: () {
-                Navigator.pop(context); // Close dialog
+                Navigator.pop(context);
                 _calculateAndSubmit();
               },
-              child: const Text('Submit Test', style: TextStyle(color: AppTheme.background, fontWeight: FontWeight.bold)),
+              child: const Text('Submit Exam', style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ],
         );
@@ -323,153 +520,331 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
     );
   }
 
+  Widget _buildSubmitSummaryRow(String label, String value, Color valueColor) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
+        Text(value, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: valueColor)),
+      ],
+    );
+  }
+
+  // --- Official GATE 5-State Question Palette Modal Bottom Sheet ---
   void _showQuestionsMapSheet() {
-    // Sync inputs locally before displaying sheet
-    _natControllers.forEach((qId, controller) {
-      final text = controller.text.trim();
-      if (text.isNotEmpty) {
-        _userAnswers[qId] = text;
-      } else {
-        _userAnswers.remove(qId);
-      }
-    });
-    _msqSelections.forEach((qId, selections) {
-      if (selections.isNotEmpty) {
-        final sorted = selections.toList()..sort();
-        _userAnswers[qId] = sorted.join(';');
-      } else {
-        _userAnswers.remove(qId);
-      }
-    });
+    _syncCurrentInput();
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: AppTheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            List<int> displayedIndices = [];
+            if (_isFullMock) {
+              if (_navigatorSectionIndex == 1) {
+                displayedIndices = List.generate(10, (i) => i);
+              } else if (_navigatorSectionIndex == 2) {
+                displayedIndices = List.generate(55, (i) => i + 10);
+              } else {
+                displayedIndices = List.generate(widget.questions.length, (i) => i);
+              }
+            } else {
+              displayedIndices = List.generate(widget.questions.length, (i) => i);
+            }
+
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.85,
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Question Navigator',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.white24,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.close, color: AppTheme.textSecondary),
-                    onPressed: () => Navigator.pop(context),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'GATE Question Palette',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: AppTheme.textSecondary),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              // Legend
-              Wrap(
-                spacing: 12,
-                children: [
-                  _buildLegendItem(Colors.green, 'Answered'),
-                  _buildLegendItem(Colors.purpleAccent, 'Marked'),
-                  _buildLegendItem(AppTheme.primary, 'Visited'),
-                  _buildLegendItem(AppTheme.background, 'Unvisited'),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Flexible(
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const BouncingScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 5,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
+                  const SizedBox(height: 8),
+
+                  // 5 Official TCS iON Status Badges
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: AppTheme.background,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Wrap(
+                      spacing: 12,
+                      runSpacing: 8,
+                      children: [
+                        _buildLegendPill(AppTheme.success, 'Answered', '$_answeredCount', isCircle: false),
+                        _buildLegendPill(AppTheme.error, 'Not Answered', '$_notAnsweredCount', isCircle: false),
+                        _buildLegendPill(const Color(0xFF7B1FA2), 'Marked for Review', '$_markedForReviewCount', isCircle: true),
+                        _buildLegendPill(const Color(0xFF7B1FA2), 'Ans & Marked', '$_answeredAndMarkedCount', isCircle: true, hasGreenDot: true),
+                        _buildLegendPill(AppTheme.surface, 'Not Visited', '$_notVisitedCount', isCircle: false, isBordered: true),
+                      ],
+                    ),
                   ),
-                  itemCount: widget.questions.length,
-                  itemBuilder: (context, index) {
-                    final q = widget.questions[index];
-                    final isMarked = _markedForReview.contains(q.id);
-                    final isAnswered = _userAnswers.containsKey(q.id) && _userAnswers[q.id]!.isNotEmpty;
-                    final isVisited = _visitedQuestions.contains(q.id);
-                    final isCurrent = index == _currentIndex;
+                  const SizedBox(height: 12),
 
-                    Color circleCol = AppTheme.background;
-                    Color borderCol = Colors.white.withValues(alpha: 0.1);
+                  // Section filter tabs (if full mock)
+                  if (_isFullMock) ...[
+                    Row(
+                      children: [
+                        _buildSectionPill(0, 'All (65)', setSheetState),
+                        const SizedBox(width: 8),
+                        _buildSectionPill(1, 'Section 1: GA (10)', setSheetState),
+                        const SizedBox(width: 8),
+                        _buildSectionPill(2, 'Section 2: Core (55)', setSheetState),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                  ],
 
-                    if (isAnswered) {
-                      circleCol = AppTheme.success.withValues(alpha: 0.2);
-                      borderCol = AppTheme.success;
-                    } else if (isMarked) {
-                      circleCol = Colors.purple.withValues(alpha: 0.2);
-                      borderCol = Colors.purpleAccent;
-                    } else if (isVisited) {
-                      circleCol = AppTheme.primary.withValues(alpha: 0.15);
-                      borderCol = AppTheme.primary;
-                    }
-
-                    if (isCurrent) {
-                      borderCol = AppTheme.secondary;
-                    }
-
-                    return InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                        setState(() {
-                          _currentIndex = index;
-                          _visitedQuestions.add(q.id);
-                        });
+                  // Question Numbers Grid
+                  Expanded(
+                    child: GridView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 5,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 1.15,
+                      ),
+                      itemCount: displayedIndices.length,
+                      itemBuilder: (context, i) {
+                        final questionIndex = displayedIndices[i];
+                        final isCurrent = questionIndex == _currentIndex;
+                        return _buildQuestionGridItem(questionIndex, isCurrent);
                       },
-                      child: Container(
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: circleCol,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: borderCol, width: isCurrent ? 2.5 : 1.5),
-                        ),
-                        child: Text(
-                          '${index + 1}',
-                          style: TextStyle(
-                            color: isCurrent ? AppTheme.secondary : Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                    ),
+                  ),
+
+                  // Bottom note on evaluation
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: AppTheme.primary.withValues(alpha: 0.2)),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.info_outline, size: 14, color: AppTheme.primary),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Questions marked as "Ans & Marked" (🟣🟢) will be considered for marks in GATE.',
+                            style: TextStyle(fontSize: 11, color: AppTheme.textSecondary),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
 
-  Widget _buildLegendItem(Color color, String text) {
+  Widget _buildSectionPill(int index, String label, StateSetter setSheetState) {
+    final isSelected = _navigatorSectionIndex == index;
+    return Expanded(
+      child: InkWell(
+        onTap: () {
+          setSheetState(() {
+            _navigatorSectionIndex = index;
+          });
+          setState(() {
+            _navigatorSectionIndex = index;
+          });
+        },
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: isSelected ? AppTheme.primary : AppTheme.background,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: isSelected ? AppTheme.primary : Colors.white.withValues(alpha: 0.1),
+            ),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 10.5,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              color: isSelected ? Colors.white : AppTheme.textSecondary,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLegendPill(Color color, String label, String count, {bool isCircle = false, bool hasGreenDot = false, bool isBordered = false}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          width: 12,
-          height: 12,
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.2),
-            shape: BoxShape.circle,
-            border: Border.all(color: color, width: 1.5),
-          ),
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              width: 16,
+              height: 16,
+              decoration: BoxDecoration(
+                color: color,
+                shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
+                borderRadius: isCircle ? null : BorderRadius.circular(3),
+                border: isBordered ? Border.all(color: Colors.white24, width: 1.2) : null,
+              ),
+            ),
+            if (hasGreenDot)
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: AppTheme.success,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 1),
+                  ),
+                ),
+              ),
+          ],
         ),
-        const SizedBox(width: 4),
-        Text(text, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
+        const SizedBox(width: 5),
+        Text(
+          '$label: $count',
+          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10.5, fontWeight: FontWeight.w500),
+        ),
       ],
     );
   }
 
+  Widget _buildQuestionGridItem(int index, bool isCurrent) {
+    final status = _getQuestionStatus(index);
+
+    Color bgColor;
+    Color borderColor;
+    Color textColor = Colors.white;
+    BoxShape shape = BoxShape.rectangle;
+    BorderRadius? borderRadius = BorderRadius.circular(6);
+    Widget? indicatorBadge;
+
+    switch (status) {
+      case GateQuestionStatus.answered:
+        bgColor = AppTheme.success;
+        borderColor = AppTheme.success;
+        break;
+      case GateQuestionStatus.notAnswered:
+        bgColor = AppTheme.error;
+        borderColor = AppTheme.error;
+        break;
+      case GateQuestionStatus.markedForReview:
+        bgColor = const Color(0xFF7B1FA2);
+        borderColor = const Color(0xFF9C27B0);
+        shape = BoxShape.circle;
+        borderRadius = null;
+        break;
+      case GateQuestionStatus.answeredAndMarked:
+        bgColor = const Color(0xFF7B1FA2);
+        borderColor = const Color(0xFF9C27B0);
+        shape = BoxShape.circle;
+        borderRadius = null;
+        indicatorBadge = Positioned(
+          right: 2,
+          bottom: 2,
+          child: Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: AppTheme.success,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 1.2),
+            ),
+          ),
+        );
+        break;
+      case GateQuestionStatus.notVisited:
+        bgColor = AppTheme.surface;
+        borderColor = Colors.white.withValues(alpha: 0.12);
+        textColor = AppTheme.textSecondary;
+        break;
+    }
+
+    return InkWell(
+      onTap: () {
+        Navigator.pop(context);
+        _jumpToQuestion(index);
+      },
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: bgColor,
+              shape: shape,
+              borderRadius: borderRadius,
+              border: Border.all(
+                color: isCurrent ? AppTheme.secondary : borderColor,
+                width: isCurrent ? 2.5 : 1.2,
+              ),
+              boxShadow: isCurrent
+                  ? [
+                      BoxShadow(
+                        color: AppTheme.secondary.withValues(alpha: 0.4),
+                        blurRadius: 8,
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Text(
+              '${index + 1}',
+              style: TextStyle(
+                color: textColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
+              ),
+            ),
+          ),
+          ?indicatorBadge,
+        ],
+      ),
+    );
+  }
+
+  // --- Monospace & Formula Formatter ---
   Widget _buildQuestionText(String text, {bool isExplanation = false, Color? textColor}) {
     final cacheKey = '${text.hashCode}_${isExplanation}_${textColor?.value}';
     if (_questionWidgetCache.containsKey(cacheKey)) {
@@ -626,8 +1001,11 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
     }
 
     final q = widget.questions[_currentIndex];
-    final bool isLast = _currentIndex == widget.questions.length - 1;
     final bool isLowTime = _secondsRemaining < 300; // 5 minutes
+    final double weight = _getQuestionWeight(_currentIndex);
+    final double negMarks = _getQuestionNegativeMarks(_currentIndex);
+    final String sectionName = _getSectionName(_currentIndex);
+    final status = _getQuestionStatus(_currentIndex);
 
     return PopScope(
       canPop: false,
@@ -640,7 +1018,7 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.testName, style: AppTheme.poppinsBold(fontSize: 16)),
+          title: Text(widget.testName, style: AppTheme.poppinsBold(fontSize: 15)),
           leading: IconButton(
             icon: const Icon(Icons.close_rounded),
             onPressed: () async {
@@ -651,31 +1029,50 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
             },
           ),
           actions: [
-            Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.calculate_outlined),
-                  tooltip: 'Virtual Calculator',
-                  onPressed: () {
-                    VirtualCalculator.show(context);
-                  },
-                ),
-                Icon(
-                  Icons.timer_outlined,
-                  size: 18,
-                  color: isLowTime ? AppTheme.error : AppTheme.secondary,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  _formatTime(_secondsRemaining),
-                  style: AppTheme.timerStyle(
-                    fontSize: 16,
+            IconButton(
+              icon: const Icon(Icons.calculate_outlined),
+              tooltip: 'GATE Virtual Calculator',
+              onPressed: () {
+                VirtualCalculator.show(context);
+              },
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: isLowTime ? AppTheme.error.withValues(alpha: 0.15) : AppTheme.surface,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: isLowTime ? AppTheme.error : Colors.white12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.timer_outlined,
+                    size: 15,
                     color: isLowTime ? AppTheme.error : AppTheme.secondary,
                   ),
-                ),
-                const SizedBox(width: 12),
-              ],
-            )
+                  const SizedBox(width: 4),
+                  Text(
+                    _formatTime(_secondsRemaining),
+                    style: AppTheme.timerStyle(
+                      fontSize: 14,
+                      color: isLowTime ? AppTheme.error : AppTheme.secondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 6),
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: AppTheme.secondary,
+                visualDensity: VisualDensity.compact,
+              ),
+              onPressed: _showSubmitConfirmation,
+              child: const Text('SUBMIT', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+            ),
+            const SizedBox(width: 8),
           ],
         ),
         body: Center(
@@ -688,9 +1085,53 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                   value: (_currentIndex + 1) / widget.questions.length,
                   backgroundColor: AppTheme.surface,
                   valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.secondary),
-                  minHeight: 4,
+                  minHeight: 3.5,
                 ),
-                // Question Content
+
+                // Question Metadata Strip (Section, Marks, Type, Status)
+                Container(
+                  color: AppTheme.surface,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Row(
+                    children: [
+                      // Section Chip
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppTheme.background,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                        ),
+                        child: Text(
+                          sectionName,
+                          style: const TextStyle(color: AppTheme.secondary, fontSize: 11, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+
+                      // Marking Scheme Chip
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppTheme.background,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          negMarks > 0
+                              ? '+${weight.toStringAsFixed(0)} | -${negMarks.toStringAsFixed(2)}'
+                              : '+${weight.toStringAsFixed(0)} | 0.00',
+                          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      const Spacer(),
+
+                      // Current Status Indicator Pill
+                      _buildCurrentStatusChip(status),
+                    ],
+                  ),
+                ),
+
+                // Main Scrollable Question Area
                 Expanded(
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
@@ -703,14 +1144,14 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                               decoration: BoxDecoration(
-                                color: AppTheme.primary.withValues(alpha: 0.12),
+                                color: AppTheme.primary.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
-                                'Q. ${_currentIndex + 1} of ${widget.questions.length}',
+                                'Question ${_currentIndex + 1} of ${widget.questions.length}',
                                 style: const TextStyle(
                                   color: AppTheme.primary,
-                                  fontSize: 11,
+                                  fontSize: 11.5,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -720,10 +1161,10 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                               decoration: BoxDecoration(
                                 color: q.type == 'MSQ'
-                                    ? AppTheme.error.withValues(alpha: 0.12)
+                                    ? AppTheme.error.withValues(alpha: 0.15)
                                     : q.type == 'NAT'
-                                        ? AppTheme.success.withValues(alpha: 0.12)
-                                        : AppTheme.primary.withValues(alpha: 0.12),
+                                        ? AppTheme.success.withValues(alpha: 0.15)
+                                        : AppTheme.primary.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
@@ -734,56 +1175,26 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                                       : q.type == 'NAT'
                                           ? AppTheme.success
                                           : AppTheme.primary,
-                                  fontSize: 11,
+                                  fontSize: 11.5,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
-                            const Spacer(),
-                            if (_userAnswers.containsKey(q.id) && _userAnswers[q.id]!.isNotEmpty)
-                              Padding(
-                                padding: const EdgeInsets.only(right: 4.0),
-                                child: TextButton.icon(
-                                  style: TextButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    visualDensity: VisualDensity.compact,
-                                  ),
-                                  onPressed: _clearCurrentAnswer,
-                                  icon: const Icon(Icons.clear_rounded, size: 14, color: AppTheme.error),
-                                  label: const Text('Clear Response', style: TextStyle(color: AppTheme.error, fontSize: 11, fontWeight: FontWeight.bold)),
-                                ),
-                              ),
-                            IconButton(
-                              icon: Icon(
-                                _markedForReview.contains(q.id)
-                                    ? Icons.bookmark
-                                    : Icons.bookmark_border,
-                                color: _markedForReview.contains(q.id)
-                                    ? Colors.purpleAccent
-                                    : AppTheme.textSecondary,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  if (_markedForReview.contains(q.id)) {
-                                    _markedForReview.remove(q.id);
-                                  } else {
-                                    _markedForReview.add(q.id);
-                                  }
-                                });
-                              },
-                              tooltip: 'Mark for Review',
-                            ),
                           ],
                         ),
                         const SizedBox(height: 8),
-                        // Subject Tag
+
+                        // Subject & Topic Path
                         Text(
                           '${q.subject} > ${q.topic}',
                           style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                         ),
-                        const SizedBox(height: 16),
-                        // Question Body
+                        const SizedBox(height: 14),
+
+                        // Question Body Text
                         _buildQuestionText(q.questionText),
+
+                        // Diagram or Question Image
                         if (q.hasImage && q.imagePath != null) ...[
                           const SizedBox(height: 16),
                           ClipRRect(
@@ -792,94 +1203,188 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                               color: AppTheme.textPrimary.withValues(alpha: 0.05),
                               padding: const EdgeInsets.all(8),
                               child: q.imagePath!.startsWith('http')
-                                ? Image.network(
-                                    q.imagePath!,
-                                    fit: BoxFit.contain,
-                                    errorBuilder: (context, err, stack) => const SizedBox(),
-                                  )
-                                : Image.asset(
-                                    q.imagePath!,
-                                    fit: BoxFit.contain,
-                                    errorBuilder: (context, err, stack) => const SizedBox(),
-                                  ),
+                                  ? Image.network(
+                                      q.imagePath!,
+                                      fit: BoxFit.contain,
+                                      errorBuilder: (context, err, stack) => const SizedBox(),
+                                    )
+                                  : Image.asset(
+                                      q.imagePath!,
+                                      fit: BoxFit.contain,
+                                      errorBuilder: (context, err, stack) => const SizedBox(),
+                                    ),
                             ),
                           ),
                         ],
                         const SizedBox(height: 24),
-                        // Answer inputs
-                        if (q.isMCQ)
-                          _buildMockMCQOptions(q)
-                        else
-                          _buildMockNATInput(q),
+
+                        // Answer Options (MCQ, MSQ, or NAT)
+                        if (q.isMCQ) _buildMockMCQOptions(q) else _buildMockNATInput(q),
                       ],
                     ),
                   ),
                 ),
-                // Bottom control bar
+
+                // TCS iON Official Bottom Action Bar
                 Container(
                   color: AppTheme.surface,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.background,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  child: SafeArea(
+                    top: false,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          children: [
+                            // 1. Mark for Review & Next
+                            Expanded(
+                              flex: 3,
+                              child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  side: const BorderSide(color: Color(0xFFBA68C8)),
+                                  foregroundColor: const Color(0xFFBA68C8),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                  padding: const EdgeInsets.symmetric(vertical: 11),
+                                ),
+                                onPressed: _markForReviewAndNext,
+                                child: const Text(
+                                  'Mark & Next',
+                                  style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+
+                            // 2. Clear Response
+                            Expanded(
+                              flex: 3,
+                              child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+                                  foregroundColor: AppTheme.error,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                  padding: const EdgeInsets.symmetric(vertical: 11),
+                                ),
+                                onPressed: _clearCurrentAnswer,
+                                child: const Text(
+                                  'Clear',
+                                  style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+
+                            // 3. Question Palette Trigger
+                            IconButton(
+                              style: IconButton.styleFrom(
+                                backgroundColor: AppTheme.background,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              ),
+                              icon: const Icon(Icons.grid_view_rounded, color: AppTheme.secondary, size: 20),
+                              tooltip: 'Open GATE Question Palette',
+                              onPressed: _showQuestionsMapSheet,
+                            ),
+                            const SizedBox(width: 8),
+
+                            // 4. Save & Next
+                            Expanded(
+                              flex: 4,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppTheme.primary,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                  padding: const EdgeInsets.symmetric(vertical: 11),
+                                ),
+                                onPressed: _saveAndNext,
+                                child: Text(
+                                  _currentIndex == widget.questions.length - 1 ? 'Save & Submit' : 'Save & Next',
+                                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        onPressed: _currentIndex > 0
-                            ? () {
+                        if (_currentIndex > 0) ...[
+                          const SizedBox(height: 6),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: InkWell(
+                              onTap: () {
                                 HapticFeedback.selectionClick();
+                                _syncCurrentInput();
                                 setState(() {
                                   _currentIndex--;
                                   _visitedQuestions.add(widget.questions[_currentIndex].id);
                                 });
-                              }
-                            : null,
-                        child: const Text('PREVIOUS'),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.grid_view_rounded, color: AppTheme.secondary),
-                        onPressed: () {
-                          HapticFeedback.lightImpact();
-                          _showQuestionsMapSheet();
-                        },
-                        tooltip: 'View Question Navigator',
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isLast ? AppTheme.secondary : AppTheme.primary,
-                          foregroundColor: isLast ? AppTheme.background : Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        ),
-                        onPressed: () {
-                          HapticFeedback.selectionClick();
-                          if (isLast) {
-                            _showSubmitConfirmation();
-                          } else {
-                            setState(() {
-                              _currentIndex++;
-                              _visitedQuestions.add(widget.questions[_currentIndex].id);
-                            });
-                          }
-                        },
-                        child: Text(
-                          isLast ? 'SUBMIT TEST' : 'NEXT',
-                          style: TextStyle(
-                            fontWeight: isLast ? FontWeight.bold : FontWeight.normal,
+                              },
+                              child: const Padding(
+                                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.chevron_left_rounded, size: 16, color: AppTheme.textSecondary),
+                                    Text('Previous Question', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ],
+                        ],
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildCurrentStatusChip(GateQuestionStatus status) {
+    Color bg;
+    Color fg;
+    String label;
+
+    switch (status) {
+      case GateQuestionStatus.answered:
+        bg = AppTheme.success.withValues(alpha: 0.15);
+        fg = AppTheme.success;
+        label = 'Answered';
+        break;
+      case GateQuestionStatus.notAnswered:
+        bg = AppTheme.error.withValues(alpha: 0.15);
+        fg = AppTheme.error;
+        label = 'Not Answered';
+        break;
+      case GateQuestionStatus.markedForReview:
+        bg = const Color(0xFF7B1FA2).withValues(alpha: 0.2);
+        fg = const Color(0xFFBA68C8);
+        label = 'Marked';
+        break;
+      case GateQuestionStatus.answeredAndMarked:
+        bg = const Color(0xFF7B1FA2).withValues(alpha: 0.2);
+        fg = const Color(0xFFBA68C8);
+        label = 'Ans & Marked';
+        break;
+      case GateQuestionStatus.notVisited:
+        bg = Colors.white.withValues(alpha: 0.05);
+        fg = AppTheme.textSecondary;
+        label = 'Not Visited';
+        break;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(color: fg, fontSize: 11, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -899,16 +1404,18 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
 
         return Card(
           margin: const EdgeInsets.only(bottom: 8.0),
-          color: isSelected ? AppTheme.primary.withValues(alpha: 0.08) : AppTheme.surface,
+          color: isSelected ? AppTheme.primary.withValues(alpha: 0.12) : AppTheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
             side: BorderSide(
-              color: isSelected ? AppTheme.primary : Colors.white.withValues(alpha: 0.05),
-              width: 1.5,
+              color: isSelected ? AppTheme.primary : Colors.white.withValues(alpha: 0.06),
+              width: isSelected ? 1.5 : 1,
             ),
           ),
           child: InkWell(
+            borderRadius: BorderRadius.circular(10),
             onTap: () {
+              HapticFeedback.selectionClick();
               setState(() {
                 if (q.type == 'MSQ') {
                   if (_msqSelections[q.id]!.contains(letter)) {
@@ -927,10 +1434,10 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                 }
               });
             },
-            borderRadius: BorderRadius.circular(10),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              padding: const EdgeInsets.all(12.0),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     width: 28,
@@ -941,13 +1448,13 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                       shape: q.type == 'MSQ' ? BoxShape.rectangle : BoxShape.circle,
                       borderRadius: q.type == 'MSQ' ? BorderRadius.circular(6) : null,
                       border: Border.all(
-                        color: isSelected ? Colors.transparent : AppTheme.textSecondary.withValues(alpha: 0.3),
+                        color: isSelected ? AppTheme.primary : AppTheme.textSecondary.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Text(
                       letter,
                       style: TextStyle(
-                        color: isSelected ? Colors.white : AppTheme.textPrimary,
+                        color: isSelected ? Colors.white : AppTheme.textSecondary,
                         fontWeight: FontWeight.bold,
                         fontSize: 13,
                       ),
@@ -977,19 +1484,20 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Enter your numerical answer:',
+          'Enter your numerical answer (NAT):',
           style: TextStyle(fontSize: 12, color: AppTheme.textSecondary, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          style: const TextStyle(color: AppTheme.textPrimary, fontSize: 16),
+          keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+          style: const TextStyle(color: AppTheme.textPrimary, fontSize: 16, fontWeight: FontWeight.bold),
           decoration: InputDecoration(
-            hintText: 'e.g., 14.5 or 0.33',
-            hintStyle: const TextStyle(color: AppTheme.textSecondary),
+            hintText: 'e.g., 14.5 or -0.33',
+            hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 14),
             filled: true,
             fillColor: AppTheme.surface,
+            prefixIcon: const Icon(Icons.pin, size: 18, color: AppTheme.secondary),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: AppTheme.textPrimary.withValues(alpha: 0.05)),
@@ -1011,74 +1519,163 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
     );
   }
 
+  // --- Official GATE CBT Scorecard & Analysis Screen ---
   Widget _buildScoreSummaryScreen() {
-    double calculatedScore = 0.0;
+    double totalScore = 0.0;
+    double maxPossibleMarks = 0.0;
     int correctCount = 0;
     int incorrectCount = 0;
     int unattemptedCount = 0;
 
-    for (var q in widget.questions) {
-      final uAns = _userAnswers[q.id];
-      final cAns = q.correctAnswer;
+    double gaScore = 0.0;
+    double coreScore = 0.0;
 
-      if (uAns == null || uAns.isEmpty) {
+    for (int i = 0; i < widget.questions.length; i++) {
+      final q = widget.questions[i];
+      final weight = _getQuestionWeight(i);
+      maxPossibleMarks += weight;
+      final uAns = _userAnswers[q.id];
+      final isGa = _isFullMock ? i < 10 : q.subject.toLowerCase().contains('aptitude');
+
+      if (uAns == null || uAns.trim().isEmpty) {
         unattemptedCount++;
       } else {
         final isCorrect = q.isAnswerCorrect(uAns);
-
         if (isCorrect) {
           correctCount++;
-          calculatedScore += 1.0;
+          totalScore += weight;
+          if (isGa) {
+            gaScore += weight;
+          } else {
+            coreScore += weight;
+          }
         } else {
           incorrectCount++;
           if (q.type == 'MCQ') {
-            calculatedScore -= 1.0 / 3.0;
+            final penalty = weight / 3.0;
+            totalScore -= penalty;
+            if (isGa) {
+              gaScore -= penalty;
+            } else {
+              coreScore -= penalty;
+            }
           }
         }
       }
     }
-    if (calculatedScore < 0) calculatedScore = 0.0;
+    if (totalScore < 0) totalScore = 0.0;
 
-    final double maxScore = widget.questions.length.toDouble();
-    final double accuracy = maxScore > 0 ? (correctCount / maxScore) * 100.0 : 0.0;
+    final double accuracy = (correctCount + incorrectCount > 0)
+        ? (correctCount / (correctCount + incorrectCount)) * 100.0
+        : 0.0;
+
+    // Predicted AIR Range & IIT Call Estimator
+    String predictedAir = 'N/A';
+    String iitChance = 'N/A';
+    if (totalScore >= 75) {
+      predictedAir = 'Top 100';
+      iitChance = 'Guaranteed Old IIT (Bombay, Delhi, Madras)';
+    } else if (totalScore >= 60) {
+      predictedAir = '150 – 500';
+      iitChance = 'Top IIT Direct Call';
+    } else if (totalScore >= 45) {
+      predictedAir = '800 – 2500';
+      iitChance = 'New IIT / Top NIT Qualified';
+    } else {
+      predictedAir = '3000+';
+      iitChance = 'Revision & Drill Needed';
+    }
+
+    final filteredQuestions = widget.questions.where((q) {
+      final uAns = _userAnswers[q.id];
+      final isCorrect = q.isAnswerCorrect(uAns);
+      if (_reviewFilter == 'Correct') return isCorrect && uAns != null && uAns.isNotEmpty;
+      if (_reviewFilter == 'Incorrect') return !isCorrect && uAns != null && uAns.isNotEmpty;
+      if (_reviewFilter == 'Unattempted') return uAns == null || uAns.isEmpty;
+      return true;
+    }).toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Test Results'),
+        title: const Text('Official CBT Scorecard', style: TextStyle(fontWeight: FontWeight.bold)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share_rounded, color: AppTheme.secondary),
+            tooltip: 'Share Scorecard',
+            onPressed: () {
+              final shareText = '''🎯 GateX CBT Mock Exam Scorecard
+Test: ${widget.testName}
+Score: ${totalScore.toStringAsFixed(2)} / ${maxPossibleMarks.toStringAsFixed(0)} Marks
+Accuracy: ${accuracy.toStringAsFixed(1)}%
+Correct: $correctCount | Incorrect: $incorrectCount | Skipped: $unattemptedCount
+Estimated Rank: $predictedAir ($iitChance)
+
+Prepared with GateX — 100% Student-Centric GATE Prep.
+https://github.com/aditya21030/GateX''';
+              Share.share(shareText, subject: 'My GateX Mock Test Scorecard');
+            },
+          ),
+        ],
       ),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
           child: Column(
             children: [
-              // Top summary Card
+              // Scorecard Hero Banner
               Card(
                 margin: const EdgeInsets.all(16),
                 child: Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.all(18.0),
                   child: Column(
                     children: [
-                      Text(widget.testName.toUpperCase(), style: const TextStyle(color: AppTheme.secondary, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.1)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            widget.testName.toUpperCase(),
+                            style: const TextStyle(color: AppTheme.secondary, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.1),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primary.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              'AIR: $predictedAir',
+                              style: const TextStyle(color: AppTheme.primary, fontSize: 11, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 12),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            calculatedScore.toStringAsFixed(2),
-                            style: AppTheme.timerStyle(fontSize: 48, color: AppTheme.secondary),
+                            totalScore.toStringAsFixed(2),
+                            style: AppTheme.timerStyle(fontSize: 44, color: AppTheme.secondary),
                           ),
-                          Text(' / ${maxScore.toStringAsFixed(0)}', style: const TextStyle(color: AppTheme.textSecondary, fontSize: 20)),
+                          Text(
+                            ' / ${maxPossibleMarks.toStringAsFixed(0)}',
+                            style: const TextStyle(color: AppTheme.textSecondary, fontSize: 18),
+                          ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      const Text('Final Practice Score', style: TextStyle(color: AppTheme.textSecondary, fontSize: 13)),
-                      const SizedBox(height: 16),
+                      Text(
+                        iitChance,
+                        style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                      ),
+                      const SizedBox(height: 14),
                       const Divider(color: AppTheme.background),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 10),
+
+                      // Metric Grid Strip
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -1087,20 +1684,59 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                           _buildResultMiniStat('Incorrect', '$incorrectCount', AppTheme.error),
                           _buildResultMiniStat('Skipped', '$unattemptedCount', AppTheme.textSecondary),
                         ],
-                      )
+                      ),
+
+                      if (_isFullMock) ...[
+                        const SizedBox(height: 12),
+                        const Divider(color: AppTheme.background),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text(
+                              'General Aptitude: ${gaScore.toStringAsFixed(2)} / 15.00',
+                              style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary, fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              'Subject Core: ${coreScore.toStringAsFixed(2)} / 85.00',
+                              style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ],
                     ],
                   ),
                 ),
               ),
+
+              // Filter Tabs for Questions Review
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  children: [
+                    _buildReviewFilterChip('All (${widget.questions.length})', 'All'),
+                    const SizedBox(width: 8),
+                    _buildReviewFilterChip('Incorrect ($incorrectCount)', 'Incorrect'),
+                    const SizedBox(width: 8),
+                    _buildReviewFilterChip('Correct ($correctCount)', 'Correct'),
+                    const SizedBox(width: 8),
+                    _buildReviewFilterChip('Skipped ($unattemptedCount)', 'Unattempted'),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              // Question-by-Question Review List
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   physics: const BouncingScrollPhysics(),
-                  itemCount: widget.questions.length,
+                  itemCount: filteredQuestions.length,
                   itemBuilder: (context, index) {
-                    final q = widget.questions[index];
+                    final q = filteredQuestions[index];
+                    final originalIndex = widget.questions.indexOf(q);
                     return _MockQuestionReviewCard(
-                      index: index,
+                      index: originalIndex,
                       pyq: q,
                       userAnswer: _userAnswers[q.id],
                       buildTextHelper: _buildQuestionText,
@@ -1115,12 +1751,45 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
     );
   }
 
+  Widget _buildReviewFilterChip(String label, String filterKey) {
+    final isSelected = _reviewFilter == filterKey;
+    return Expanded(
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _reviewFilter = filterKey;
+          });
+        },
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: isSelected ? AppTheme.primary : AppTheme.surface,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: isSelected ? AppTheme.primary : Colors.white.withValues(alpha: 0.08),
+            ),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 10.5,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              color: isSelected ? Colors.white : AppTheme.textSecondary,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildResultMiniStat(String label, String value, Color color) {
     return Column(
       children: [
-        Text(value, style: AppTheme.timerStyle(fontSize: 20, color: color)),
-        const SizedBox(height: 4),
-        Text(label, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10)),
+        Text(value, style: AppTheme.timerStyle(fontSize: 18, color: color)),
+        const SizedBox(height: 2),
+        Text(label, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10.5)),
       ],
     );
   }
@@ -1130,7 +1799,7 @@ class _MockQuestionReviewCard extends StatefulWidget {
   final int index;
   final PYQ pyq;
   final String? userAnswer;
-  final Widget Function(String, {bool isExplanation}) buildTextHelper;
+  final Widget Function(String, {bool isExplanation, Color? textColor}) buildTextHelper;
 
   const _MockQuestionReviewCard({
     required this.index,
@@ -1154,22 +1823,23 @@ class _MockQuestionReviewCardState extends State<_MockQuestionReviewCard> {
       builder: (context) {
         return AlertDialog(
           backgroundColor: AppTheme.surface,
-          title: const Text('Add to Error Log', style: TextStyle(color: AppTheme.error)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: const Text('Add to Error Log', style: TextStyle(color: AppTheme.error, fontWeight: FontWeight.bold, fontSize: 16)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Topic: ${widget.pyq.topic}'),
+              Text('Topic: ${widget.pyq.topic}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
               const SizedBox(height: 12),
-              const Text('Why did you get this wrong? (e.g. Calculation error, concept forgotten)', style: TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
-              const SizedBox(height: 6),
+              const Text('Why did you get this wrong? (e.g. Calculation mistake, conceptual confusion):', style: TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
+              const SizedBox(height: 8),
               TextField(
                 controller: noteController,
-                style: const TextStyle(color: AppTheme.textPrimary),
+                style: const TextStyle(color: AppTheme.textPrimary, fontSize: 13),
                 maxLines: 2,
                 decoration: InputDecoration(
-                  hintText: 'e.g., Read option wrong / Forgot standard formula',
-                  hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+                  hintText: 'e.g., Overlooked negative sign / Misread option B',
+                  hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                   filled: true,
                   fillColor: AppTheme.background,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
@@ -1191,7 +1861,7 @@ class _MockQuestionReviewCardState extends State<_MockQuestionReviewCard> {
                   widget.pyq.subject,
                   widget.pyq.topic,
                   widget.pyq.questionText,
-                  whyWrongText.isNotEmpty ? whyWrongText : 'Incorrect in mock practice test.',
+                  whyWrongText.isNotEmpty ? whyWrongText : 'Incorrect in CBT mock test.',
                 );
                 setState(() {
                   _addedToErrorLog = true;
@@ -1204,7 +1874,7 @@ class _MockQuestionReviewCardState extends State<_MockQuestionReviewCard> {
                   ),
                 );
               },
-              child: const Text('Add Log', style: TextStyle(color: AppTheme.textPrimary)),
+              child: const Text('Add to Journal', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ],
         );
@@ -1262,8 +1932,8 @@ class _MockQuestionReviewCardState extends State<_MockQuestionReviewCard> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: q.imagePath!.startsWith('http')
-                  ? Image.network(q.imagePath!, fit: BoxFit.contain, errorBuilder: (c, e, s) => const SizedBox())
-                  : Image.asset(q.imagePath!, fit: BoxFit.contain, errorBuilder: (c, e, s) => const SizedBox()),
+                    ? Image.network(q.imagePath!, fit: BoxFit.contain, errorBuilder: (c, e, s) => const SizedBox())
+                    : Image.asset(q.imagePath!, fit: BoxFit.contain, errorBuilder: (c, e, s) => const SizedBox()),
               ),
             ],
             if (q.options.isNotEmpty) ...[

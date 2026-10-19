@@ -5,16 +5,13 @@ import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
-import '../services/storage_service.dart';
 import '../models/models.dart';
-import '../data/sample_pyqs.dart';
 import '../data/da_full_mock_pyqs.dart';
 import '../data/cs_full_mock_pyqs.dart';
 import '../data/da_subjectwise_mock_data.dart';
 import '../data/csit_subjectwise_mock_data.dart';
 import '../data/minimock_data.dart';
 import 'mock_test_runner_screen.dart';
-import 'pro_upgrade_screen.dart';
 import '../services/ad_service.dart';
 
 class MockTrackerScreen extends StatefulWidget {

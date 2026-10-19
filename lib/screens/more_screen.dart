@@ -13,7 +13,6 @@ import 'mock_tracker_screen.dart';
 import 'revision_screen.dart';
 import 'weightage_screen.dart';
 import 'coap_screen.dart';
-import 'auth_screen.dart';
 import 'profile_screen.dart';
 import 'ranking_screen.dart';
 import 'resources_screen.dart';
