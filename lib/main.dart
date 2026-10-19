@@ -355,82 +355,54 @@ class MainNavigationScaffold extends StatelessWidget {
         children: screens,
       ),
       bottomNavigationBar: Container(
-        color: AppTheme.background,
-        padding: EdgeInsets.fromLTRB(
-          16,
-          4,
-          16,
-          MediaQuery.of(context).padding.bottom > 0
-              ? MediaQuery.of(context).padding.bottom + 4
-              : 16,
-        ),
-        child: Container(
-          height: 66,
-          decoration: BoxDecoration(
-            color: AppTheme.surface.withOpacity(0.95),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.06),
+        decoration: const BoxDecoration(
+          color: AppTheme.surface,
+          border: Border(
+            top: BorderSide(
+              color: Color(0x18FFFFFF),
               width: 1,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.4),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(navItems.length, (index) {
-              final isSelected = selectedIndex == index;
-              final item = navItems[index];
-              return Expanded(
-                child: GestureDetector(
-                  onTap: () {
-                    Provider.of<AppProvider>(context, listen: false).setSelectedIndex(index);
-                  },
-                  behavior: HitTestBehavior.opaque,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Active indicator dot on top
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        width: isSelected ? 4 : 0,
-                        height: isSelected ? 4 : 0,
-                        decoration: const BoxDecoration(
-                          color: AppTheme.secondary,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      // Scaling icon
-                      AnimatedScale(
-                        scale: isSelected ? 1.15 : 1.0,
-                        duration: const Duration(milliseconds: 200),
-                        child: Icon(
+        ),
+        child: SafeArea(
+          top: false,
+          child: SizedBox(
+            height: 60,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(navItems.length, (index) {
+                final isSelected = selectedIndex == index;
+                final item = navItems[index];
+                return Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      Provider.of<AppProvider>(context, listen: false).setSelectedIndex(index);
+                    },
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
                           isSelected ? item.activeIcon : item.icon,
-                          color: isSelected ? AppTheme.secondary : AppTheme.textSecondary,
+                          color: isSelected ? AppTheme.primary : AppTheme.textSecondary,
                           size: 24,
                         ),
-                      ),
-                      const SizedBox(height: 3),
-                      // Text label
-                      Text(
-                        item.label,
-                        style: TextStyle(
-                          color: isSelected ? Colors.white : AppTheme.textSecondary,
-                          fontSize: 10,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                        const SizedBox(height: 3),
+                        Text(
+                          item.label,
+                          style: TextStyle(
+                            color: isSelected ? AppTheme.primary : AppTheme.textSecondary,
+                            fontSize: 11,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              );
-            }),
+                );
+              }),
+            ),
           ),
         ),
       ),

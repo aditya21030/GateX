@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Color Palette
-  static const Color background = Color(0xFF0F0F14);
-  static const Color primary = Color(0xFF6C63FF);
+  // Color Palette (Clean Navy & Electric Blue)
+  static const Color background = Color(0xFF0A0E21);
+  static const Color primary = Color(0xFF2962FF);
   static const Color secondary = Color(0xFF00D4AA);
-  static const Color surface = Color(0xFF1A1A24);
+  static const Color surface = Color(0xFF1D1E33);
   static const Color textPrimary = Color(0xFFFFFFFF);
-  static const Color textSecondary = Color(0xFF9090A0);
-  static const Color error = Color(0xFFFF5C5C);
+  static const Color textSecondary = Color(0xFFB0BEC5);
+  static const Color error = Color(0xFFFF5252);
   static const Color warning = Color(0xFFFFB74D);
   static const Color success = Color(0xFF4CAF50);
 
@@ -132,6 +132,7 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(16)),
+          side: BorderSide(color: Color(0x18FFFFFF), width: 1),
         ),
       ),
       appBarTheme: const AppBarTheme(
