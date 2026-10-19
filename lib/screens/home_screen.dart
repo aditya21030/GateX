@@ -7,6 +7,7 @@ import 'error_log_screen.dart';
 import 'formula_sheet_screen.dart';
 import 'mock_tracker_screen.dart';
 import 'pro_upgrade_screen.dart';
+import 'community_screen.dart';
 import '../models/models.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -193,6 +194,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 10),
                 _buildStudyToolsGrid(context, provider),
+                const SizedBox(height: 16),
+
+                // 5. PEER DOUBT SOLVING BANNER
+                _buildCommunityBanner(context),
                 const SizedBox(height: 20),
               ],
             ),
@@ -575,6 +580,61 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildCommunityBanner(BuildContext context) {
+    return Card(
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const CommunityScreen()),
+          );
+        },
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: AppTheme.secondary.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.forum_rounded, color: AppTheme.secondary, size: 24),
+              ),
+              const SizedBox(width: 14),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Peer Doubt Solving',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      'Discuss tricky concepts & shortcuts with rankers',
+                      style: TextStyle(
+                        color: AppTheme.textSecondary,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right, color: AppTheme.textSecondary),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

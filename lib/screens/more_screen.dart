@@ -18,6 +18,7 @@ import 'ranking_screen.dart';
 import 'resources_screen.dart';
 import 'formula_sheet_screen.dart';
 import 'pro_upgrade_screen.dart';
+import 'community_screen.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -62,6 +63,14 @@ class MoreScreen extends StatelessWidget {
                 title: 'GateX Ranking & Leaderboard',
                 subtitle: 'Compete globally with other aspirants',
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RankingScreen())),
+              ),
+              _buildMenuTile(
+                context: context,
+                icon: Icons.forum_rounded,
+                iconColor: const Color(0xFF00D4AA),
+                title: 'Peer Learning & Doubts',
+                subtitle: 'Subject channels, doubt discussions & shortcuts',
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CommunityScreen())),
               ),
               _buildMenuTile(
                 context: context,
