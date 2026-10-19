@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 
 /// 100% Pure Flutter 3D Architectural IIT Monument & Campus Asset
-/// Renders a grand neoclassical IIT facade (columns, pediment, dome, steps, and ambient lighting)
+/// Renders an authentic, grand neoclassical IIT facade (columns, pediment, dome, steps, and ambient lighting)
 class IITMonument3DAsset extends StatefulWidget {
   final double size;
   final String targetIIT;
@@ -34,7 +34,7 @@ class _IITMonument3DAssetState extends State<IITMonument3DAsset>
       duration: const Duration(seconds: 4),
     )..repeat(reverse: true);
 
-    _floatAnim = Tween<double>(begin: -6.0, end: 6.0).animate(
+    _floatAnim = Tween<double>(begin: -5.0, end: 5.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
   }
@@ -51,19 +51,21 @@ class _IITMonument3DAssetState extends State<IITMonument3DAsset>
       animation: _floatAnim,
       builder: (context, child) {
         final float = _floatAnim.value;
+        final scale = widget.size / 280.0;
 
         return SizedBox(
           width: widget.size,
           height: widget.size * 1.05,
           child: Stack(
+            clipBehavior: Clip.none,
             alignment: Alignment.center,
             children: [
               // 1. Top Down Spotlight Glow
               Positioned(
                 top: 0,
                 child: Container(
-                  width: widget.size * 0.85,
-                  height: widget.size * 0.85,
+                  width: widget.size * 0.9,
+                  height: widget.size * 0.9,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
@@ -82,59 +84,27 @@ class _IITMonument3DAssetState extends State<IITMonument3DAsset>
               Transform.translate(
                 offset: Offset(0, float),
                 child: SizedBox(
-                  width: widget.size * 0.9,
-                  height: widget.size * 0.9,
+                  width: widget.size * 0.92,
+                  height: widget.size * 0.92,
                   child: CustomPaint(
                     painter: _IITBuildingPainter(),
                   ),
                 ),
               ),
 
-              // 3. Floating 3D Graduation Cap above the dome
+              // 3. Floating Target IIT Badge (Bottom) - No floating circle above dome!
               Positioned(
-                top: 8 + float * 1.3,
-                child: Container(
-                  padding: EdgeInsets.all((10 * (widget.size / 280.0)).clamp(6.0, 12.0)),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFFF9100), Color(0xFFFF3D00)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFFFF6D00).withValues(alpha: 0.5),
-                        blurRadius: (18 * (widget.size / 280.0)).clamp(8.0, 18.0),
-                        offset: Offset(0, (6 * (widget.size / 280.0)).clamp(2.0, 6.0)),
-                      ),
-                    ],
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.5),
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Icon(
-                    Icons.school_rounded,
-                    color: Colors.white,
-                    size: (26 * (widget.size / 280.0)).clamp(16.0, 28.0),
-                  ),
-                ),
-              ),
-
-              // 4. Floating Target IIT Badge (Bottom)
-              Positioned(
-                bottom: 8 + float * -0.5,
+                bottom: 4 + float * -0.5,
                 child: Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: (16 * (widget.size / 280.0)).clamp(10.0, 18.0),
-                    vertical: (7 * (widget.size / 280.0)).clamp(4.0, 8.0),
+                    horizontal: (16 * scale).clamp(10.0, 18.0),
+                    vertical: (7 * scale).clamp(4.0, 8.0),
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF14151D),
+                    color: const Color(0xFF12141D),
                     borderRadius: BorderRadius.circular(22),
                     border: Border.all(
-                      color: const Color(0xFF8338EC).withValues(alpha: 0.6),
+                      color: const Color(0xFF8338EC).withValues(alpha: 0.65),
                       width: 1.4,
                     ),
                     boxShadow: [
@@ -143,17 +113,29 @@ class _IITMonument3DAssetState extends State<IITMonument3DAsset>
                         blurRadius: 16,
                         offset: const Offset(0, 6),
                       ),
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.6),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
                     ],
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        width: (8 * (widget.size / 280.0)).clamp(5.0, 8.0),
-                        height: (8 * (widget.size / 280.0)).clamp(5.0, 8.0),
+                        width: (8 * scale).clamp(5.0, 8.0),
+                        height: (8 * scale).clamp(5.0, 8.0),
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           color: Color(0xFF00E676),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color(0xFF00E676),
+                              blurRadius: 6,
+                              spreadRadius: 1,
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(width: 6),
@@ -161,7 +143,7 @@ class _IITMonument3DAssetState extends State<IITMonument3DAsset>
                         widget.targetIIT,
                         style: GoogleFonts.outfit(
                           color: Colors.white,
-                          fontSize: (12.5 * (widget.size / 280.0)).clamp(9.5, 13.0),
+                          fontSize: (12.5 * scale).clamp(9.5, 13.0),
                           fontWeight: FontWeight.bold,
                           letterSpacing: 0.8,
                         ),
@@ -171,7 +153,7 @@ class _IITMonument3DAssetState extends State<IITMonument3DAsset>
                         '• ${widget.airRank}',
                         style: GoogleFonts.outfit(
                           color: const Color(0xFFFFB300),
-                          fontSize: (11.5 * (widget.size / 280.0)).clamp(8.5, 12.0),
+                          fontSize: (11.5 * scale).clamp(8.5, 12.0),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -187,223 +169,531 @@ class _IITMonument3DAssetState extends State<IITMonument3DAsset>
   }
 }
 
-/// Custom Painter that renders neoclassical 3D IIT Building with columns, pediment and dome
+/// Custom Painter that renders an authentic, breathtaking 3D neoclassical IIT Building
 class _IITBuildingPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final w = size.width;
     final h = size.height;
-
     final centerX = w / 2;
-    final baseY = h * 0.82;
+    final baseY = h * 0.84;
 
-    // 1. Shadow beneath building
-    final shadowPaint = Paint()
-      ..color = Colors.black.withValues(alpha: 0.6)
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 16);
+    // 1. Soft Ambient Occlusion Ground Shadow
+    final groundShadow = Paint()
+      ..color = Colors.black.withValues(alpha: 0.5)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14);
     canvas.drawOval(
-      Rect.fromCenter(center: Offset(centerX, baseY + 10), width: w * 0.85, height: 26),
-      shadowPaint,
+      Rect.fromCenter(
+        center: Offset(centerX, baseY + 6),
+        width: w * 0.86,
+        height: 20,
+      ),
+      groundShadow,
     );
 
-    // 2. Base Steps (3-tiered marble stylobate)
-    final stepColors = [
-      const Color(0xFF333544),
-      const Color(0xFF282A36),
-      const Color(0xFF1E202B),
-    ];
-    for (int i = 0; i < 3; i++) {
-      final stepW = w * (0.84 - i * 0.04);
-      final stepH = 8.0;
-      final stepY = baseY - (3 - i) * stepH;
-      final stepRect = RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset(centerX, stepY + stepH / 2), width: stepW, height: stepH),
-        const Radius.circular(3),
-      );
-      final paint = Paint()
-        ..shader = LinearGradient(
-          colors: [stepColors[i].withValues(alpha: 0.9), stepColors[i]],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ).createShader(stepRect.outerRect);
-      canvas.drawRRect(stepRect, paint);
-    }
-
-    final columnBaseY = baseY - 24;
-    final columnTopY = columnBaseY - (h * 0.32);
-
-    // 3. Central Doorway & Back Wall
-    final wallRect = Rect.fromCenter(
-      center: Offset(centerX, (columnBaseY + columnTopY) / 2),
-      width: w * 0.66,
-      height: columnBaseY - columnTopY,
-    );
-    final wallPaint = Paint()
-      ..shader = const LinearGradient(
-        colors: [Color(0xFF20222D), Color(0xFF14151F)],
+    // 2. Conical Volumetric Light Beam from Apex down to Steps
+    final beamPath = Path()
+      ..moveTo(centerX, h * 0.12)
+      ..lineTo(centerX - w * 0.44, baseY)
+      ..lineTo(centerX + w * 0.44, baseY)
+      ..close();
+    final beamPaint = Paint()
+      ..shader = LinearGradient(
+        colors: [
+          const Color(0xFFFFD54F).withValues(alpha: 0.18),
+          const Color(0xFF8338EC).withValues(alpha: 0.05),
+          Colors.transparent,
+        ],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-      ).createShader(wallRect);
-    canvas.drawRect(wallRect, wallPaint);
+        stops: const [0.0, 0.6, 1.0],
+      ).createShader(Rect.fromLTWH(0, 0, w, baseY));
+    canvas.drawPath(beamPath, beamPaint);
 
-    // Arch Entrance
-    final doorW = w * 0.18;
-    final doorH = (columnBaseY - columnTopY) * 0.72;
-    final doorRect = Rect.fromLTWH(centerX - doorW / 2, columnBaseY - doorH, doorW, doorH);
-    final doorPath = Path()
-      ..moveTo(doorRect.left, doorRect.bottom)
-      ..lineTo(doorRect.left, doorRect.top + doorW / 2)
-      ..arcToPoint(
-        Offset(doorRect.right, doorRect.top + doorW / 2),
-        radius: Radius.circular(doorW / 2),
-      )
-      ..lineTo(doorRect.right, doorRect.bottom)
-      ..close();
-    final doorPaint = Paint()
-      ..shader = RadialGradient(
-        colors: [
-          const Color(0xFFFFB300).withValues(alpha: 0.5),
-          const Color(0xFF0F1018),
-        ],
-        center: Alignment.bottomCenter,
-        radius: 0.8,
-      ).createShader(doorRect);
-    canvas.drawPath(doorPath, doorPaint);
+    // 3. Ambient Academic Sparks / Floating Stardust
+    final sparkPaint = Paint()..color = const Color(0xFFFFD54F).withValues(alpha: 0.7);
+    final sparkGlow = Paint()
+      ..color = const Color(0xFFFFB300).withValues(alpha: 0.35)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
 
-    // 4. Neoclassical Fluted Columns (6 columns with 3D cylindrical lighting)
-    const numColumns = 6;
-    final columnWidth = w * 0.052;
-    final columnSpacing = (w * 0.68 - columnWidth * numColumns) / (numColumns - 1);
-    final startX = centerX - (w * 0.68) / 2 + columnWidth / 2;
+    final sparks = [
+      Offset(w * 0.16, h * 0.32),
+      Offset(w * 0.84, h * 0.36),
+      Offset(w * 0.22, h * 0.56),
+      Offset(w * 0.78, h * 0.52),
+    ];
+    for (final sp in sparks) {
+      canvas.drawCircle(sp, (w * 0.015).clamp(2.0, 4.0), sparkGlow);
+      canvas.drawCircle(sp, (w * 0.008).clamp(1.0, 2.0), sparkPaint);
+    }
 
-    for (int i = 0; i < numColumns; i++) {
-      final colX = startX + i * (columnWidth + columnSpacing);
-      final colRect = Rect.fromCenter(
-        center: Offset(colX, (columnBaseY + columnTopY) / 2),
-        width: columnWidth,
-        height: columnBaseY - columnTopY,
+    // 4. Base Steps: 3-Tiered Beveled Marble Stylobate
+    const stepH = 8.0;
+    final tiers = [
+      (w * 0.84, const Color(0xFF1E2230), const Color(0xFF151824)),
+      (w * 0.78, const Color(0xFF282D3E), const Color(0xFF1A1D2B)),
+      (w * 0.72, const Color(0xFF33394D), const Color(0xFF222636)),
+    ];
+
+    for (int i = 0; i < 3; i++) {
+      final stepW = tiers[i].$1;
+      final stepY = baseY - (3 - i) * stepH;
+      final stepRect = Rect.fromCenter(
+        center: Offset(centerX, stepY + stepH / 2),
+        width: stepW,
+        height: stepH,
       );
 
-      // 3D cylindrical gradient highlight
+      // Step riser
+      final riserPaint = Paint()
+        ..shader = LinearGradient(
+          colors: [tiers[i].$2, tiers[i].$3],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ).createShader(stepRect);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(stepRect, const Radius.circular(2.5)),
+        riserPaint,
+      );
+
+      // Top bevel specular line
+      final bevelPaint = Paint()
+        ..shader = LinearGradient(
+          colors: [
+            Colors.white.withValues(alpha: 0.1),
+            Colors.white.withValues(alpha: 0.55),
+            Colors.white.withValues(alpha: 0.1),
+          ],
+        ).createShader(Rect.fromLTWH(centerX - stepW / 2, stepY, stepW, 1.2));
+      canvas.drawRect(
+        Rect.fromLTWH(centerX - stepW / 2, stepY, stepW, 1.2),
+        bevelPaint,
+      );
+    }
+
+    final columnBaseY = baseY - (3 * stepH);
+    final columnTopY = columnBaseY - (h * 0.33);
+    final buildingH = columnBaseY - columnTopY;
+
+    // 5. Side Wings (Symmetrical Academic Wings flanking the main portico)
+    final wingW = w * 0.14;
+    final wingH = buildingH * 0.92;
+    final wingTopY = columnBaseY - wingH;
+
+    for (final isLeft in [true, false]) {
+      final wingX = isLeft ? (centerX - w * 0.35) : (centerX + w * 0.35 - wingW);
+      final wingRect = Rect.fromLTWH(wingX, wingTopY, wingW, wingH);
+
+      // Wing stone facade
+      final wingPaint = Paint()
+        ..shader = LinearGradient(
+          colors: isLeft
+              ? [const Color(0xFF222638), const Color(0xFF161826)]
+              : [const Color(0xFF1A1C2C), const Color(0xFF10121D)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ).createShader(wingRect);
+      canvas.drawRRect(RRect.fromRectAndRadius(wingRect, const Radius.circular(3)), wingPaint);
+
+      // Wing Cornice Top
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(wingX - 2, wingTopY - 3, wingW + 4, 4),
+          const Radius.circular(1.5),
+        ),
+        Paint()..color = const Color(0xFF42485E),
+      );
+
+      // 2 Symmetrical Arched Windows on each wing with warm amber study light!
+      final winW = wingW * 0.42;
+      final winH = wingH * 0.38;
+      final winY = wingTopY + (wingH - winH) / 2;
+      final winX = wingX + (wingW - winW) / 2;
+
+      final winRect = Rect.fromLTWH(winX, winY, winW, winH);
+      final winPath = Path()
+        ..moveTo(winRect.left, winRect.bottom)
+        ..lineTo(winRect.left, winRect.top + winW / 2)
+        ..arcToPoint(Offset(winRect.right, winRect.top + winW / 2), radius: Radius.circular(winW / 2))
+        ..lineTo(winRect.right, winRect.bottom)
+        ..close();
+
+      final winGlow = Paint()
+        ..shader = const RadialGradient(
+          colors: [Color(0xFFFFD54F), Color(0xFFFF8F00), Color(0xFF2A1502)],
+          stops: [0.1, 0.6, 1.0],
+          center: Alignment(0.0, 0.2),
+        ).createShader(winRect);
+      canvas.drawPath(winPath, winGlow);
+
+      // Window stone frame & sill
+      canvas.drawPath(
+        winPath,
+        Paint()
+          ..color = const Color(0xFF5A627E)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.0,
+      );
+      canvas.drawRect(
+        Rect.fromCenter(center: Offset(winX + winW / 2, winRect.bottom + 1), width: winW + 4, height: 2),
+        Paint()..color = const Color(0xFF8C96B8),
+      );
+    }
+
+    // 6. Central Portico Back Wall & Grand Arched Portal
+    final porticoW = w * 0.56;
+    final backWallRect = Rect.fromCenter(
+      center: Offset(centerX, (columnBaseY + columnTopY) / 2),
+      width: porticoW,
+      height: buildingH,
+    );
+    final backWallPaint = Paint()
+      ..shader = const LinearGradient(
+        colors: [Color(0xFF1C1E2B), Color(0xFF0F1019)],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ).createShader(backWallRect);
+    canvas.drawRect(backWallRect, backWallPaint);
+
+    // Grand Arched Entrance
+    final archW = porticoW * 0.28;
+    final archH = buildingH * 0.74;
+    final archRect = Rect.fromLTWH(centerX - archW / 2, columnBaseY - archH, archW, archH);
+
+    final archPath = Path()
+      ..moveTo(archRect.left, archRect.bottom)
+      ..lineTo(archRect.left, archRect.top + archW / 2)
+      ..arcToPoint(Offset(archRect.right, archRect.top + archW / 2), radius: Radius.circular(archW / 2))
+      ..lineTo(archRect.right, archRect.bottom)
+      ..close();
+
+    // Warm Interior Golden Radiance (The Light of Knowledge)
+    final archGlow = Paint()
+      ..shader = RadialGradient(
+        colors: const [
+          Color(0xFFFFD54F),
+          Color(0xFFFF8F00),
+          Color(0xFF3E1F00),
+          Color(0xFF0A0B10),
+        ],
+        stops: const [0.0, 0.35, 0.75, 1.0],
+        center: const Alignment(0.0, 0.3),
+      ).createShader(archRect);
+    canvas.drawPath(archPath, archGlow);
+
+    // Beveled stone archivolt trim around the arch
+    canvas.drawPath(
+      archPath,
+      Paint()
+        ..color = const Color(0xFF7E88A6)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.6,
+    );
+
+    // Golden light shining forward onto steps from entrance
+    final lightForward = Path()
+      ..moveTo(archRect.left + 2, archRect.bottom)
+      ..lineTo(centerX - archW * 0.8, baseY)
+      ..lineTo(centerX + archW * 0.8, baseY)
+      ..lineTo(archRect.right - 2, archRect.bottom)
+      ..close();
+    canvas.drawPath(
+      lightForward,
+      Paint()
+        ..shader = LinearGradient(
+          colors: [
+            const Color(0xFFFFB300).withValues(alpha: 0.35),
+            Colors.transparent,
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ).createShader(Rect.fromLTWH(0, archRect.bottom, w, baseY - archRect.bottom)),
+    );
+
+    // 7. 6 Neoclassical Fluted Columns with Cylindrical 3D Lighting
+    const numCols = 6;
+    final colWidth = porticoW * 0.088;
+    final colSpacing = (porticoW - colWidth * numCols) / (numCols - 1);
+    final colStartX = centerX - porticoW / 2 + colWidth / 2;
+
+    for (int i = 0; i < numCols; i++) {
+      final colX = colStartX + i * (colWidth + colSpacing);
+      final colH = buildingH - 8;
+      final colRect = Rect.fromCenter(
+        center: Offset(colX, (columnBaseY + columnTopY + 2) / 2),
+        width: colWidth,
+        height: colH,
+      );
+
+      // Cylindrical 3D Specular Highlight Shader (Apple/Material 3D level)
       final colPaint = Paint()
         ..shader = const LinearGradient(
           colors: [
-            Color(0xFF888B9E),
-            Color(0xFFE4E7F2),
-            Color(0xFFC0C4D6),
-            Color(0xFF5A5D6E),
+            Color(0xFF8A93A6),
+            Color(0xFFFFFFFF),
+            Color(0xFFCBD5E1),
+            Color(0xFF4B5366),
           ],
-          stops: [0.0, 0.35, 0.7, 1.0],
+          stops: [0.0, 0.32, 0.68, 1.0],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ).createShader(colRect);
-      canvas.drawRRect(RRect.fromRectAndRadius(colRect, const Radius.circular(2)), colPaint);
 
-      // Capital & Base capitals
-      final capPaint = Paint()..color = const Color(0xFFF0F2FA);
       canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromCenter(center: Offset(colX, columnTopY + 2), width: columnWidth * 1.35, height: 4),
-          const Radius.circular(1),
-        ),
-        capPaint,
+        RRect.fromRectAndRadius(colRect, const Radius.circular(2)),
+        colPaint,
+      );
+
+      // Column Plinth Base (3D square base)
+      final baseRect = Rect.fromCenter(
+        center: Offset(colX, columnBaseY - 3),
+        width: colWidth * 1.45,
+        height: 6,
       );
       canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromCenter(center: Offset(colX, columnBaseY - 2), width: columnWidth * 1.35, height: 4),
-          const Radius.circular(1),
-        ),
-        capPaint,
+        RRect.fromRectAndRadius(baseRect, const Radius.circular(1.5)),
+        Paint()
+          ..shader = const LinearGradient(
+            colors: [Color(0xFFE2E8F0), Color(0xFF64748B)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ).createShader(baseRect),
+      );
+
+      // Column Capital (Classical Ionic/Corinthian head with golden bead)
+      final capRect = Rect.fromCenter(
+        center: Offset(colX, columnTopY + 4),
+        width: colWidth * 1.5,
+        height: 6,
+      );
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(capRect, const Radius.circular(1.5)),
+        Paint()
+          ..shader = const LinearGradient(
+            colors: [Color(0xFFFFFFFF), Color(0xFFFFD54F), Color(0xFF94A3B8)],
+            stops: [0.0, 0.5, 1.0],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ).createShader(capRect),
       );
     }
 
-    // 5. Entablature (Horizontal Beam above columns)
+    // 8. Entablature (Horizontal Projecting Architrave & Frieze)
+    final entH = (h * 0.042).clamp(10.0, 16.0);
+    final entY = columnTopY - entH;
+    final entW = porticoW * 1.08;
     final entRect = Rect.fromCenter(
-      center: Offset(centerX, columnTopY - 6),
-      width: w * 0.76,
-      height: 12,
+      center: Offset(centerX, entY + entH / 2),
+      width: entW,
+      height: entH,
     );
+
+    // Multi-tier entablature stone
     final entPaint = Paint()
       ..shader = const LinearGradient(
-        colors: [Color(0xFFD6DAE8), Color(0xFF8C90A2)],
+        colors: [Color(0xFFF1F5F9), Color(0xFFCBD5E1), Color(0xFF475569)],
+        stops: [0.0, 0.45, 1.0],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
       ).createShader(entRect);
-    canvas.drawRRect(RRect.fromRectAndRadius(entRect, const Radius.circular(2)), entPaint);
+    canvas.drawRRect(RRect.fromRectAndRadius(entRect, const Radius.circular(2.5)), entPaint);
 
-    // 6. Triangular Pediment (with golden "IIT" engraved)
-    final pedimentHeight = h * 0.14;
-    final pedimentBottom = columnTopY - 12;
-    final pedimentTop = pedimentBottom - pedimentHeight;
+    // Entablature drop shadow onto columns
+    final corniceShadow = Paint()
+      ..color = Colors.black.withValues(alpha: 0.5)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3);
+    canvas.drawRect(
+      Rect.fromLTWH(centerX - entW / 2, columnTopY, entW, 4),
+      corniceShadow,
+    );
 
-    final pedimentPath = Path()
-      ..moveTo(centerX - (w * 0.76) / 2, pedimentBottom)
-      ..lineTo(centerX, pedimentTop)
-      ..lineTo(centerX + (w * 0.76) / 2, pedimentBottom)
-      ..close();
+    // 9. Classical Central Drum supporting the Dome
+    final drumW = porticoW * 0.46;
+    final drumH = (h * 0.09).clamp(18.0, 32.0);
+    final drumY = entY - drumH;
+    final drumRect = Rect.fromCenter(
+      center: Offset(centerX, drumY + drumH / 2),
+      width: drumW,
+      height: drumH,
+    );
 
-    final pedimentPaint = Paint()
-      ..shader = LinearGradient(
-        colors: const [Color(0xFFF0F3FA), Color(0xFF9EA3B8)],
+    final drumPaint = Paint()
+      ..shader = const LinearGradient(
+        colors: [Color(0xFF33384C), Color(0xFF1E212E), Color(0xFF12141F)],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-      ).createShader(Rect.fromLTWH(centerX - w / 2, pedimentTop, w, pedimentHeight));
-    canvas.drawPath(pedimentPath, pedimentPaint);
+      ).createShader(drumRect);
+    canvas.drawRect(drumRect, drumPaint);
 
-    // Pediment Border
-    final borderPaint = Paint()
-      ..color = const Color(0xFFFFFFFF)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.5;
-    canvas.drawPath(pedimentPath, borderPaint);
+    // 3 Clerestory windows on the drum
+    for (int k = -1; k <= 1; k++) {
+      final dwX = centerX + k * (drumW * 0.28);
+      final dwRect = Rect.fromCenter(center: Offset(dwX, drumY + drumH * 0.55), width: drumW * 0.16, height: drumH * 0.55);
+      final dwPath = Path()
+        ..moveTo(dwRect.left, dwRect.bottom)
+        ..lineTo(dwRect.left, dwRect.top + dwRect.width / 2)
+        ..arcToPoint(Offset(dwRect.right, dwRect.top + dwRect.width / 2), radius: Radius.circular(dwRect.width / 2))
+        ..lineTo(dwRect.right, dwRect.bottom)
+        ..close();
+      canvas.drawPath(
+        dwPath,
+        Paint()
+          ..shader = const RadialGradient(
+            colors: [Color(0xFFFFD54F), Color(0xFFFF8F00), Color(0xFF1A1002)],
+            stops: [0.1, 0.7, 1.0],
+          ).createShader(dwRect),
+      );
+    }
 
-    // 7. Central Dome behind Pediment
-    final domeRadius = w * 0.17;
-    final domeCenter = Offset(centerX, pedimentTop + 8);
+    // 10. Grand 3D Heritage Spherical Dome
+    final domeRadius = drumW * 0.54;
+    final domeCenter = Offset(centerX, drumY + 2);
     final domeRect = Rect.fromCircle(center: domeCenter, radius: domeRadius);
 
     final domePath = Path()
       ..addArc(domeRect, math.pi, math.pi);
+
+    // Rich 3D Spherical Specular Shader
     final domePaint = Paint()
       ..shader = RadialGradient(
         colors: const [
+          Color(0xFFFFF176),
           Color(0xFFFFB300),
           Color(0xFFFF8F00),
-          Color(0xFF4527A0),
-          Color(0xFF1E1438),
+          Color(0xFF512DA8),
+          Color(0xFF1A0A38),
         ],
-        stops: const [0.1, 0.35, 0.75, 1.0],
-        center: const Alignment(-0.2, -0.4),
+        stops: const [0.05, 0.25, 0.55, 0.85, 1.0],
+        center: const Alignment(-0.35, -0.45),
+        radius: 0.9,
       ).createShader(domeRect);
     canvas.drawPath(domePath, domePaint);
 
-    // Dome Spire
-    final spireLength = (w * 0.06).clamp(8.0, 18.0);
+    // 4 Architectural Golden Ribs curving along the dome
+    final ribPaint = Paint()
+      ..color = const Color(0xFFFFE082).withValues(alpha: 0.65)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = (w * 0.007).clamp(1.0, 2.0);
+    for (final factor in [-0.65, -0.25, 0.25, 0.65]) {
+      final ribPath = Path()
+        ..moveTo(centerX, domeCenter.dy - domeRadius)
+        ..quadraticBezierTo(
+          centerX + domeRadius * factor,
+          domeCenter.dy - domeRadius * 0.5,
+          centerX + (drumW / 2) * (factor > 0 ? 0.9 : -0.9) * (factor.abs() > 0.4 ? 1.0 : 0.5),
+          domeCenter.dy,
+        );
+      canvas.drawPath(ribPath, ribPaint);
+    }
+
+    // 11. Golden Architectural Cupola / Lantern & Apex Needle Spire
+    final cupolaW = drumW * 0.22;
+    final cupolaH = (h * 0.045).clamp(10.0, 16.0);
+    final cupolaTopY = (domeCenter.dy - domeRadius) - cupolaH;
+    final cupolaRect = Rect.fromCenter(
+      center: Offset(centerX, cupolaTopY + cupolaH / 2),
+      width: cupolaW,
+      height: cupolaH,
+    );
+
+    // Cupola base
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(cupolaRect, const Radius.circular(2)),
+      Paint()
+        ..shader = const LinearGradient(
+          colors: [Color(0xFFFFF9C4), Color(0xFFFFB300), Color(0xFFE65100)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ).createShader(cupolaRect),
+    );
+
+    // Apex Needle Spire with golden top finial
+    final spireLength = (h * 0.065).clamp(14.0, 26.0);
     final spirePaint = Paint()
-      ..color = const Color(0xFFFFD54F)
-      ..strokeWidth = (w * 0.012).clamp(1.5, 3.0);
+      ..shader = const LinearGradient(
+        colors: [Color(0xFFFFFFFF), Color(0xFFFFD54F), Color(0xFFFF8F00)],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ).createShader(Rect.fromLTWH(centerX - 2, cupolaTopY - spireLength, 4, spireLength))
+      ..strokeWidth = (w * 0.012).clamp(1.8, 3.0)
+      ..strokeCap = StrokeCap.round;
+
     canvas.drawLine(
-      Offset(centerX, domeCenter.dy - domeRadius),
-      Offset(centerX, domeCenter.dy - domeRadius - spireLength),
+      Offset(centerX, cupolaTopY),
+      Offset(centerX, cupolaTopY - spireLength),
       spirePaint,
     );
 
-    // Golden "IIT" Letters inside Pediment
-    final textPainter = TextPainter(
+    // Spire golden glow aura at the summit
+    canvas.drawCircle(
+      Offset(centerX, cupolaTopY - spireLength),
+      (w * 0.016).clamp(3.0, 5.0),
+      Paint()..color = const Color(0xFFFFD54F),
+    );
+    canvas.drawCircle(
+      Offset(centerX, cupolaTopY - spireLength),
+      (w * 0.035).clamp(6.0, 10.0),
+      Paint()
+        ..color = const Color(0xFFFFB300).withValues(alpha: 0.4)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+    );
+
+    // 12. Grand 3D Triangular Pediment
+    final pedHeight = (h * 0.13).clamp(28.0, 48.0);
+    final pedBottomY = entY;
+    final pedTopY = pedBottomY - pedHeight;
+    final pedW = entW * 0.98;
+
+    final pedPath = Path()
+      ..moveTo(centerX - pedW / 2, pedBottomY)
+      ..lineTo(centerX, pedTopY)
+      ..lineTo(centerX + pedW / 2, pedBottomY)
+      ..close();
+
+    // Pediment Tympanum Stone
+    final pedPaint = Paint()
+      ..shader = const LinearGradient(
+        colors: [Color(0xFFF8FAFC), Color(0xFFE2E8F0), Color(0xFF94A3B8)],
+        stops: [0.0, 0.4, 1.0],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ).createShader(Rect.fromLTWH(centerX - pedW / 2, pedTopY, pedW, pedHeight));
+    canvas.drawPath(pedPath, pedPaint);
+
+    // Top Beveled Specular Stone Raking Cornice
+    final rakePaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = (w * 0.012).clamp(2.0, 3.2);
+    canvas.drawPath(pedPath, rakePaint);
+
+    // 13. Embossed Golden "IIT" Emblem in Tympanum
+    final iitTextPainter = TextPainter(
       text: TextSpan(
         text: 'IIT',
         style: TextStyle(
-          color: const Color(0xFF263238),
-          fontSize: (w * 0.065).clamp(8.0, 16.0),
+          color: const Color(0xFF0F172A),
+          fontSize: (w * 0.075).clamp(11.0, 20.0),
           fontWeight: FontWeight.w900,
-          letterSpacing: (w * 0.012).clamp(1.0, 3.0),
+          letterSpacing: (w * 0.016).clamp(2.0, 4.0),
+          shadows: [
+            Shadow(
+              color: const Color(0xFFFFD54F).withValues(alpha: 0.8),
+              blurRadius: 6,
+              offset: const Offset(0, 1),
+            ),
+          ],
         ),
       ),
       textDirection: TextDirection.ltr,
     )..layout();
-    textPainter.paint(
+
+    iitTextPainter.paint(
       canvas,
-      Offset(centerX - textPainter.width / 2, pedimentBottom - textPainter.height - 4),
+      Offset(
+        centerX - iitTextPainter.width / 2,
+        pedBottomY - iitTextPainter.height - (pedHeight * 0.18),
+      ),
     );
   }
 
@@ -460,89 +750,126 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
       );
     }
 
-    // Slide 1: Heavily curved, minimal floating cards with LESS components
-    return AnimatedBuilder(
-      animation: _floatAnim,
-      builder: (context, child) {
-        final float = _floatAnim.value;
+    // Slide 1: Heavily curved, minimal floating cards with LESS components (Unconstrained & expansive)
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final stageW = constraints.maxWidth;
+        final stageH = constraints.maxHeight;
+        final cardW = (stageW * 0.88).clamp(310.0, 360.0);
+        const cardH = 68.0;
 
-        return SizedBox(
-          height: 300,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              // Ambient soft glow
-              Container(
-                width: 250,
-                height: 250,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      const Color(0xFFFF5722).withValues(alpha: 0.22),
-                      const Color(0xFF673AB7).withValues(alpha: 0.12),
-                      Colors.transparent,
-                    ],
-                  ),
-                ),
-              ),
+        final availableH = stageH;
+        final spacing = (availableH * 0.23).clamp(78.0, 96.0);
+        final startY = ((availableH - (spacing * 2 + cardH)) / 2).clamp(10.0, 80.0);
 
-              // Card 1: IIT Bombay (Golden Coral Stadium Pill)
-              Positioned(
-                top: 36 + float * 0.8,
-                child: Transform.rotate(
-                  angle: -0.04,
-                  child: _buildCurvedPill(
-                    title: 'IIT Bombay',
-                    subtitle: 'AIR < 100 • CSE & AI',
-                    tag: 'Dream IIT',
-                    gradient: const [Color(0xFFFF9800), Color(0xFFFF5722)],
-                    tagColor: const Color(0xFFFF1744),
-                    icon: Icons.account_balance_rounded,
-                  ),
-                ),
-              ),
+        return AnimatedBuilder(
+          animation: _floatAnim,
+          builder: (context, child) {
+            final float = _floatAnim.value;
 
-              // Card 2: IISc Bangalore (Platinum Pearl Stadium Pill)
-              Positioned(
-                top: 115 + float * -0.7,
-                child: Transform.rotate(
-                  angle: 0.035,
-                  child: _buildCurvedPill(
-                    title: 'IISc Bangalore',
-                    subtitle: 'AIR < 50 • M.Tech CSA',
-                    tag: 'AIR 1',
-                    gradient: const [Color(0xFFECEFF1), Color(0xFFCFD8DC)],
-                    tagColor: const Color(0xFFD81B60),
-                    icon: Icons.school_rounded,
-                    isDarkText: true,
+            return SizedBox(
+              width: stageW,
+              height: stageH,
+              child: Stack(
+                clipBehavior: Clip.none,
+                alignment: Alignment.center,
+                children: [
+                  // Full stage ambient soft glow
+                  Positioned.fill(
+                    child: Center(
+                      child: Container(
+                        width: stageW * 0.95,
+                        height: stageH * 0.85,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: RadialGradient(
+                            colors: [
+                              const Color(0xFFFF5722).withValues(alpha: 0.16),
+                              const Color(0xFF673AB7).withValues(alpha: 0.10),
+                              Colors.transparent,
+                            ],
+                            radius: 0.85,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
 
-              // Card 3: IIT Delhi (Azure Cyan Stadium Pill)
-              Positioned(
-                top: 195 + float * 0.9,
-                child: Transform.rotate(
-                  angle: -0.02,
-                  child: _buildCurvedPill(
-                    title: 'IIT Delhi',
-                    subtitle: 'AIR < 250 • Data Science',
-                    tag: 'Target IIT',
-                    gradient: const [Color(0xFF29B6F6), Color(0xFF0288D1)],
-                    tagColor: const Color(0xFF7B1FA2),
-                    icon: Icons.psychology_rounded,
+                  // Card 1: IIT Bombay (Golden Coral Stadium Pill)
+                  Positioned(
+                    top: startY + float * 0.8,
+                    child: Transform.translate(
+                      offset: const Offset(-8, 0),
+                      child: Transform.rotate(
+                        angle: -0.024,
+                        child: _buildCurvedPill(
+                          width: cardW,
+                          height: cardH,
+                          title: 'IIT Bombay',
+                          subtitle: 'AIR < 100 • CSE & AI',
+                          tag: 'Dream IIT',
+                          gradient: const [Color(0xFFFF9800), Color(0xFFFF5722)],
+                          tagColor: const Color(0xFFFF1744),
+                          icon: Icons.account_balance_rounded,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+
+                  // Card 2: IISc Bangalore (Platinum Pearl Stadium Pill)
+                  Positioned(
+                    top: startY + spacing + float * -0.7,
+                    child: Transform.translate(
+                      offset: const Offset(8, 0),
+                      child: Transform.rotate(
+                        angle: 0.022,
+                        child: _buildCurvedPill(
+                          width: cardW,
+                          height: cardH,
+                          title: 'IISc Bangalore',
+                          subtitle: 'AIR < 50 • M.Tech CSA',
+                          tag: 'AIR 1',
+                          gradient: const [Color(0xFFECEFF1), Color(0xFFCFD8DC)],
+                          tagColor: const Color(0xFFD81B60),
+                          icon: Icons.school_rounded,
+                          isDarkText: true,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Card 3: IIT Delhi (Azure Cyan Stadium Pill)
+                  Positioned(
+                    top: startY + spacing * 2 + float * 0.9,
+                    child: Transform.translate(
+                      offset: const Offset(-4, 0),
+                      child: Transform.rotate(
+                        angle: -0.014,
+                        child: _buildCurvedPill(
+                          width: cardW,
+                          height: cardH,
+                          title: 'IIT Delhi',
+                          subtitle: 'AIR < 250 • Data Science',
+                          tag: 'Target IIT',
+                          gradient: const [Color(0xFF29B6F6), Color(0xFF0288D1)],
+                          tagColor: const Color(0xFF7B1FA2),
+                          icon: Icons.psychology_rounded,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
 
   Widget _buildCurvedPill({
+    required double width,
+    required double height,
     required String title,
     required String subtitle,
     required String tag,
@@ -552,11 +879,11 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
     bool isDarkText = false,
   }) {
     return Container(
-      width: 275,
-      height: 60,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      width: width,
+      height: height,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32), // Heavily curved stadium pill
+        borderRadius: BorderRadius.circular(34), // Heavily curved stadium pill
         gradient: LinearGradient(
           colors: gradient,
           begin: Alignment.topLeft,
@@ -583,15 +910,15 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
         children: [
           // Icon emblem in circle
           Container(
-            width: 40,
-            height: 40,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isDarkText ? const Color(0xFF37474F) : Colors.black.withValues(alpha: 0.25),
             ),
-            child: Icon(icon, color: Colors.white, size: 22),
+            child: Icon(icon, color: Colors.white, size: 24),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 14),
 
           // Name and Rank
           Expanded(
@@ -604,16 +931,17 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
                   style: GoogleFonts.outfit(
                     color: isDarkText ? const Color(0xFF1E2024) : Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    fontSize: 15,
                   ),
                 ),
+                const SizedBox(height: 1),
                 Text(
                   subtitle,
                   style: GoogleFonts.outfit(
                     color: isDarkText
                         ? const Color(0xFF455A64)
                         : Colors.white.withValues(alpha: 0.85),
-                    fontSize: 11,
+                    fontSize: 11.5,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -623,13 +951,13 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
 
           // Minimal Pill Tag
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               color: tagColor,
               boxShadow: [
                 BoxShadow(
-                  color: tagColor.withValues(alpha: 0.4),
+                  color: tagColor.withValues(alpha: 0.45),
                   blurRadius: 6,
                   offset: const Offset(0, 2),
                 ),
@@ -639,7 +967,7 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
               tag,
               style: GoogleFonts.outfit(
                 color: Colors.white,
-                fontSize: 10.5,
+                fontSize: 11,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -783,21 +1111,11 @@ class AuthPurpleHeaderWithIIT extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 220,
       width: double.infinity,
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xFF6B38FF),
-            Color(0xFF7B2CBF),
-            Color(0xFF5A189A),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
       child: Stack(
+        clipBehavior: Clip.none,
         alignment: Alignment.center,
         children: [
           // Background ambient spotlight glow
@@ -821,7 +1139,7 @@ class AuthPurpleHeaderWithIIT extends StatelessWidget {
 
           // Central 3D IIT Monument Asset
           Positioned(
-            bottom: 8,
+            bottom: 4,
             child: IITMonument3DAsset(
               size: 140,
               targetIIT: targetIIT,

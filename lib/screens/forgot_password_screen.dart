@@ -59,48 +59,59 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final isDark = context.isDarkMode;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF6B38FF),
-      body: Column(
-        children: [
-          // Top Electric Purple Stage with 3D IIT Asset and Back Button
-          AuthPurpleHeaderWithIIT(
-            action: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.18),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.25),
-                  width: 1,
-                ),
-              ),
-              child: IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: Colors.white,
-                  size: 18,
-                ),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
-            targetIIT: 'GATE ACCESS',
-            airRank: 'SECURE RECOVERY',
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF6B38FF),
+              Color(0xFF7B2CBF),
+              Color(0xFF5A189A),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
-
-          // Bottom White Sheet (Matches Screen 4)
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF14151B) : Colors.white,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
-                    blurRadius: 26,
-                    offset: const Offset(0, -6),
+        ),
+        child: Column(
+          children: [
+            // Top Electric Purple Stage with 3D IIT Asset and Back Button
+            AuthPurpleHeaderWithIIT(
+              action: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withValues(alpha: 0.18),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.25),
+                    width: 1,
                   ),
-                ],
+                ),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                ),
               ),
+              targetIIT: 'GATE ACCESS',
+              airRank: 'SECURE RECOVERY',
+            ),
+
+            // Bottom White Sheet (Matches Screen 4)
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF14151B) : Colors.white,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
+                      blurRadius: 26,
+                      offset: const Offset(0, -6),
+                    ),
+                  ],
+                ),
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(26, 26, 26, 24),
@@ -264,6 +275,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           ),
         ],
       ),
-    );
+    ),
+  );
   }
 }

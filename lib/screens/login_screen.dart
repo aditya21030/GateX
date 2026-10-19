@@ -152,30 +152,41 @@ class _LoginScreenState extends State<LoginScreen> {
     final isDark = context.isDarkMode;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF6B38FF),
-      body: Column(
-        children: [
-          // Top Electric Purple Stage with 3D IIT Asset
-          const AuthPurpleHeaderWithIIT(
-            targetIIT: 'TARGET IIT',
-            airRank: 'GATE 2027',
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF6B38FF),
+              Color(0xFF7B2CBF),
+              Color(0xFF5A189A),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
+        ),
+        child: Column(
+          children: [
+            // Top Electric Purple Stage with 3D IIT Asset
+            const AuthPurpleHeaderWithIIT(
+              targetIIT: 'TARGET IIT',
+              airRank: 'GATE 2027',
+            ),
 
-          // Bottom White Sheet (Refined Neumorphic/Clean UI)
-          Expanded(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF14151B) : Colors.white,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
-                    blurRadius: 26,
-                    offset: const Offset(0, -6),
-                  ),
-                ],
-              ),
+            // Bottom Sheet with Sleek, Refined Top Curve
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF14151B) : Colors.white,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.08),
+                      blurRadius: 20,
+                      offset: const Offset(0, -4),
+                    ),
+                  ],
+                ),
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(26, 26, 26, 20),
@@ -428,6 +439,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ],
       ),
-    );
+    ),
+  );
   }
 }
