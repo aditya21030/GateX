@@ -1,0 +1,3 @@
+QuestionNumber,Section,Subject,Topic,QuestionText,Type,OptionA,OptionB,OptionC,OptionD,CorrectAnswer,Marks,Difficulty,Explanation,ImagePath
+1,General Aptitude,General Aptitude,Verbal Ability,The author's argument is fundamentally flawed because...,MCQ,It assumes causation from correlation,It lacks empirical evidence,It relies on anecdotal examples,It contradicts prior findings,A,1,Medium,Option A correctly identifies the logical fallacy.,
+15,Subject Core,Linear Algebra,Eigenvalues,Consider matrix $M = \begin{pmatrix} 2 & 1 \\ 0 & 3 \end{pmatrix}$. The trace of $M^3$ is...,NAT,,,,,35,2,Hard,Eigenvalues of M are 2 and 3. Eigenvalues of M^3 are 8 and 27. Trace = 8 + 27 = 35.,

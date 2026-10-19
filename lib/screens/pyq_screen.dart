@@ -9,6 +9,7 @@ import '../utils/math_markdown_builder.dart';
 import '../services/ad_service.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../widgets/virtual_calculator.dart';
+import '../widgets/question_discussion_sheet.dart';
 
 class PYQScreen extends StatefulWidget {
   const PYQScreen({super.key});
@@ -27,6 +28,41 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
   String _selectedYear = 'All';
   String _selectedDifficulty = 'All';
   bool _natOnly = false;
+
+  int get _activeFilterCount {
+    int count = 0;
+    if (_selectedSubject != 'All') count++;
+    if (_selectedYear != 'All') count++;
+    if (_selectedDifficulty != 'All') count++;
+    if (_natOnly) count++;
+    return count;
+  }
+
+  Widget _buildActiveFilterTag(String label, VoidCallback onRemove) {
+    return Container(
+      margin: const EdgeInsets.only(right: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: AppTheme.primary.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.primary.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(color: AppTheme.primary, fontSize: 11, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(width: 4),
+          InkWell(
+            onTap: onRemove,
+            child: const Icon(Icons.close_rounded, size: 13, color: AppTheme.primary),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -113,119 +149,112 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
             constraints: const BoxConstraints(maxWidth: 800),
             child: Column(
               children: [
-                // 1. SEARCH BAR
+                // 1. COMPACT SEARCH BAR WITH FILTER BUTTON
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
-                  child: TextField(
-                    controller: _searchController,
-                    style: TextStyle(color: context.textColor),
-                    decoration: InputDecoration(
-                      hintText: 'Search by keyword, topic, or year...',
-                      hintStyle: const TextStyle(color: AppTheme.textSecondary),
-                      prefixIcon: const Icon(Icons.search, color: AppTheme.textSecondary),
-                      suffixIcon: _searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear, color: AppTheme.textSecondary),
-                              onPressed: () {
-                                setState(() {
-                                  _searchController.clear();
-                                  _searchQuery = '';
-                                });
-                              },
-                            )
-                          : null,
-                      filled: true,
-                      fillColor: context.colorSurface,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    onChanged: (val) {
-                      setState(() {
-                        _searchQuery = val;
-                      });
-                    },
-                  ),
-                ),
-
-                // 2. FILTER CHIPS ROW
-                SizedBox(
-                  height: 38,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
                     children: [
-                      // NAT Drill Quick Toggle Pill
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          style: TextStyle(color: context.textColor),
+                          decoration: InputDecoration(
+                            hintText: 'Search by keyword, topic, or year...',
+                            hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+                            prefixIcon: const Icon(Icons.search, color: AppTheme.textSecondary, size: 20),
+                            suffixIcon: _searchQuery.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.clear, color: AppTheme.textSecondary, size: 18),
+                                    onPressed: () {
+                                      setState(() {
+                                        _searchController.clear();
+                                        _searchQuery = '';
+                                      });
+                                    },
+                                  )
+                                : null,
+                            filled: true,
+                            fillColor: context.colorSurface,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                          onChanged: (val) {
+                            setState(() {
+                              _searchQuery = val;
+                            });
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Filter Button with Badge
                       InkWell(
-                        onTap: () => setState(() => _natOnly = !_natOnly),
-                        borderRadius: BorderRadius.circular(20),
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 180),
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                        onTap: () => _showComprehensiveFilterSheet(subjectsList, yearsList, difficultiesList),
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          height: 48,
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
                           decoration: BoxDecoration(
-                            color: _natOnly ? AppTheme.secondary.withValues(alpha: 0.18) : context.colorSurface,
-                            borderRadius: BorderRadius.circular(20),
+                            color: _activeFilterCount > 0
+                                ? AppTheme.primary.withValues(alpha: 0.15)
+                                : context.colorSurface,
+                            borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: _natOnly ? AppTheme.secondary : AppTheme.textSecondary.withValues(alpha: 0.2),
-                              width: _natOnly ? 1.5 : 1.0,
+                              color: _activeFilterCount > 0
+                                  ? AppTheme.primary
+                                  : Colors.white.withValues(alpha: 0.08),
                             ),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.bolt_rounded, size: 14, color: _natOnly ? AppTheme.secondary : AppTheme.textSecondary),
-                              const SizedBox(width: 4),
-                              Text(
-                                'NAT Drills',
-                                style: TextStyle(
-                                  color: _natOnly ? AppTheme.secondary : context.textColor,
-                                  fontWeight: _natOnly ? FontWeight.bold : FontWeight.w600,
-                                  fontSize: 12,
-                                ),
+                              Icon(
+                                Icons.tune_rounded,
+                                size: 20,
+                                color: _activeFilterCount > 0 ? AppTheme.primary : AppTheme.textSecondary,
                               ),
+                              if (_activeFilterCount > 0) ...[
+                                const SizedBox(width: 6),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  decoration: const BoxDecoration(
+                                    color: AppTheme.primary,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Text(
+                                    '$_activeFilterCount',
+                                    style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
+                    ],
+                  ),
+                ),
 
-                      // Subject Dropdown Chip
-                      _buildFilterPill(
-                        title: 'Subject',
-                        items: subjectsList,
-                        selectedValue: _selectedSubject,
-                        onChanged: (val) {
-                          setState(() => _selectedSubject = val);
-                        },
-                      ),
-                      const SizedBox(width: 8),
-
-                      // Year Dropdown Chip
-                      _buildFilterPill(
-                        title: 'Year',
-                        items: yearsList,
-                        selectedValue: _selectedYear,
-                        onChanged: (val) {
-                          setState(() => _selectedYear = val);
-                        },
-                      ),
-                      const SizedBox(width: 8),
-
-                      // Difficulty Dropdown Chip
-                      _buildFilterPill(
-                        title: 'Difficulty',
-                        items: difficultiesList,
-                        selectedValue: _selectedDifficulty,
-                        onChanged: (val) {
-                          setState(() => _selectedDifficulty = val);
-                        },
-                      ),
-
-                      // Reset Filters Pill
-                      if (_selectedSubject != 'All' || _selectedYear != 'All' || _selectedDifficulty != 'All' || _natOnly) ...[
-                        const SizedBox(width: 8),
+                // 2. ACTIVE FILTER TAGS STRIP
+                if (_activeFilterCount > 0)
+                  Container(
+                    height: 34,
+                    margin: const EdgeInsets.only(bottom: 4),
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      children: [
+                        if (_natOnly)
+                          _buildActiveFilterTag('NAT Drills', () => setState(() => _natOnly = false)),
+                        if (_selectedSubject != 'All')
+                          _buildActiveFilterTag(_selectedSubject, () => setState(() => _selectedSubject = 'All')),
+                        if (_selectedYear != 'All')
+                          _buildActiveFilterTag(_selectedYear, () => setState(() => _selectedYear = 'All')),
+                        if (_selectedDifficulty != 'All')
+                          _buildActiveFilterTag(_selectedDifficulty, () => setState(() => _selectedDifficulty = 'All')),
                         InkWell(
                           onTap: () {
                             setState(() {
@@ -235,28 +264,73 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                               _natOnly = false;
                             });
                           },
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(16),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
                               color: AppTheme.error.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: AppTheme.error.withValues(alpha: 0.35)),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: AppTheme.error.withValues(alpha: 0.3)),
                             ),
                             child: const Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.close_rounded, size: 13, color: AppTheme.error),
+                                Icon(Icons.close_rounded, size: 12, color: AppTheme.error),
                                 SizedBox(width: 4),
-                                Text('Clear', style: TextStyle(color: AppTheme.error, fontSize: 11, fontWeight: FontWeight.bold)),
+                                Text('Clear All', style: TextStyle(color: AppTheme.error, fontSize: 11, fontWeight: FontWeight.bold)),
                               ],
                             ),
                           ),
                         ),
                       ],
-                    ],
+                    ),
+                  )
+                else
+                  // Quick selection pills when no filters are active
+                  SizedBox(
+                    height: 34,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      children: [
+                        InkWell(
+                          onTap: () => setState(() => _natOnly = true),
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: context.colorSurface,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.bolt_rounded, size: 14, color: AppTheme.secondary),
+                                SizedBox(width: 4),
+                                Text('NAT Drills', style: TextStyle(color: AppTheme.secondary, fontSize: 11.5, fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        _buildFilterPill(
+                          title: 'Subject',
+                          items: subjectsList,
+                          selectedValue: _selectedSubject,
+                          onChanged: (val) => setState(() => _selectedSubject = val),
+                        ),
+                        const SizedBox(width: 8),
+                        _buildFilterPill(
+                          title: 'Year',
+                          items: yearsList,
+                          selectedValue: _selectedYear,
+                          onChanged: (val) => setState(() => _selectedYear = val),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
                 const SizedBox(height: 6),
 
                 // 3. TOP TABS
@@ -266,7 +340,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                   decoration: BoxDecoration(
                     color: context.colorSurface,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppTheme.textSecondary.withOpacity(0.1)),
+                    border: Border.all(color: AppTheme.textSecondary.withValues(alpha: 0.1)),
                   ),
                   child: TabBar(
                     controller: _tabController,
@@ -362,6 +436,182 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
     );
   }
 
+  void _showComprehensiveFilterSheet(
+    List<String> subjectsList,
+    List<String> yearsList,
+    List<String> difficultiesList,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppTheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.78,
+              padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 36,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.white24,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Filter Questions', style: AppTheme.poppinsBold(fontSize: 16)),
+                      if (_activeFilterCount > 0)
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _selectedSubject = 'All';
+                              _selectedYear = 'All';
+                              _selectedDifficulty = 'All';
+                              _natOnly = false;
+                            });
+                            setSheetState(() {});
+                          },
+                          child: const Text('Reset All', style: TextStyle(color: AppTheme.error, fontSize: 12, fontWeight: FontWeight.bold)),
+                        ),
+                    ],
+                  ),
+                  const Divider(color: Colors.white12),
+                  Expanded(
+                    child: ListView(
+                      physics: const BouncingScrollPhysics(),
+                      children: [
+                        // 1. Quick Toggles
+                        const Text('QUESTION TYPE', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        FilterChip(
+                          selected: _natOnly,
+                          label: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.bolt_rounded, size: 14, color: AppTheme.secondary),
+                              SizedBox(width: 4),
+                              Text('NAT Questions Only (Numerical Answer Type)', style: TextStyle(fontSize: 12)),
+                            ],
+                          ),
+                          selectedColor: AppTheme.secondary.withValues(alpha: 0.2),
+                          checkmarkColor: AppTheme.secondary,
+                          onSelected: (val) {
+                            setState(() => _natOnly = val);
+                            setSheetState(() {});
+                          },
+                        ),
+                        const SizedBox(height: 16),
+
+                        // 2. Subject Filter
+                        const Text('SUBJECT', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 6,
+                          children: subjectsList.map((subj) {
+                            final isSel = _selectedSubject == subj;
+                            return ChoiceChip(
+                              label: Text(subj, style: TextStyle(fontSize: 12, color: isSel ? Colors.white : AppTheme.textSecondary)),
+                              selected: isSel,
+                              selectedColor: AppTheme.primary,
+                              backgroundColor: AppTheme.background,
+                              onSelected: (selected) {
+                                if (selected) {
+                                  setState(() => _selectedSubject = subj);
+                                  setSheetState(() {});
+                                }
+                              },
+                            );
+                          }).toList(),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // 3. Year Filter
+                        const Text('YEAR & SET', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 6,
+                          children: yearsList.take(12).map((yr) {
+                            final isSel = _selectedYear == yr;
+                            return ChoiceChip(
+                              label: Text(yr, style: TextStyle(fontSize: 12, color: isSel ? Colors.white : AppTheme.textSecondary)),
+                              selected: isSel,
+                              selectedColor: AppTheme.primary,
+                              backgroundColor: AppTheme.background,
+                              onSelected: (selected) {
+                                if (selected) {
+                                  setState(() => _selectedYear = yr);
+                                  setSheetState(() {});
+                                }
+                              },
+                            );
+                          }).toList(),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // 4. Difficulty
+                        const Text('DIFFICULTY', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: difficultiesList.map((diff) {
+                            final isSel = _selectedDifficulty == diff;
+                            return Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 3),
+                                child: ChoiceChip(
+                                  label: Center(child: Text(diff, style: TextStyle(fontSize: 11.5, color: isSel ? Colors.white : AppTheme.textSecondary))),
+                                  selected: isSel,
+                                  selectedColor: AppTheme.primary,
+                                  backgroundColor: AppTheme.background,
+                                  onSelected: (selected) {
+                                    if (selected) {
+                                      setState(() => _selectedDifficulty = diff);
+                                      setSheetState(() {});
+                                    }
+                                  },
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 46,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primary,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Apply Filters', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget _buildFilterPill({
     required String title,
     required List<String> items,
@@ -376,10 +626,10 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primary.withOpacity(0.12) : context.colorSurface,
+          color: isSelected ? AppTheme.primary.withValues(alpha: 0.12) : context.colorSurface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? AppTheme.primary : AppTheme.textSecondary.withOpacity(0.2),
+            color: isSelected ? AppTheme.primary : AppTheme.textSecondary.withValues(alpha: 0.2),
             width: isSelected ? 1.5 : 1.0,
           ),
         ),
@@ -787,7 +1037,7 @@ class _PYQCardState extends State<_PYQCard> {
             const Divider(height: 1, color: AppTheme.textSecondary),
             const SizedBox(height: 12),
 
-            // Card Footer: Done checkbox, show solution toggle
+            // Card Footer: Done checkbox, Discuss button, and show solution toggle
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -807,32 +1057,61 @@ class _PYQCardState extends State<_PYQCard> {
                       },
                     ),
                     const Text(
-                      'Mark as Solved',
-                      style: TextStyle(fontSize: 12, color: AppTheme.textSecondary, fontWeight: FontWeight.bold),
+                      'Mark Solved',
+                      style: TextStyle(fontSize: 11.5, color: AppTheme.textSecondary, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
 
-                // Show Solution toggle
-                TextButton.icon(
-                  onPressed: () {
-                    setState(() {
-                      _showSolution = !_showSolution;
-                    });
-                  },
-                  icon: Icon(
-                    _showSolution ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                    color: AppTheme.secondary,
-                    size: 18,
-                  ),
-                  label: Text(
-                    _showSolution ? 'Hide Solution' : 'Show Solution',
-                    style: const TextStyle(
-                      color: AppTheme.secondary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
+                Row(
+                  children: [
+                    // Discuss Button
+                    TextButton.icon(
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        visualDensity: VisualDensity.compact,
+                      ),
+                      onPressed: () {
+                        QuestionDiscussionSheet.show(context, pyq);
+                      },
+                      icon: const Icon(Icons.forum_outlined, color: AppTheme.primary, size: 16),
+                      label: const Text(
+                        'Discuss',
+                        style: TextStyle(
+                          color: AppTheme.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11.5,
+                        ),
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 4),
+
+                    // Show Solution toggle
+                    TextButton.icon(
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        visualDensity: VisualDensity.compact,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _showSolution = !_showSolution;
+                        });
+                      },
+                      icon: Icon(
+                        _showSolution ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                        color: AppTheme.secondary,
+                        size: 16,
+                      ),
+                      label: Text(
+                        _showSolution ? 'Hide Solution' : 'Solution',
+                        style: const TextStyle(
+                          color: AppTheme.secondary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11.5,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
