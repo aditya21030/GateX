@@ -191,15 +191,14 @@ class _ExamSelectionScreenState extends State<ExamSelectionScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 8),
-              // Header Icon
+              // Header 3D Asset
               Center(
-                child: NeuContainer(
-                  borderRadius: 24,
-                  padding: const EdgeInsets.all(16),
-                  child: const Icon(
-                    Icons.school_rounded,
-                    size: 40,
-                    color: AppTheme.accentPurple,
+                child: SizedBox(
+                  width: 80,
+                  height: 60,
+                  child: Image.asset(
+                    'assets/images/3d/badge_grad_cap.png',
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),

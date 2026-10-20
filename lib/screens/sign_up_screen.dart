@@ -212,8 +212,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   },
                 ),
               ),
-              targetIIT: 'IIT BOMBAY',
-              airRank: 'AIR 1 TARGET',
+              imageAsset: 'assets/images/3d/iit_delhi.png',
+              targetIIT: 'IIT DELHI GATE',
+              airRank: 'NEW ASPIRANT',
             ),
 
             // Bottom Sheet with Sleek, Refined Top Curve

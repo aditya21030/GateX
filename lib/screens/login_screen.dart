@@ -168,7 +168,8 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             // Top Electric Purple Stage with 3D IIT Asset
             const AuthPurpleHeaderWithIIT(
-              targetIIT: 'TARGET IIT',
+              imageAsset: 'assets/images/3d/iit_bombay.png',
+              targetIIT: 'IIT BOMBAY',
               airRank: 'GATE 2027',
             ),
 
