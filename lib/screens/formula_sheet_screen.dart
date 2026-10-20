@@ -15,6 +15,40 @@ class FormulaSheetScreen extends StatefulWidget {
 }
 
 class _FormulaSheetScreenState extends State<FormulaSheetScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _copyToClipboard(BuildContext context, String text, String label) {
+    HapticFeedback.selectionClick();
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle_rounded, color: AppTheme.accentMint, size: 18),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Copied "$label" formula to clipboard!',
+                style: GoogleFonts.outfit(fontWeight: FontWeight.w600, fontSize: 12.5),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: context.isDarkMode ? const Color(0xFF1E202B) : const Color(0xFF2D3142),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,12 +100,12 @@ class _FormulaSheetScreenState extends State<FormulaSheetScreen> {
           actions: [
             IconButton(
               icon: const Icon(Icons.share_rounded, size: 20, color: AppTheme.accentPurple),
-              tooltip: 'Share / Export Formulas',
+              tooltip: 'Share Formulas',
               onPressed: () {
                 HapticFeedback.selectionClick();
                 final exam = provider.activeExam ?? 'DA';
                 Share.share(
-                  'GATE $exam Complete Formula & Concept Cheatsheet by GateX.\nIncludes Linear Algebra, Calculus, Probability & Stats, ML/AI, and Aptitude formulas.\nDownload now on Google Play Store!',
+                  'GATE $exam Complete Formula & Concept Cheatsheet on GateX.\nIncludes Linear Algebra, Calculus, Probability & Stats, ML/AI, and Core Engineering formulas.\nDownload GateX now on Google Play!',
                   subject: 'GATE $exam Formula Cheatsheet',
                 );
               },
@@ -110,49 +144,162 @@ class _FormulaSheetScreenState extends State<FormulaSheetScreen> {
             ),
           ),
         ),
-        body: TabBarView(
-          children: isCSIT
-              ? [
-                  _buildCSITMathTab(context),
-                  _buildDigitalLogicTab(context),
-                  _buildCOATab(context),
-                  _buildCSITDSATab(context),
-                  _buildCSITAlgorithmsTab(context),
-                  _buildTOCTab(context),
-                  _buildCompilerTab(context),
-                  _buildOSTab(context),
-                  _buildCSITDBMSTab(context),
-                  _buildCNTab(context),
-                  _buildAptitudeTab(context),
-                ]
-              : [
-                  _buildProbabilityTab(context),
-                  _buildLinearAlgebraTab(context),
-                  _buildCalculusTab(context),
-                  _buildMLTab(context),
-                  _buildDBMSTab(context),
-                  _buildAITab(context),
-                  _buildDSATab(context),
-                  _buildAptitudeTab(context),
-                ],
+        body: Column(
+          children: [
+            _buildSearchBar(context),
+            Expanded(
+              child: TabBarView(
+                physics: const BouncingScrollPhysics(),
+                children: isCSIT
+                    ? [
+                        _buildCSITMathTab(context),
+                        _buildDigitalLogicTab(context),
+                        _buildCOATab(context),
+                        _buildCSITDSATab(context),
+                        _buildCSITAlgorithmsTab(context),
+                        _buildTOCTab(context),
+                        _buildCompilerTab(context),
+                        _buildOSTab(context),
+                        _buildCSITDBMSTab(context),
+                        _buildCNTab(context),
+                        _buildAptitudeTab(context),
+                      ]
+                    : [
+                        _buildProbabilityTab(context),
+                        _buildLinearAlgebraTab(context),
+                        _buildCalculusTab(context),
+                        _buildMLTab(context),
+                        _buildDBMSTab(context),
+                        _buildAITab(context),
+                        _buildDSATab(context),
+                        _buildAptitudeTab(context),
+                      ],
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildPlaceholderTab(BuildContext context, String subject) {
-    return _buildSubjectTab(context, [
-      _buildFormulaCard(
-        context,
-        title: subject,
-        items: [
-          _FormulaItem(
-            name: 'Coming Soon',
-            formula: '''Work in progress''', explanation: 'Detailed formulas for $subject will be added in a future update.',
+  Widget _buildSearchBar(BuildContext context) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 800),
+        child: NeuContainer(
+          isRecessed: true,
+          borderRadius: 14,
+          margin: const EdgeInsets.fromLTRB(16, 8, 16, 6),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+          child: Row(
+            children: [
+              Icon(Icons.search_rounded, size: 18, color: context.textSecondaryColor),
+              const SizedBox(width: 8),
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (val) => setState(() => _searchQuery = val),
+                  style: GoogleFonts.outfit(fontSize: 13, color: context.textColor),
+                  decoration: InputDecoration(
+                    hintText: 'Search formulas, theorems, derivations...',
+                    hintStyle: GoogleFonts.outfit(fontSize: 12, color: context.textSecondaryColor.withValues(alpha: 0.7)),
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                  ),
+                ),
+              ),
+              if (_searchQuery.isNotEmpty)
+                GestureDetector(
+                  onTap: () {
+                    _searchController.clear();
+                    setState(() => _searchQuery = '');
+                  },
+                  child: Icon(Icons.close_rounded, size: 16, color: context.textSecondaryColor),
+                ),
+            ],
           ),
-        ],
-      )
-    ]);
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubjectTab(BuildContext context, List<Widget> children) {
+    final query = _searchQuery.trim().toLowerCase();
+    List<Widget> filteredChildren = children;
+
+    if (query.isNotEmpty) {
+      filteredChildren = children.map((c) {
+        if (c is _FormulaCardGroup) {
+          final matchedItems = c.items.where((it) {
+            return it.name.toLowerCase().contains(query) ||
+                it.formula.toLowerCase().contains(query) ||
+                it.explanation.toLowerCase().contains(query) ||
+                c.title.toLowerCase().contains(query);
+          }).toList();
+          if (matchedItems.isNotEmpty) {
+            return _FormulaCardGroup(
+              title: c.title,
+              items: matchedItems,
+              onCopy: _copyToClipboard,
+            );
+          }
+          return const SizedBox.shrink();
+        }
+        return c;
+      }).where((w) => w is! SizedBox).toList();
+    }
+
+    if (filteredChildren.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.search_off_rounded, size: 48, color: context.textSecondaryColor),
+              const SizedBox(height: 12),
+              Text(
+                'No formulas found for "$_searchQuery"',
+                style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.bold, color: context.textColor),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Try searching another keyword (e.g. Bayes, Eigen, TCP, Turing, LCS)',
+                style: GoogleFonts.outfit(fontSize: 12, color: context.textSecondaryColor),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: filteredChildren,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFormulaCard(
+    BuildContext context, {
+    required String title,
+    required List<_FormulaItem> items,
+  }) {
+    return _FormulaCardGroup(
+      title: title,
+      items: items,
+      onCopy: _copyToClipboard,
+    );
   }
 
   Widget _buildCSITMathTab(BuildContext context) {
@@ -518,60 +665,6 @@ DNS: UDP 53''', explanation: 'Standard port numbers.'),
         ]
       )
     ]);
-  }
-
-  void _copyToClipboard(BuildContext context, String text, String label) {
-    HapticFeedback.selectionClick();
-    Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.check_circle_rounded, color: AppTheme.accentMint, size: 18),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                'Copied $label formula to clipboard!',
-                style: GoogleFonts.outfit(fontWeight: FontWeight.w600, fontSize: 12.5),
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: context.isDarkMode ? const Color(0xFF1E202B) : const Color(0xFF2D3142),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
-  Widget _buildSubjectTab(BuildContext context, List<Widget> children) {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Center(
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 800),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: children,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFormulaCard(
-    BuildContext context, {
-    required String title,
-    required List<_FormulaItem> items,
-  }) {
-    return _FormulaCardGroup(
-      title: title,
-      items: items,
-      onCopy: _copyToClipboard,
-    );
   }
 
   Widget _buildProbabilityTab(BuildContext context) {
@@ -1531,9 +1624,6 @@ DNS: UDP 53''', explanation: 'Standard port numbers.'),
 
 }
 
-
-
-
 class _FormulaDisplayBox extends StatefulWidget {
   final String formula;
   const _FormulaDisplayBox({required this.formula});
@@ -1553,37 +1643,25 @@ class _FormulaDisplayBoxState extends State<_FormulaDisplayBox> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: context.isDarkMode ? const Color(0xFF0F1523) : const Color(0xFFF1F5F9),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: context.isDarkMode
-              ? Colors.white.withValues(alpha: 0.08)
-              : Colors.black.withValues(alpha: 0.06),
-        ),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+    return NeuContainer(
+      isRecessed: true,
+      borderRadius: 12,
+      padding: const EdgeInsets.all(12),
       child: RawScrollbar(
         controller: _scrollController,
-        thumbColor: AppTheme.accentPurple.withValues(alpha: 0.4),
+        thumbColor: AppTheme.accentPurple.withValues(alpha: 0.35),
         radius: const Radius.circular(4),
-        thickness: 3,
-        thumbVisibility: false,
+        thickness: 4,
+        thumbVisibility: true,
         child: SingleChildScrollView(
           controller: _scrollController,
           scrollDirection: Axis.horizontal,
           physics: const BouncingScrollPhysics(),
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 2.0),
+            padding: const EdgeInsets.only(bottom: 6.0),
             child: Text(
               widget.formula,
-              style: GoogleFonts.jetBrainsMono(
-                fontSize: 12.5,
-                fontWeight: FontWeight.w500,
-                height: 1.5,
-                color: context.isDarkMode ? const Color(0xFFE2E8F0) : const Color(0xFF1E293B),
-              ),
+              style: AppTheme.monospaceStyle(fontSize: 12.0, color: context.textColor),
               softWrap: false,
             ),
           ),
@@ -1592,7 +1670,6 @@ class _FormulaDisplayBoxState extends State<_FormulaDisplayBox> {
     );
   }
 }
-
 
 class _FormulaItem {
   final String name;
@@ -1620,72 +1697,42 @@ class _FormulaCardGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NeuContainer(
-      margin: const EdgeInsets.only(bottom: 16),
-      borderRadius: 18,
-      padding: const EdgeInsets.all(16.0),
+      margin: const EdgeInsets.only(bottom: 14),
+      borderRadius: 20,
+      padding: const EdgeInsets.all(18.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Container(
-                      width: 4,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [AppTheme.accentPurple, Color(0xFF8B5CF6)],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        title.toUpperCase(),
-                        style: GoogleFonts.outfit(
-                          color: AppTheme.accentPurple,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1.1,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
+              Container(
+                width: 4,
+                height: 14,
+                decoration: BoxDecoration(
+                  color: AppTheme.accentPurple,
+                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: AppTheme.accentPurple.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '${items.length} ${items.length == 1 ? "formula" : "formulas"}',
-                  style: GoogleFonts.outfit(
-                    color: AppTheme.accentPurple,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
+              const SizedBox(width: 8),
+              Text(
+                title.toUpperCase(),
+                style: GoogleFonts.outfit(
+                  color: AppTheme.accentPurple,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.1,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 14),
           ...items.asMap().entries.map((entry) {
-            final int index = entry.key;
-            final _FormulaItem item = entry.value;
-            final bool isLast = index == items.length - 1;
+            final idx = entry.key;
+            final item = entry.value;
+            final isLast = idx == items.length - 1;
 
             return Padding(
-              padding: EdgeInsets.only(bottom: isLast ? 0.0 : 16.0),
+              padding: EdgeInsets.only(bottom: isLast ? 0 : 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1697,84 +1744,35 @@ class _FormulaCardGroup extends StatelessWidget {
                           item.name,
                           style: GoogleFonts.outfit(
                             color: context.textColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(8),
-                          onTap: () => onCopy(context, item.formula, item.name),
-                          child: Padding(
-                            padding: const EdgeInsets.all(6.0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.copy_rounded,
-                                  size: 13,
-                                  color: AppTheme.accentPurple.withValues(alpha: 0.8),
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  'Copy',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppTheme.accentPurple.withValues(alpha: 0.8),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                      IconButton(
+                        icon: const Icon(Icons.copy_rounded, size: 15, color: AppTheme.accentPurple),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        tooltip: 'Copy Formula',
+                        onPressed: () => onCopy(context, item.formula, item.name),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
                   _FormulaDisplayBox(formula: item.formula),
                   if (item.explanation.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-                      decoration: BoxDecoration(
-                        color: context.isDarkMode
-                            ? Colors.white.withValues(alpha: 0.04)
-                            : Colors.black.withValues(alpha: 0.03),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: context.isDarkMode
-                              ? Colors.white.withValues(alpha: 0.06)
-                              : Colors.black.withValues(alpha: 0.04),
-                        ),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.lightbulb_outline_rounded,
-                            size: 13,
-                            color: Colors.amber.shade600,
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              item.explanation,
-                              style: TextStyle(
-                                color: context.textColor.withValues(alpha: 0.7),
-                                fontSize: 11.5,
-                                height: 1.35,
-                              ),
-                            ),
-                          ),
-                        ],
+                    const SizedBox(height: 6),
+                    Text(
+                      item.explanation,
+                      style: GoogleFonts.outfit(
+                        color: context.textSecondaryColor,
+                        fontSize: 11.5,
+                        height: 1.35,
                       ),
                     ),
                   ],
                   if (!isLast) ...[
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 14),
                     Divider(
                       height: 1,
                       thickness: 0.5,
@@ -1792,5 +1790,3 @@ class _FormulaCardGroup extends StatelessWidget {
     );
   }
 }
-
-

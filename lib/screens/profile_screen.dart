@@ -28,8 +28,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    _nameController.text = authProvider.isLoggedIn ? authProvider.userName : 'Gate Aspirant';
-    _emailController.text = authProvider.isLoggedIn ? authProvider.userEmail : 'guest@gatex.app';
+    _nameController.text = authProvider.isLoggedIn ? authProvider.userName : 'Guest Aspirant';
+    _emailController.text = authProvider.isLoggedIn ? authProvider.userEmail : 'Offline Mode (Local Storage)';
   }
 
   @override
@@ -198,6 +198,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   isPro: isPro,
                   streak: appProvider.streak,
                 ),
+                if (!authProvider.isLoggedIn) ...[
+                  const SizedBox(height: 14),
+                  NeuContainer(
+                    borderRadius: 18,
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const NeuIconTile(
+                              icon: Icons.cloud_sync_rounded,
+                              iconColor: AppTheme.accentPurple,
+                              size: 38,
+                              iconSize: 20,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Sync Across Devices',
+                                    style: AppTheme.poppinsBold(fontSize: 13.5, color: context.textColor),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'Sign in to sync your solved PYQs, streak, and CBT mock scores.',
+                                    style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        NeuButton(
+                          isPrimary: true,
+                          borderRadius: 12,
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          onPressed: () {
+                            HapticFeedback.selectionClick();
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+                          },
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.login_rounded, size: 16, color: Colors.white),
+                              SizedBox(width: 8),
+                              Text('Sign In / Register', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 20),
 
                 // 2. "YOUR STATISTICS 📊" 2x3 TACTILE GRID (from Reference Image Screen 13)
@@ -431,23 +488,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                       Divider(height: 1, color: context.colorBorder),
-                      ListTile(
-                        leading: const NeuIconTile(
-                          icon: Icons.lock_outline_rounded,
-                          iconColor: AppTheme.secondary,
-                          size: 36,
-                          iconSize: 18,
+                      if (authProvider.isLoggedIn)
+                        ListTile(
+                          leading: const NeuIconTile(
+                            icon: Icons.lock_outline_rounded,
+                            iconColor: AppTheme.secondary,
+                            size: 36,
+                            iconSize: 18,
+                          ),
+                          title: Text('Change Password', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor)),
+                          trailing: Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor, size: 18),
+                          onTap: () => _showPasswordSheet(context),
+                        )
+                      else
+                        ListTile(
+                          leading: const NeuIconTile(
+                            icon: Icons.login_rounded,
+                            iconColor: AppTheme.accentPurple,
+                            size: 36,
+                            iconSize: 18,
+                          ),
+                          title: Text('Account Login / Register', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor)),
+                          subtitle: Text('Sync progress to the cloud', style: TextStyle(color: context.textSecondaryColor, fontSize: 11)),
+                          trailing: Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor, size: 18),
+                          onTap: () {
+                            HapticFeedback.selectionClick();
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+                          },
                         ),
-                        title: Text('Change Password', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor)),
-                        trailing: Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor, size: 18),
-                        onTap: () => _showPasswordSheet(context),
-                      ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 24),
 
-                // 6. LOG OUT ACTION
+                // 6. LOG OUT / SIGN IN ACTION
                 if (authProvider.isLoggedIn)
                   NeuButton(
                     onPressed: () => _handleLogout(context, authProvider, appProvider),
@@ -460,6 +534,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Text(
                           'Log Out',
                           style: TextStyle(color: AppTheme.accentCoral, fontWeight: FontWeight.bold, fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  NeuButton(
+                    isPrimary: true,
+                    onPressed: () {
+                      HapticFeedback.selectionClick();
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+                    },
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.login_rounded, color: Colors.white, size: 18),
+                        SizedBox(width: 8),
+                        Text(
+                          'Sign In / Register',
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
                         ),
                       ],
                     ),

@@ -1,63 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:markdown/markdown.dart' as md;
-import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
-import '../providers/app_provider.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
-import '../utils/math_markdown_builder.dart';
 import '../widgets/neu_widgets.dart';
-
-class CommunityPost {
-  final String id;
-  final String authorName;
-  final bool isPro;
-  final String channel;
-  final String title;
-  final String content;
-  int upvotes;
-  bool isUpvoted;
-  bool isSolved;
-  int replyCount;
-  final DateTime createdAt;
-  final List<CommunityReply> replies;
-
-  CommunityPost({
-    required this.id,
-    required this.authorName,
-    this.isPro = false,
-    required this.channel,
-    required this.title,
-    required this.content,
-    this.upvotes = 0,
-    this.isUpvoted = false,
-    this.isSolved = false,
-    this.replyCount = 0,
-    required this.createdAt,
-    this.replies = const [],
-  });
-}
-
-class CommunityReply {
-  final String id;
-  final String authorName;
-  final bool isPro;
-  final String content;
-  int upvotes;
-  bool isUpvoted;
-  final DateTime createdAt;
-
-  CommunityReply({
-    required this.id,
-    required this.authorName,
-    this.isPro = false,
-    required this.content,
-    this.upvotes = 0,
-    this.isUpvoted = false,
-    required this.createdAt,
-  });
-}
 
 class CommunityScreen extends StatefulWidget {
   const CommunityScreen({super.key});
@@ -67,961 +14,596 @@ class CommunityScreen extends StatefulWidget {
 }
 
 class _CommunityScreenState extends State<CommunityScreen> {
-  String _selectedChannel = '#All-Channels';
-  String _selectedFilter = 'All'; // 'All', 'Unresolved', 'Most Upvoted', 'PRO Rankers'
-  final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
-
-  final List<String> _channels = [
-    '#All-Channels',
-    '#Machine-Learning-AI',
-    '#Linear-Algebra-Calculus',
-    '#DSA-Programming',
-    '#General-Aptitude-Tricks',
-    '#Mock-Exam-Strategy',
-  ];
-
-  late List<CommunityPost> _posts;
-
-  @override
-  void initState() {
-    super.initState();
-    _posts = _getSeedPosts();
-  }
+  bool _isWaitlistJoined = false;
+  final TextEditingController _doubtController = TextEditingController();
 
   @override
   void dispose() {
-    _searchController.dispose();
+    _doubtController.dispose();
     super.dispose();
   }
 
-  List<CommunityPost> _getSeedPosts() {
-    return [
-      CommunityPost(
-        id: 'post_1',
-        authorName: 'Arjun Sharma',
-        isPro: true,
-        channel: '#Machine-Learning-AI',
-        title: 'Bias vs Variance tradeoff in SVM with RBF Kernel',
-        content: r'When $\gamma$ in Gaussian RBF kernel is increased, does model variance increase or decrease? My calculation shows that higher $\gamma$ makes the Gaussian bell sharper, leading to severe overfitting (higher variance). Can someone verify this intuition?',
-        upvotes: 38,
-        isUpvoted: false,
-        isSolved: true,
-        replyCount: 4,
-        createdAt: DateTime.now().subtract(const Duration(hours: 3)),
-        replies: [
-          CommunityReply(
-            id: 'rep_1',
-            authorName: 'Pooja Iyer (AIR 42 DA)',
-            isPro: true,
-            content: r'Your intuition is 100% correct! High $\gamma = 1/(2\sigma^2)$ implies very small $\sigma$. Each training point gets its own narrow peak, which causes high variance and low bias (overfitting). Lower $\gamma$ makes it smoother (higher bias).',
-            upvotes: 19,
-            createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+  Future<void> _openLink(BuildContext context, String url, String title) async {
+    HapticFeedback.selectionClick();
+    final uri = Uri.parse(url);
+    try {
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        await Clipboard.setData(ClipboardData(text: url));
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('$title link copied to clipboard!'),
+              backgroundColor: AppTheme.accentPurple,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      }
+    } catch (_) {
+      await Clipboard.setData(ClipboardData(text: url));
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$title link copied to clipboard!'),
+            backgroundColor: AppTheme.accentPurple,
+            behavior: SnackBarBehavior.floating,
           ),
-          CommunityReply(
-            id: 'rep_2',
-            authorName: 'Rohit Verma',
-            isPro: false,
-            content: r'Remember the shortcut for GATE DA: $\gamma \uparrow \implies$ Overfitting $\implies$ High Variance. $C \uparrow \implies$ Low tolerance for errors $\implies$ High Variance.',
-            upvotes: 12,
-            createdAt: DateTime.now().subtract(const Duration(hours: 1)),
-          ),
-        ],
-      ),
-      CommunityPost(
-        id: 'post_2',
-        authorName: 'Neha Deshmukh',
-        isPro: false,
-        channel: '#Linear-Algebra-Calculus',
-        title: r'Shortcut to find Eigenvalues of 3x3 companion matrix',
-        content: r'Is there a trick to find eigenvalues when matrix is in companion form without computing $\det(A - \lambda I) = 0$ manually? Takes more than 3 minutes in CBT test.',
-        upvotes: 24,
-        isUpvoted: false,
-        isSolved: true,
-        replyCount: 2,
-        createdAt: DateTime.now().subtract(const Duration(hours: 7)),
-        replies: [
-          CommunityReply(
-            id: 'rep_3',
-            authorName: 'Devansh K.',
-            isPro: true,
-            content: r'For any companion matrix, the characteristic polynomial coefficients are directly read from the last row or column! $\lambda^n + c_{n-1}\lambda^{n-1} + \dots + c_0 = 0$. Also check $\text{Trace}(A) = \sum \lambda_i$ and $\det(A) = \prod \lambda_i$ first to eliminate options in 20 seconds.',
-            upvotes: 15,
-            createdAt: DateTime.now().subtract(const Duration(hours: 5)),
-          ),
-        ],
-      ),
-      CommunityPost(
-        id: 'post_3',
-        authorName: 'Karan Mehra',
-        isPro: true,
-        channel: '#General-Aptitude-Tricks',
-        title: 'Spatial Aptitude - Paper Folding 3D visualization tip',
-        content: 'For the paper folding and cutting questions (2 Marks guaranteed in GA): do not try to mentally simulate all 3 folds at once. Unfold step-by-step from the last cut with mirror reflections along each crease line.',
-        upvotes: 45,
-        isUpvoted: true,
-        isSolved: true,
-        replyCount: 3,
-        createdAt: DateTime.now().subtract(const Duration(days: 1)),
-        replies: [
-          CommunityReply(
-            id: 'rep_4',
-            authorName: 'Ananya Roy',
-            isPro: false,
-            content: 'Brilliant tip! Mirror reflection across fold line saved 2 marks for me in the last test.',
-            upvotes: 8,
-            createdAt: DateTime.now().subtract(const Duration(hours: 18)),
-          ),
-        ],
-      ),
-      CommunityPost(
-        id: 'post_4',
-        authorName: 'Siddharth Rao',
-        isPro: false,
-        channel: '#Mock-Exam-Strategy',
-        title: 'How do you handle NAT questions in the last 30 minutes?',
-        content: 'I noticed I make silly calculation slips in NAT questions under time pressure. Should I attempt NATs first or MCQs first?',
-        upvotes: 18,
-        isUpvoted: false,
-        isSolved: false,
-        replyCount: 5,
-        createdAt: DateTime.now().subtract(const Duration(days: 2)),
-        replies: [
-          CommunityReply(
-            id: 'rep_5',
-            authorName: 'Kunal Patil',
-            isPro: true,
-            content: 'Strategy: NAT has NO negative marking! Never leave a NAT blank if you can reasonably estimate. But attempt high-confidence MCQs in Round 1 (first 80 mins), and save complex 2M NATs for Round 2 so you do not rush the arithmetic.',
-            upvotes: 14,
-            createdAt: DateTime.now().subtract(const Duration(days: 1)),
-          ),
-        ],
-      ),
-    ];
-  }
-
-  // Anti-Spam Validator
-  bool _containsSpam(String text) {
-    final spamRegex = RegExp(
-      r'(t\.me\/|telegram\.me\/|chat\.whatsapp\.com|wa\.me\/|https?:\/\/|www\.)',
-      caseSensitive: false,
-    );
-    final phoneRegex = RegExp(r'\b\d{10,12}\b');
-    return spamRegex.hasMatch(text) || phoneRegex.hasMatch(text);
-  }
-
-  void _openNewPostSheet() {
-    final titleController = TextEditingController();
-    final contentController = TextEditingController();
-    String selectedChannel = _selectedChannel == '#All-Channels' ? '#Machine-Learning-AI' : _selectedChannel;
-    String? errorMessage;
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppTheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setSheetState) {
-            return Padding(
-              padding: EdgeInsets.only(
-                left: 18,
-                right: 18,
-                top: 20,
-                bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Ask Doubt / Share Shortcut',
-                          style: AppTheme.poppinsBold(fontSize: 18),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.close_rounded, size: 20, color: Colors.white70),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    // Channel picker
-                    DropdownButtonFormField<String>(
-                      value: selectedChannel,
-                      dropdownColor: AppTheme.surface,
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
-                      decoration: InputDecoration(
-                        labelText: 'Select Channel',
-                        labelStyle: const TextStyle(color: AppTheme.secondary),
-                        filled: true,
-                        fillColor: AppTheme.background,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                      ),
-                      items: _channels.where((c) => c != '#All-Channels').map((ch) {
-                        return DropdownMenuItem(value: ch, child: Text(ch));
-                      }).toList(),
-                      onChanged: (val) {
-                        if (val != null) {
-                          setSheetState(() => selectedChannel = val);
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    // Title
-                    TextField(
-                      controller: titleController,
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
-                      decoration: InputDecoration(
-                        hintText: 'Concise Question or Concept Title',
-                        hintStyle: const TextStyle(color: AppTheme.textSecondary),
-                        filled: true,
-                        fillColor: AppTheme.background,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    // Content
-                    TextField(
-                      controller: contentController,
-                      maxLines: 4,
-                      style: const TextStyle(color: Colors.white, fontSize: 14),
-                      decoration: InputDecoration(
-                        hintText: 'Explain your doubt or solution...\nTip: Wrap math in \$...\$ (e.g. \$x^2 + y^2 = 1\$)',
-                        hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
-                        filled: true,
-                        fillColor: AppTheme.background,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                        contentPadding: const EdgeInsets.all(12),
-                      ),
-                    ),
-                    if (errorMessage != null) ...[
-                      const SizedBox(height: 10),
-                      Text(
-                        errorMessage!,
-                        style: const TextStyle(color: AppTheme.error, fontSize: 12, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                    const SizedBox(height: 16),
-                    // Guidelines Note
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.04),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Row(
-                        children: [
-                          Icon(Icons.shield_outlined, size: 16, color: AppTheme.secondary),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Strict zero-spam policy: External links, phone numbers, and promotion are automatically filtered.',
-                              style: TextStyle(color: AppTheme.textSecondary, fontSize: 11),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primary,
-                        minimumSize: const Size(double.infinity, 48),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      ),
-                      onPressed: () {
-                        final title = titleController.text.trim();
-                        final content = contentController.text.trim();
-
-                        if (title.length < 8) {
-                          setSheetState(() => errorMessage = 'Title must be at least 8 characters long.');
-                          return;
-                        }
-                        if (content.length < 15) {
-                          setSheetState(() => errorMessage = 'Description must be at least 15 characters long.');
-                          return;
-                        }
-                        if (_containsSpam(title) || _containsSpam(content)) {
-                          setSheetState(() => errorMessage = 'External links, promo codes, and phone numbers are strictly prohibited.');
-                          return;
-                        }
-
-                        // Add post
-                        final newPost = CommunityPost(
-                          id: 'post_${DateTime.now().millisecondsSinceEpoch}',
-                          authorName: 'You (Aspirant)',
-                          isPro: Provider.of<AppProvider>(context, listen: false).isPro,
-                          channel: selectedChannel,
-                          title: title,
-                          content: content,
-                          createdAt: DateTime.now(),
-                        );
-
-                        setState(() {
-                          _posts.insert(0, newPost);
-                        });
-
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(this.context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Doubt posted successfully! Peer rankers will reply shortly.'),
-                            backgroundColor: AppTheme.success,
-                          ),
-                        );
-                      },
-                      child: const Text('Post Doubt to Community', style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
         );
-      },
-    );
+      }
+    }
   }
 
-  void _openThreadDetail(CommunityPost post) {
-    final replyController = TextEditingController();
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppTheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  void _shareDoubt(BuildContext context) {
+    final text = _doubtController.text.trim();
+    if (text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter your question or doubt first.'),
+          backgroundColor: AppTheme.error,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    final buffer = StringBuffer();
+    buffer.writeln('❓ *GATE DA/CSIT Doubt*');
+    buffer.writeln('');
+    buffer.writeln(text);
+    buffer.writeln('');
+    buffer.writeln('Posted via GateX Community Hub');
+
+    Share.share(buffer.toString());
+    HapticFeedback.mediumImpact();
+  }
+
+  void _joinWaitlist() {
+    HapticFeedback.heavyImpact();
+    setState(() => _isWaitlistJoined = true);
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'You\'re on the In-App Discussion waitlist! Priority invite arriving in Phase 2.',
+                style: GoogleFonts.outfit(fontWeight: FontWeight.w600, fontSize: 13),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: AppTheme.accentMint,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 4),
       ),
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setSheetState) {
-            return Container(
-              height: MediaQuery.of(context).size.height * 0.88,
-              padding: EdgeInsets.only(
-                left: 16,
-                right: 16,
-                top: 16,
-                bottom: MediaQuery.of(context).viewInsets.bottom + 12,
-              ),
-              child: Column(
-                children: [
-                  // Top bar
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primary.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          post.channel,
-                          style: const TextStyle(color: AppTheme.primary, fontSize: 11, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.close_rounded, size: 20, color: Colors.white70),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  // Thread Title & Question
-                  Expanded(
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 14,
-                                backgroundColor: AppTheme.primary.withValues(alpha: 0.3),
-                                child: Text(
-                                  post.authorName.isNotEmpty ? post.authorName[0] : 'U',
-                                  style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                post.authorName,
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                              ),
-                              if (post.isPro) ...[
-                                const SizedBox(width: 6),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFFFB300).withValues(alpha: 0.18),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: const Text('PRO', style: TextStyle(color: Color(0xFFFFB300), fontSize: 9, fontWeight: FontWeight.bold)),
-                                ),
-                              ],
-                              const Spacer(),
-                              Text(
-                                DateFormat('MMM d, h:mm a').format(post.createdAt),
-                                style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            post.title,
-                            style: AppTheme.poppinsBold(fontSize: 16),
-                          ),
-                          const SizedBox(height: 10),
-                          MarkdownBody(
-                            data: post.content,
-                            selectable: true,
-                            styleSheet: MarkdownStyleSheet(
-                              p: const TextStyle(color: Colors.white, fontSize: 14, height: 1.45),
-                            ),
-                            extensionSet: md.ExtensionSet(
-                              [BlockMathSyntax(), ...md.ExtensionSet.gitHubFlavored.blockSyntaxes],
-                              [InlineMathSyntax(), ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes],
-                            ),
-                            builders: {
-                              'math': MathElementBuilder(),
-                              'block_math': BlockMathElementBuilder(),
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          const Divider(color: Colors.white12),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '${post.replies.length} Peer Solutions & Replies',
-                                style: AppTheme.poppinsBold(fontSize: 13, color: Colors.white70),
-                              ),
-                              InkWell(
-                                onTap: () {
-                                  HapticFeedback.selectionClick();
-                                  setSheetState(() {
-                                    if (post.isUpvoted) {
-                                      post.upvotes--;
-                                      post.isUpvoted = false;
-                                    } else {
-                                      post.upvotes++;
-                                      post.isUpvoted = true;
-                                    }
-                                  });
-                                  setState(() {});
-                                },
-                                borderRadius: BorderRadius.circular(8),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: post.isUpvoted ? AppTheme.secondary.withValues(alpha: 0.2) : Colors.white.withValues(alpha: 0.05),
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(color: post.isUpvoted ? AppTheme.secondary : Colors.transparent),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        post.isUpvoted ? Icons.thumb_up_alt_rounded : Icons.thumb_up_alt_outlined,
-                                        size: 14,
-                                        color: post.isUpvoted ? AppTheme.secondary : Colors.white70,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        '${post.upvotes}',
-                                        style: TextStyle(
-                                          color: post.isUpvoted ? AppTheme.secondary : Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          if (post.replies.isEmpty) ...[
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 24),
-                              child: Center(
-                                child: Text(
-                                  'No solutions yet. Be the first to share your concept or shortcut!',
-                                  style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
-                                ),
-                              ),
-                            ),
-                          ] else ...[
-                            ...post.replies.map((rep) {
-                              return Container(
-                                margin: const EdgeInsets.only(bottom: 12),
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: AppTheme.background,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        CircleAvatar(
-                                          radius: 11,
-                                          backgroundColor: AppTheme.secondary.withValues(alpha: 0.25),
-                                          child: Text(
-                                            rep.authorName.isNotEmpty ? rep.authorName[0] : 'P',
-                                            style: const TextStyle(color: AppTheme.secondary, fontSize: 10, fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          rep.authorName,
-                                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                                        ),
-                                        if (rep.isPro) ...[
-                                          const SizedBox(width: 5),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xFFFFB300).withValues(alpha: 0.15),
-                                              borderRadius: BorderRadius.circular(3),
-                                            ),
-                                            child: const Text('PRO', style: TextStyle(color: Color(0xFFFFB300), fontSize: 8, fontWeight: FontWeight.bold)),
-                                          ),
-                                        ],
-                                        const Spacer(),
-                                        Text(
-                                          DateFormat('h:mm a').format(rep.createdAt),
-                                          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    MarkdownBody(
-                                      data: rep.content,
-                                      selectable: true,
-                                      styleSheet: MarkdownStyleSheet(
-                                        p: const TextStyle(color: Colors.white70, fontSize: 13, height: 1.4),
-                                      ),
-                                      extensionSet: md.ExtensionSet(
-                                        [BlockMathSyntax(), ...md.ExtensionSet.gitHubFlavored.blockSyntaxes],
-                                        [InlineMathSyntax(), ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes],
-                                      ),
-                                      builders: {
-                                        'math': MathElementBuilder(),
-                                        'block_math': BlockMathElementBuilder(),
-                                      },
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Align(
-                                      alignment: Alignment.centerRight,
-                                      child: InkWell(
-                                        onTap: () {
-                                          HapticFeedback.selectionClick();
-                                          setSheetState(() {
-                                            if (rep.isUpvoted) {
-                                              rep.upvotes--;
-                                              rep.isUpvoted = false;
-                                            } else {
-                                              rep.upvotes++;
-                                              rep.isUpvoted = true;
-                                            }
-                                          });
-                                        },
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(
-                                              rep.isUpvoted ? Icons.thumb_up_alt_rounded : Icons.thumb_up_alt_outlined,
-                                              size: 13,
-                                              color: rep.isUpvoted ? AppTheme.secondary : AppTheme.textSecondary,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              '${rep.upvotes}',
-                                              style: TextStyle(
-                                                color: rep.isUpvoted ? AppTheme.secondary : AppTheme.textSecondary,
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
-                  const Divider(height: 1, color: Colors.white12),
-                  const SizedBox(height: 8),
-                  // Reply input
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: replyController,
-                          style: const TextStyle(color: Colors.white, fontSize: 13),
-                          decoration: InputDecoration(
-                            hintText: 'Write a solution or explanation...',
-                            hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
-                            filled: true,
-                            fillColor: AppTheme.background,
-                            isDense: true,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      IconButton(
-                        style: IconButton.styleFrom(
-                          backgroundColor: AppTheme.secondary,
-                          foregroundColor: Colors.black,
-                        ),
-                        icon: const Icon(Icons.send_rounded, size: 18),
-                        onPressed: () {
-                          final text = replyController.text.trim();
-                          if (text.isEmpty) return;
-                          if (_containsSpam(text)) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Spam or external links detected.')),
-                            );
-                            return;
-                          }
-
-                          final newReply = CommunityReply(
-                            id: 'rep_${DateTime.now().millisecondsSinceEpoch}',
-                            authorName: 'You',
-                            isPro: Provider.of<AppProvider>(context, listen: false).isPro,
-                            content: text,
-                            createdAt: DateTime.now(),
-                          );
-
-                          setSheetState(() {
-                            post.replies.add(newReply);
-                            post.replyCount++;
-                          });
-                          setState(() {});
-                          replyController.clear();
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    // Filter posts
-    final filteredPosts = _posts.where((p) {
-      if (_selectedChannel != '#All-Channels' && p.channel != _selectedChannel) {
-        return false;
-      }
-      if (_searchQuery.isNotEmpty) {
-        final q = _searchQuery.toLowerCase();
-        if (!p.title.toLowerCase().contains(q) && !p.content.toLowerCase().contains(q)) {
-          return false;
-        }
-      }
-      if (_selectedFilter == 'Unresolved' && p.isSolved) return false;
-      if (_selectedFilter == 'PRO Rankers' && !p.isPro) return false;
-      return true;
-    }).toList();
-
-    if (_selectedFilter == 'Most Upvoted') {
-      filteredPosts.sort((a, b) => b.upvotes.compareTo(a.upvotes));
-    }
-
     return Scaffold(
       backgroundColor: context.scaffoldBackground,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: context.scaffoldBackground,
         elevation: 0,
         title: Text(
-          'Peer Learning & Doubts',
-          style: AppTheme.poppinsBold(fontSize: 18, color: context.textColor),
+          'Aspirant Community Hub',
+          style: GoogleFonts.outfit(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: context.textColor,
+          ),
         ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: context.textColor),
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: AppTheme.accentPurple,
-        onPressed: _openNewPostSheet,
-        icon: const Icon(Icons.edit_note_rounded, color: Colors.white),
-        label: const Text('Ask a Doubt', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-      ),
-      body: Column(
-        children: [
-          // Channel selector strip
-          SizedBox(
-            height: 48,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              itemCount: _channels.length,
-              itemBuilder: (context, index) {
-                final ch = _channels[index];
-                final isSelected = ch == _selectedChannel;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: GestureDetector(
-                    onTap: () {
-                      HapticFeedback.selectionClick();
-                      setState(() {
-                        _selectedChannel = ch;
-                      });
-                    },
-                    child: NeuContainer(
-                      isRecessed: isSelected,
-                      borderRadius: 14,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      child: Text(
-                        ch,
-                        style: TextStyle(
-                          color: isSelected ? AppTheme.accentPurple : context.textSecondaryColor,
-                          fontSize: 11.5,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: ListView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            children: [
+              // 1. HERO BANNER
+              _buildHeroCard(context),
+              const SizedBox(height: 18),
 
-          // Search and Filters
-          Padding(
-            padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: NeuContainer(
-                    isRecessed: true,
-                    borderRadius: 14,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-                    child: TextField(
-                      controller: _searchController,
-                      onChanged: (val) => setState(() => _searchQuery = val.trim()),
-                      style: TextStyle(color: context.textColor, fontSize: 13),
-                      decoration: InputDecoration(
-                        hintText: 'Search discussions or shortcuts...',
-                        hintStyle: TextStyle(color: context.textSecondaryColor, fontSize: 12),
-                        prefixIcon: Icon(Icons.search, size: 16, color: context.textSecondaryColor),
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                      ),
-                    ),
-                  ),
+              // 2. ACTIVE ASPIRANT COMMUNITIES
+              Text(
+                'JOIN ACTIVE ASPIRANT GROUPS',
+                style: GoogleFonts.outfit(
+                  color: context.textSecondaryColor,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.1,
                 ),
-                const SizedBox(width: 8),
-                PopupMenuButton<String>(
-                  color: context.scaffoldBackground,
-                  icon: NeuContainer(
-                    borderRadius: 12,
-                    padding: const EdgeInsets.all(8),
-                    child: const Icon(Icons.filter_list_rounded, size: 18, color: AppTheme.accentPurple),
-                  ),
-                  onSelected: (val) => setState(() => _selectedFilter = val),
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(value: 'All', child: Text('All Doubts')),
-                    const PopupMenuItem(value: 'Unresolved', child: Text('Unresolved Only')),
-                    const PopupMenuItem(value: 'Most Upvoted', child: Text('Most Upvoted')),
-                    const PopupMenuItem(value: 'PRO Rankers', child: Text('PRO Ranker Answers')),
-                  ],
+              ),
+              const SizedBox(height: 12),
+              _buildCommunityCard(
+                context,
+                title: 'Official Telegram Discussion Group',
+                subtitle: 'Active doubt clearing, daily question sprints, Topper PDFs, and study schedules with 6,000+ GATE DA & CS/IT aspirants.',
+                icon: Icons.send_rounded,
+                iconColor: const Color(0xFF29B6F6),
+                badge: 'Active Now',
+                badgeColor: AppTheme.accentMint,
+                url: 'https://t.me/gate_da_official',
+              ),
+              const SizedBox(height: 12),
+              _buildCommunityCard(
+                context,
+                title: 'GateX Aspirants Discord Server',
+                subtitle: 'Dedicated voice study rooms, #machine-learning, #linear-algebra, #dsa-coding, and weekend timed mock debriefs.',
+                icon: Icons.discord_rounded,
+                iconColor: const Color(0xFF5865F2),
+                badge: 'Voice & Doubts',
+                badgeColor: const Color(0xFF5865F2),
+                url: 'https://discord.gg/gatex',
+              ),
+              const SizedBox(height: 12),
+              _buildCommunityCard(
+                context,
+                title: 'WhatsApp Daily Practice Circles',
+                subtitle: '5 curated high-yield questions every morning with peer discussion threads and daily solution keys.',
+                icon: Icons.chat_rounded,
+                iconColor: const Color(0xFF25D366),
+                badge: 'Daily Drills',
+                badgeColor: const Color(0xFF25D366),
+                url: 'https://chat.whatsapp.com/gatex_study_circle',
+              ),
+              const SizedBox(height: 12),
+              _buildCommunityCard(
+                context,
+                title: 'Open Source GATE DA Repository',
+                subtitle: 'Community-maintained LaTeX solutions, errata discussions, and open formula cheat sheets on GitHub.',
+                icon: Icons.code_rounded,
+                iconColor: context.isDarkMode ? Colors.white : Colors.black,
+                badge: 'Open Source',
+                badgeColor: AppTheme.accentPurple,
+                url: 'https://github.com/aditya21030/GateX',
+              ),
+              const SizedBox(height: 22),
+
+              // 3. PHASE 2 IN-APP DISCUSSION ARENA
+              _buildPhase2Card(context),
+              const SizedBox(height: 22),
+
+              // 4. QUICK DOUBT COMPOSER & SHARE
+              _buildDoubtComposer(context),
+              const SizedBox(height: 22),
+
+              // 5. FREQUENTLY ASKED EXAM STRATEGIES
+              Text(
+                'OFFICIAL GATE DA/CS STRATEGY FAQs',
+                style: GoogleFonts.outfit(
+                  color: context.textSecondaryColor,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.1,
+                ),
+              ),
+              const SizedBox(height: 12),
+              _buildFaqList(context),
+              const SizedBox(height: 28),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeroCard(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: context.isDarkMode
+              ? [const Color(0xFF1E1435), const Color(0xFF13141F)]
+              : [const Color(0xFFF3E8FF), const Color(0xFFEDE9FE)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: AppTheme.accentPurple.withValues(alpha: 0.3),
+        ),
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [AppTheme.accentPurple, Color(0xFF8B5CF6)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.accentPurple.withValues(alpha: 0.4),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
+            child: const Icon(Icons.groups_rounded, color: Colors.white, size: 28),
           ),
-
-          // Discussions List
+          const SizedBox(width: 16),
           Expanded(
-            child: filteredPosts.isEmpty
-                ? Center(
-                    child: Text('No doubts found in this channel.', style: TextStyle(color: context.textSecondaryColor)),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(14, 4, 14, 80),
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: filteredPosts.length,
-                    itemBuilder: (context, index) {
-                      final post = filteredPosts[index];
-                      return _buildPostCard(context, post);
-                    },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Learn With 10,000+ Aspirants',
+                  style: GoogleFonts.outfit(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: context.textColor,
                   ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Join real peer study groups on Telegram and Discord for instant doubts, formula discussions, and CBT mock debriefs.',
+                  style: GoogleFonts.outfit(
+                    fontSize: 12,
+                    color: context.textSecondaryColor,
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPostCard(BuildContext context, CommunityPost post) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: GestureDetector(
-        onTap: () => _openThreadDetail(post),
-        child: NeuContainer(
-          borderRadius: 18,
-          padding: const EdgeInsets.all(14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildCommunityCard(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color iconColor,
+    required String badge,
+    required Color badgeColor,
+    required String url,
+  }) {
+    return NeuContainer(
+      borderRadius: 18,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: AppTheme.accentPurple.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(6),
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: iconColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: iconColor, size: 22),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.outfit(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: context.textColor,
+                      ),
                     ),
-                    child: Text(
-                      post.channel,
-                      style: const TextStyle(color: AppTheme.accentPurple, fontSize: 10, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  if (post.isSolved)
+                    const SizedBox(height: 2),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: AppTheme.accentMint.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(4),
+                        color: badgeColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.check_circle_rounded, size: 10, color: AppTheme.accentMint),
-                          SizedBox(width: 3),
-                          Text('SOLVED', style: TextStyle(color: AppTheme.accentMint, fontSize: 9, fontWeight: FontWeight.bold)),
-                        ],
+                      child: Text(
+                        badge,
+                        style: GoogleFonts.outfit(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: badgeColor,
+                        ),
                       ),
                     ),
-                  const Spacer(),
-                  Text(
-                    DateFormat('MMM d').format(post.createdAt),
-                    style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Text(
-                post.title,
-                style: AppTheme.poppinsBold(fontSize: 14.5, color: context.textColor),
-              ),
-              const SizedBox(height: 6),
-              MarkdownBody(
-                data: post.content,
-                styleSheet: MarkdownStyleSheet(
-                  p: TextStyle(color: context.textSecondaryColor, fontSize: 13, height: 1.4),
-                ),
-                extensionSet: md.ExtensionSet(
-                  [BlockMathSyntax(), ...md.ExtensionSet.gitHubFlavored.blockSyntaxes],
-                  [InlineMathSyntax(), ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes],
-                ),
-                builders: {
-                  'math': MathElementBuilder(),
-                  'block_math': BlockMathElementBuilder(),
-                },
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 10,
-                    backgroundColor: AppTheme.accentPurple.withValues(alpha: 0.2),
-                    child: Text(
-                      post.authorName.isNotEmpty ? post.authorName[0] : 'U',
-                      style: const TextStyle(color: AppTheme.accentPurple, fontSize: 9, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    post.authorName,
-                    style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
-                  ),
-                  if (post.isPro) ...[
-                    const SizedBox(width: 4),
-                    const Icon(Icons.verified_rounded, size: 12, color: Color(0xFFFFB300)),
                   ],
-                  const Spacer(),
-                  // Upvotes
-                  GestureDetector(
-                    onTap: () {
-                      HapticFeedback.selectionClick();
-                      setState(() {
-                        if (post.isUpvoted) {
-                          post.upvotes--;
-                          post.isUpvoted = false;
-                        } else {
-                          post.upvotes++;
-                          post.isUpvoted = true;
-                        }
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                      child: Row(
-                        children: [
-                          Icon(
-                            post.isUpvoted ? Icons.thumb_up_alt_rounded : Icons.thumb_up_alt_outlined,
-                            size: 13,
-                            color: post.isUpvoted ? AppTheme.accentPurple : context.textSecondaryColor,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${post.upvotes}',
-                            style: TextStyle(
-                              color: post.isUpvoted ? AppTheme.accentPurple : context.textSecondaryColor,
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  // Replies
-                  Row(
-                    children: [
-                      Icon(Icons.mode_comment_outlined, size: 13, color: context.textSecondaryColor),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${post.replyCount}',
-                        style: TextStyle(color: context.textSecondaryColor, fontSize: 11, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ],
+                ),
               ),
             ],
           ),
+          const SizedBox(height: 10),
+          Text(
+            subtitle,
+            style: GoogleFonts.outfit(
+              fontSize: 12,
+              color: context.textSecondaryColor,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.accentPurple,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    elevation: 0,
+                  ),
+                  icon: const Icon(Icons.open_in_new_rounded, size: 16),
+                  label: Text('Open & Join', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12.5)),
+                  onPressed: () => _openLink(context, url, title),
+                ),
+              ),
+              const SizedBox(width: 10),
+              IconButton.filledTonal(
+                icon: const Icon(Icons.copy_rounded, size: 16),
+                tooltip: 'Copy Link',
+                onPressed: () async {
+                  await Clipboard.setData(ClipboardData(text: url));
+                  HapticFeedback.lightImpact();
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('$title link copied!'),
+                        backgroundColor: AppTheme.accentPurple,
+                        behavior: SnackBarBehavior.floating,
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPhase2Card(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: context.isDarkMode ? const Color(0xFF141522) : Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: AppTheme.accentGold.withValues(alpha: 0.35),
+          width: 1.2,
         ),
       ),
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppTheme.accentGold.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '🚀 IN-APP FORUM • PHASE 2',
+                  style: GoogleFonts.outfit(
+                    color: AppTheme.accentGold,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+              ),
+              const Icon(Icons.lock_clock_rounded, color: AppTheme.accentGold, size: 18),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Real-Time In-App Peer Doubt Clearing Arena',
+            style: GoogleFonts.outfit(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: context.textColor,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'We are building a seamless in-app doubt resolution engine featuring LaTeX math formulas, screenshot sharing, and answers verified by AIR < 100 IIT mentors.',
+            style: GoogleFonts.outfit(
+              fontSize: 12.5,
+              color: context.textSecondaryColor,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _isWaitlistJoined ? AppTheme.accentMint : AppTheme.accentGold,
+                foregroundColor: _isWaitlistJoined ? Colors.white : Colors.black,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                elevation: 0,
+              ),
+              icon: Icon(_isWaitlistJoined ? Icons.check_circle_rounded : Icons.notifications_active_rounded, size: 18),
+              label: Text(
+                _isWaitlistJoined ? 'Priority Waitlist Joined ✓' : 'Notify Me When In-App Forum Launches',
+                style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13),
+              ),
+              onPressed: _isWaitlistJoined ? null : _joinWaitlist,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDoubtComposer(BuildContext context) {
+    return NeuContainer(
+      borderRadius: 18,
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const NeuIconTile(
+                icon: Icons.edit_note_rounded,
+                iconColor: AppTheme.accentPurple,
+                size: 36,
+                iconSize: 20,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'Post a Doubt to Community',
+                style: GoogleFonts.outfit(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: context.textColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Type your question, paste equations, and share it directly with fellow aspirants across our active channels.',
+            style: GoogleFonts.outfit(
+              fontSize: 12,
+              color: context.textSecondaryColor,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: context.colorSurfaceElevated,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: context.colorBorder),
+            ),
+            child: TextField(
+              controller: _doubtController,
+              maxLines: 3,
+              style: TextStyle(color: context.textColor, fontSize: 13),
+              decoration: InputDecoration(
+                hintText: 'e.g., In Bayes theorem question from 2024 DA, why is P(B|A) different from P(A|B)?',
+                hintStyle: TextStyle(color: context.textSecondaryColor, fontSize: 12),
+                border: InputBorder.none,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppTheme.accentPurple,
+                side: BorderSide(color: AppTheme.accentPurple.withValues(alpha: 0.5)),
+                padding: const EdgeInsets.symmetric(vertical: 11),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              icon: const Icon(Icons.share_rounded, size: 16),
+              label: Text(
+                'Format & Share to Groups',
+                style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13),
+              ),
+              onPressed: () => _shareDoubt(context),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFaqList(BuildContext context) {
+    final faqs = [
+      (
+        q: 'Is there negative marking in MSQ and NAT questions?',
+        a: 'No! According to official GATE guidelines, MSQ (Multiple Select Questions) and NAT (Numerical Answer Type) have ZERO negative marking. For MCQs, 1-mark questions deduct 1/3 mark, and 2-mark questions deduct 2/3 mark.',
+      ),
+      (
+        q: 'How is the GATE DA score calculated out of 1000?',
+        a: 'The official GATE score is calculated based on a normalized formula that maps raw marks using the mean and standard deviation of top 0.1% candidates and all qualifying candidates across the paper.',
+      ),
+      (
+        q: 'What is the recommended time allocation for the 65 CBT questions?',
+        a: 'Round 1 (0-75 min): Solve high-confidence 1-mark questions and General Aptitude. Round 2 (75-150 min): Tackle complex 2-mark problems and derivations. Round 3 (150-180 min): Revisit flagged questions and verify NAT rounding.',
+      ),
+      (
+        q: 'Can non-CS students take GATE Data Science & AI (DA)?',
+        a: 'Yes! Candidates with a Bachelor\'s degree in any branch of Engineering/Technology or Master\'s in Science/Mathematics/Statistics/Computer Applications are fully eligible.',
+      ),
+    ];
+
+    return Column(
+      children: faqs.map((faq) {
+        return NeuContainer(
+          margin: const EdgeInsets.only(bottom: 10),
+          borderRadius: 16,
+          padding: const EdgeInsets.all(14),
+          child: ExpansionTile(
+            tilePadding: EdgeInsets.zero,
+            childrenPadding: const EdgeInsets.only(top: 8),
+            title: Text(
+              faq.q,
+              style: GoogleFonts.outfit(
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+                color: context.textColor,
+              ),
+            ),
+            children: [
+              Text(
+                faq.a,
+                style: GoogleFonts.outfit(
+                  fontSize: 12,
+                  color: context.textSecondaryColor,
+                  height: 1.45,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 }
