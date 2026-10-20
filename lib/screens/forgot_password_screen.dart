@@ -93,9 +93,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   onPressed: () => Navigator.pop(context),
                 ),
               ),
-              imageAsset: 'assets/images/3d/char_thinking.png',
-              targetIIT: 'PASSWORD RECOVERY',
-              airRank: 'GATE ACCESS',
+              targetIIT: 'GATE ACCESS',
+              airRank: 'SECURE RECOVERY',
             ),
 
             // Bottom White Sheet (Matches Screen 4)
