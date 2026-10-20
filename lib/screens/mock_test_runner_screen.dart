@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../models/models.dart';
@@ -533,14 +534,15 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
 
   // --- Official GATE 5-State Question Palette Modal Bottom Sheet ---
   void _showQuestionsMapSheet() {
+    HapticFeedback.selectionClick();
     _syncCurrentInput();
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppTheme.surface,
+      backgroundColor: context.colorSurface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) {
         return StatefulBuilder(
@@ -566,10 +568,10 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                 children: [
                   Center(
                     child: Container(
-                      width: 40,
+                      width: 44,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.white24,
+                        color: context.isDarkMode ? Colors.white24 : Colors.black26,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -578,12 +580,12 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'GATE Question Palette',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 17, color: context.textColor),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close, color: AppTheme.textSecondary),
+                        icon: Icon(Icons.close_rounded, color: context.textSecondaryColor),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ],
@@ -592,20 +594,25 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
 
                   // 5 Official TCS iON Status Badges
                   Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                     decoration: BoxDecoration(
-                      color: AppTheme.background,
-                      borderRadius: BorderRadius.circular(12),
+                      color: context.isDarkMode ? const Color(0xFF14151D) : const Color(0xFFF1F1F5),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: context.isDarkMode
+                            ? Colors.white.withValues(alpha: 0.08)
+                            : Colors.black.withValues(alpha: 0.06),
+                      ),
                     ),
                     child: Wrap(
                       spacing: 12,
                       runSpacing: 8,
                       children: [
-                        _buildLegendPill(AppTheme.success, 'Answered', '$_answeredCount', isCircle: false),
-                        _buildLegendPill(AppTheme.error, 'Not Answered', '$_notAnsweredCount', isCircle: false),
-                        _buildLegendPill(const Color(0xFF7B1FA2), 'Marked for Review', '$_markedForReviewCount', isCircle: true),
-                        _buildLegendPill(const Color(0xFF7B1FA2), 'Ans & Marked', '$_answeredAndMarkedCount', isCircle: true, hasGreenDot: true),
-                        _buildLegendPill(AppTheme.surface, 'Not Visited', '$_notVisitedCount', isCircle: false, isBordered: true),
+                        _buildLegendPill(AppTheme.accentMint, 'Answered', '$_answeredCount', isCircle: false),
+                        _buildLegendPill(AppTheme.accentCoral, 'Not Answered', '$_notAnsweredCount', isCircle: false),
+                        _buildLegendPill(const Color(0xFFAB47BC), 'Marked for Review', '$_markedForReviewCount', isCircle: true),
+                        _buildLegendPill(const Color(0xFFAB47BC), 'Ans & Marked', '$_answeredAndMarkedCount', isCircle: true, hasGreenDot: true),
+                        _buildLegendPill(context.colorSurface, 'Not Visited', '$_notVisitedCount', isCircle: false, isBordered: true),
                       ],
                     ),
                   ),
@@ -648,18 +655,18 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
-                      color: AppTheme.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppTheme.primary.withValues(alpha: 0.2)),
+                      color: AppTheme.accentPurple.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.2)),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(Icons.info_outline, size: 14, color: AppTheme.primary),
-                        SizedBox(width: 8),
+                        const Icon(Icons.info_outline, size: 15, color: AppTheme.accentPurple),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             'Questions marked as "Ans & Marked" (🟣🟢) will be considered for marks in GATE.',
-                            style: TextStyle(fontSize: 11, color: AppTheme.textSecondary),
+                            style: GoogleFonts.outfit(fontSize: 11.5, color: context.textSecondaryColor),
                           ),
                         ),
                       ],
@@ -679,6 +686,7 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
     return Expanded(
       child: InkWell(
         onTap: () {
+          HapticFeedback.selectionClick();
           setSheetState(() {
             _navigatorSectionIndex = index;
           });
@@ -686,23 +694,32 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
             _navigatorSectionIndex = index;
           });
         },
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(10),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isSelected ? AppTheme.primary : AppTheme.background,
-            borderRadius: BorderRadius.circular(8),
+            color: isSelected ? AppTheme.accentPurple : context.colorSurface,
+            borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: isSelected ? AppTheme.primary : Colors.white.withValues(alpha: 0.1),
+              color: isSelected ? AppTheme.accentPurple : (context.isDarkMode ? Colors.white12 : Colors.black12),
             ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: AppTheme.accentPurple.withValues(alpha: 0.3),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
           ),
           child: Text(
             label,
-            style: TextStyle(
-              fontSize: 10.5,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected ? Colors.white : AppTheme.textSecondary,
+            style: GoogleFonts.outfit(
+              fontSize: 11,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+              color: isSelected ? Colors.white : context.textSecondaryColor,
             ),
           ),
         ),
@@ -723,8 +740,8 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
               decoration: BoxDecoration(
                 color: color,
                 shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
-                borderRadius: isCircle ? null : BorderRadius.circular(3),
-                border: isBordered ? Border.all(color: Colors.white24, width: 1.2) : null,
+                borderRadius: isCircle ? null : BorderRadius.circular(4),
+                border: isBordered ? Border.all(color: context.isDarkMode ? Colors.white24 : Colors.black26, width: 1.2) : null,
               ),
             ),
             if (hasGreenDot)
@@ -735,7 +752,7 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                   width: 6,
                   height: 6,
                   decoration: BoxDecoration(
-                    color: AppTheme.success,
+                    color: AppTheme.accentMint,
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 1),
                   ),
@@ -746,7 +763,7 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
         const SizedBox(width: 5),
         Text(
           '$label: $count',
-          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10.5, fontWeight: FontWeight.w500),
+          style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 11, fontWeight: FontWeight.w500),
         ),
       ],
     );
@@ -759,27 +776,27 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
     Color borderColor;
     Color textColor = Colors.white;
     BoxShape shape = BoxShape.rectangle;
-    BorderRadius? borderRadius = BorderRadius.circular(6);
+    BorderRadius? borderRadius = BorderRadius.circular(8);
     Widget? indicatorBadge;
 
     switch (status) {
       case GateQuestionStatus.answered:
-        bgColor = AppTheme.success;
-        borderColor = AppTheme.success;
+        bgColor = AppTheme.accentMint;
+        borderColor = AppTheme.accentMint;
         break;
       case GateQuestionStatus.notAnswered:
-        bgColor = AppTheme.error;
-        borderColor = AppTheme.error;
+        bgColor = AppTheme.accentCoral;
+        borderColor = AppTheme.accentCoral;
         break;
       case GateQuestionStatus.markedForReview:
-        bgColor = const Color(0xFF7B1FA2);
-        borderColor = const Color(0xFF9C27B0);
+        bgColor = const Color(0xFFAB47BC);
+        borderColor = const Color(0xFFBA68C8);
         shape = BoxShape.circle;
         borderRadius = null;
         break;
       case GateQuestionStatus.answeredAndMarked:
-        bgColor = const Color(0xFF7B1FA2);
-        borderColor = const Color(0xFF9C27B0);
+        bgColor = const Color(0xFFAB47BC);
+        borderColor = const Color(0xFFBA68C8);
         shape = BoxShape.circle;
         borderRadius = null;
         indicatorBadge = Positioned(
@@ -789,7 +806,7 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
             width: 8,
             height: 8,
             decoration: BoxDecoration(
-              color: AppTheme.success,
+              color: AppTheme.accentMint,
               shape: BoxShape.circle,
               border: Border.all(color: Colors.white, width: 1.2),
             ),
@@ -797,17 +814,19 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
         );
         break;
       case GateQuestionStatus.notVisited:
-        bgColor = AppTheme.surface;
-        borderColor = Colors.white.withValues(alpha: 0.12);
-        textColor = AppTheme.textSecondary;
+        bgColor = context.colorSurface;
+        borderColor = context.isDarkMode ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.12);
+        textColor = context.textSecondaryColor;
         break;
     }
 
     return InkWell(
       onTap: () {
+        HapticFeedback.selectionClick();
         Navigator.pop(context);
         _jumpToQuestion(index);
       },
+      borderRadius: borderRadius ?? BorderRadius.circular(20),
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -818,13 +837,13 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
               shape: shape,
               borderRadius: borderRadius,
               border: Border.all(
-                color: isCurrent ? AppTheme.secondary : borderColor,
+                color: isCurrent ? AppTheme.accentPurple : borderColor,
                 width: isCurrent ? 2.5 : 1.2,
               ),
               boxShadow: isCurrent
                   ? [
                       BoxShadow(
-                        color: AppTheme.secondary.withValues(alpha: 0.4),
+                        color: AppTheme.accentPurple.withValues(alpha: 0.5),
                         blurRadius: 8,
                       ),
                     ]
@@ -832,10 +851,10 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
             ),
             child: Text(
               '${index + 1}',
-              style: TextStyle(
+              style: GoogleFonts.outfit(
                 color: textColor,
                 fontWeight: FontWeight.bold,
-                fontSize: 13,
+                fontSize: 13.5,
               ),
             ),
           ),
@@ -1019,7 +1038,9 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.testName, style: AppTheme.poppinsBold(fontSize: 15)),
+          backgroundColor: context.colorSurface,
+          elevation: 0,
+          title: Text(widget.testName, style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 16, color: context.textColor)),
           leading: IconButton(
             icon: const Icon(Icons.close_rounded),
             onPressed: () async {
@@ -1031,19 +1052,26 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.calculate_outlined),
+              icon: const Icon(Icons.calculate_outlined, color: AppTheme.accentPurple),
               tooltip: 'GATE Virtual Calculator',
               onPressed: () {
+                HapticFeedback.selectionClick();
                 VirtualCalculator.show(context);
               },
             ),
             Container(
-              margin: const EdgeInsets.symmetric(vertical: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              margin: const EdgeInsets.symmetric(vertical: 9),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: isLowTime ? AppTheme.error.withValues(alpha: 0.15) : AppTheme.surface,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: isLowTime ? AppTheme.error : Colors.white12),
+                color: isLowTime
+                    ? AppTheme.accentCoral.withValues(alpha: 0.15)
+                    : (context.isDarkMode ? const Color(0xFF14151D) : const Color(0xFFF1F1F5)),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: isLowTime
+                      ? AppTheme.accentCoral
+                      : (context.isDarkMode ? Colors.white12 : Colors.black12),
+                ),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -1051,29 +1079,43 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                   Icon(
                     Icons.timer_outlined,
                     size: 15,
-                    color: isLowTime ? AppTheme.error : AppTheme.secondary,
+                    color: isLowTime ? AppTheme.accentCoral : AppTheme.accentPurple,
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: 5),
                   Text(
                     _formatTime(_secondsRemaining),
-                    style: AppTheme.timerStyle(
-                      fontSize: 14,
-                      color: isLowTime ? AppTheme.error : AppTheme.secondary,
+                    style: GoogleFonts.jetBrainsMono(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: isLowTime ? AppTheme.accentCoral : context.textColor,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 6),
-            TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: AppTheme.secondary,
-                visualDensity: VisualDensity.compact,
-              ),
-              onPressed: _showSubmitConfirmation,
-              child: const Text('SUBMIT', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-            ),
             const SizedBox(width: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 9),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.accentPurple,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  visualDensity: VisualDensity.compact,
+                ),
+                onPressed: () {
+                  HapticFeedback.selectionClick();
+                  _showSubmitConfirmation();
+                },
+                child: Text(
+                  'SUBMIT',
+                  style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 11.5, letterSpacing: 0.5),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
           ],
         ),
         body: Center(
@@ -1084,28 +1126,28 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                 // Top Progress Strip
                 LinearProgressIndicator(
                   value: (_currentIndex + 1) / widget.questions.length,
-                  backgroundColor: AppTheme.surface,
-                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.secondary),
+                  backgroundColor: context.isDarkMode ? Colors.white10 : Colors.black12,
+                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.accentPurple),
                   minHeight: 3.5,
                 ),
 
                 // Question Metadata Strip (Section, Marks, Type, Status)
                 Container(
-                  color: AppTheme.surface,
+                  color: context.colorSurface,
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Row(
                     children: [
                       // Section Chip
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                         decoration: BoxDecoration(
-                          color: AppTheme.background,
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                          color: AppTheme.accentPurple.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.25)),
                         ),
                         child: Text(
                           sectionName,
-                          style: const TextStyle(color: AppTheme.secondary, fontSize: 11, fontWeight: FontWeight.bold),
+                          style: GoogleFonts.outfit(color: AppTheme.accentPurple, fontSize: 11.5, fontWeight: FontWeight.bold),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -1114,14 +1156,15 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: AppTheme.background,
-                          borderRadius: BorderRadius.circular(6),
+                          color: context.isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: context.isDarkMode ? Colors.white10 : Colors.black12),
                         ),
                         child: Text(
                           negMarks > 0
                               ? '+${weight.toStringAsFixed(0)} | -${negMarks.toStringAsFixed(2)}'
                               : '+${weight.toStringAsFixed(0)} | 0.00',
-                          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.w600),
+                          style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 11, fontWeight: FontWeight.w600),
                         ),
                       ),
                       const Spacer(),
@@ -1143,40 +1186,40 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                               decoration: BoxDecoration(
-                                color: AppTheme.primary.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(6),
+                                color: AppTheme.accentPurple.withValues(alpha: 0.14),
+                                borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
                                 'Question ${_currentIndex + 1} of ${widget.questions.length}',
-                                style: const TextStyle(
-                                  color: AppTheme.primary,
-                                  fontSize: 11.5,
+                                style: GoogleFonts.outfit(
+                                  color: AppTheme.accentPurple,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
                             const SizedBox(width: 8),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                               decoration: BoxDecoration(
                                 color: q.type == 'MSQ'
-                                    ? AppTheme.error.withValues(alpha: 0.15)
+                                    ? AppTheme.accentCoral.withValues(alpha: 0.15)
                                     : q.type == 'NAT'
-                                        ? AppTheme.success.withValues(alpha: 0.15)
-                                        : AppTheme.primary.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(6),
+                                        ? AppTheme.accentMint.withValues(alpha: 0.15)
+                                        : AppTheme.accentGold.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
                                 q.type,
-                                style: TextStyle(
+                                style: GoogleFonts.outfit(
                                   color: q.type == 'MSQ'
-                                      ? AppTheme.error
+                                      ? AppTheme.accentCoral
                                       : q.type == 'NAT'
-                                          ? AppTheme.success
-                                          : AppTheme.primary,
-                                  fontSize: 11.5,
+                                          ? AppTheme.accentMint
+                                          : AppTheme.accentGold,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -1188,7 +1231,7 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                         // Subject & Topic Path
                         Text(
                           '${q.subject} > ${q.topic}',
-                          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                          style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 12.5, fontWeight: FontWeight.w500),
                         ),
                         const SizedBox(height: 14),
 
@@ -1199,9 +1242,9 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                         if (q.hasImage && q.imagePath != null) ...[
                           const SizedBox(height: 16),
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(12),
                             child: Container(
-                              color: AppTheme.textPrimary.withValues(alpha: 0.05),
+                              color: context.textColor.withValues(alpha: 0.05),
                               padding: const EdgeInsets.all(8),
                               child: q.imagePath!.startsWith('http')
                                   ? Image.network(
@@ -1228,8 +1271,15 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
 
                 // TCS iON Official Bottom Action Bar
                 Container(
-                  color: context.scaffoldBackground,
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: context.colorSurface,
+                    border: Border(
+                      top: BorderSide(
+                        color: context.isDarkMode ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+                      ),
+                    ),
+                  ),
                   child: SafeArea(
                     top: false,
                     child: Column(
@@ -1240,14 +1290,17 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                             // 1. Mark for Review & Next
                             Expanded(
                               flex: 3,
-                              child: NeuButton(
+                              child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: const Color(0xFFAB47BC),
+                                  side: BorderSide(color: const Color(0xFFAB47BC).withValues(alpha: 0.5)),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                ),
                                 onPressed: _markForReviewAndNext,
-                                isPrimary: false,
-                                borderRadius: 12,
-                                height: 42,
-                                child: const Text(
+                                child: Text(
                                   'Mark & Next',
-                                  style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: Color(0xFFBA68C8)),
+                                  style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
@@ -1256,14 +1309,17 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                             // 2. Clear Response
                             Expanded(
                               flex: 2,
-                              child: NeuButton(
+                              child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: AppTheme.accentCoral,
+                                  side: BorderSide(color: AppTheme.accentCoral.withValues(alpha: 0.5)),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                ),
                                 onPressed: _clearCurrentAnswer,
-                                isPrimary: false,
-                                borderRadius: 12,
-                                height: 42,
-                                child: const Text(
+                                child: Text(
                                   'Clear',
-                                  style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: AppTheme.error),
+                                  style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.bold),
                                 ),
                               ),
                             ),
@@ -1272,10 +1328,16 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                             // 3. Question Palette Trigger
                             GestureDetector(
                               onTap: _showQuestionsMapSheet,
-                              child: const NeuContainer(
-                                borderRadius: 12,
-                                padding: EdgeInsets.all(10),
-                                child: Icon(Icons.grid_view_rounded, color: AppTheme.accentPurple, size: 20),
+                              child: Container(
+                                padding: const EdgeInsets.all(11),
+                                decoration: BoxDecoration(
+                                  color: context.isDarkMode ? const Color(0xFF14151D) : const Color(0xFFF1F1F5),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: context.isDarkMode ? Colors.white12 : Colors.black12,
+                                  ),
+                                ),
+                                child: const Icon(Icons.grid_view_rounded, color: AppTheme.accentPurple, size: 20),
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -1283,14 +1345,26 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                             // 4. Save & Next
                             Expanded(
                               flex: 4,
-                              child: NeuButton(
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppTheme.accentPurple,
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  shadowColor: AppTheme.accentPurple.withValues(alpha: 0.4),
+                                ),
                                 onPressed: _saveAndNext,
-                                isPrimary: true,
-                                borderRadius: 12,
-                                height: 42,
-                                child: Text(
-                                  _currentIndex == widget.questions.length - 1 ? 'Submit' : 'Save & Next',
-                                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      _currentIndex == widget.questions.length - 1 ? 'Submit' : 'Save & Next',
+                                      style: GoogleFonts.outfit(fontSize: 12.5, fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    const Icon(Icons.arrow_forward_rounded, size: 14),
+                                  ],
                                 ),
                               ),
                             ),
@@ -1309,13 +1383,17 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                                   _visitedQuestions.add(widget.questions[_currentIndex].id);
                                 });
                               },
-                              child: const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+                              borderRadius: BorderRadius.circular(6),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.chevron_left_rounded, size: 16, color: AppTheme.textSecondary),
-                                    Text('Previous Question', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
+                                    Icon(Icons.chevron_left_rounded, size: 16, color: context.textSecondaryColor),
+                                    Text(
+                                      'Previous Question',
+                                      style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 11.5, fontWeight: FontWeight.w500),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -1341,41 +1419,41 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
 
     switch (status) {
       case GateQuestionStatus.answered:
-        bg = AppTheme.success.withValues(alpha: 0.15);
-        fg = AppTheme.success;
+        bg = AppTheme.accentMint.withValues(alpha: 0.15);
+        fg = AppTheme.accentMint;
         label = 'Answered';
         break;
       case GateQuestionStatus.notAnswered:
-        bg = AppTheme.error.withValues(alpha: 0.15);
-        fg = AppTheme.error;
+        bg = AppTheme.accentCoral.withValues(alpha: 0.15);
+        fg = AppTheme.accentCoral;
         label = 'Not Answered';
         break;
       case GateQuestionStatus.markedForReview:
-        bg = const Color(0xFF7B1FA2).withValues(alpha: 0.2);
+        bg = const Color(0xFFAB47BC).withValues(alpha: 0.2);
         fg = const Color(0xFFBA68C8);
         label = 'Marked';
         break;
       case GateQuestionStatus.answeredAndMarked:
-        bg = const Color(0xFF7B1FA2).withValues(alpha: 0.2);
+        bg = const Color(0xFFAB47BC).withValues(alpha: 0.2);
         fg = const Color(0xFFBA68C8);
         label = 'Ans & Marked';
         break;
       case GateQuestionStatus.notVisited:
-        bg = Colors.white.withValues(alpha: 0.05);
-        fg = AppTheme.textSecondary;
+        bg = context.isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04);
+        fg = context.textSecondaryColor;
         label = 'Not Visited';
         break;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
       decoration: BoxDecoration(
         color: bg,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         label,
-        style: TextStyle(color: fg, fontSize: 11, fontWeight: FontWeight.bold),
+        style: GoogleFonts.outfit(color: fg, fontSize: 11, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -1393,9 +1471,16 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
             ? _msqSelections[q.id]!.contains(letter)
             : _userAnswers[q.id] == letter;
 
+        final Color borderCol = isSelected
+            ? AppTheme.accentPurple
+            : (context.isDarkMode ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08));
+        final Color bgCol = isSelected
+            ? AppTheme.accentPurple.withValues(alpha: 0.12)
+            : context.colorSurface;
+
         return Padding(
           padding: const EdgeInsets.only(bottom: 10.0),
-          child: GestureDetector(
+          child: InkWell(
             onTap: () {
               HapticFeedback.selectionClick();
               setState(() {
@@ -1416,29 +1501,46 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                 }
               });
             },
-            child: NeuContainer(
-              isRecessed: isSelected,
-              borderRadius: 14,
+            borderRadius: BorderRadius.circular(14),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              decoration: BoxDecoration(
+                color: bgCol,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: borderCol, width: isSelected ? 1.5 : 1.0),
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: AppTheme.accentPurple.withValues(alpha: 0.2),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ]
+                    : null,
+              ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  NeuContainer(
-                    isRecessed: !isSelected,
-                    borderRadius: q.type == 'MSQ' ? 6 : 14,
-                    padding: const EdgeInsets.all(5),
-                    child: SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: Center(
-                        child: Text(
-                          letter,
-                          style: TextStyle(
-                            color: isSelected ? AppTheme.accentPurple : context.textColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
-                        ),
+                  Container(
+                    width: 30,
+                    height: 30,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: isSelected ? AppTheme.accentPurple : (context.isDarkMode ? const Color(0xFF14151D) : const Color(0xFFF1F1F5)),
+                      shape: q.type == 'MSQ' ? BoxShape.rectangle : BoxShape.circle,
+                      borderRadius: q.type == 'MSQ' ? BorderRadius.circular(8) : null,
+                      border: Border.all(
+                        color: isSelected ? Colors.transparent : (context.isDarkMode ? Colors.white12 : Colors.black12),
+                      ),
+                    ),
+                    child: Text(
+                      letter,
+                      style: GoogleFonts.outfit(
+                        color: isSelected ? Colors.white : context.textColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
                       ),
                     ),
                   ),
@@ -1465,33 +1567,73 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Numerical Answer (NAT):',
-          style: TextStyle(fontSize: 12, color: context.textSecondaryColor, fontWeight: FontWeight.bold),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Numerical Answer (NAT):',
+              style: GoogleFonts.outfit(fontSize: 13, color: context.textSecondaryColor, fontWeight: FontWeight.bold),
+            ),
+            InkWell(
+              onTap: () {
+                HapticFeedback.selectionClick();
+                VirtualCalculator.show(context);
+              },
+              borderRadius: BorderRadius.circular(8),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                child: Row(
+                  children: [
+                    const Icon(Icons.calculate_outlined, size: 14, color: AppTheme.accentPurple),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Calculator',
+                      style: GoogleFonts.outfit(color: AppTheme.accentPurple, fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 10),
         NeuContainer(
           isRecessed: true,
           borderRadius: 14,
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
           child: TextFormField(
             controller: controller,
             keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-            style: TextStyle(color: context.textColor, fontSize: 16, fontWeight: FontWeight.bold),
+            style: GoogleFonts.jetBrainsMono(color: context.textColor, fontSize: 17, fontWeight: FontWeight.bold),
             decoration: InputDecoration(
               hintText: 'e.g. 14.5 or -0.33',
-              hintStyle: TextStyle(color: context.textSecondaryColor, fontSize: 14),
+              hintStyle: GoogleFonts.jetBrainsMono(color: context.textSecondaryColor.withValues(alpha: 0.5), fontSize: 14),
               border: InputBorder.none,
               isDense: true,
               contentPadding: const EdgeInsets.symmetric(vertical: 12),
               prefixIcon: const Icon(Icons.pin_rounded, size: 18, color: AppTheme.accentPurple),
+              suffixIcon: controller.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear_rounded, size: 18),
+                      color: context.textSecondaryColor,
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        controller.clear();
+                        setState(() {
+                          _userAnswers.remove(q.id);
+                        });
+                      },
+                    )
+                  : null,
             ),
             onChanged: (val) {
-              if (val.trim().isNotEmpty) {
-                _userAnswers[q.id] = val.trim();
-              } else {
-                _userAnswers.remove(q.id);
-              }
+              setState(() {
+                if (val.trim().isNotEmpty) {
+                  _userAnswers[q.id] = val.trim();
+                } else {
+                  _userAnswers.remove(q.id);
+                }
+              });
             },
           ),
         ),
@@ -1576,17 +1718,21 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
     }).toList();
 
     return Scaffold(
+      backgroundColor: context.colorBackground,
       appBar: AppBar(
-        title: const Text('Official CBT Scorecard', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: context.colorSurface,
+        elevation: 0,
+        title: Text('Official CBT Scorecard', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 18, color: context.textColor)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share_rounded, color: AppTheme.secondary),
+            icon: const Icon(Icons.share_rounded, color: AppTheme.accentPurple),
             tooltip: 'Share Scorecard',
             onPressed: () {
+              HapticFeedback.selectionClick();
               final shareText = '''🎯 GateX CBT Mock Exam Scorecard
 Test: ${widget.testName}
 Score: ${totalScore.toStringAsFixed(2)} / ${maxPossibleMarks.toStringAsFixed(0)} Marks
@@ -1607,7 +1753,6 @@ https://github.com/aditya21030/GateX''';
           child: Column(
             children: [
               // Scorecard Hero Banner
-              // Scorecard Hero Banner in NeuContainer
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: NeuContainer(
@@ -1620,17 +1765,23 @@ https://github.com/aditya21030/GateX''';
                         children: [
                           Text(
                             widget.testName.toUpperCase(),
-                            style: const TextStyle(color: AppTheme.accentPurple, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 1.1),
+                            style: GoogleFonts.outfit(
+                              color: AppTheme.accentPurple,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.1,
+                            ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
                               color: AppTheme.accentPurple.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(6),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.25)),
                             ),
                             child: Text(
                               'AIR: $predictedAir',
-                              style: const TextStyle(color: AppTheme.accentPurple, fontSize: 11, fontWeight: FontWeight.bold),
+                              style: GoogleFonts.outfit(color: AppTheme.accentPurple, fontSize: 11.5, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ],
@@ -1638,20 +1789,30 @@ https://github.com/aditya21030/GateX''';
                       const SizedBox(height: 12),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
                         children: [
                           Text(
                             totalScore.toStringAsFixed(2),
-                            style: AppTheme.timerStyle(fontSize: 44, color: AppTheme.accentPurple),
+                            style: GoogleFonts.outfit(fontSize: 48, fontWeight: FontWeight.bold, color: AppTheme.accentPurple),
                           ),
                           Text(
                             ' / ${maxPossibleMarks.toStringAsFixed(0)}',
-                            style: TextStyle(color: context.textSecondaryColor, fontSize: 18),
+                            style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 18, fontWeight: FontWeight.w600),
                           ),
                         ],
                       ),
-                      Text(
-                        iitChance,
-                        style: TextStyle(color: context.textSecondaryColor, fontSize: 12),
+                      const SizedBox(height: 4),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.school_rounded, size: 16, color: AppTheme.accentMint),
+                          const SizedBox(width: 6),
+                          Text(
+                            iitChance,
+                            style: GoogleFonts.outfit(color: context.textColor, fontSize: 13, fontWeight: FontWeight.w600),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 14),
                       Divider(color: context.isDarkMode ? Colors.white12 : Colors.black12),
@@ -1661,10 +1822,10 @@ https://github.com/aditya21030/GateX''';
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          _buildResultMiniStat('Accuracy', '${accuracy.toStringAsFixed(0)}%', AppTheme.accentPurple),
-                          _buildResultMiniStat('Correct', '$correctCount', AppTheme.accentMint),
-                          _buildResultMiniStat('Incorrect', '$incorrectCount', AppTheme.error),
-                          _buildResultMiniStat('Skipped', '$unattemptedCount', context.textSecondaryColor),
+                          _buildResultMiniStat('Accuracy', '${accuracy.toStringAsFixed(0)}%', AppTheme.accentPurple, Icons.pie_chart_outline_rounded),
+                          _buildResultMiniStat('Correct', '$correctCount', AppTheme.accentMint, Icons.check_circle_outline_rounded),
+                          _buildResultMiniStat('Incorrect', '$incorrectCount', AppTheme.accentCoral, Icons.cancel_outlined),
+                          _buildResultMiniStat('Skipped', '$unattemptedCount', context.textSecondaryColor, Icons.remove_circle_outline_rounded),
                         ],
                       ),
 
@@ -1675,13 +1836,27 @@ https://github.com/aditya21030/GateX''';
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            Text(
-                              'General Aptitude: ${gaScore.toStringAsFixed(2)} / 15.00',
-                              style: TextStyle(fontSize: 11, color: context.textSecondaryColor, fontWeight: FontWeight.bold),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: context.isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                'General Aptitude: ${gaScore.toStringAsFixed(2)} / 15.00',
+                                style: GoogleFonts.outfit(fontSize: 11.5, color: context.textColor, fontWeight: FontWeight.bold),
+                              ),
                             ),
-                            Text(
-                              'Subject Core: ${coreScore.toStringAsFixed(2)} / 85.00',
-                              style: TextStyle(fontSize: 11, color: context.textSecondaryColor, fontWeight: FontWeight.bold),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: context.isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                'Subject Core: ${coreScore.toStringAsFixed(2)} / 85.00',
+                                style: GoogleFonts.outfit(fontSize: 11.5, color: context.textColor, fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ],
                         ),
@@ -1706,7 +1881,7 @@ https://github.com/aditya21030/GateX''';
                   ],
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
 
               // Question-by-Question Review List
               Expanded(
@@ -1743,17 +1918,31 @@ https://github.com/aditya21030/GateX''';
             _reviewFilter = filterKey;
           });
         },
-        child: NeuContainer(
-          isRecessed: isSelected,
-          borderRadius: 10,
+        child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected ? AppTheme.accentPurple : context.colorSurface,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: isSelected ? AppTheme.accentPurple : (context.isDarkMode ? Colors.white12 : Colors.black12),
+            ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: AppTheme.accentPurple.withValues(alpha: 0.3),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
           child: Center(
             child: Text(
               label,
-              style: TextStyle(
+              style: GoogleFonts.outfit(
                 fontSize: 10.5,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected ? AppTheme.accentPurple : context.textSecondaryColor,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: isSelected ? Colors.white : context.textSecondaryColor,
               ),
             ),
           ),
@@ -1762,12 +1951,14 @@ https://github.com/aditya21030/GateX''';
     );
   }
 
-  Widget _buildResultMiniStat(String label, String value, Color color) {
+  Widget _buildResultMiniStat(String label, String value, Color color, IconData icon) {
     return Column(
       children: [
-        Text(value, style: AppTheme.timerStyle(fontSize: 18, color: color)),
+        Icon(icon, size: 18, color: color),
+        const SizedBox(height: 4),
+        Text(value, style: GoogleFonts.outfit(fontSize: 19, fontWeight: FontWeight.bold, color: color)),
         const SizedBox(height: 2),
-        Text(label, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10.5)),
+        Text(label, style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 11, fontWeight: FontWeight.w500)),
       ],
     );
   }
@@ -1869,8 +2060,8 @@ class _MockQuestionReviewCardState extends State<_MockQuestionReviewCard> {
     final isCorrect = q.isAnswerCorrect(uAns);
 
     final Color statusColor = uAns == null || uAns.isEmpty
-        ? AppTheme.textSecondary
-        : (isCorrect ? AppTheme.success : AppTheme.error);
+        ? context.textSecondaryColor
+        : (isCorrect ? AppTheme.accentMint : AppTheme.accentCoral);
 
     final String statusText = uAns == null || uAns.isEmpty
         ? 'Skipped'
@@ -1889,17 +2080,18 @@ class _MockQuestionReviewCardState extends State<_MockQuestionReviewCard> {
               children: [
                 Text(
                   'Q. ${widget.index + 1} (${q.type})',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 14.5, color: context.textColor),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3.5),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: statusColor.withValues(alpha: 0.25)),
                   ),
                   child: Text(
                     statusText,
-                    style: TextStyle(color: statusColor, fontSize: 10, fontWeight: FontWeight.bold),
+                    style: GoogleFonts.outfit(color: statusColor, fontSize: 11, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -1909,7 +2101,7 @@ class _MockQuestionReviewCardState extends State<_MockQuestionReviewCard> {
             if (q.hasImage && q.imagePath != null) ...[
               const SizedBox(height: 12),
               ClipRRect(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(10),
                 child: q.imagePath!.startsWith('http')
                     ? Image.network(q.imagePath!, fit: BoxFit.contain, errorBuilder: (c, e, s) => const SizedBox())
                     : Image.asset(q.imagePath!, fit: BoxFit.contain, errorBuilder: (c, e, s) => const SizedBox()),
@@ -1924,43 +2116,83 @@ class _MockQuestionReviewCardState extends State<_MockQuestionReviewCard> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('$letter. ', style: const TextStyle(fontWeight: FontWeight.bold, color: AppTheme.textSecondary)),
+                      Container(
+                        width: 22,
+                        height: 22,
+                        alignment: Alignment.center,
+                        margin: const EdgeInsets.only(right: 8, top: 1),
+                        decoration: BoxDecoration(
+                          color: context.isDarkMode ? const Color(0xFF14151D) : const Color(0xFFF1F1F5),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: context.isDarkMode ? Colors.white12 : Colors.black12),
+                        ),
+                        child: Text(letter, style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 11.5, color: context.textSecondaryColor)),
+                      ),
                       Expanded(child: widget.buildTextHelper(q.options[i])),
                     ],
                   ),
                 );
               }),
             ],
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
             // User vs Correct answers
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppTheme.background,
-                borderRadius: BorderRadius.circular(8),
+                color: isCorrect
+                    ? AppTheme.accentMint.withValues(alpha: 0.08)
+                    : (uAns == null || uAns.isEmpty
+                        ? (context.isDarkMode ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.03))
+                        : AppTheme.accentCoral.withValues(alpha: 0.08)),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isCorrect
+                      ? AppTheme.accentMint.withValues(alpha: 0.25)
+                      : (uAns == null || uAns.isEmpty
+                          ? (context.isDarkMode ? Colors.white10 : Colors.black12)
+                          : AppTheme.accentCoral.withValues(alpha: 0.25)),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Your Answer: ${uAns == null || uAns.isEmpty ? "[Not Answered]" : uAns}',
-                    style: TextStyle(
-                      color: uAns == null || uAns.isEmpty ? AppTheme.textSecondary : statusColor,
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    children: [
+                      Icon(
+                        isCorrect
+                            ? Icons.check_circle_rounded
+                            : (uAns == null || uAns.isEmpty ? Icons.help_outline_rounded : Icons.cancel_rounded),
+                        size: 16,
+                        color: statusColor,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Your Answer: ${uAns == null || uAns.isEmpty ? "[Not Answered]" : uAns}',
+                        style: GoogleFonts.outfit(
+                          color: uAns == null || uAns.isEmpty ? context.textSecondaryColor : statusColor,
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Correct Answer: $cAns',
-                    style: const TextStyle(color: AppTheme.success, fontSize: 13, fontWeight: FontWeight.bold),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      const Icon(Icons.verified_rounded, size: 16, color: AppTheme.accentMint),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Correct Answer: $cAns',
+                        style: GoogleFonts.outfit(color: AppTheme.accentMint, fontSize: 13, fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 12),
-            const Divider(color: AppTheme.background, height: 1),
+            Divider(color: context.isDarkMode ? Colors.white10 : Colors.black12, height: 1),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1968,31 +2200,55 @@ class _MockQuestionReviewCardState extends State<_MockQuestionReviewCard> {
                 // Error Log Shortcut
                 if (!isCorrect && uAns != null && uAns.isNotEmpty)
                   _addedToErrorLog
-                      ? const Text('Added to Error Log', style: TextStyle(color: AppTheme.error, fontSize: 12, fontWeight: FontWeight.bold))
-                      : TextButton.icon(
-                          onPressed: () => _showAddErrorLogDialog(context),
-                          icon: const Icon(Icons.add_alert_rounded, color: AppTheme.error, size: 16),
-                          label: const Text('Add to Error Log', style: TextStyle(color: AppTheme.error, fontSize: 12, fontWeight: FontWeight.bold)),
+                      ? Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: AppTheme.accentCoral.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text('Added to Error Log ✓', style: GoogleFonts.outfit(color: AppTheme.accentCoral, fontSize: 11.5, fontWeight: FontWeight.bold)),
+                        )
+                      : OutlinedButton.icon(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppTheme.accentCoral,
+                            side: BorderSide(color: AppTheme.accentCoral.withValues(alpha: 0.4)),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            visualDensity: VisualDensity.compact,
+                          ),
+                          onPressed: () {
+                            HapticFeedback.selectionClick();
+                            _showAddErrorLogDialog(context);
+                          },
+                          icon: const Icon(Icons.add_alert_rounded, size: 15),
+                          label: Text('Add to Error Log', style: GoogleFonts.outfit(fontSize: 11.5, fontWeight: FontWeight.bold)),
                         )
                 else
                   const SizedBox(),
 
                 // Toggle solution
                 if (q.explanation.trim().isNotEmpty)
-                  TextButton.icon(
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppTheme.accentPurple,
+                      side: BorderSide(color: AppTheme.accentPurple.withValues(alpha: 0.4)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      visualDensity: VisualDensity.compact,
+                    ),
                     onPressed: () {
+                      HapticFeedback.selectionClick();
                       setState(() {
                         _showExplanation = !_showExplanation;
                       });
                     },
                     icon: Icon(
                       _showExplanation ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                      color: AppTheme.secondary,
-                      size: 16,
+                      size: 15,
                     ),
                     label: Text(
-                      _showExplanation ? 'Hide Explanation' : 'Explain',
-                      style: const TextStyle(color: AppTheme.secondary, fontSize: 12, fontWeight: FontWeight.bold),
+                      _showExplanation ? 'Hide Solution' : 'Explain',
+                      style: GoogleFonts.outfit(fontSize: 11.5, fontWeight: FontWeight.bold),
                     ),
                   ),
               ],
@@ -2001,11 +2257,11 @@ class _MockQuestionReviewCardState extends State<_MockQuestionReviewCard> {
               const SizedBox(height: 12),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: AppTheme.secondary.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppTheme.secondary.withValues(alpha: 0.15)),
+                  color: AppTheme.accentPurple.withValues(alpha: 0.07),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.2)),
                 ),
                 child: widget.buildTextHelper(q.explanation, isExplanation: true),
               ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -360,24 +362,33 @@ class MainNavigationScaffold extends StatelessWidget {
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: context.colorSurface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
           border: Border(
             top: BorderSide(
-              color: context.colorBorder,
+              color: context.isDarkMode
+                  ? Colors.white.withValues(alpha: 0.10)
+                  : Colors.black.withValues(alpha: 0.06),
               width: 1,
             ),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: context.isDarkMode ? 0.35 : 0.05),
-              blurRadius: 12,
-              offset: const Offset(0, -2),
+              color: Colors.black.withValues(alpha: context.isDarkMode ? 0.45 : 0.08),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
             ),
+            if (context.isDarkMode)
+              BoxShadow(
+                color: AppTheme.accentPurple.withValues(alpha: 0.08),
+                blurRadius: 24,
+                offset: const Offset(0, -8),
+              ),
           ],
         ),
         child: SafeArea(
           top: false,
           child: SizedBox(
-            height: 64,
+            height: 66,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: List.generate(navItems.length, (index) {
@@ -386,42 +397,76 @@ class MainNavigationScaffold extends StatelessWidget {
                 return Expanded(
                   child: InkWell(
                     onTap: () {
+                      HapticFeedback.selectionClick();
                       Provider.of<AppProvider>(context, listen: false).setSelectedIndex(index);
                     },
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 220),
+                      curve: Curves.easeOutCubic,
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                            duration: const Duration(milliseconds: 220),
+                            curve: Curves.easeOutCubic,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isSelected ? 16 : 10,
+                              vertical: 4.5,
+                            ),
                             decoration: BoxDecoration(
-                              color: isSelected
-                                  ? AppTheme.accentPurple.withValues(alpha: 0.16)
-                                  : Colors.transparent,
+                              gradient: isSelected
+                                  ? LinearGradient(
+                                      colors: [
+                                        AppTheme.accentPurple.withValues(alpha: 0.22),
+                                        AppTheme.accentPurple.withValues(alpha: 0.10),
+                                      ],
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                    )
+                                  : null,
                               borderRadius: BorderRadius.circular(16),
+                              border: isSelected
+                                  ? Border.all(
+                                      color: AppTheme.accentPurple.withValues(alpha: 0.35),
+                                      width: 1,
+                                    )
+                                  : null,
                             ),
                             child: Icon(
                               isSelected ? item.activeIcon : item.icon,
                               color: isSelected ? AppTheme.accentPurple : context.textSecondaryColor,
-                              size: 22,
+                              size: isSelected ? 22.5 : 21,
                             ),
                           ),
-                          const SizedBox(height: 3),
-                          Text(
-                            item.label,
-                            style: TextStyle(
-                              color: isSelected ? AppTheme.accentPurple : context.textSecondaryColor,
-                              fontSize: 10.5,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                              letterSpacing: isSelected ? 0.2 : 0.0,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                          const SizedBox(height: 2),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (isSelected)
+                                Container(
+                                  width: 4,
+                                  height: 4,
+                                  margin: const EdgeInsets.only(right: 3.5),
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppTheme.accentPurple,
+                                  ),
+                                ),
+                              Text(
+                                item.label,
+                                style: GoogleFonts.outfit(
+                                  color: isSelected ? AppTheme.accentPurple : context.textSecondaryColor,
+                                  fontSize: 11,
+                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                  letterSpacing: isSelected ? 0.2 : 0.0,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
                         ],
                       ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
@@ -334,23 +336,34 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: context.colorSurface,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppTheme.textSecondary.withValues(alpha: 0.1)),
+                    color: context.isDarkMode ? const Color(0xFF14151D) : const Color(0xFFF1F1F5),
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                      color: context.isDarkMode
+                          ? Colors.white.withValues(alpha: 0.08)
+                          : Colors.black.withValues(alpha: 0.06),
+                    ),
                   ),
                   child: TabBar(
                     controller: _tabController,
                     indicator: BoxDecoration(
-                      color: AppTheme.primary,
-                      borderRadius: BorderRadius.circular(8),
+                      color: AppTheme.accentPurple,
+                      borderRadius: BorderRadius.circular(18),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.accentPurple.withValues(alpha: 0.35),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     indicatorSize: TabBarIndicatorSize.tab,
                     dividerColor: Colors.transparent,
                     labelColor: Colors.white,
-                    unselectedLabelColor: AppTheme.textSecondary,
+                    unselectedLabelColor: context.textSecondaryColor,
                     labelPadding: const EdgeInsets.symmetric(horizontal: 4),
-                    labelStyle: AppTheme.poppinsBold(fontSize: 12),
-                    unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
+                    labelStyle: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12),
+                    unselectedLabelStyle: GoogleFonts.outfit(fontWeight: FontWeight.w500, fontSize: 12),
                     tabs: const [
                       Tab(
                         height: 38,
@@ -856,16 +869,18 @@ class _PYQCardState extends State<_PYQCard> {
               children: [
                 // Year Badge
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
                   decoration: BoxDecoration(
-                    color: AppTheme.secondary.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(6),
+                    color: AppTheme.accentPurple.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    provider.activeExam == 'CSIT' ? 'CSIT ${pyq.year}${pyq.setNumber != null ? " Set ${pyq.setNumber}" : ""}' : 'DA ${pyq.year}${pyq.setNumber != null ? " Set ${pyq.setNumber}" : ""}',
-                    style: const TextStyle(
-                      color: AppTheme.secondary,
-                      fontSize: 10,
+                    provider.activeExam == 'CSIT'
+                        ? 'CSIT ${pyq.year}${pyq.setNumber != null ? " Set ${pyq.setNumber}" : ""}'
+                        : 'DA ${pyq.year}${pyq.setNumber != null ? " Set ${pyq.setNumber}" : ""}',
+                    style: GoogleFonts.outfit(
+                      color: AppTheme.accentPurple,
+                      fontSize: 10.5,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -873,16 +888,18 @@ class _PYQCardState extends State<_PYQCard> {
                 const SizedBox(width: 6),
                 // Question Badge
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
                   decoration: BoxDecoration(
-                    color: AppTheme.primary.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(6),
+                    color: context.isDarkMode
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.black.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     'Q. ${pyq.id.split('_').last}',
-                    style: const TextStyle(
-                      color: AppTheme.primary,
-                      fontSize: 10,
+                    style: GoogleFonts.outfit(
+                      color: context.textColor,
+                      fontSize: 10.5,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -890,48 +907,67 @@ class _PYQCardState extends State<_PYQCard> {
                 const SizedBox(width: 6),
                 // Type Badge (MCQ, MSQ, NAT)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
                   decoration: BoxDecoration(
                     color: pyq.type == 'MSQ'
-                        ? AppTheme.error.withOpacity(0.12)
+                        ? const Color(0xFFFF9100).withValues(alpha: 0.14)
                         : pyq.type == 'NAT'
-                            ? AppTheme.success.withOpacity(0.12)
-                            : AppTheme.primary.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(6),
+                            ? AppTheme.accentMint.withValues(alpha: 0.14)
+                            : AppTheme.accentPurple.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     pyq.type,
-                    style: TextStyle(
+                    style: GoogleFonts.outfit(
                       color: pyq.type == 'MSQ'
-                          ? AppTheme.error
+                          ? const Color(0xFFFF9100)
                           : pyq.type == 'NAT'
-                              ? AppTheme.success
-                              : AppTheme.primary,
-                      fontSize: 10,
+                              ? AppTheme.accentMint
+                              : AppTheme.accentPurple,
+                      fontSize: 10.5,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 const Spacer(),
+                // Virtual Calculator shortcut
+                IconButton(
+                  icon: const Icon(Icons.calculate_outlined, size: 19),
+                  color: context.textSecondaryColor,
+                  tooltip: 'Virtual Calculator',
+                  visualDensity: VisualDensity.compact,
+                  onPressed: () {
+                    HapticFeedback.selectionClick();
+                    VirtualCalculator.show(context);
+                  },
+                ),
                 // Flag revision
                 IconButton(
                   icon: Icon(
                     pyq.isFlaggedForRevision ? Icons.flag_rounded : Icons.flag_outlined,
-                    color: pyq.isFlaggedForRevision ? AppTheme.error : AppTheme.textSecondary,
-                    size: 20,
+                    color: pyq.isFlaggedForRevision ? AppTheme.error : context.textSecondaryColor,
+                    size: 19,
                   ),
-                  onPressed: () => provider.togglePYQFlagRevision(pyq.id),
+                  onPressed: () {
+                    HapticFeedback.selectionClick();
+                    provider.togglePYQFlagRevision(pyq.id);
+                  },
                   tooltip: 'Flag for revision',
+                  visualDensity: VisualDensity.compact,
                 ),
                 // Bookmark
                 IconButton(
                   icon: Icon(
-                    pyq.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                    color: pyq.isBookmarked ? Colors.amber : AppTheme.textSecondary,
+                    pyq.isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                    color: pyq.isBookmarked ? const Color(0xFFFFD166) : context.textSecondaryColor,
                     size: 20,
                   ),
-                  onPressed: () => provider.togglePYQBookmark(pyq.id),
+                  onPressed: () {
+                    HapticFeedback.selectionClick();
+                    provider.togglePYQBookmark(pyq.id);
+                  },
                   tooltip: 'Bookmark question',
+                  visualDensity: VisualDensity.compact,
                 ),
               ],
             ),
@@ -1250,30 +1286,33 @@ class _PYQCardState extends State<_PYQCard> {
           final correctIndex = pyq.options.indexOf(pyq.correctAnswer);
           final isCorrectOption = correctLetters.contains(optionLetter) || (correctIndex != -1 && correctIndex == index);
 
-          Color borderCol = AppTheme.textSecondary.withOpacity(0.2);
+          Color borderCol = context.isDarkMode
+              ? Colors.white.withValues(alpha: 0.10)
+              : Colors.black.withValues(alpha: 0.08);
           Color bgCol = context.colorSurface;
           Color textCol = context.textColor;
 
           if (alreadySolved) {
             if (isCorrectOption) {
-              borderCol = AppTheme.success;
-              bgCol = AppTheme.success.withOpacity(0.08);
-              textCol = AppTheme.success;
+              borderCol = AppTheme.accentMint;
+              bgCol = AppTheme.accentMint.withValues(alpha: 0.12);
+              textCol = AppTheme.accentMint;
             } else if (isSelected) {
               borderCol = AppTheme.error;
-              bgCol = AppTheme.error.withOpacity(0.08);
+              bgCol = AppTheme.error.withValues(alpha: 0.12);
               textCol = AppTheme.error;
             }
           } else if (isSelected) {
-            borderCol = AppTheme.primary;
-            bgCol = AppTheme.primary.withOpacity(0.08);
-            textCol = AppTheme.primary;
+            borderCol = AppTheme.accentPurple;
+            bgCol = AppTheme.accentPurple.withValues(alpha: 0.12);
+            textCol = AppTheme.accentPurple;
           }
 
           return Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
+            padding: const EdgeInsets.only(bottom: 9.0),
             child: InkWell(
               onTap: () {
+                HapticFeedback.selectionClick();
                 if (!alreadySolved) {
                   if (pyq.type == 'MSQ') {
                     setState(() {
@@ -1288,32 +1327,42 @@ class _PYQCardState extends State<_PYQCard> {
                   }
                 }
               },
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
+              borderRadius: BorderRadius.circular(14),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                 decoration: BoxDecoration(
                   color: bgCol,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: borderCol, width: 1.5),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: borderCol, width: isSelected || (alreadySolved && isCorrectOption) ? 1.5 : 1.0),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: borderCol.withValues(alpha: 0.18),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : null,
                 ),
                 child: Row(
                   children: [
                     Container(
-                      width: 28,
-                      height: 28,
+                      width: 30,
+                      height: 30,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: isSelected ? borderCol : AppTheme.background,
+                        color: isSelected ? borderCol : context.colorBackground,
                         shape: pyq.type == 'MSQ' ? BoxShape.rectangle : BoxShape.circle,
-                        borderRadius: pyq.type == 'MSQ' ? BorderRadius.circular(6) : null,
+                        borderRadius: pyq.type == 'MSQ' ? BorderRadius.circular(8) : null,
                         border: Border.all(
-                          color: isSelected ? Colors.transparent : AppTheme.textSecondary.withOpacity(0.3),
+                          color: isSelected ? Colors.transparent : context.textSecondaryColor.withValues(alpha: 0.25),
                         ),
                       ),
                       child: Text(
                         optionLetter,
-                        style: TextStyle(
+                        style: GoogleFonts.outfit(
                           color: isSelected ? Colors.white : context.textColor,
                           fontWeight: FontWeight.bold,
                           fontSize: 13,
@@ -1324,16 +1373,18 @@ class _PYQCardState extends State<_PYQCard> {
                     Expanded(
                       child: Text(
                         option,
-                        style: TextStyle(
+                        style: GoogleFonts.outfit(
                           color: textCol,
-                          fontSize: 13,
+                          fontSize: 13.5,
+                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                          height: 1.35,
                         ),
                       ),
                     ),
                     if (alreadySolved && isCorrectOption)
-                      const Icon(Icons.check_circle, color: AppTheme.success, size: 20)
+                      const Icon(Icons.check_circle_rounded, color: AppTheme.accentMint, size: 21)
                     else if (alreadySolved && isSelected)
-                      const Icon(Icons.cancel, color: AppTheme.error, size: 20),
+                      const Icon(Icons.cancel_rounded, color: AppTheme.error, size: 21),
                   ],
                 ),
               ),
@@ -1344,14 +1395,16 @@ class _PYQCardState extends State<_PYQCard> {
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
+            child: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.secondary,
-                foregroundColor: AppTheme.background,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                backgroundColor: AppTheme.accentPurple,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                elevation: 0,
               ),
               onPressed: () {
+                HapticFeedback.selectionClick();
                 if (_selectedMsqOptions.isNotEmpty) {
                   final sortedAnswers = _selectedMsqOptions.toList()..sort();
                   provider.solvePYQ(pyq.id, sortedAnswers.join(';'));
@@ -1364,7 +1417,11 @@ class _PYQCardState extends State<_PYQCard> {
                   );
                 }
               },
-              child: const Text('Submit Answers', style: TextStyle(fontWeight: FontWeight.bold)),
+              icon: const Icon(Icons.done_all_rounded, size: 18),
+              label: Text(
+                'Submit MSQ Answers (${_selectedMsqOptions.length})',
+                style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13.5),
+              ),
             ),
           ),
         ],

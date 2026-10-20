@@ -1,5 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -155,19 +157,47 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
         elevation: 0,
         title: Text(
           'Mock Arena',
-          style: AppTheme.poppinsBold(fontSize: 20, color: context.textColor),
+          style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: context.textColor),
         ),
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: AppTheme.accentPurple,
-          indicatorWeight: 3,
-          labelColor: AppTheme.accentPurple,
-          unselectedLabelColor: context.textSecondaryColor,
-          labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-          tabs: const [
-            Tab(text: 'Test Arena', icon: Icon(Icons.sports_score_rounded, size: 20)),
-            Tab(text: 'Score Curve & History', icon: Icon(Icons.show_chart_rounded, size: 20)),
-          ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: context.isDarkMode ? const Color(0xFF14151D) : const Color(0xFFF1F1F5),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: context.isDarkMode
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.black.withValues(alpha: 0.06),
+              ),
+            ),
+            child: TabBar(
+              controller: _tabController,
+              indicator: BoxDecoration(
+                color: AppTheme.accentPurple,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.accentPurple.withValues(alpha: 0.35),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              indicatorSize: TabBarIndicatorSize.tab,
+              dividerColor: Colors.transparent,
+              labelColor: Colors.white,
+              unselectedLabelColor: context.textSecondaryColor,
+              labelStyle: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13),
+              unselectedLabelStyle: GoogleFonts.outfit(fontWeight: FontWeight.w500, fontSize: 13),
+              tabs: const [
+                Tab(height: 38, text: 'Test Arena', icon: Icon(Icons.sports_score_rounded, size: 18)),
+                Tab(height: 38, text: 'Score Curve & History', icon: Icon(Icons.show_chart_rounded, size: 18)),
+              ],
+            ),
+          ),
         ),
       ),
       body: Center(
@@ -196,17 +226,17 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
 
   Widget _buildRulePill(String label, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
       child: Text(
         label,
-        style: TextStyle(
+        style: GoogleFonts.outfit(
           color: color,
-          fontSize: 10,
+          fontSize: 10.5,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -308,7 +338,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                   const NeuIconTile(
                     icon: Icons.topic_outlined,
                     iconColor: AppTheme.accentGold,
-                    size: 44,
+                    size: 46,
                     iconSize: 22,
                   ),
                   const SizedBox(width: 14),
@@ -321,33 +351,64 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                             Expanded(
                               child: Text(
                                 'Subject Practice Test',
-                                style: AppTheme.poppinsBold(fontSize: 15, color: context.textColor),
+                                style: GoogleFonts.outfit(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: context.textColor,
+                                ),
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
                               decoration: BoxDecoration(
                                 color: AppTheme.accentGold.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: AppTheme.accentGold.withValues(alpha: 0.25)),
                               ),
-                              child: const Text(
+                              child: Text(
                                 'DEEP DIVE',
-                                style: TextStyle(color: AppTheme.accentGold, fontSize: 9, fontWeight: FontWeight.bold),
+                                style: GoogleFonts.outfit(
+                                  color: AppTheme.accentGold,
+                                  fontSize: 9.5,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 3),
-                        Text(
-                          '10 Questions • 20 Minutes',
-                          style: TextStyle(color: context.textSecondaryColor, fontSize: 12, fontWeight: FontWeight.w500),
+                        const SizedBox(height: 5),
+                        Row(
+                          children: [
+                            Icon(Icons.quiz_outlined, size: 13, color: context.textSecondaryColor),
+                            const SizedBox(width: 4),
+                            Text(
+                              '10 Questions',
+                              style: GoogleFonts.outfit(
+                                color: context.textSecondaryColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Icon(Icons.timer_outlined, size: 13, color: context.textSecondaryColor),
+                            const SizedBox(width: 4),
+                            Text(
+                              '20 Minutes',
+                              style: GoogleFonts.outfit(
+                                color: context.textSecondaryColor,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
               NeuContainer(
                 isRecessed: true,
                 borderRadius: 14,
@@ -357,12 +418,13 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                     value: _selectedSubject,
                     isExpanded: true,
                     dropdownColor: context.colorSurface,
-                    style: TextStyle(color: context.textColor, fontSize: 13, fontWeight: FontWeight.w500),
+                    style: GoogleFonts.outfit(color: context.textColor, fontSize: 13.5, fontWeight: FontWeight.w500),
                     icon: Icon(Icons.arrow_drop_down_rounded, color: context.textSecondaryColor),
                     items: subjects.map((sub) {
                       return DropdownMenuItem(value: sub, child: Text(sub));
                     }).toList(),
                     onChanged: (val) {
+                      HapticFeedback.selectionClick();
                       setState(() {
                         _selectedSubject = val;
                       });
@@ -374,6 +436,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
               NeuButton(
                 isPrimary: false,
                 onPressed: () {
+                  HapticFeedback.selectionClick();
                   if (_selectedSubject != null) {
                     final questions = _generateSubjectMock(_selectedSubject!, provider);
                     _startTest(questions, const Duration(minutes: 20), '$_selectedSubject Practice');
@@ -386,7 +449,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                     const SizedBox(width: 8),
                     Text(
                       'Start Subject Test',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor),
+                      style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13.5, color: context.textColor),
                     ),
                   ],
                 ),
@@ -460,6 +523,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
       isPrimary: false,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       onPressed: () async {
+        HapticFeedback.selectionClick();
         final messenger = ScaffoldMessenger.of(this.context);
         Navigator.pop(context);
         if (isLocked) {
@@ -492,7 +556,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
           const SizedBox(width: 14),
           Text(
             difficulty,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: color),
+            style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 15, color: color),
           ),
           if (isLocked) ...[
             const SizedBox(width: 8),
@@ -546,7 +610,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
               NeuIconTile(
                 icon: icon,
                 iconColor: iconColor,
-                size: 44,
+                size: 46,
                 iconSize: 22,
               ),
               const SizedBox(width: 14),
@@ -559,26 +623,57 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                         Expanded(
                           child: Text(
                             title,
-                            style: AppTheme.poppinsBold(fontSize: 15, color: context.textColor),
+                            style: GoogleFonts.outfit(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: context.textColor,
+                            ),
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
                           decoration: BoxDecoration(
                             color: badgeColor.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: badgeColor.withValues(alpha: 0.25)),
                           ),
                           child: Text(
                             badgeText,
-                            style: TextStyle(color: badgeColor, fontSize: 9, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.outfit(
+                              color: badgeColor,
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 3),
-                    Text(
-                      '$questionsCount • $duration',
-                      style: TextStyle(color: context.textSecondaryColor, fontSize: 12, fontWeight: FontWeight.w500),
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Icon(Icons.quiz_outlined, size: 13, color: context.textSecondaryColor),
+                        const SizedBox(width: 4),
+                        Text(
+                          questionsCount,
+                          style: GoogleFonts.outfit(
+                            color: context.textSecondaryColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Icon(Icons.timer_outlined, size: 13, color: context.textSecondaryColor),
+                        const SizedBox(width: 4),
+                        Text(
+                          duration,
+                          style: GoogleFonts.outfit(
+                            color: context.textSecondaryColor,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -589,7 +684,10 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
           NeuButton(
             isPrimary: isPrimary,
             gradient: gradient,
-            onPressed: onTap,
+            onPressed: () {
+              HapticFeedback.selectionClick();
+              onTap();
+            },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -601,9 +699,9 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                 const SizedBox(width: 8),
                 Text(
                   buttonText ?? 'Start Practice Exam',
-                  style: TextStyle(
+                  style: GoogleFonts.outfit(
                     fontWeight: FontWeight.bold,
-                    fontSize: 13,
+                    fontSize: 13.5,
                     color: isPrimary ? Colors.white : context.textColor,
                   ),
                 ),
@@ -817,7 +915,11 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
               Expanded(
                 child: Text(
                   label,
-                  style: TextStyle(color: context.textSecondaryColor, fontSize: 10.5, fontWeight: FontWeight.bold),
+                  style: GoogleFonts.outfit(
+                    color: context.textSecondaryColor,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -827,7 +929,11 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
           const SizedBox(height: 6),
           Text(
             value,
-            style: AppTheme.timerStyle(fontSize: 17, color: context.textColor),
+            style: GoogleFonts.outfit(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: context.textColor,
+            ),
           ),
         ],
       ),
@@ -850,25 +956,26 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
         textColor: AppTheme.accentPurple,
         iconColor: AppTheme.accentPurple,
         leading: Container(
-          width: 42,
-          height: 42,
+          width: 44,
+          height: 44,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: scoreCol.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: scoreCol.withValues(alpha: 0.25)),
           ),
           child: Text(
             mock.score.toStringAsFixed(0),
-            style: AppTheme.timerStyle(fontSize: 16, color: scoreCol),
+            style: GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.bold, color: scoreCol),
           ),
         ),
         title: Text(
           mock.name,
-          style: AppTheme.poppinsBold(fontSize: 13, color: context.textColor),
+          style: GoogleFonts.outfit(fontSize: 14.5, fontWeight: FontWeight.bold, color: context.textColor),
         ),
         subtitle: Text(
           formattedDate,
-          style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
+          style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 11.5),
         ),
         children: [
           Padding(

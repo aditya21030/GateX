@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/app_provider.dart';
@@ -333,20 +334,47 @@ class _PlannerScreenState extends State<PlannerScreen> {
           elevation: 0,
           title: Text(
             'Syllabus & Planner',
-            style: AppTheme.poppinsBold(fontSize: 20, color: context.textColor),
+            style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: context.textColor),
           ),
-          bottom: TabBar(
-            indicatorColor: AppTheme.accentPurple,
-            indicatorWeight: 3,
-            labelColor: AppTheme.accentPurple,
-            unselectedLabelColor: context.textSecondaryColor,
-            labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-            indicatorSize: TabBarIndicatorSize.tab,
-            tabs: const [
-              Tab(text: 'Agile Checklist'),
-              Tab(text: 'Daily Plan'),
-              Tab(text: 'Phase Runway'),
-            ],
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(56),
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: context.isDarkMode ? const Color(0xFF14151D) : const Color(0xFFF1F1F5),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: context.isDarkMode
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.black.withValues(alpha: 0.06),
+                ),
+              ),
+              child: TabBar(
+                indicator: BoxDecoration(
+                  color: AppTheme.accentPurple,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.accentPurple.withValues(alpha: 0.35),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                indicatorSize: TabBarIndicatorSize.tab,
+                dividerColor: Colors.transparent,
+                labelColor: Colors.white,
+                unselectedLabelColor: context.textSecondaryColor,
+                labelStyle: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13),
+                unselectedLabelStyle: GoogleFonts.outfit(fontWeight: FontWeight.w500, fontSize: 13),
+                tabs: const [
+                  Tab(height: 38, text: 'Agile Checklist'),
+                  Tab(height: 38, text: 'Daily Plan'),
+                  Tab(height: 38, text: 'Phase Runway'),
+                ],
+              ),
+            ),
           ),
         ),
         body: TabBarView(
@@ -387,36 +415,97 @@ class _PlannerScreenState extends State<PlannerScreen> {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
           child: NeuContainer(
-            borderRadius: 20,
-            padding: const EdgeInsets.all(14),
+            borderRadius: 22,
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Overall Progress Bar
+                // Top Progress Card: Circular Ring + Stat Counters
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Syllabus Mastery',
-                      style: AppTheme.poppinsBold(fontSize: 13, color: context.textColor),
+                    // Circular Progress Indicator Ring
+                    SizedBox(
+                      width: 54,
+                      height: 54,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                            value: overallProgress,
+                            strokeWidth: 5.5,
+                            backgroundColor: context.isDarkMode
+                                ? Colors.white.withValues(alpha: 0.08)
+                                : Colors.black.withValues(alpha: 0.06),
+                            valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.accentMint),
+                          ),
+                          Text(
+                            '${(overallProgress * 100).toStringAsFixed(0)}%',
+                            style: GoogleFonts.outfit(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: context.textColor,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    Text(
-                      '$masteredTopics / $totalTopics (${(overallProgress * 100).toStringAsFixed(0)}%)',
-                      style: const TextStyle(
-                        color: AppTheme.accentMint,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(width: 14),
+                    // Stats Breakdown
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Syllabus Mastery',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: context.textColor,
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.accentMint.withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  overallProgress >= 0.8
+                                      ? 'GATE READY'
+                                      : (overallProgress >= 0.4 ? 'ON TRACK' : 'IN PROGRESS'),
+                                  style: GoogleFonts.outfit(
+                                    color: AppTheme.accentMint,
+                                    fontSize: 9.5,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            '$masteredTopics of $totalTopics Topics Completed',
+                            style: GoogleFonts.outfit(
+                              color: context.textSecondaryColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          NeuProgressBar(
+                            progress: overallProgress,
+                            progressColor: AppTheme.accentMint,
+                            height: 6,
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                NeuProgressBar(
-                  progress: overallProgress,
-                  progressColor: AppTheme.accentMint,
-                  height: 8,
-                ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 // Search Bar
                 NeuContainer(
                   isRecessed: true,
@@ -429,14 +518,14 @@ class _PlannerScreenState extends State<PlannerScreen> {
                         _checklistSearchQuery = val.trim();
                       });
                     },
-                    style: TextStyle(color: context.textColor, fontSize: 13),
+                    style: GoogleFonts.outfit(color: context.textColor, fontSize: 13.5),
                     decoration: InputDecoration(
                       hintText: 'Search topics (e.g. Eigenvalues, Bayes)...',
-                      hintStyle: TextStyle(color: context.textSecondaryColor, fontSize: 13),
-                      prefixIcon: Icon(Icons.search, size: 18, color: context.textSecondaryColor),
+                      hintStyle: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 13),
+                      prefixIcon: Icon(Icons.search_rounded, size: 18, color: context.textSecondaryColor),
                       suffixIcon: _checklistSearchQuery.isNotEmpty
                           ? IconButton(
-                              icon: Icon(Icons.close, size: 16, color: context.textSecondaryColor),
+                              icon: Icon(Icons.close_rounded, size: 16, color: context.textSecondaryColor),
                               onPressed: () {
                                 _searchController.clear();
                                 setState(() {
@@ -451,17 +540,18 @@ class _PlannerScreenState extends State<PlannerScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
                 // Filter Chips
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
                   child: Row(
                     children: [
-                      _buildFilterChip('All', 'All'),
-                      _buildFilterChip('Unfinished', 'Unfinished'),
-                      _buildFilterChip('Concept Left', '🎬 Concept Left'),
-                      _buildFilterChip('PYQ Left', '📝 PYQ Left'),
-                      _buildFilterChip('Needs Revision', '🔄 Needs Revision'),
+                      _buildFilterChip('All', 'All ($totalTopics)'),
+                      _buildFilterChip('Unfinished', 'Pending (${totalTopics - masteredTopics})'),
+                      _buildFilterChip('Concept Left', '🎬 Concept'),
+                      _buildFilterChip('PYQ Left', '📝 PYQs'),
+                      _buildFilterChip('Needs Revision', '🔄 Revise'),
                     ],
                   ),
                 ),
@@ -629,7 +719,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
   Widget _buildFilterChip(String filterKey, String label) {
     final isSelected = _checklistFilter == filterKey;
     return Padding(
-      padding: const EdgeInsets.only(right: 6),
+      padding: const EdgeInsets.only(right: 7),
       child: InkWell(
         onTap: () {
           HapticFeedback.selectionClick();
@@ -637,22 +727,37 @@ class _PlannerScreenState extends State<PlannerScreen> {
             _checklistFilter = filterKey;
           });
         },
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        borderRadius: BorderRadius.circular(16),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6.5),
           decoration: BoxDecoration(
-            color: isSelected ? AppTheme.primary : AppTheme.background,
-            borderRadius: BorderRadius.circular(14),
+            color: isSelected
+                ? AppTheme.accentPurple
+                : (context.isDarkMode ? const Color(0xFF1B1D26) : const Color(0xFFEBEBF0)),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isSelected ? AppTheme.primary : Colors.white.withValues(alpha: 0.12),
+              color: isSelected
+                  ? AppTheme.accentPurple
+                  : (context.isDarkMode ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06)),
+              width: 1,
             ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: AppTheme.accentPurple.withValues(alpha: 0.35),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
           ),
           child: Text(
             label,
-            style: TextStyle(
-              color: isSelected ? Colors.white : AppTheme.textSecondary,
-              fontSize: 11,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            style: GoogleFonts.outfit(
+              color: isSelected ? Colors.white : context.textSecondaryColor,
+              fontSize: 11.5,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
             ),
           ),
         ),
@@ -681,10 +786,10 @@ class _PlannerScreenState extends State<PlannerScreen> {
     final isFullyMastered = status.conceptWatched && status.pyqSolved && status.revisedOnce;
 
     return NeuContainer(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4.5),
+      padding: const EdgeInsets.all(12),
       isRecessed: isFullyMastered,
-      borderRadius: 14,
+      borderRadius: 16,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -693,33 +798,40 @@ class _PlannerScreenState extends State<PlannerScreen> {
               Expanded(
                 child: Text(
                   topic,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: isFullyMastered ? FontWeight.bold : FontWeight.w500,
+                  style: GoogleFonts.outfit(
+                    fontSize: 13.5,
+                    fontWeight: isFullyMastered ? FontWeight.bold : FontWeight.w600,
                     color: isFullyMastered ? AppTheme.accentMint : context.textColor,
                   ),
                 ),
               ),
               if (isFullyMastered)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
                   decoration: BoxDecoration(
-                    color: AppTheme.secondary.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(4),
+                    color: AppTheme.accentMint.withValues(alpha: 0.16),
+                    borderRadius: BorderRadius.circular(6),
                   ),
-                  child: const Text(
-                    'MASTERED',
-                    style: TextStyle(
-                      color: AppTheme.secondary,
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.5,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.check_circle_rounded, size: 10.5, color: AppTheme.accentMint),
+                      const SizedBox(width: 3.5),
+                      Text(
+                        'MASTERED',
+                        style: GoogleFonts.outfit(
+                          color: AppTheme.accentMint,
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 9),
           // 3 Checkbox Action Pills
           Row(
             children: [
@@ -727,7 +839,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
                 label: 'Concept',
                 icon: Icons.play_circle_fill_rounded,
                 isDone: status.conceptWatched,
-                activeColor: const Color(0xFF2962FF),
+                activeColor: const Color(0xFF6B38FF),
                 onTap: () {
                   HapticFeedback.selectionClick();
                   provider.toggleTopicMilestone(subject, topic, 'concept');
@@ -772,17 +884,30 @@ class _PlannerScreenState extends State<PlannerScreen> {
     return Expanded(
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(10),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
+          padding: const EdgeInsets.symmetric(vertical: 6.5, horizontal: 6),
           decoration: BoxDecoration(
-            color: isDone ? activeColor.withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.03),
-            borderRadius: BorderRadius.circular(8),
+            color: isDone
+                ? activeColor.withValues(alpha: 0.16)
+                : (context.isDarkMode ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.02)),
+            borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: isDone ? activeColor : Colors.white.withValues(alpha: 0.12),
-              width: isDone ? 1.4 : 1.0,
+              color: isDone
+                  ? activeColor
+                  : (context.isDarkMode ? Colors.white.withValues(alpha: 0.10) : Colors.black.withValues(alpha: 0.08)),
+              width: isDone ? 1.3 : 1.0,
             ),
+            boxShadow: isDone
+                ? [
+                    BoxShadow(
+                      color: activeColor.withValues(alpha: 0.20),
+                      blurRadius: 6,
+                      offset: const Offset(0, 1),
+                    ),
+                  ]
+                : null,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -790,15 +915,15 @@ class _PlannerScreenState extends State<PlannerScreen> {
               Icon(
                 isDone ? Icons.check_circle_rounded : icon,
                 size: 13,
-                color: isDone ? activeColor : AppTheme.textSecondary,
+                color: isDone ? activeColor : context.textSecondaryColor,
               ),
               const SizedBox(width: 4),
               Text(
                 label,
-                style: TextStyle(
+                style: GoogleFonts.outfit(
                   fontSize: 11,
                   fontWeight: isDone ? FontWeight.bold : FontWeight.w500,
-                  color: isDone ? activeColor : AppTheme.textSecondary,
+                  color: isDone ? activeColor : context.textSecondaryColor,
                 ),
               ),
             ],
