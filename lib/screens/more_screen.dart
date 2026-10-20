@@ -399,7 +399,7 @@ class MoreScreen extends StatelessWidget {
       {'icon': Icons.timer_outlined, 'color': AppTheme.accentFlame, 'title': 'Pomodoro', 'screen': const PomodoroScreen()},
       {'icon': Icons.repeat_rounded, 'color': AppTheme.accentPurple, 'title': 'Revision', 'screen': const RevisionScreen()},
       {'icon': Icons.error_outline_rounded, 'color': AppTheme.accentCoral, 'title': 'Mistakes', 'screen': const ErrorLogScreen()},
-      {'icon': Icons.account_balance_outlined, 'color': Colors.blueAccent, 'title': 'Cutoffs', 'screen': const COAPScreen()},
+      {'icon': Icons.account_balance_outlined, 'color': Colors.blueAccent, 'title': 'COAP Predictor', 'screen': const COAPScreen()},
       {'icon': Icons.library_books_rounded, 'color': Colors.deepPurpleAccent, 'title': 'Notes', 'screen': const ResourcesScreen()},
     ];
 

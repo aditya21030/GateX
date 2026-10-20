@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/neu_widgets.dart';
+import 'coap_screen.dart';
 
 class EstimationNode {
   final double marks;
@@ -656,6 +657,30 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                           child: Text(
                             prediction['message'],
                             style: TextStyle(fontSize: 12.5, height: 1.45, color: context.textColor),
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        NeuButton(
+                          isPrimary: true,
+                          borderRadius: 14,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          onPressed: () {
+                            HapticFeedback.selectionClick();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const COAPScreen()),
+                            );
+                          },
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.account_balance_rounded, size: 18, color: Colors.white),
+                              SizedBox(width: 8),
+                              Text(
+                                'Check Eligible IITs/IISc on COAP Predictor →',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
+                              ),
+                            ],
                           ),
                         ),
                       ],
