@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -31,7 +32,14 @@ class MoreScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: context.scaffoldBackground,
       appBar: AppBar(
-        title: const Text('GateX Hub'),
+        title: Text(
+          'GateX Hub',
+          style: GoogleFonts.outfit(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: context.textColor,
+          ),
+        ),
         elevation: 0,
         backgroundColor: context.scaffoldBackground,
       ),
@@ -53,11 +61,11 @@ class MoreScreen extends StatelessWidget {
               // 3. EXAM PREPARATION TOOLS (Tactile 2-Column Grid)
               Text(
                 'PREP TOOLS',
-                style: TextStyle(
+                style: GoogleFonts.outfit(
                   color: context.textSecondaryColor,
                   fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.0,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.1,
                 ),
               ),
               const SizedBox(height: 12),
@@ -67,11 +75,11 @@ class MoreScreen extends StatelessWidget {
               // 4. COMMUNITY & RANKING
               Text(
                 'COMMUNITY & STANDING',
-                style: TextStyle(
+                style: GoogleFonts.outfit(
                   color: context.textSecondaryColor,
                   fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.0,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.1,
                 ),
               ),
               const SizedBox(height: 12),
@@ -103,11 +111,11 @@ class MoreScreen extends StatelessWidget {
               // 5. PREFERENCES
               Text(
                 'APP PREFERENCES',
-                style: TextStyle(
+                style: GoogleFonts.outfit(
                   color: context.textSecondaryColor,
                   fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.0,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.1,
                 ),
               ),
               const SizedBox(height: 12),
@@ -163,11 +171,11 @@ class MoreScreen extends StatelessWidget {
               // 6. SUPPORT & DATA
               Text(
                 'SUPPORT & DATA',
-                style: TextStyle(
+                style: GoogleFonts.outfit(
                   color: context.textSecondaryColor,
                   fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.0,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.1,
                 ),
               ),
               const SizedBox(height: 12),
@@ -221,7 +229,7 @@ class MoreScreen extends StatelessWidget {
     final userName = authProvider.isLoggedIn && authProvider.userName.isNotEmpty
         ? authProvider.userName
         : 'Guest Aspirant';
-    final userEmail = authProvider.isLoggedIn ? authProvider.userEmail : 'Login to sync data';
+    final userEmail = authProvider.isLoggedIn ? authProvider.userEmail : 'Login to sync your preparation data';
 
     return GestureDetector(
       onTap: () {
@@ -230,17 +238,31 @@ class MoreScreen extends StatelessWidget {
       },
       child: NeuContainer(
         padding: const EdgeInsets.all(16),
+        borderRadius: 20,
         child: Row(
           children: [
-            NeuContainer(
+            Container(
               width: 52,
               height: 52,
-              borderRadius: 26,
-              padding: EdgeInsets.zero,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [AppTheme.accentPurple, Color(0xFF8B5CF6)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(26),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.accentPurple.withValues(alpha: 0.35),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
               alignment: Alignment.center,
               child: Text(
                 userName.isNotEmpty ? userName[0].toUpperCase() : 'G',
-                style: AppTheme.poppinsBold(fontSize: 22, color: AppTheme.accentPurple),
+                style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ),
             const SizedBox(width: 14),
@@ -255,28 +277,40 @@ class MoreScreen extends StatelessWidget {
                           userName,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: AppTheme.poppinsBold(fontSize: 15, color: context.textColor),
+                          style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, color: context.textColor),
                         ),
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
                           color: AppTheme.accentFlame.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: AppTheme.accentFlame.withValues(alpha: 0.3),
+                            width: 0.8,
+                          ),
                         ),
-                        child: Text(
-                          '${provider.streak}d',
-                          style: const TextStyle(color: AppTheme.accentFlame, fontSize: 9.5, fontWeight: FontWeight.bold),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.local_fire_department_rounded, size: 12, color: AppTheme.accentFlame),
+                            const SizedBox(width: 3),
+                            Text(
+                              '${provider.streak}d',
+                              style: GoogleFonts.outfit(color: AppTheme.accentFlame, fontSize: 11, fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
+                  const SizedBox(height: 3),
                   Text(
                     userEmail,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
+                    style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 12),
                   ),
                 ],
               ),
@@ -297,15 +331,36 @@ class MoreScreen extends StatelessWidget {
         Navigator.push(context, MaterialPageRoute(builder: (_) => const ProUpgradeScreen()));
       },
       child: NeuContainer(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         borderRadius: 20,
         child: Row(
           children: [
-            NeuIconTile(
-              icon: isPro ? Icons.verified_rounded : Icons.workspace_premium_rounded,
-              iconColor: isPro ? AppTheme.accentMint : AppTheme.accentGold,
-              size: 40,
-              iconSize: 22,
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: isPro
+                      ? [AppTheme.accentMint, const Color(0xFF10B981)]
+                      : [const Color(0xFFFFB300), const Color(0xFFF59E0B)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: (isPro ? AppTheme.accentMint : const Color(0xFFFFB300)).withValues(alpha: 0.35),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              alignment: Alignment.center,
+              child: Icon(
+                isPro ? Icons.verified_rounded : Icons.workspace_premium_rounded,
+                color: Colors.white,
+                size: 22,
+              ),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -314,14 +369,16 @@ class MoreScreen extends StatelessWidget {
                 children: [
                   Text(
                     isPro ? 'GateX Pro Active' : 'GateX Pro Season Pass',
-                    style: AppTheme.poppinsBold(
-                      fontSize: 13.5,
+                    style: GoogleFonts.outfit(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
                       color: isPro ? AppTheme.accentMint : const Color(0xFFFFB300),
                     ),
                   ),
+                  const SizedBox(height: 2),
                   Text(
-                    isPro ? 'All 10 CBT Mocks Unlocked' : '₹199 One-Time • 10 CBT Mocks',
-                    style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
+                    isPro ? 'All 10 CBT Mocks Unlocked • Ad-free' : '₹199 One-Time • 10 CBT Mocks & Full Analytics',
+                    style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 11.5),
                   ),
                 ],
               ),
@@ -382,21 +439,21 @@ class MoreScreen extends StatelessWidget {
         onTap();
       },
       child: NeuContainer(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         borderRadius: 18,
         child: Row(
           children: [
-            NeuIconTile(icon: icon, iconColor: iconColor, size: 34, iconSize: 18),
+            NeuIconTile(icon: icon, iconColor: iconColor, size: 36, iconSize: 19),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
                 title,
-                style: AppTheme.poppinsBold(fontSize: 12.5, color: context.textColor),
+                style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: context.textColor),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor, size: 16),
+            Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor.withValues(alpha: 0.6), size: 16),
           ],
         ),
       ),

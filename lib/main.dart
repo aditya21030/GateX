@@ -359,123 +359,126 @@ class MainNavigationScaffold extends StatelessWidget {
         index: selectedIndex,
         children: screens,
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: context.colorSurface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
-          border: Border(
-            top: BorderSide(
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Container(
+          height: 64,
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          decoration: BoxDecoration(
+            color: context.isDarkMode
+                ? const Color(0xFF13141C).withValues(alpha: 0.95)
+                : Colors.white.withValues(alpha: 0.95),
+            borderRadius: BorderRadius.circular(32),
+            border: Border.all(
               color: context.isDarkMode
-                  ? Colors.white.withValues(alpha: 0.10)
-                  : Colors.black.withValues(alpha: 0.06),
-              width: 1,
+                  ? Colors.white.withValues(alpha: 0.12)
+                  : Colors.black.withValues(alpha: 0.08),
+              width: 1.2,
             ),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: context.isDarkMode ? 0.45 : 0.08),
-              blurRadius: 20,
-              offset: const Offset(0, -5),
-            ),
-            if (context.isDarkMode)
+            boxShadow: [
               BoxShadow(
-                color: AppTheme.accentPurple.withValues(alpha: 0.08),
+                color: Colors.black.withValues(alpha: context.isDarkMode ? 0.45 : 0.12),
                 blurRadius: 24,
-                offset: const Offset(0, -8),
+                offset: const Offset(0, 8),
               ),
-          ],
-        ),
-        child: SafeArea(
-          top: false,
-          child: SizedBox(
-            height: 66,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: List.generate(navItems.length, (index) {
-                final isSelected = selectedIndex == index;
-                final item = navItems[index];
-                return Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      HapticFeedback.selectionClick();
-                      Provider.of<AppProvider>(context, listen: false).setSelectedIndex(index);
-                    },
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 220),
-                      curve: Curves.easeOutCubic,
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          AnimatedContainer(
-                            duration: const Duration(milliseconds: 220),
-                            curve: Curves.easeOutCubic,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isSelected ? 16 : 10,
-                              vertical: 4.5,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: isSelected
-                                  ? LinearGradient(
-                                      colors: [
-                                        AppTheme.accentPurple.withValues(alpha: 0.22),
-                                        AppTheme.accentPurple.withValues(alpha: 0.10),
-                                      ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                    )
-                                  : null,
-                              borderRadius: BorderRadius.circular(16),
-                              border: isSelected
-                                  ? Border.all(
-                                      color: AppTheme.accentPurple.withValues(alpha: 0.35),
-                                      width: 1,
-                                    )
-                                  : null,
-                            ),
-                            child: Icon(
-                              isSelected ? item.activeIcon : item.icon,
-                              color: isSelected ? AppTheme.accentPurple : context.textSecondaryColor,
-                              size: isSelected ? 22.5 : 21,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (isSelected)
-                                Container(
-                                  width: 4,
-                                  height: 4,
-                                  margin: const EdgeInsets.only(right: 3.5),
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: AppTheme.accentPurple,
-                                  ),
-                                ),
-                              Text(
-                                item.label,
-                                style: GoogleFonts.outfit(
-                                  color: isSelected ? AppTheme.accentPurple : context.textSecondaryColor,
-                                  fontSize: 11,
-                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                                  letterSpacing: isSelected ? 0.2 : 0.0,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }),
-            ),
+              if (context.isDarkMode)
+                BoxShadow(
+                  color: AppTheme.accentPurple.withValues(alpha: 0.18),
+                  blurRadius: 20,
+                  offset: const Offset(0, 2),
+                ),
+            ],
           ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: List.generate(navItems.length, (index) {
+              final isSelected = selectedIndex == index;
+              final item = navItems[index];
+              return _NavBarItem(
+                item: item,
+                isSelected: isSelected,
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  Provider.of<AppProvider>(context, listen: false).setSelectedIndex(index);
+                },
+              );
+            }),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NavBarItem extends StatelessWidget {
+  final _NavItem item;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _NavBarItem({
+    required this.item,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      borderRadius: BorderRadius.circular(24),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 260),
+        curve: Curves.easeOutCubic,
+        padding: EdgeInsets.symmetric(
+          horizontal: isSelected ? 14 : 10,
+          vertical: 9,
+        ),
+        decoration: BoxDecoration(
+          gradient: isSelected
+              ? const LinearGradient(
+                  colors: [
+                    AppTheme.accentPurple,
+                    Color(0xFF8B5CF6),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+              : null,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppTheme.accentPurple.withValues(alpha: 0.40),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
+                  ),
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              isSelected ? item.activeIcon : item.icon,
+              color: isSelected ? Colors.white : context.textSecondaryColor,
+              size: 21,
+            ),
+            if (isSelected) ...[
+              const SizedBox(width: 6),
+              Text(
+                item.label,
+                style: GoogleFonts.outfit(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );

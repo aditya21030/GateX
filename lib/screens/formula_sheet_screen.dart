@@ -1,6 +1,6 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../providers/app_provider.dart';
@@ -15,7 +15,6 @@ class FormulaSheetScreen extends StatefulWidget {
 }
 
 class _FormulaSheetScreenState extends State<FormulaSheetScreen> {
-  bool _isFlashcardMode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -52,16 +51,24 @@ class _FormulaSheetScreenState extends State<FormulaSheetScreen> {
     return DefaultTabController(
       length: tabs.length,
       child: Scaffold(
+        backgroundColor: context.colorBackground,
         appBar: AppBar(
+          backgroundColor: context.colorSurface,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_rounded, color: context.textColor),
+            onPressed: () => Navigator.pop(context),
+          ),
           title: Text(
-            _isFlashcardMode ? 'Formula Flashcards' : 'Formula Sheet',
-            style: AppTheme.poppinsBold(fontSize: 18),
+            'Formula & Concept Sheet',
+            style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: context.textColor),
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.share_rounded, size: 20),
+              icon: const Icon(Icons.share_rounded, size: 20, color: AppTheme.accentPurple),
               tooltip: 'Share / Export Formulas',
               onPressed: () {
+                HapticFeedback.selectionClick();
                 final exam = provider.activeExam ?? 'DA';
                 Share.share(
                   'GATE $exam Complete Formula & Concept Cheatsheet by GateX.\nIncludes Linear Algebra, Calculus, Probability & Stats, ML/AI, and Aptitude formulas.\nDownload now on Google Play Store!',
@@ -69,57 +76,38 @@ class _FormulaSheetScreenState extends State<FormulaSheetScreen> {
                 );
               },
             ),
-            Padding(
-              padding: const EdgeInsets.only(right: 12.0),
-              child: Center(
-                child: InkWell(
-                  onTap: () {
-                    HapticFeedback.selectionClick();
-                    setState(() {
-                      _isFlashcardMode = !_isFlashcardMode;
-                    });
-                  },
-                  borderRadius: BorderRadius.circular(10),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: _isFlashcardMode ? AppTheme.secondary.withValues(alpha: 0.18) : AppTheme.surface,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: _isFlashcardMode ? AppTheme.secondary : Colors.white.withValues(alpha: 0.15),
-                      ),
+            const SizedBox(width: 6),
+          ],
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(50),
+            child: Container(
+              height: 38,
+              margin: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+              child: TabBar(
+                isScrollable: true,
+                tabAlignment: TabAlignment.start,
+                indicator: BoxDecoration(
+                  color: AppTheme.accentPurple,
+                  borderRadius: BorderRadius.circular(19),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.accentPurple.withValues(alpha: 0.35),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          _isFlashcardMode ? Icons.view_agenda_outlined : Icons.style_rounded,
-                          size: 15,
-                          color: _isFlashcardMode ? AppTheme.secondary : Colors.white70,
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          _isFlashcardMode ? 'List View' : 'Flashcards',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: _isFlashcardMode ? AppTheme.secondary : Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  ],
                 ),
+                indicatorSize: TabBarIndicatorSize.tab,
+                dividerColor: Colors.transparent,
+                labelColor: Colors.white,
+                unselectedLabelColor: context.textSecondaryColor,
+                labelStyle: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12.5),
+                unselectedLabelStyle: GoogleFonts.outfit(fontWeight: FontWeight.w500, fontSize: 12.5),
+                padding: EdgeInsets.zero,
+                labelPadding: const EdgeInsets.symmetric(horizontal: 14),
+                tabs: tabs,
               ),
             ),
-          ],
-          bottom: TabBar(
-            isScrollable: true,
-            indicatorColor: AppTheme.secondary,
-            labelColor: AppTheme.secondary,
-            unselectedLabelColor: AppTheme.textSecondary,
-            tabs: tabs,
           ),
         ),
         body: TabBarView(
@@ -533,32 +521,35 @@ DNS: UDP 53''', explanation: 'Standard port numbers.'),
   }
 
   void _copyToClipboard(BuildContext context, String text, String label) {
+    HapticFeedback.selectionClick();
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Copied $label formula to clipboard!'),
-        backgroundColor: AppTheme.primary,
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle_rounded, color: AppTheme.accentMint, size: 18),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Copied $label formula to clipboard!',
+                style: GoogleFonts.outfit(fontWeight: FontWeight.w600, fontSize: 12.5),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: context.isDarkMode ? const Color(0xFF1E202B) : const Color(0xFF2D3142),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         duration: const Duration(seconds: 2),
       ),
     );
   }
 
   Widget _buildSubjectTab(BuildContext context, List<Widget> children) {
-    if (_isFlashcardMode) {
-      final List<({_FormulaItem item, String sectionTitle})> flattened = [];
-      for (final child in children) {
-        if (child is _FormulaCardGroup) {
-          for (final it in child.items) {
-            flattened.add((item: it, sectionTitle: child.title));
-          }
-        }
-      }
-      return _FlashcardDeckView(items: flattened);
-    }
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 800),
@@ -1562,25 +1553,37 @@ class _FormulaDisplayBoxState extends State<_FormulaDisplayBox> {
 
   @override
   Widget build(BuildContext context) {
-    return NeuContainer(
-      isRecessed: true,
-      borderRadius: 10,
-      padding: const EdgeInsets.all(10),
+    return Container(
+      decoration: BoxDecoration(
+        color: context.isDarkMode ? const Color(0xFF0F1523) : const Color(0xFFF1F5F9),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: context.isDarkMode
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.06),
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       child: RawScrollbar(
         controller: _scrollController,
-        thumbColor: AppTheme.secondary.withValues(alpha: 0.3),
+        thumbColor: AppTheme.accentPurple.withValues(alpha: 0.4),
         radius: const Radius.circular(4),
-        thickness: 4,
-        thumbVisibility: true,
+        thickness: 3,
+        thumbVisibility: false,
         child: SingleChildScrollView(
           controller: _scrollController,
           scrollDirection: Axis.horizontal,
           physics: const BouncingScrollPhysics(),
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 6.0),
+            padding: const EdgeInsets.only(bottom: 2.0),
             child: Text(
               widget.formula,
-              style: AppTheme.monospaceStyle(fontSize: 12.0, color: context.textColor),
+              style: GoogleFonts.jetBrainsMono(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w500,
+                height: 1.5,
+                color: context.isDarkMode ? const Color(0xFFE2E8F0) : const Color(0xFF1E293B),
+              ),
               softWrap: false,
             ),
           ),
@@ -1617,500 +1620,177 @@ class _FormulaCardGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NeuContainer(
-      margin: const EdgeInsets.only(bottom: 14),
-      borderRadius: 20,
+      margin: const EdgeInsets.only(bottom: 16),
+      borderRadius: 18,
       padding: const EdgeInsets.all(16.0),
       child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title.toUpperCase(),
-              style: const TextStyle(
-                color: AppTheme.secondary,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.1,
-              ),
-            ),
-            const SizedBox(height: 12),
-            ...items.map((item) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            item.name,
-                            style: TextStyle(
-                              color: context.textColor,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.copy_rounded, size: 14, color: AppTheme.textSecondary),
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                          onPressed: () => onCopy(context, item.formula, item.name),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    _FormulaDisplayBox(formula: item.formula),
-                    if (item.explanation.isNotEmpty) ...[
-                      const SizedBox(height: 6),
-                      Text(
-                        item.explanation,
-                        style: const TextStyle(
-                          color: AppTheme.textSecondary,
-                          fontSize: 11,
-                          height: 1.35,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              );
-            }),
-          ],
-        ),
-    );
-  }
-}
-
-class _FlashcardDeckView extends StatefulWidget {
-  final List<({_FormulaItem item, String sectionTitle})> items;
-
-  const _FlashcardDeckView({required this.items});
-
-  @override
-  State<_FlashcardDeckView> createState() => _FlashcardDeckViewState();
-}
-
-class _FlashcardDeckViewState extends State<_FlashcardDeckView> with SingleTickerProviderStateMixin {
-  late List<({_FormulaItem item, String sectionTitle})> _deck;
-  int _currentIndex = 0;
-  bool _isFront = true;
-  late AnimationController _flipController;
-  late Animation<double> _flipAnimation;
-  final Set<String> _masteredNames = {};
-  final Set<String> _reviewNames = {};
-
-  @override
-  void initState() {
-    super.initState();
-    _deck = List.of(widget.items);
-    _flipController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 320),
-    );
-    _flipAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _flipController, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void didUpdateWidget(covariant _FlashcardDeckView oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.items != oldWidget.items) {
-      _deck = List.of(widget.items);
-      _currentIndex = 0;
-      _isFront = true;
-      _flipController.reset();
-    }
-  }
-
-  @override
-  void dispose() {
-    _flipController.dispose();
-    super.dispose();
-  }
-
-  void _flip() {
-    HapticFeedback.selectionClick();
-    if (_isFront) {
-      _flipController.forward();
-    } else {
-      _flipController.reverse();
-    }
-    _isFront = !_isFront;
-  }
-
-  void _nextCard() {
-    if (_deck.isEmpty) return;
-    if (!_isFront) {
-      _flipController.reset();
-      _isFront = true;
-    }
-    setState(() {
-      _currentIndex = (_currentIndex + 1) % _deck.length;
-    });
-  }
-
-  void _prevCard() {
-    if (_deck.isEmpty) return;
-    if (!_isFront) {
-      _flipController.reset();
-      _isFront = true;
-    }
-    setState(() {
-      _currentIndex = (_currentIndex - 1 + _deck.length) % _deck.length;
-    });
-  }
-
-  void _shuffle() {
-    HapticFeedback.mediumImpact();
-    setState(() {
-      _deck.shuffle();
-      _currentIndex = 0;
-      if (!_isFront) {
-        _flipController.reset();
-        _isFront = true;
-      }
-    });
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('🔀 Flashcard deck shuffled!'),
-        backgroundColor: AppTheme.secondary,
-        duration: Duration(seconds: 1),
-      ),
-    );
-  }
-
-  void _markMastered() {
-    if (_deck.isEmpty) return;
-    final card = _deck[_currentIndex];
-    HapticFeedback.selectionClick();
-    setState(() {
-      _masteredNames.add(card.item.name);
-      _reviewNames.remove(card.item.name);
-    });
-    _nextCard();
-  }
-
-  void _markReviewAgain() {
-    if (_deck.isEmpty) return;
-    final card = _deck[_currentIndex];
-    HapticFeedback.lightImpact();
-    setState(() {
-      _reviewNames.add(card.item.name);
-      _masteredNames.remove(card.item.name);
-    });
-    _nextCard();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_deck.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.style_outlined, size: 56, color: AppTheme.textSecondary.withValues(alpha: 0.4)),
-            const SizedBox(height: 12),
-            const Text('No flashcards available in this section.', style: TextStyle(color: AppTheme.textSecondary)),
-          ],
-        ),
-      );
-    }
-
-    final current = _deck[_currentIndex];
-    final isMastered = _masteredNames.contains(current.item.name);
-    final needsReview = _reviewNames.contains(current.item.name);
-
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Center(
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 600),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Progress Bar & Tally Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Card ${_currentIndex + 1} of ${_deck.length}',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.textSecondary),
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: AppTheme.success.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          '🎯 ${_masteredNames.length} Mastered',
-                          style: const TextStyle(color: AppTheme.success, fontSize: 11, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: AppTheme.warning.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          '${_reviewNames.length} Review',
-                          style: const TextStyle(color: AppTheme.warning, fontSize: 11, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: LinearProgressIndicator(
-                  value: (_currentIndex + 1) / _deck.length,
-                  backgroundColor: AppTheme.surface,
-                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.secondary),
-                  minHeight: 5,
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // 3D Flip Card Widget
-              GestureDetector(
-                onTap: _flip,
-                child: AnimatedBuilder(
-                  animation: _flipAnimation,
-                  builder: (context, child) {
-                    final angle = _flipAnimation.value * math.pi;
-                    final isUnder = angle > math.pi / 2;
-                    return Transform(
-                      transform: Matrix4.identity()
-                        ..setEntry(3, 2, 0.001)
-                        ..rotateY(angle),
-                      alignment: Alignment.center,
-                      child: isUnder
-                          ? Transform(
-                              transform: Matrix4.identity()..rotateY(math.pi),
-                              alignment: Alignment.center,
-                              child: _buildCardBack(current.item, current.sectionTitle),
-                            )
-                          : _buildCardFront(current.item, current.sectionTitle, isMastered, needsReview),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Action Buttons: Review Again vs Mastered
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: AppTheme.warning.withValues(alpha: 0.4)),
-                        foregroundColor: AppTheme.warning,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                      icon: const Icon(Icons.replay_rounded, size: 18),
-                      label: const Text('Review Again', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                      onPressed: _markReviewAgain,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.success,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                      icon: const Icon(Icons.check_circle_rounded, size: 18),
-                      label: const Text('Mastered', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                      onPressed: _markMastered,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-
-              // Navigation Controls
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton.filledTonal(
-                    icon: const Icon(Icons.chevron_left_rounded, size: 22),
-                    tooltip: 'Previous Card',
-                    onPressed: _prevCard,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.shuffle_rounded, size: 20, color: AppTheme.textSecondary),
-                    tooltip: 'Shuffle Cards',
-                    onPressed: _shuffle,
-                  ),
-                  IconButton.filledTonal(
-                    icon: const Icon(Icons.chevron_right_rounded, size: 22),
-                    tooltip: 'Next Card',
-                    onPressed: _nextCard,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCardFront(_FormulaItem item, String sectionTitle, bool isMastered, bool needsReview) {
-    return NeuContainer(
-      borderRadius: 22,
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppTheme.secondary.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    sectionTitle.toUpperCase(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: AppTheme.secondary,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.0,
-                    ),
-                  ),
-                ),
-              ),
-              if (isMastered)
-                const Icon(Icons.check_circle_rounded, color: AppTheme.success, size: 18)
-              else if (needsReview)
-                const Icon(Icons.error_outline_rounded, color: AppTheme.warning, size: 18)
-              else
-                const Icon(Icons.flip_to_back_rounded, color: AppTheme.textSecondary, size: 18),
-            ],
-          ),
-          const SizedBox(height: 28),
-          Column(
-            children: [
-              Text(
-                item.name,
-                textAlign: TextAlign.center,
-                style: AppTheme.poppinsBold(fontSize: 20, color: context.textColor),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Can you recall this formula and its key properties?',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: context.textSecondaryColor,
-                  height: 1.4,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 28),
-          NeuContainer(
-            isRecessed: true,
-            borderRadius: 14,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.touch_app_rounded, size: 14, color: AppTheme.secondary),
-                SizedBox(width: 6),
-                Text(
-                  'Tap card to reveal formula ↺',
-                  style: TextStyle(color: AppTheme.secondary, fontSize: 11, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCardBack(_FormulaItem item, String sectionTitle) {
-    return NeuContainer(
-      borderRadius: 22,
-      padding: const EdgeInsets.all(22),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Text(
-                  item.name,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: context.textColor),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 4,
+                      height: 16,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [AppTheme.accentPurple, Color(0xFF8B5CF6)],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        title.toUpperCase(),
+                        style: GoogleFonts.outfit(
+                          color: AppTheme.accentPurple,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1.1,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.copy_rounded, size: 16, color: AppTheme.textSecondary),
-                constraints: const BoxConstraints(),
-                padding: EdgeInsets.zero,
-                tooltip: 'Copy Formula',
-                onPressed: () {
-                  Clipboard.setData(ClipboardData(text: item.formula));
-                  ScaffoldMessenger.of(context).clearSnackBars();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Copied ${item.name} formula!'),
-                      backgroundColor: AppTheme.primary,
-                      duration: const Duration(seconds: 1),
-                    ),
-                  );
-                },
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppTheme.accentPurple.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${items.length} ${items.length == 1 ? "formula" : "formulas"}',
+                  style: GoogleFonts.outfit(
+                    color: AppTheme.accentPurple,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          _FormulaDisplayBox(formula: item.formula),
-          if (item.explanation.isNotEmpty) ...[
-            const SizedBox(height: 10),
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.25),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                item.explanation,
-                style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11, height: 1.4),
-              ),
-            ),
-          ],
           const SizedBox(height: 14),
-          Center(
-            child: Text(
-              'Tap card to flip back ↺',
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 10),
-            ),
-          ),
+          ...items.asMap().entries.map((entry) {
+            final int index = entry.key;
+            final _FormulaItem item = entry.value;
+            final bool isLast = index == items.length - 1;
+
+            return Padding(
+              padding: EdgeInsets.only(bottom: isLast ? 0.0 : 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          item.name,
+                          style: GoogleFonts.outfit(
+                            color: context.textColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(8),
+                          onTap: () => onCopy(context, item.formula, item.name),
+                          child: Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.copy_rounded,
+                                  size: 13,
+                                  color: AppTheme.accentPurple.withValues(alpha: 0.8),
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Copy',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppTheme.accentPurple.withValues(alpha: 0.8),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  _FormulaDisplayBox(formula: item.formula),
+                  if (item.explanation.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                      decoration: BoxDecoration(
+                        color: context.isDarkMode
+                            ? Colors.white.withValues(alpha: 0.04)
+                            : Colors.black.withValues(alpha: 0.03),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: context.isDarkMode
+                              ? Colors.white.withValues(alpha: 0.06)
+                              : Colors.black.withValues(alpha: 0.04),
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.lightbulb_outline_rounded,
+                            size: 13,
+                            color: Colors.amber.shade600,
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              item.explanation,
+                              style: TextStyle(
+                                color: context.textColor.withValues(alpha: 0.7),
+                                fontSize: 11.5,
+                                height: 1.35,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  if (!isLast) ...[
+                    const SizedBox(height: 16),
+                    Divider(
+                      height: 1,
+                      thickness: 0.5,
+                      color: context.isDarkMode
+                          ? Colors.white.withValues(alpha: 0.06)
+                          : Colors.black.withValues(alpha: 0.06),
+                    ),
+                  ],
+                ],
+              ),
+            );
+          }),
         ],
       ),
     );
   }
 }
+
+
