@@ -18,7 +18,8 @@ class PlannerScreen extends StatefulWidget {
   State<PlannerScreen> createState() => _PlannerScreenState();
 }
 
-class _PlannerScreenState extends State<PlannerScreen> {
+class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   late ScrollController _scrollController;
   final TextEditingController _searchController = TextEditingController();
 
@@ -240,6 +241,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 3, vsync: this);
     _scrollController = ScrollController();
 
     // Rolling calendar range: 30 days before today to 120 days after today
@@ -314,8 +316,20 @@ class _PlannerScreenState extends State<PlannerScreen> {
     }
   }
 
+  void _jumpToChecklistWithSubject(String subject) {
+    HapticFeedback.selectionClick();
+    setState(() {
+      _expandedSubjects.add(subject);
+      _checklistSearchQuery = subject;
+      _searchController.text = subject;
+      _checklistFilter = 'All';
+    });
+    _tabController.animateTo(0);
+  }
+
   @override
   void dispose() {
+    _tabController.dispose();
     _scrollController.dispose();
     _searchController.dispose();
     super.dispose();
@@ -325,9 +339,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
   Widget build(BuildContext context) {
     final provider = Provider.of<AppProvider>(context);
 
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: context.colorBackground,
         appBar: AppBar(
           backgroundColor: context.colorSurface,
@@ -351,6 +363,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
                 ),
               ),
               child: TabBar(
+                controller: _tabController,
                 indicator: BoxDecoration(
                   color: AppTheme.accentPurple,
                   borderRadius: BorderRadius.circular(20),
@@ -378,14 +391,14 @@ class _PlannerScreenState extends State<PlannerScreen> {
           ),
         ),
         body: TabBarView(
+          controller: _tabController,
           children: [
             _buildAgileChecklistTab(context, provider),
             _buildDailyPlanTab(context, provider),
             _buildPhaseOverviewTab(context, provider),
           ],
         ),
-      ),
-    );
+      );
   }
 
   // ==========================================
@@ -946,7 +959,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
     return Column(
       children: [
         _buildCalendarStrip(context, provider),
-        const Divider(height: 1, color: Color(0xFF2A2A3C)),
+        Divider(height: 1, color: context.colorBorder),
         Expanded(
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
@@ -965,7 +978,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
 
     return Container(
       height: 95,
-      color: AppTheme.background,
+      color: context.colorBackground,
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: ListView.builder(
         controller: _scrollController,
@@ -1213,239 +1226,266 @@ class _PlannerScreenState extends State<PlannerScreen> {
     return Container(
       width: double.infinity,
       constraints: const BoxConstraints(maxWidth: 800),
-      child: Card(
-        color: AppTheme.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
-            color: isCompleted ? AppTheme.secondary.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.05),
-            width: 1.5,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primary.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      'DAY ${item.day}',
-                      style: AppTheme.monospaceStyle(
-                        fontSize: 12,
-                        color: AppTheme.primary,
-                      ).copyWith(fontWeight: FontWeight.bold),
-                    ),
+      child: NeuContainer(
+        borderRadius: 22,
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppTheme.accentPurple.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  Text(
-                    DateFormat('EEEE, MMMM dd, yyyy').format(DateTime.parse(item.date)),
-                    style: const TextStyle(
-                      color: AppTheme.textSecondary,
+                  child: Text(
+                    'DAY ${item.day}',
+                    style: AppTheme.monospaceStyle(
                       fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
+                      color: AppTheme.accentPurple,
+                    ).copyWith(fontWeight: FontWeight.bold),
                   ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                item.subject.toUpperCase(),
-                style: const TextStyle(
-                  color: AppTheme.secondary,
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2,
                 ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                item.topic,
-                style: AppTheme.poppinsBold(fontSize: 20),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Phase: ${item.phase}',
-                style: const TextStyle(
-                  color: AppTheme.textSecondary,
-                  fontSize: 13,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _buildTypeBadge(item.type),
-                  _buildDifficultyBadge(diff),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      '${item.totalHours.toStringAsFixed(1)} HRS',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              const Divider(color: Colors.white10),
-              const SizedBox(height: 16),
-              Text(
-                'STUDY METRICS',
-                style: AppTheme.poppinsBold(fontSize: 12, color: Colors.white70),
-              ),
-              const SizedBox(height: 12),
-              _buildMetricRow(Icons.menu_book, 'Study Hours', '${item.studyHours.toStringAsFixed(1)} hours'),
-              const SizedBox(height: 8),
-              _buildMetricRow(Icons.timer, 'Aptitude Practice', '${item.aptitudeMinutes} minutes'),
-              const SizedBox(height: 8),
-              _buildMetricRow(Icons.insights, 'Total Target', '${item.totalHours.toStringAsFixed(1)} hours'),
-              const SizedBox(height: 20),
-              const Divider(color: Colors.white10),
-              const SizedBox(height: 16),
-              if (item.notes.trim().isNotEmpty) ...[
                 Text(
-                  'CURRICULUM TASKS / NOTES',
-                  style: AppTheme.poppinsBold(fontSize: 12, color: Colors.white70),
+                  DateFormat('EEEE, MMMM dd, yyyy').format(DateTime.parse(item.date)),
+                  style: TextStyle(
+                    color: context.textSecondaryColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-                const SizedBox(height: 8),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              item.subject.toUpperCase(),
+              style: const TextStyle(
+                color: AppTheme.secondary,
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              item.topic,
+              style: AppTheme.poppinsBold(fontSize: 20, color: context.textColor),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Phase: ${item.phase}',
+              style: TextStyle(
+                color: context.textSecondaryColor,
+                fontSize: 13,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _buildTypeBadge(item.type),
+                _buildDifficultyBadge(diff),
                 Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.03),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                    color: context.isDarkMode
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.black.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    item.notes,
-                    style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13, height: 1.4),
+                    '${item.totalHours.toStringAsFixed(1)} HRS',
+                    style: TextStyle(
+                      color: context.textColor,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 20),
               ],
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'MY PERSONAL STUDY NOTES',
-                    style: AppTheme.poppinsBold(fontSize: 12, color: Colors.white70),
+            ),
+            const SizedBox(height: 20),
+            Divider(color: context.colorBorder),
+            const SizedBox(height: 16),
+            Text(
+              'STUDY METRICS',
+              style: AppTheme.poppinsBold(fontSize: 12, color: context.textColor),
+            ),
+            const SizedBox(height: 12),
+            _buildMetricRow(context, Icons.menu_book, 'Study Hours', '${item.studyHours.toStringAsFixed(1)} hours'),
+            const SizedBox(height: 8),
+            _buildMetricRow(context, Icons.timer, 'Aptitude Practice', '${item.aptitudeMinutes} minutes'),
+            const SizedBox(height: 8),
+            _buildMetricRow(context, Icons.insights, 'Total Target', '${item.totalHours.toStringAsFixed(1)} hours'),
+            const SizedBox(height: 20),
+            Divider(color: context.colorBorder),
+            const SizedBox(height: 16),
+            if (item.notes.trim().isNotEmpty) ...[
+              Text(
+                'CURRICULUM TASKS / NOTES',
+                style: AppTheme.poppinsBold(fontSize: 12, color: context.textColor),
+              ),
+              const SizedBox(height: 8),
+              NeuContainer(
+                isRecessed: true,
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                borderRadius: 12,
+                child: Text(
+                  item.notes,
+                  style: TextStyle(color: context.textSecondaryColor, fontSize: 13, height: 1.4),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'MY PERSONAL STUDY NOTES',
+                  style: AppTheme.poppinsBold(fontSize: 12, color: context.textColor),
+                ),
+                TextButton.icon(
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppTheme.secondary,
+                    padding: EdgeInsets.zero,
                   ),
-                  TextButton.icon(
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppTheme.secondary,
-                      padding: EdgeInsets.zero,
+                  onPressed: () => _showPersonalNoteDialog(context, provider, item.day, userNote),
+                  icon: const Icon(Icons.edit, size: 14),
+                  label: Text(userNote.isNotEmpty ? 'Edit' : 'Add Note', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            if (userNote.isNotEmpty)
+              NeuContainer(
+                isRecessed: true,
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                borderRadius: 12,
+                child: Text(
+                  userNote,
+                  style: TextStyle(color: context.textColor, fontSize: 13, height: 1.4, fontStyle: FontStyle.italic),
+                ),
+              )
+            else
+              NeuContainer(
+                isRecessed: true,
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                borderRadius: 12,
+                child: Text(
+                  'No personal notes added yet. Use notes to track definitions, formulas, or concepts you want to remember.',
+                  style: TextStyle(color: context.textSecondaryColor, fontSize: 12, fontStyle: FontStyle.italic),
+                ),
+              ),
+            const SizedBox(height: 20),
+            // Quick action buttons: Checklist & PYQs
+            Row(
+              children: [
+                Expanded(
+                  child: NeuButton(
+                    isPrimary: false,
+                    borderRadius: 12,
+                    padding: const EdgeInsets.symmetric(vertical: 11),
+                    onPressed: () => _jumpToChecklistWithSubject(item.subject),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.checklist_rounded, size: 16, color: AppTheme.accentPurple),
+                        const SizedBox(width: 6),
+                        Text(
+                          'In Checklist',
+                          style: GoogleFonts.outfit(fontSize: 12.5, fontWeight: FontWeight.bold, color: context.textColor),
+                        ),
+                      ],
                     ),
-                    onPressed: () => _showPersonalNoteDialog(context, provider, item.day, userNote),
-                    icon: const Icon(Icons.edit, size: 14),
-                    label: Text(userNote.isNotEmpty ? 'Edit' : 'Add Note', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: NeuButton(
+                    isPrimary: false,
+                    borderRadius: 12,
+                    padding: const EdgeInsets.symmetric(vertical: 11),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PYQScreen(initialSubject: item.subject),
+                        ),
+                      );
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.quiz_outlined, size: 16, color: AppTheme.accentGold),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Practice PYQs',
+                          style: GoogleFonts.outfit(fontSize: 12.5, fontWeight: FontWeight.bold, color: context.textColor),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            // Mark Day Completed button
+            NeuButton(
+              isPrimary: isCompleted,
+              borderRadius: 14,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              onPressed: () {
+                HapticFeedback.selectionClick();
+                provider.toggleStudyDayCompletion(item.day);
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    isCompleted ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+                    color: isCompleted ? Colors.white : AppTheme.accentPurple,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    isCompleted ? 'DAY COMPLETED ✓' : 'MARK DAY AS COMPLETED',
+                    style: GoogleFonts.outfit(
+                      color: isCompleted ? Colors.white : context.textColor,
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              if (userNote.isNotEmpty)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primary.withValues(alpha: 0.03),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: AppTheme.primary.withValues(alpha: 0.15)),
-                  ),
-                  child: Text(
-                    userNote,
-                    style: const TextStyle(color: Colors.white, fontSize: 13, height: 1.4, fontStyle: FontStyle.italic),
-                  ),
-                )
-              else
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.02),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.02)),
-                  ),
-                  child: const Text(
-                    'No personal notes added yet. Use notes to track definitions, formulas, or concepts you want to remember.',
-                    style: TextStyle(color: AppTheme.textSecondary, fontSize: 12, fontStyle: FontStyle.italic),
-                  ),
-                ),
-              const SizedBox(height: 24),
-              InkWell(
-                onTap: () {
-                  HapticFeedback.selectionClick();
-                  provider.toggleStudyDayCompletion(item.day);
-                },
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: isCompleted ? AppTheme.secondary.withValues(alpha: 0.1) : AppTheme.primary.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isCompleted ? AppTheme.secondary : AppTheme.primary.withValues(alpha: 0.3),
-                      width: 1.5,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        isCompleted ? Icons.check_circle : Icons.radio_button_unchecked,
-                        color: isCompleted ? AppTheme.secondary : AppTheme.primary,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        isCompleted ? 'DAY COMPLETED' : 'MARK AS COMPLETED',
-                        style: TextStyle(
-                          color: isCompleted ? AppTheme.secondary : Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.8,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildMetricRow(IconData icon, String label, String value) {
+  Widget _buildMetricRow(BuildContext context, IconData icon, String label, String value) {
     return Row(
       children: [
         Icon(icon, size: 16, color: AppTheme.secondary),
         const SizedBox(width: 10),
         Text(
           label,
-          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+          style: TextStyle(color: context.textSecondaryColor, fontSize: 13),
         ),
         const Spacer(),
         Text(
           value,
-          style: AppTheme.monospaceStyle(fontSize: 13, color: Colors.white).copyWith(fontWeight: FontWeight.w500),
+          style: AppTheme.monospaceStyle(fontSize: 13, color: context.textColor).copyWith(fontWeight: FontWeight.w500),
         ),
       ],
     );
@@ -1457,28 +1497,28 @@ class _PlannerScreenState extends State<PlannerScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: AppTheme.surface,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          backgroundColor: context.colorSurface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: Text(
             'Personal Note (Day $day)',
-            style: AppTheme.poppinsBold(fontSize: 18),
+            style: AppTheme.poppinsBold(fontSize: 18, color: context.textColor),
           ),
           content: TextField(
             controller: controller,
             maxLines: 5,
             autofocus: true,
-            style: const TextStyle(color: Colors.white, fontSize: 14),
+            style: TextStyle(color: context.textColor, fontSize: 14),
             decoration: InputDecoration(
               hintText: 'Add formulas, definitions, reminders...',
-              hintStyle: const TextStyle(color: AppTheme.textSecondary),
+              hintStyle: TextStyle(color: context.textSecondaryColor),
               filled: true,
-              fillColor: Colors.black.withValues(alpha: 0.2),
+              fillColor: context.colorBackground,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: context.colorBorder),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(color: AppTheme.secondary),
               ),
             ),
@@ -1486,18 +1526,18 @@ class _PlannerScreenState extends State<PlannerScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel', style: TextStyle(color: AppTheme.textSecondary)),
+              child: Text('Cancel', style: TextStyle(color: context.textSecondaryColor)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
               onPressed: () {
                 provider.updateStudyDayUserNote(day, controller.text.trim());
                 Navigator.pop(context);
               },
-              child: const Text('Save Note', style: TextStyle(color: Colors.white)),
+              child: const Text('Save Note', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ],
         );
@@ -1615,7 +1655,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
                   children: [
                     Text(
                       'SYLLABUS PHASES & RUNWAY',
-                      style: AppTheme.poppinsBold(fontSize: 16),
+                      style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor),
                     ),
                     Text(
                       'Active Phase: #$activePhaseNum',
@@ -1643,37 +1683,34 @@ class _PlannerScreenState extends State<PlannerScreen> {
   }
 
   Widget _buildPhaseRow(BuildContext context, Map<String, dynamic> phase, bool isCurrent, double progress) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      decoration: BoxDecoration(
-        color: isCurrent ? AppTheme.primary.withValues(alpha: 0.08) : AppTheme.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: isCurrent ? AppTheme.secondary.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.06),
-          width: isCurrent ? 1.5 : 1.0,
-        ),
-      ),
-      child: Padding(
+    return GestureDetector(
+      onTap: () => _jumpToChecklistWithSubject(phase['displayName']),
+      child: NeuContainer(
+        margin: const EdgeInsets.symmetric(vertical: 6),
+        borderRadius: 18,
         padding: const EdgeInsets.all(16),
+        color: isCurrent ? AppTheme.primary.withValues(alpha: 0.08) : null,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  width: 32,
-                  height: 32,
+                  width: 34,
+                  height: 34,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: isCurrent ? AppTheme.secondary.withValues(alpha: 0.2) : Colors.white.withValues(alpha: 0.06),
-                    borderRadius: BorderRadius.circular(8),
+                    color: isCurrent
+                        ? AppTheme.secondary.withValues(alpha: 0.2)
+                        : (context.isDarkMode ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.05)),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
                     phase['num'],
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
-                      color: isCurrent ? AppTheme.secondary : Colors.white70,
+                      color: isCurrent ? AppTheme.secondary : context.textColor,
                     ),
                   ),
                 ),
@@ -1684,17 +1721,17 @@ class _PlannerScreenState extends State<PlannerScreen> {
                     children: [
                       Text(
                         phase['displayName'],
-                        style: TextStyle(
-                          fontSize: 14,
+                        style: GoogleFonts.outfit(
+                          fontSize: 14.5,
                           fontWeight: FontWeight.bold,
-                          color: isCurrent ? Colors.white : Colors.white.withValues(alpha: 0.9),
+                          color: isCurrent ? AppTheme.secondary : context.textColor,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         '${phase['runway'] ?? ''} • ${phase['hours']} Hours',
-                        style: const TextStyle(
-                          color: AppTheme.textSecondary,
+                        style: TextStyle(
+                          color: context.textSecondaryColor,
                           fontSize: 12,
                         ),
                       ),
@@ -1705,7 +1742,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: AppTheme.primary.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     phase['weightage'] ?? '',
@@ -1716,24 +1753,18 @@ class _PlannerScreenState extends State<PlannerScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(width: 6),
+                Icon(Icons.arrow_forward_ios_rounded, size: 13, color: context.textSecondaryColor),
               ],
             ),
             const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: progress,
-                      backgroundColor: Colors.white.withValues(alpha: 0.06),
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        progress == 1.0
-                            ? AppTheme.secondary
-                            : (isCurrent ? AppTheme.secondary : AppTheme.primary),
-                      ),
-                      minHeight: 5,
-                    ),
+                  child: NeuProgressBar(
+                    progress: progress,
+                    progressColor: progress == 1.0 ? AppTheme.accentMint : AppTheme.accentPurple,
+                    height: 5.5,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -1742,7 +1773,7 @@ class _PlannerScreenState extends State<PlannerScreen> {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: progress == 1.0 ? AppTheme.secondary : AppTheme.textSecondary,
+                    color: progress == 1.0 ? AppTheme.accentMint : context.textSecondaryColor,
                   ),
                 ),
               ],

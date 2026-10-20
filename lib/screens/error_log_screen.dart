@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
@@ -52,7 +53,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
     final errorEntries = provider.errorLog;
 
     // Distinct subjects list for filters
-    final filterSubjects = ['All', ...StorageService.syllabusData.keys];
+    final filterSubjects = ['All', ...provider.currentSubjects];
 
     // Filter items by Subject and Taxonomy Tag
     final filteredEntries = errorEntries.where((e) {
@@ -197,7 +198,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
-                        color: isSelected ? tagColor.withValues(alpha: 0.2) : context.surfaceColor,
+                        color: isSelected ? tagColor.withValues(alpha: 0.2) : context.colorSurfaceElevated,
                         borderRadius: BorderRadius.circular(18),
                         border: Border.all(
                           color: isSelected ? tagColor : Colors.white.withValues(alpha: 0.08),
@@ -212,7 +213,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                           Text(
                             label,
                             style: TextStyle(
-                              color: isSelected ? Colors.white : AppTheme.textSecondary,
+                              color: isSelected ? Colors.white : context.textSecondaryColor,
                               fontSize: 11,
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                             ),
@@ -252,10 +253,10 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: isSelected ? AppTheme.secondary.withValues(alpha: 0.15) : AppTheme.background,
+                        color: isSelected ? AppTheme.accentPurple.withValues(alpha: 0.15) : context.colorSurfaceElevated,
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                          color: isSelected ? AppTheme.secondary : Colors.white.withValues(alpha: 0.06),
+                          color: isSelected ? AppTheme.accentPurple : context.colorBorder,
                         ),
                       ),
                       child: Row(
@@ -264,7 +265,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                           Text(
                             subj,
                             style: TextStyle(
-                              color: isSelected ? AppTheme.secondary : AppTheme.textSecondary,
+                              color: isSelected ? AppTheme.accentPurple : context.textSecondaryColor,
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                               fontSize: 11,
                             ),
@@ -273,7 +274,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                           Text(
                             '($count)',
                             style: TextStyle(
-                              color: isSelected ? AppTheme.secondary : AppTheme.textSecondary.withValues(alpha: 0.6),
+                              color: isSelected ? AppTheme.accentPurple : context.textSecondaryColor.withValues(alpha: 0.6),
                               fontSize: 9.5,
                             ),
                           ),
@@ -304,7 +305,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                           _selectedSubjectFilter == 'All' && _selectedTagFilter == 'All'
                               ? 'Your error log is clean! 🎉'
                               : 'No matching mistakes found',
-                          style: AppTheme.poppinsBold(fontSize: 15, color: AppTheme.textPrimary),
+                          style: AppTheme.poppinsBold(fontSize: 15, color: context.textColor),
                         ),
                         const SizedBox(height: 6),
                         const Text(
@@ -326,10 +327,17 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: AppTheme.accentPurple,
+        foregroundColor: Colors.white,
+        elevation: 4,
         onPressed: () => _showAddEntrySheet(context, provider),
-        tooltip: 'Add Error Entry',
-        child: const Icon(Icons.add),
+        tooltip: 'Log Mistake to Journal',
+        icon: const Icon(Icons.edit_note_rounded, size: 20),
+        label: Text(
+          'Log Mistake',
+          style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13),
+        ),
       ),
     );
   }
@@ -395,7 +403,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                 const Spacer(),
                 Text(
                   formattedDate,
-                  style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10.5),
+                  style: TextStyle(color: context.textSecondaryColor, fontSize: 10.5),
                 ),
                 const SizedBox(width: 6),
                 if (entry.isRevised)
@@ -417,7 +425,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
             entry.questionText,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+            style: TextStyle(color: context.textSecondaryColor, fontSize: 12),
           ),
         ),
         children: [
@@ -426,7 +434,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Divider(height: 1, color: Colors.white12),
+                Divider(height: 1, color: context.colorBorder),
                 const SizedBox(height: 14),
                 const Text(
                   'QUESTION:',
@@ -435,7 +443,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                 const SizedBox(height: 6),
                 Text(
                   entry.questionText,
-                  style: const TextStyle(fontSize: 13.5, color: AppTheme.textPrimary, height: 1.4),
+                  style: TextStyle(fontSize: 13.5, color: context.textColor, height: 1.4),
                 ),
                 const SizedBox(height: 16),
                 const Text(
@@ -459,7 +467,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                       Expanded(
                         child: Text(
                           entry.whyWrong,
-                          style: const TextStyle(fontSize: 13, color: AppTheme.textPrimary, fontStyle: FontStyle.italic, height: 1.4),
+                          style: TextStyle(fontSize: 13, color: context.textColor, fontStyle: FontStyle.italic, height: 1.4),
                         ),
                       ),
                     ],
@@ -509,7 +517,8 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
   }
 
   void _showAddEntrySheet(BuildContext context, AppProvider provider) {
-    String selectedSubject = StorageService.syllabusData.keys.first;
+    final availableSubjects = provider.currentSubjects.isNotEmpty ? provider.currentSubjects : StorageService.syllabusData.keys.toList();
+    String selectedSubject = availableSubjects.first;
     final topicController = TextEditingController();
     final questionController = TextEditingController();
     final whyWrongController = TextEditingController();
@@ -518,7 +527,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppTheme.background,
+      backgroundColor: context.colorSurface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -553,7 +562,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                       const SizedBox(height: 14),
                       Text(
                         'Log a Mistake to Journal',
-                        style: AppTheme.poppinsBold(fontSize: 16),
+                        style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor),
                       ),
                       const SizedBox(height: 14),
 
@@ -563,16 +572,16 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         decoration: BoxDecoration(
-                          color: AppTheme.surface,
+                          color: context.colorSurfaceElevated,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                          border: Border.all(color: context.colorBorder),
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
                             value: selectedSubject,
                             isExpanded: true,
-                            dropdownColor: AppTheme.surface,
-                            items: StorageService.syllabusData.keys.map((sub) {
+                            dropdownColor: context.colorSurface,
+                            items: availableSubjects.map((sub) {
                               return DropdownMenuItem<String>(
                                 value: sub,
                                 child: Text(sub, style: const TextStyle(fontSize: 13)),
@@ -595,12 +604,12 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                       const SizedBox(height: 6),
                       TextFormField(
                         controller: topicController,
-                        style: const TextStyle(color: AppTheme.textPrimary, fontSize: 13),
+                        style: TextStyle(color: context.textColor, fontSize: 13),
                         decoration: InputDecoration(
                           hintText: 'e.g., Eigenvalues / Bayes Theorem',
-                          hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                          hintStyle: TextStyle(color: context.textSecondaryColor, fontSize: 12),
                           filled: true,
-                          fillColor: AppTheme.surface,
+                          fillColor: context.colorSurfaceElevated,
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
                         ),
                         validator: (val) => val == null || val.trim().isEmpty ? 'Please enter a topic' : null,
@@ -612,13 +621,13 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                       const SizedBox(height: 6),
                       TextFormField(
                         controller: questionController,
-                        style: const TextStyle(color: AppTheme.textPrimary, fontSize: 13),
+                        style: TextStyle(color: context.textColor, fontSize: 13),
                         maxLines: 2,
                         decoration: InputDecoration(
                           hintText: 'Paste or summarize the question...',
-                          hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                          hintStyle: TextStyle(color: context.textSecondaryColor, fontSize: 12),
                           filled: true,
-                          fillColor: AppTheme.surface,
+                          fillColor: context.colorSurfaceElevated,
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
                         ),
                         validator: (val) => val == null || val.trim().isEmpty ? 'Please enter question details' : null,
@@ -640,10 +649,10 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                         ].map((tag) {
                           return ActionChip(
                             label: Text(tag, style: const TextStyle(fontSize: 11)),
-                            backgroundColor: AppTheme.surface,
+                            backgroundColor: context.colorSurfaceElevated,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
-                              side: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                              side: BorderSide(color: context.colorBorder),
                             ),
                             onPressed: () {
                               setModalState(() {
@@ -659,13 +668,13 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                       const SizedBox(height: 6),
                       TextFormField(
                         controller: whyWrongController,
-                        style: const TextStyle(color: AppTheme.textPrimary, fontSize: 13),
+                        style: TextStyle(color: context.textColor, fontSize: 13),
                         maxLines: 3,
                         decoration: InputDecoration(
                           hintText: 'e.g., [Conceptual Gap]: Forgot that eigenvectors of distinct eigenvalues are linearly independent.',
-                          hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                          hintStyle: TextStyle(color: context.textSecondaryColor, fontSize: 12),
                           filled: true,
-                          fillColor: AppTheme.surface,
+                          fillColor: context.colorSurfaceElevated,
                           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
                         ),
                         validator: (val) => val == null || val.trim().isEmpty ? 'Please describe why you got it wrong' : null,
@@ -719,14 +728,14 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: AppTheme.surface,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Text('Delete Entry?'),
-          content: const Text('Are you sure you want to remove this mistake from your notebook?'),
+          backgroundColor: context.colorSurface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          title: Text('Delete Entry?', style: TextStyle(color: context.textColor, fontWeight: FontWeight.bold)),
+          content: Text('Are you sure you want to remove this mistake from your notebook?', style: TextStyle(color: context.textSecondaryColor)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel', style: TextStyle(color: AppTheme.textSecondary)),
+              child: Text('Cancel', style: TextStyle(color: context.textSecondaryColor)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: AppTheme.error),

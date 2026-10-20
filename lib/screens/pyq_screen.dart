@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +14,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../widgets/virtual_calculator.dart';
 import '../widgets/question_discussion_sheet.dart';
 import '../widgets/neu_widgets.dart';
+import 'mock_test_runner_screen.dart';
 
 class PYQScreen extends StatefulWidget {
   final String? initialSubject;
@@ -110,6 +112,30 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
     }).toList();
   }
 
+  void _startInstantDrill(BuildContext context, List<PYQ> questions) {
+    HapticFeedback.mediumImpact();
+    if (questions.isEmpty) return;
+    final drillQuestions = List<PYQ>.from(questions)..shuffle();
+    final testQuestions = drillQuestions.take(min(30, drillQuestions.length)).toList();
+    final minutes = max(5, (testQuestions.length * 2.5).ceil());
+    final drillName = _selectedSubject != 'All'
+        ? '$_selectedSubject Drill'
+        : (_selectedYear != 'All'
+            ? 'GATE $_selectedYear Drill'
+            : (_natOnly ? 'NAT Practice Drill' : 'Custom PYQ Drill'));
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MockTestRunnerScreen(
+          questions: testQuestions,
+          duration: Duration(minutes: minutes),
+          testName: drillName,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AppProvider>(context);
@@ -144,12 +170,43 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
     final difficultiesList = ['All', 'Easy', 'Medium', 'Hard'];
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          VirtualCalculator.show(context);
-        },
-        child: const Icon(Icons.calculate),
-      ),
+      floatingActionButton: pyqListAll.isNotEmpty
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FloatingActionButton.small(
+                  heroTag: 'pyq_calc',
+                  backgroundColor: context.colorSurface,
+                  foregroundColor: context.textColor,
+                  elevation: 3,
+                  tooltip: 'GATE Virtual Calculator',
+                  onPressed: () => VirtualCalculator.show(context),
+                  child: const Icon(Icons.calculate_outlined, size: 20),
+                ),
+                const SizedBox(width: 10),
+                FloatingActionButton.extended(
+                  heroTag: 'pyq_drill',
+                  backgroundColor: AppTheme.accentPurple,
+                  foregroundColor: Colors.white,
+                  elevation: 4,
+                  icon: const Icon(Icons.play_arrow_rounded, size: 22),
+                  label: Text(
+                    'Practice Drill (${pyqListAll.length})',
+                    style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13),
+                  ),
+                  onPressed: () => _startInstantDrill(context, pyqListAll),
+                ),
+              ],
+            )
+          : FloatingActionButton(
+              heroTag: 'pyq_calc',
+              backgroundColor: context.colorSurface,
+              foregroundColor: context.textColor,
+              elevation: 3,
+              tooltip: 'GATE Virtual Calculator',
+              onPressed: () => VirtualCalculator.show(context),
+              child: const Icon(Icons.calculate_outlined),
+            ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -453,7 +510,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppTheme.surface,
+      backgroundColor: context.colorSurface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -480,7 +537,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Filter Questions', style: AppTheme.poppinsBold(fontSize: 16)),
+                      Text('Filter Questions', style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor)),
                       if (_activeFilterCount > 0)
                         TextButton(
                           onPressed: () {
@@ -496,7 +553,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                         ),
                     ],
                   ),
-                  const Divider(color: Colors.white12),
+                  Divider(color: context.colorBorder),
                   Expanded(
                     child: ListView(
                       physics: const BouncingScrollPhysics(),
@@ -534,8 +591,8 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                             return ChoiceChip(
                               label: Text(subj, style: TextStyle(fontSize: 12, color: isSel ? Colors.white : AppTheme.textSecondary)),
                               selected: isSel,
-                              selectedColor: AppTheme.primary,
-                              backgroundColor: AppTheme.background,
+                              selectedColor: AppTheme.accentPurple,
+                              backgroundColor: context.colorSurfaceElevated,
                               onSelected: (selected) {
                                 if (selected) {
                                   setState(() => _selectedSubject = subj);
@@ -558,8 +615,8 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                             return ChoiceChip(
                               label: Text(yr, style: TextStyle(fontSize: 12, color: isSel ? Colors.white : AppTheme.textSecondary)),
                               selected: isSel,
-                              selectedColor: AppTheme.primary,
-                              backgroundColor: AppTheme.background,
+                              selectedColor: AppTheme.accentPurple,
+                              backgroundColor: context.colorSurfaceElevated,
                               onSelected: (selected) {
                                 if (selected) {
                                   setState(() => _selectedYear = yr);
@@ -673,7 +730,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
   ) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppTheme.background,
+      backgroundColor: context.colorSurface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -703,7 +760,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                   ],
                 ),
               ),
-              Divider(color: context.colorSurface, height: 1),
+              Divider(color: context.colorBorder, height: 1),
               // Options List
               Expanded(
                 child: ListView.builder(
@@ -1433,7 +1490,7 @@ class _PYQCardState extends State<_PYQCard> {
     final alreadySolved = pyq.isCompleted;
     final isCorrect = pyq.isAnswerCorrect(pyq.userAnswer);
 
-    Color borderCol = AppTheme.textSecondary.withOpacity(0.2);
+    Color borderCol = context.isDarkMode ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.10);
     if (alreadySolved) {
       borderCol = isCorrect ? AppTheme.success : AppTheme.error;
     }
@@ -1456,9 +1513,9 @@ class _PYQCardState extends State<_PYQCard> {
                 style: TextStyle(color: context.textColor),
                 decoration: InputDecoration(
                   hintText: 'e.g., 3.14',
-                  hintStyle: const TextStyle(color: AppTheme.textSecondary),
+                  hintStyle: TextStyle(color: context.textSecondaryColor),
                   filled: true,
-                  fillColor: context.colorSurface,
+                  fillColor: context.colorSurfaceElevated,
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide(color: borderCol, width: 1.5),
@@ -1550,18 +1607,18 @@ class _PYQCardState extends State<_PYQCard> {
           ),
           codeblockDecoration: BoxDecoration(
             color: isExplanation 
-                ? AppTheme.secondary.withOpacity(0.04)
-                : AppTheme.surface,
-            borderRadius: BorderRadius.circular(8),
+                ? AppTheme.secondary.withValues(alpha: 0.08)
+                : context.colorSurfaceElevated,
+            borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: (isExplanation ? AppTheme.secondary : AppTheme.textSecondary).withOpacity(0.1),
+              color: (isExplanation ? AppTheme.secondary : context.colorBorder).withValues(alpha: 0.2),
             ),
           ),
           code: AppTheme.monospaceStyle(
             fontSize: 11.5,
             color: context.textColor,
           ),
-          tableBorder: TableBorder.all(color: AppTheme.textSecondary.withOpacity(0.2)),
+          tableBorder: TableBorder.all(color: context.colorBorder),
           tableCellsPadding: const EdgeInsets.all(8),
         ),
       ),
@@ -1615,21 +1672,21 @@ class _NativeAdWrapperState extends State<_NativeAdWrapper> {
   Widget build(BuildContext context) {
     if (_nativeAd == null || _isAdFailed) return const SizedBox.shrink();
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    return NeuContainer(
+      margin: const EdgeInsets.only(bottom: 14),
+      borderRadius: 18,
+      padding: const EdgeInsets.all(8),
       child: Container(
-        padding: const EdgeInsets.all(8),
         constraints: const BoxConstraints(
-          minWidth: 320, // minimum recommended width
-          minHeight: 320, // minimum recommended height
+          minWidth: 320,
+          minHeight: 320,
           maxWidth: 400,
           maxHeight: 400,
         ),
         child: _isAdLoaded
             ? AdWidget(ad: _nativeAd!)
             : const Center(
-                child: CircularProgressIndicator(color: AppTheme.primary),
+                child: CircularProgressIndicator(color: AppTheme.accentPurple),
               ),
       ),
     );

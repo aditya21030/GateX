@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
@@ -12,68 +14,92 @@ class COAPScreen extends StatefulWidget {
 }
 
 class _COAPScreenState extends State<COAPScreen> {
+  String _selectedCategory = 'General';
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+
+  final List<String> _categories = ['General', 'OBC-NCL', 'EWS', 'SC', 'ST'];
+
   final List<Map<String, dynamic>> _daCutoffs = [
     {
       'institute': 'IISc Bangalore',
       'program': 'M.Tech Artificial Intelligence',
-      'rank': 'Under AIR 100',
-      'score': '800+',
+      'genRank': 100,
+      'genScore': 800,
+      'ctc': '₹32 LPA',
+      'process': 'Written Test + Interview',
       'color': Colors.blue,
     },
     {
       'institute': 'IIT Bombay',
       'program': 'M.Tech Data Science (C-MinDS)',
-      'rank': 'Under AIR 150',
-      'score': '750+',
+      'genRank': 150,
+      'genScore': 750,
+      'ctc': '₹28 LPA',
+      'process': 'Direct COAP Offer',
       'color': Colors.amber,
     },
     {
       'institute': 'IIT Madras',
       'program': 'M.Tech Data Science & AI',
-      'rank': 'Under AIR 200',
-      'score': '720+',
+      'genRank': 200,
+      'genScore': 720,
+      'ctc': '₹26 LPA',
+      'process': 'Direct COAP Offer',
       'color': AppTheme.success,
     },
     {
       'institute': 'IIT Delhi',
       'program': 'M.Tech MINDS',
-      'rank': 'Under AIR 250',
-      'score': '700+',
+      'genRank': 250,
+      'genScore': 700,
+      'ctc': '₹27 LPA',
+      'process': 'Online Interview',
       'color': Colors.orange,
     },
     {
       'institute': 'IIT Kanpur',
       'program': 'M.Tech Artificial Intelligence',
-      'rank': 'Under AIR 300',
-      'score': '680+',
+      'genRank': 300,
+      'genScore': 680,
+      'ctc': '₹25 LPA',
+      'process': 'Coding Test + Interview',
       'color': Colors.teal,
     },
     {
       'institute': 'IIT Kharagpur',
       'program': 'M.Tech Artificial Intelligence',
-      'rank': 'Under AIR 350',
-      'score': '650+',
+      'genRank': 350,
+      'genScore': 650,
+      'ctc': '₹23 LPA',
+      'process': 'Direct COAP Offer',
       'color': Colors.cyan,
     },
     {
       'institute': 'IIT Roorkee',
       'program': 'M.Tech DS & AI',
-      'rank': 'Under AIR 400',
-      'score': '640+',
+      'genRank': 400,
+      'genScore': 640,
+      'ctc': '₹22 LPA',
+      'process': 'Direct COAP Offer',
       'color': Colors.purple,
     },
     {
       'institute': 'IIT Guwahati',
       'program': 'M.Tech Data Science',
-      'rank': 'Under AIR 450',
-      'score': '620+',
+      'genRank': 450,
+      'genScore': 620,
+      'ctc': '₹21 LPA',
+      'process': 'Direct COAP Offer',
       'color': Colors.indigo,
     },
     {
       'institute': 'IIT Hyderabad',
       'program': 'M.Tech Artificial Intelligence',
-      'rank': 'Under AIR 500',
-      'score': '600+',
+      'genRank': 500,
+      'genScore': 600,
+      'ctc': '₹24 LPA',
+      'process': 'Coding Test + Interview',
       'color': Colors.pink,
     },
   ];
@@ -81,104 +107,306 @@ class _COAPScreenState extends State<COAPScreen> {
   final List<Map<String, dynamic>> _csitCutoffs = [
     {
       'institute': 'IISc Bangalore',
-      'program': 'M.Tech CSA',
-      'rank': 'Under AIR 50',
-      'score': '850+',
+      'program': 'M.Tech CSA (Computer Science)',
+      'genRank': 50,
+      'genScore': 850,
+      'ctc': '₹35 LPA',
+      'process': 'Direct / Interview',
       'color': Colors.blue,
     },
     {
       'institute': 'IIT Bombay',
-      'program': 'M.Tech CSE',
-      'rank': 'Under AIR 70',
-      'score': '800+',
+      'program': 'M.Tech Computer Science & Engg',
+      'genRank': 70,
+      'genScore': 800,
+      'ctc': '₹30 LPA',
+      'process': 'Direct COAP Offer',
       'color': Colors.amber,
     },
     {
       'institute': 'IIT Madras',
-      'program': 'M.Tech CSE',
-      'rank': 'Under AIR 120',
-      'score': '780+',
+      'program': 'M.Tech Computer Science',
+      'genRank': 120,
+      'genScore': 780,
+      'ctc': '₹28 LPA',
+      'process': 'Direct COAP Offer',
       'color': AppTheme.success,
     },
     {
       'institute': 'IIT Delhi',
       'program': 'M.Tech CSE',
-      'rank': 'Under AIR 150',
-      'score': '760+',
+      'genRank': 150,
+      'genScore': 760,
+      'ctc': '₹29 LPA',
+      'process': 'Direct COAP Offer',
       'color': Colors.orange,
     },
     {
       'institute': 'IIT Kanpur',
       'program': 'M.Tech CSE',
-      'rank': 'Under AIR 180',
-      'score': '740+',
+      'genRank': 180,
+      'genScore': 740,
+      'ctc': '₹27 LPA',
+      'process': 'Direct COAP Offer',
       'color': Colors.teal,
     },
     {
       'institute': 'IIT Kharagpur',
       'program': 'M.Tech CSE',
-      'rank': 'Under AIR 220',
-      'score': '720+',
+      'genRank': 220,
+      'genScore': 720,
+      'ctc': '₹25 LPA',
+      'process': 'Direct COAP Offer',
       'color': Colors.cyan,
     },
     {
       'institute': 'IIT Roorkee',
       'program': 'M.Tech CSE',
-      'rank': 'Under AIR 280',
-      'score': '700+',
+      'genRank': 280,
+      'genScore': 700,
+      'ctc': '₹24 LPA',
+      'process': 'Direct COAP Offer',
       'color': Colors.purple,
     },
     {
       'institute': 'IIT Guwahati',
       'program': 'M.Tech CSE',
-      'rank': 'Under AIR 350',
-      'score': '670+',
+      'genRank': 350,
+      'genScore': 670,
+      'ctc': '₹23 LPA',
+      'process': 'Direct COAP Offer',
       'color': Colors.indigo,
     },
     {
       'institute': 'IIT Hyderabad',
       'program': 'M.Tech CSE',
-      'rank': 'Under AIR 400',
-      'score': '650+',
+      'genRank': 400,
+      'genScore': 650,
+      'ctc': '₹25 LPA',
+      'process': 'Written + Interview',
       'color': Colors.pink,
     },
   ];
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  int _getAdjustedRank(int genRank, String category) {
+    switch (category) {
+      case 'OBC-NCL':
+        return (genRank * 1.8).round();
+      case 'EWS':
+        return (genRank * 1.5).round();
+      case 'SC':
+        return (genRank * 4.2).round();
+      case 'ST':
+        return (genRank * 6.5).round();
+      default:
+        return genRank;
+    }
+  }
+
+  int _getAdjustedScore(int genScore, String category) {
+    switch (category) {
+      case 'OBC-NCL':
+        return (genScore * 0.90).round();
+      case 'EWS':
+        return (genScore * 0.92).round();
+      case 'SC':
+        return (genScore * 0.68).round();
+      case 'ST':
+        return (genScore * 0.58).round();
+      default:
+        return genScore;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AppProvider>(context);
     final isCSIT = provider.activeExam == 'CSIT';
-    final currentCutoffs = isCSIT ? _csitCutoffs : _daCutoffs;
+    final rawList = isCSIT ? _csitCutoffs : _daCutoffs;
+
+    // Filter by search query
+    final query = _searchQuery.trim().toLowerCase();
+    final currentCutoffs = rawList.where((item) {
+      if (query.isEmpty) return true;
+      final inst = (item['institute'] as String).toLowerCase();
+      final prog = (item['program'] as String).toLowerCase();
+      return inst.contains(query) || prog.contains(query);
+    }).toList();
+
+    // Student latest mock score estimate for odds calculation
+    double userMockScore = 0.0;
+    if (provider.mockLogs.isNotEmpty) {
+      userMockScore = provider.mockLogs.map((m) => m.score).reduce((a, b) => a > b ? a : b);
+    }
+    // Convert 100-scale mock percentage to approximate 1000 GATE score
+    final double userEstimatedGateScore = userMockScore > 0 ? (userMockScore * 10.0).clamp(200.0, 1000.0) : 0.0;
 
     return Scaffold(
       backgroundColor: context.scaffoldBackground,
       appBar: AppBar(
         title: Text(
-          'COAP Cutoff Matrix (${provider.activeExam})',
-          style: AppTheme.poppinsBold(fontSize: 17, color: context.textColor),
+          'COAP & CCMT Predictor (${provider.activeExam})',
+          style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: context.textColor),
         ),
         backgroundColor: context.scaffoldBackground,
         elevation: 0,
       ),
-      body: ListView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-        children: [
-          _buildHeaderCard(),
-          const SizedBox(height: 18),
-          Text(
-            'Target IIT Placements (General)',
-            style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: ListView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            children: [
+              // 1. Hero Insights Container
+              _buildHeaderCard(userEstimatedGateScore),
+              const SizedBox(height: 14),
+
+              // 2. Category Filter Pills
+              _buildCategorySelector(),
+              const SizedBox(height: 14),
+
+              // 3. Search Bar
+              _buildSearchBar(),
+              const SizedBox(height: 18),
+
+              // 4. Header title with count
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Target M.Tech Cutoffs ($_selectedCategory)',
+                    style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.bold, color: context.textColor),
+                  ),
+                  Text(
+                    '${currentCutoffs.length} Institutes',
+                    style: GoogleFonts.outfit(fontSize: 12, color: context.textSecondaryColor),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+
+              // 5. Cutoff Cards
+              if (currentCutoffs.isEmpty)
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: Column(
+                      children: [
+                        Icon(Icons.search_off_rounded, size: 44, color: context.textSecondaryColor),
+                        const SizedBox(height: 10),
+                        Text('No institutes found matching "$_searchQuery"',
+                            style: GoogleFonts.outfit(color: context.textColor, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                ...currentCutoffs.map((cutoff) {
+                  return _buildCutoffCard(cutoff, userEstimatedGateScore);
+                }),
+              const SizedBox(height: 24),
+            ],
           ),
-          const SizedBox(height: 12),
-          ...currentCutoffs.map((cutoff) => _buildCutoffCard(cutoff)),
-          const SizedBox(height: 24),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategorySelector() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      child: Row(
+        children: _categories.map((cat) {
+          final isSelected = _selectedCategory == cat;
+          return Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: GestureDetector(
+              onTap: () {
+                HapticFeedback.selectionClick();
+                setState(() => _selectedCategory = cat);
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: isSelected ? AppTheme.accentPurple : context.colorSurface,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: isSelected
+                        ? AppTheme.accentPurple
+                        : (context.isDarkMode ? Colors.white12 : Colors.black12),
+                  ),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: AppTheme.accentPurple.withValues(alpha: 0.35),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : null,
+                ),
+                child: Text(
+                  cat,
+                  style: GoogleFonts.outfit(
+                    fontSize: 12,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    color: isSelected ? Colors.white : context.textColor,
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return NeuContainer(
+      isRecessed: true,
+      borderRadius: 14,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+      child: Row(
+        children: [
+          Icon(Icons.search_rounded, size: 18, color: context.textSecondaryColor),
+          const SizedBox(width: 8),
+          Expanded(
+            child: TextField(
+              controller: _searchController,
+              onChanged: (val) => setState(() => _searchQuery = val),
+              style: GoogleFonts.outfit(fontSize: 13, color: context.textColor),
+              decoration: InputDecoration(
+                hintText: 'Search IIT Bombay, IISc, Delhi, Madras...',
+                hintStyle: GoogleFonts.outfit(fontSize: 12, color: context.textSecondaryColor.withValues(alpha: 0.7)),
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(vertical: 8),
+              ),
+            ),
+          ),
+          if (_searchQuery.isNotEmpty)
+            GestureDetector(
+              onTap: () {
+                _searchController.clear();
+                setState(() => _searchQuery = '');
+              },
+              child: Icon(Icons.close_rounded, size: 16, color: context.textSecondaryColor),
+            ),
         ],
       ),
     );
   }
 
-  Widget _buildHeaderCard() {
+  Widget _buildHeaderCard(double userScore) {
     return NeuContainer(
       borderRadius: 20,
       padding: const EdgeInsets.all(16),
@@ -186,22 +414,40 @@ class _COAPScreenState extends State<COAPScreen> {
         children: [
           const NeuIconTile(
             icon: Icons.account_balance_rounded,
-            iconColor: AppTheme.primary,
+            iconColor: AppTheme.accentPurple,
             size: 46,
-            iconSize: 24,
+            iconSize: 22,
           ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'COAP Admission Insights',
-                  style: AppTheme.poppinsBold(fontSize: 14, color: context.textColor),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'COAP Admission Insights',
+                      style: GoogleFonts.outfit(fontSize: 14.5, fontWeight: FontWeight.bold, color: context.textColor),
+                    ),
+                    if (userScore > 0)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppTheme.accentMint.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: AppTheme.accentMint.withValues(alpha: 0.3)),
+                        ),
+                        child: Text(
+                          'Your Best: ${userScore.toStringAsFixed(0)}',
+                          style: GoogleFonts.outfit(fontSize: 10, fontWeight: FontWeight.bold, color: AppTheme.accentMint),
+                        ),
+                      ),
+                  ],
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Historical admission cutoffs across IISc and top IITs based on candidate ranks & scores.',
+                  'Verified cutoff ranks, GATE score brackets, average CTC packages, and interview rounds for top IITs.',
                   style: TextStyle(color: context.textSecondaryColor, fontSize: 11.5, height: 1.3),
                 ),
               ],
@@ -212,8 +458,32 @@ class _COAPScreenState extends State<COAPScreen> {
     );
   }
 
-  Widget _buildCutoffCard(Map<String, dynamic> cutoff) {
+  Widget _buildCutoffCard(Map<String, dynamic> cutoff, double userScore) {
     final color = cutoff['color'] as Color;
+    final int genRank = cutoff['genRank'] as int;
+    final int genScore = cutoff['genScore'] as int;
+    final String ctc = cutoff['ctc'] as String;
+    final String process = cutoff['process'] as String;
+
+    final adjustedRank = _getAdjustedRank(genRank, _selectedCategory);
+    final adjustedScore = _getAdjustedScore(genScore, _selectedCategory);
+
+    // Probability badge
+    String oddsLabel = 'Target';
+    Color oddsColor = AppTheme.accentGold;
+    if (userScore > 0) {
+      if (userScore >= adjustedScore) {
+        oddsLabel = 'Safe Match ✓';
+        oddsColor = AppTheme.accentMint;
+      } else if (userScore >= adjustedScore - 40) {
+        oddsLabel = 'Competitive';
+        oddsColor = AppTheme.accentGold;
+      } else {
+        oddsLabel = 'Reach';
+        oddsColor = AppTheme.accentCoral;
+      }
+    }
+
     return NeuContainer(
       borderRadius: 18,
       padding: const EdgeInsets.all(16),
@@ -227,44 +497,90 @@ class _COAPScreenState extends State<COAPScreen> {
               Expanded(
                 child: Text(
                   cutoff['institute'],
-                  style: AppTheme.poppinsBold(fontSize: 15, color: context.textColor),
+                  style: GoogleFonts.outfit(fontSize: 15.5, fontWeight: FontWeight.bold, color: context.textColor),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  cutoff['score'],
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (userScore > 0) ...[
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                      margin: const EdgeInsets.only(right: 6),
+                      decoration: BoxDecoration(
+                        color: oddsColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: oddsColor.withValues(alpha: 0.25)),
+                      ),
+                      child: Text(
+                        oddsLabel,
+                        style: GoogleFonts.outfit(color: oddsColor, fontSize: 10, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: color.withValues(alpha: 0.3)),
+                    ),
+                    child: Text(
+                      '$adjustedScore+ Score',
+                      style: GoogleFonts.outfit(
+                        color: color,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 5),
           Text(
             cutoff['program'],
-            style: TextStyle(color: context.textSecondaryColor, fontSize: 12.5),
+            style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 12.5),
           ),
           const SizedBox(height: 12),
-          Row(
+          Wrap(
+            spacing: 12,
+            runSpacing: 6,
             children: [
-              const Icon(Icons.military_tech_outlined, size: 16, color: AppTheme.secondary),
-              const SizedBox(width: 6),
-              Text(
-                'Secured at Rank: ',
-                style: TextStyle(color: context.textSecondaryColor, fontSize: 11.5),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.military_tech_outlined, size: 15, color: AppTheme.accentPurple),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Rank: Under AIR $adjustedRank',
+                    style: GoogleFonts.outfit(color: context.textColor, fontSize: 11.5, fontWeight: FontWeight.w600),
+                  ),
+                ],
               ),
-              Text(
-                cutoff['rank'],
-                style: TextStyle(color: context.textColor, fontSize: 12, fontWeight: FontWeight.bold),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.payments_outlined, size: 15, color: AppTheme.accentMint),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Avg CTC: $ctc',
+                    style: GoogleFonts.outfit(color: AppTheme.accentMint, fontSize: 11.5, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.how_to_reg_outlined, size: 15, color: context.textSecondaryColor),
+                  const SizedBox(width: 4),
+                  Text(
+                    process,
+                    style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 11.5),
+                  ),
+                ],
               ),
             ],
           ),
