@@ -18,16 +18,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<({String title, String subtitle})> _slides = const [
     (
-      title: 'Your journey into\ntop IITs starts here',
-      subtitle: 'Master DA & CSIT syllabus, solve 15+ years PYQs, and ace GATE in one place.',
+      title: 'Master the Full\nSyllabus & PYQs',
+      subtitle: 'Structured topic checklist and 15+ years of verified GATE questions.',
     ),
     (
-      title: 'Target your dream\nIIT & top percentile',
-      subtitle: 'Official TCS iON interface with virtual calculator, real timing, and instant AIR rank.',
+      title: 'Official TCS iON\nExam Simulation',
+      subtitle: 'Real exam interface with virtual calculator, timers, and AIR projection.',
     ),
     (
-      title: 'Turn your weak topics\ninto dream AIR rank',
-      subtitle: 'Smart mistake notebook, spaced repetition drills, and high-yield formula sheets.',
+      title: 'Targeted Mistake\nNotebook & Drills',
+      subtitle: 'Automatically convert missed questions into high-yield practice drills.',
     ),
   ];
 

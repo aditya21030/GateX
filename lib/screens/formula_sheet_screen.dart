@@ -1760,14 +1760,14 @@ class _FormulaCardGroup extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   _FormulaDisplayBox(formula: item.formula),
-                  if (item.explanation.isNotEmpty) ...[
+                  if (item.explanation.isNotEmpty && item.explanation.length <= 50) ...[
                     const SizedBox(height: 6),
                     Text(
                       item.explanation,
                       style: GoogleFonts.outfit(
-                        color: context.textSecondaryColor,
-                        fontSize: 11.5,
-                        height: 1.35,
+                        color: context.textSecondaryColor.withValues(alpha: 0.8),
+                        fontSize: 11,
+                        height: 1.3,
                       ),
                     ),
                   ],

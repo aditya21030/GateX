@@ -501,7 +501,7 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
                           ),
                           const SizedBox(height: 3),
                           Text(
-                            '$masteredTopics of $totalTopics Topics Completed',
+                            '$masteredTopics / $totalTopics Topics Completed',
                             style: GoogleFonts.outfit(
                               color: context.textSecondaryColor,
                               fontSize: 12,
@@ -562,9 +562,9 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
                     children: [
                       _buildFilterChip('All', 'All ($totalTopics)'),
                       _buildFilterChip('Unfinished', 'Pending (${totalTopics - masteredTopics})'),
-                      _buildFilterChip('Concept Left', '🎬 Concept'),
-                      _buildFilterChip('PYQ Left', '📝 PYQs'),
-                      _buildFilterChip('Needs Revision', '🔄 Revise'),
+                      _buildFilterChip('Concept Left', 'Concepts'),
+                      _buildFilterChip('PYQ Left', 'PYQs'),
+                      _buildFilterChip('Needs Revision', 'Revise'),
                     ],
                   ),
                 ),

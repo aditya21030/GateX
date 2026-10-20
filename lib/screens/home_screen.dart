@@ -286,12 +286,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '$streak Days Straight! 🔥',
+                      '$streak Day Streak',
                       style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      streak > 1 ? 'Streak active • AIR on track' : 'Solve 1 PYQ today to build streak',
+                      streak > 1 ? 'Goal on track' : 'Solve 1 PYQ to maintain streak',
                       style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
                     ),
                   ],
@@ -406,7 +406,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Daily Rapid Fire',
+                    'Rapid Fire',
                     style: AppTheme.poppinsBold(fontSize: 14, color: context.textColor),
                   ),
                   const SizedBox(height: 3),
@@ -425,7 +425,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        'CBT Speed Drill',
+                        'Timed Practice',
                         style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
                       ),
                     ],
@@ -439,7 +439,7 @@ class _HomeScreenState extends State<HomeScreen> {
               borderRadius: 14,
               onPressed: () => _startRapidFire(provider),
               child: const Text(
-                'Sprint ⚡',
+                'Start',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
               ),
             ),
@@ -552,7 +552,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'DAILY MISSIONS',
+                'TODAY\'S GOALS',
                 style: TextStyle(
                   color: context.textSecondaryColor,
                   fontSize: 11,
@@ -569,7 +569,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  '$missionsDone / 3 Done',
+                  '$missionsDone of 3',
                   style: TextStyle(
                     color: missionsDone == 3 ? AppTheme.accentMint : AppTheme.accentPurple,
                     fontSize: 10.5,
@@ -586,7 +586,7 @@ class _HomeScreenState extends State<HomeScreen> {
             context: context,
             icon: Icons.menu_book_rounded,
             iconColor: AppTheme.accentCyan,
-            title: todayTopic != null ? todayTopic.topicName : 'Cover Daily Topic',
+            title: todayTopic != null ? todayTopic.topicName : 'Daily Syllabus Topic',
             ratioText: topicDone ? '1/1' : '0/1',
             progress: topicDone ? 1.0 : 0.0,
             isCompleted: topicDone,
@@ -612,7 +612,7 @@ class _HomeScreenState extends State<HomeScreen> {
             context: context,
             icon: Icons.sports_score_rounded,
             iconColor: AppTheme.accentCoral,
-            title: 'Attempt 1 Test or Sprint',
+            title: 'Mock Test or Drill',
             ratioText: mockTaken ? '1/1' : '0/1',
             progress: mockTaken ? 1.0 : 0.0,
             isCompleted: mockTaken,
@@ -792,7 +792,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.functions_rounded,
                 iconColor: AppTheme.accentCyan,
                 label: 'Formulas',
-                subtitle: 'Derivations & Sheet',
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FormulaSheetScreen())),
               ),
             ),
@@ -802,7 +801,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.calculate_outlined,
                 iconColor: AppTheme.accentGold,
                 label: 'Estimator',
-                subtitle: 'Marks to AIR Rank',
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ScoreEstimatorScreen())),
               ),
             ),
@@ -816,7 +814,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.account_balance_outlined,
                 iconColor: const Color(0xFF38BDF8),
                 label: 'COAP & CCMT',
-                subtitle: 'IIT Admission Odds',
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const COAPScreen())),
               ),
             ),
@@ -826,7 +823,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.error_outline_rounded,
                 iconColor: AppTheme.accentCoral,
                 label: 'Mistakes',
-                subtitle: 'Notebook & Drill',
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ErrorLogScreen())),
               ),
             ),
@@ -840,7 +836,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.bar_chart_rounded,
                 iconColor: AppTheme.accentMint,
                 label: 'Weightage',
-                subtitle: 'High-Yield Blueprint',
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeightageScreen())),
               ),
             ),
@@ -850,7 +845,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.forum_rounded,
                 iconColor: AppTheme.accentPurple,
                 label: 'Doubts',
-                subtitle: 'Peer Discussions',
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CommunityScreen())),
               ),
             ),
@@ -884,11 +878,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Peer Doubt Community',
+                    'Aspirant Community',
                     style: AppTheme.poppinsBold(fontSize: 13, color: context.textColor),
                   ),
                   Text(
-                    'Ask & solve exam doubts with aspirants',
+                    'Discuss doubts with fellow aspirants',
                     style: TextStyle(color: context.textSecondaryColor, fontSize: 10.5),
                   ),
                 ],
@@ -934,14 +928,12 @@ class _ToolTile extends StatefulWidget {
   final IconData icon;
   final Color iconColor;
   final String label;
-  final String subtitle;
   final VoidCallback onTap;
 
   const _ToolTile({
     required this.icon,
     required this.iconColor,
     required this.label,
-    required this.subtitle,
     required this.onTap,
   });
 
@@ -967,7 +959,7 @@ class _ToolTileState extends State<_ToolTile> {
         duration: const Duration(milliseconds: 120),
         curve: Curves.easeOutCubic,
         child: NeuContainer(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
           borderRadius: 18,
           child: Row(
             children: [
@@ -977,33 +969,16 @@ class _ToolTileState extends State<_ToolTile> {
                 size: 36,
                 iconSize: 19,
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 12),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      widget.label,
-                      style: AppTheme.poppinsBold(fontSize: 12.5, color: context.textColor),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 1),
-                    Text(
-                      widget.subtitle,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: context.textSecondaryColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                child: Text(
+                  widget.label,
+                  style: AppTheme.poppinsBold(fontSize: 13, color: context.textColor),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor.withValues(alpha: 0.6), size: 16),
+              Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor.withValues(alpha: 0.5), size: 16),
             ],
           ),
         ),

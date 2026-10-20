@@ -60,7 +60,7 @@ class MoreScreen extends StatelessWidget {
 
               // 3. EXAM PREPARATION TOOLS (Tactile 2-Column Grid)
               Text(
-                'PREP TOOLS',
+                'TOOLS',
                 style: GoogleFonts.outfit(
                   color: context.textSecondaryColor,
                   fontSize: 11,
@@ -74,7 +74,7 @@ class MoreScreen extends StatelessWidget {
 
               // 4. COMMUNITY & RANKING
               Text(
-                'COMMUNITY & STANDING',
+                'COMMUNITY',
                 style: GoogleFonts.outfit(
                   color: context.textSecondaryColor,
                   fontSize: 11,
@@ -110,7 +110,7 @@ class MoreScreen extends StatelessWidget {
 
               // 5. PREFERENCES
               Text(
-                'APP PREFERENCES',
+                'PREFERENCES',
                 style: GoogleFonts.outfit(
                   color: context.textSecondaryColor,
                   fontSize: 11,
@@ -170,7 +170,7 @@ class MoreScreen extends StatelessWidget {
 
               // 6. SUPPORT & DATA
               Text(
-                'SUPPORT & DATA',
+                'SUPPORT',
                 style: GoogleFonts.outfit(
                   color: context.textSecondaryColor,
                   fontSize: 11,
@@ -211,7 +211,7 @@ class MoreScreen extends StatelessWidget {
               // Minimal footer
               Center(
                 child: Text(
-                  'GateX v1.0.0 • For Serious GATE Aspirants',
+                  'GateX • GATE DA & CS/IT',
                   style: TextStyle(color: context.textSecondaryColor, fontSize: 10.5),
                 ),
               ),

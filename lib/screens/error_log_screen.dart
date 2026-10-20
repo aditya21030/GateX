@@ -21,12 +21,12 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
   String _selectedTagFilter = 'All';
 
   static const List<Map<String, String>> taxonomyTags = [
-    {'name': 'All', 'label': 'All Mistakes', 'icon': '🎯'},
-    {'name': 'Conceptual Gap', 'label': 'Conceptual Gap', 'icon': '🧠'},
-    {'name': 'Calculation Error', 'label': 'Calculation Error', 'icon': '📐'},
-    {'name': 'Silly Mistake', 'label': 'Silly Mistake', 'icon': '🤦‍♂️'},
-    {'name': 'Formula Slip', 'label': 'Formula Slip', 'icon': '📝'},
-    {'name': 'Time Pressure', 'label': 'Time Pressure', 'icon': '⏳'},
+    {'name': 'All', 'label': 'All Mistakes', 'icon': ''},
+    {'name': 'Conceptual Gap', 'label': 'Conceptual Gap', 'icon': ''},
+    {'name': 'Calculation Error', 'label': 'Calculation Error', 'icon': ''},
+    {'name': 'Silly Mistake', 'label': 'Silly Mistake', 'icon': ''},
+    {'name': 'Formula Slip', 'label': 'Formula Recall', 'icon': ''},
+    {'name': 'Time Pressure', 'label': 'Time Pressure', 'icon': ''},
   ];
 
   Color _getTagColor(String tag) {
@@ -124,8 +124,8 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                         const SizedBox(height: 2),
                         Text(
                           filteredEntries.isEmpty
-                              ? 'Log mistakes to generate drills'
-                              : '${filteredEntries.length} logged mistake${filteredEntries.length > 1 ? "s" : ""} ready',
+                              ? 'No recorded mistakes'
+                              : '${filteredEntries.length} mistake${filteredEntries.length > 1 ? "s" : ""} to review',
                           style: TextStyle(color: context.textSecondaryColor, fontSize: 11.5),
                         ),
                       ],

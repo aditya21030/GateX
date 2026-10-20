@@ -72,7 +72,7 @@ class _ExamSelectionScreenState extends State<ExamSelectionScreen> {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'We are compiling official IIT master question papers, LaTeX formulas, and high-yield mocks for ${branch.title}. Join the priority waitlist to get early beta access!',
+                          'Get notified when official question papers and mocks for ${branch.title} go live.',
                           style: TextStyle(color: context.textSecondaryColor, fontSize: 12, height: 1.4),
                         ),
                       ],
@@ -213,7 +213,7 @@ class _ExamSelectionScreenState extends State<ExamSelectionScreen> {
               ),
               const SizedBox(height: 6),
               Text(
-                'Select your branch to customize questions, CBT mocks & analytics',
+                'Select your target exam paper',
                 style: TextStyle(
                   color: context.textSecondaryColor,
                   fontSize: 13,
