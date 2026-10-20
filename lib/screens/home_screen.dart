@@ -10,6 +10,8 @@ import 'formula_sheet_screen.dart';
 import 'pro_upgrade_screen.dart';
 import 'community_screen.dart';
 import 'score_estimator_screen.dart';
+import 'coap_screen.dart';
+import 'weightage_screen.dart';
 import 'mock_test_runner_screen.dart';
 import '../models/models.dart';
 import '../data/minimock_data.dart';
@@ -348,62 +350,101 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // 2. ⚡ 10-MINUTE RAPID FIRE SPRINT
+  // 2. ⚡ 10-MINUTE RAPID FIRE SPRINT (Vibe Coded Shimmer Container)
   Widget _buildRapidFireSprint(BuildContext context, AppProvider provider) {
-    return NeuContainer(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Row(
-        children: [
-          const NeuIconTile(
-            icon: Icons.bolt_rounded,
-            iconColor: AppTheme.accentPurple,
-            size: 44,
-            iconSize: 24,
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Daily Rapid Fire',
-                  style: AppTheme.poppinsBold(fontSize: 14, color: context.textColor),
-                ),
-                const SizedBox(height: 2),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: AppTheme.accentPurple.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: const Text(
-                        '5 Qs • 10m',
-                        style: TextStyle(color: AppTheme.accentPurple, fontSize: 9.5, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      'Quick Drill',
-                      style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          NeuButton(
-            isPrimary: true,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            borderRadius: 14,
-            onPressed: () => _startRapidFire(provider),
-            child: const Text(
-              'Sprint ⚡',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
-            ),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: LinearGradient(
+          colors: [
+            AppTheme.accentPurple.withValues(alpha: context.isDarkMode ? 0.22 : 0.08),
+            const Color(0xFF06B6D4).withValues(alpha: context.isDarkMode ? 0.14 : 0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        border: Border.all(
+          color: AppTheme.accentPurple.withValues(alpha: context.isDarkMode ? 0.35 : 0.20),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.accentPurple.withValues(alpha: context.isDarkMode ? 0.16 : 0.06),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           ),
         ],
+      ),
+      child: NeuContainer(
+        borderRadius: 20,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [AppTheme.accentPurple, Color(0xFF06B6D4)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.accentPurple.withValues(alpha: 0.35),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: const Icon(Icons.bolt_rounded, color: Colors.white, size: 24),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Daily Rapid Fire',
+                    style: AppTheme.poppinsBold(fontSize: 14, color: context.textColor),
+                  ),
+                  const SizedBox(height: 3),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppTheme.accentPurple.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Text(
+                          '5 Qs • 10m',
+                          style: TextStyle(color: AppTheme.accentPurple, fontSize: 9.5, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'CBT Speed Drill',
+                        style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            NeuButton(
+              isPrimary: true,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              borderRadius: 14,
+              onPressed: () => _startRapidFire(provider),
+              child: const Text(
+                'Sprint ⚡',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -740,28 +781,28 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // 6. 2x2 TACTILE STUDY TOOLS GRID
+  // 6. HIGH-YIELD STUDY TOOLS (Tactile Grid with COAP, Formulas, Estimator)
   Widget _buildToolsGrid(BuildContext context, AppProvider provider) {
     return Column(
       children: [
         Row(
           children: [
             Expanded(
-              child: _buildToolTile(
-                context: context,
+              child: _ToolTile(
                 icon: Icons.functions_rounded,
                 iconColor: AppTheme.accentCyan,
                 label: 'Formulas',
+                subtitle: 'Derivations & Sheet',
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FormulaSheetScreen())),
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: _buildToolTile(
-                context: context,
+              child: _ToolTile(
                 icon: Icons.calculate_outlined,
                 iconColor: AppTheme.accentGold,
                 label: 'Estimator',
+                subtitle: 'Marks to AIR Rank',
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ScoreEstimatorScreen())),
               ),
             ),
@@ -771,66 +812,51 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           children: [
             Expanded(
-              child: _buildToolTile(
-                context: context,
-                icon: Icons.error_outline_rounded,
-                iconColor: AppTheme.accentCoral,
-                label: 'Mistakes',
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ErrorLogScreen())),
+              child: _ToolTile(
+                icon: Icons.account_balance_outlined,
+                iconColor: const Color(0xFF38BDF8),
+                label: 'COAP & CCMT',
+                subtitle: 'IIT Admission Odds',
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const COAPScreen())),
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: _buildToolTile(
-                context: context,
-                icon: Icons.forum_rounded,
+              child: _ToolTile(
+                icon: Icons.error_outline_rounded,
+                iconColor: AppTheme.accentCoral,
+                label: 'Mistakes',
+                subtitle: 'Notebook & Drill',
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ErrorLogScreen())),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(
+              child: _ToolTile(
+                icon: Icons.bar_chart_rounded,
                 iconColor: AppTheme.accentMint,
+                label: 'Weightage',
+                subtitle: 'High-Yield Blueprint',
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeightageScreen())),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _ToolTile(
+                icon: Icons.forum_rounded,
+                iconColor: AppTheme.accentPurple,
                 label: 'Doubts',
+                subtitle: 'Peer Discussions',
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CommunityScreen())),
               ),
             ),
           ],
         ),
       ],
-    );
-  }
-
-  Widget _buildToolTile({
-    required BuildContext context,
-    required IconData icon,
-    required Color iconColor,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        onTap();
-      },
-      child: NeuContainer(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        borderRadius: 18,
-        child: Row(
-          children: [
-            NeuIconTile(
-              icon: icon,
-              iconColor: iconColor,
-              size: 34,
-              iconSize: 18,
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                label,
-                style: AppTheme.poppinsBold(fontSize: 12.5, color: context.textColor),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor, size: 16),
-          ],
-        ),
-      ),
     );
   }
 
@@ -897,6 +923,88 @@ class _HomeScreenState extends State<HomeScreen> {
             color: isSelected ? Colors.white : context.textSecondaryColor,
             fontWeight: FontWeight.bold,
             fontSize: 11,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ToolTile extends StatefulWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String label;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _ToolTile({
+    required this.icon,
+    required this.iconColor,
+    required this.label,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  State<_ToolTile> createState() => _ToolTileState();
+}
+
+class _ToolTileState extends State<_ToolTile> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) => setState(() => _isPressed = false),
+      onTapCancel: () => setState(() => _isPressed = false),
+      onTap: () {
+        HapticFeedback.selectionClick();
+        widget.onTap();
+      },
+      child: AnimatedScale(
+        scale: _isPressed ? 0.96 : 1.0,
+        duration: const Duration(milliseconds: 120),
+        curve: Curves.easeOutCubic,
+        child: NeuContainer(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          borderRadius: 18,
+          child: Row(
+            children: [
+              NeuIconTile(
+                icon: widget.icon,
+                iconColor: widget.iconColor,
+                size: 36,
+                iconSize: 19,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      widget.label,
+                      style: AppTheme.poppinsBold(fontSize: 12.5, color: context.textColor),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 1),
+                    Text(
+                      widget.subtitle,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: context.textSecondaryColor,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor.withValues(alpha: 0.6), size: 16),
+            ],
           ),
         ),
       ),
