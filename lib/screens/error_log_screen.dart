@@ -98,9 +98,118 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Top Summary KPI Metrics Strip
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 6, 16, 4),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: context.colorSurfaceElevated,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: context.colorBorder),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          '${errorEntries.length}',
+                          style: GoogleFonts.outfit(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.accentPurple,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'RECORDED',
+                          style: GoogleFonts.outfit(
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w700,
+                            color: context.textSecondaryColor,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: context.colorSurfaceElevated,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: context.colorBorder),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          '${errorEntries.where((e) => !e.isRevised).length}',
+                          style: GoogleFonts.outfit(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.accentCoral,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'PENDING',
+                          style: GoogleFonts.outfit(
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w700,
+                            color: context.textSecondaryColor,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                    decoration: BoxDecoration(
+                      color: context.colorSurfaceElevated,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: context.colorBorder),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(
+                          errorEntries.isEmpty
+                              ? '100%'
+                              : '${((errorEntries.where((e) => e.isRevised).length / errorEntries.length) * 100).toStringAsFixed(0)}%',
+                          style: GoogleFonts.outfit(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.accentMint,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'MASTERY',
+                          style: GoogleFonts.outfit(
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w700,
+                            color: context.textSecondaryColor,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
           // Practice Mistakes Action Banner
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
             child: NeuContainer(
               borderRadius: 20,
               padding: const EdgeInsets.all(14),
@@ -296,27 +405,112 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
           Expanded(
             child: filteredEntries.isEmpty
                 ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.check_circle_outline_rounded,
-                          size: 56,
-                          color: AppTheme.secondary.withValues(alpha: 0.4),
-                        ),
-                        const SizedBox(height: 14),
-                        Text(
-                          _selectedSubjectFilter == 'All' && _selectedTagFilter == 'All'
-                              ? 'Your error log is clean! 🎉'
-                              : 'No matching mistakes found',
-                          style: AppTheme.poppinsBold(fontSize: 15, color: context.textColor),
-                        ),
-                        const SizedBox(height: 6),
-                        const Text(
-                          'Mistakes logged during PYQs and Mock Tests will appear here.',
-                          style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
-                        ),
-                      ],
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.all(28.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  AppTheme.accentMint.withValues(alpha: 0.2),
+                                  AppTheme.accentPurple.withValues(alpha: 0.15),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppTheme.accentMint.withValues(alpha: 0.4),
+                                width: 2,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppTheme.accentMint.withValues(alpha: 0.2),
+                                  blurRadius: 18,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: const Center(
+                              child: Icon(
+                                Icons.auto_stories_rounded,
+                                size: 38,
+                                color: AppTheme.accentMint,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 18),
+                          Text(
+                            _selectedSubjectFilter == 'All' && _selectedTagFilter == 'All'
+                                ? 'Mistake Notebook is Clean! 🎉'
+                                : 'No Matching Mistakes Found',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.poppins(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: context.textColor,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Mistakes made during Mock Tests, Drills, and PYQ practice automatically sync here so you can analyze root causes and turn weaknesses into strengths.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: context.textSecondaryColor,
+                              fontSize: 12.5,
+                              height: 1.45,
+                            ),
+                          ),
+                          const SizedBox(height: 22),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              NeuButton(
+                                isPrimary: true,
+                                borderRadius: 14,
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                onPressed: () {
+                                  Navigator.pop(context); // Return to home/drills
+                                },
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.bolt_rounded, size: 16, color: Colors.white),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'Take Rapid Drill',
+                                      style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12.5, color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              NeuButton(
+                                isPrimary: false,
+                                borderRadius: 14,
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                onPressed: () => _showAddEntrySheet(context, provider),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.edit_note_rounded, size: 16, color: context.textColor),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'Manual Log',
+                                      style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12.5, color: context.textColor),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   )
                 : ListView.builder(
@@ -440,9 +634,9 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
               children: [
                 Divider(height: 1, color: context.colorBorder),
                 const SizedBox(height: 14),
-                const Text(
+                Text(
                   'QUESTION:',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: AppTheme.textSecondary, letterSpacing: 1.1),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: context.textSecondaryColor, letterSpacing: 1.1),
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -572,13 +766,13 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                       },
                       icon: Icon(
                         entry.isRevised ? Icons.undo : Icons.check_circle_outline,
-                        color: entry.isRevised ? AppTheme.textSecondary : AppTheme.success,
+                        color: entry.isRevised ? context.textSecondaryColor : AppTheme.success,
                         size: 18,
                       ),
                       label: Text(
                         entry.isRevised ? 'Mark Pending' : 'Mark as Revised',
                         style: TextStyle(
-                          color: entry.isRevised ? AppTheme.textSecondary : AppTheme.success,
+                          color: entry.isRevised ? context.textSecondaryColor : AppTheme.success,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),

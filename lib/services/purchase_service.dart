@@ -38,29 +38,38 @@ class PurchaseService with ChangeNotifier {
     }
     notifyListeners();
 
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      final config = PurchasesConfiguration(_revenueCatApiKey);
-      if (user != null) {
-        config.appUserID = user.uid;
+    final isRealKey = _revenueCatApiKey.isNotEmpty &&
+        !_revenueCatApiKey.contains('placeholder') &&
+        _revenueCatApiKey != 'goog_gatex_pro_season_pass_key';
+
+    if (isRealKey) {
+      try {
+        final user = FirebaseAuth.instance.currentUser;
+        final config = PurchasesConfiguration(_revenueCatApiKey);
+        if (user != null) {
+          config.appUserID = user.uid;
+        }
+        await Purchases.configure(config);
+
+        Purchases.addCustomerInfoUpdateListener((customerInfo) {
+          _updateProStatusFromCustomerInfo(customerInfo);
+        });
+
+        final customerInfo = await Purchases.getCustomerInfo();
+        await _updateProStatusFromCustomerInfo(customerInfo);
+
+        final offerings = await Purchases.getOfferings();
+        if (offerings.current != null) {
+          _currentOffering = offerings.current;
+          notifyListeners();
+        }
+      } catch (e) {
+        debugPrint('PurchaseService: RevenueCat dev/fallback mode active: $e');
+        _verifyWithFirebase();
       }
-      await Purchases.configure(config);
-
-      Purchases.addCustomerInfoUpdateListener((customerInfo) {
-        _updateProStatusFromCustomerInfo(customerInfo);
-      });
-
-      final customerInfo = await Purchases.getCustomerInfo();
-      await _updateProStatusFromCustomerInfo(customerInfo);
-
-      final offerings = await Purchases.getOfferings();
-      if (offerings.current != null) {
-        _currentOffering = offerings.current;
-        notifyListeners();
-      }
-    } catch (e) {
-      debugPrint('PurchaseService: RevenueCat dev/fallback mode active: $e');
-      _verifyWithFirebase();
+    } else {
+      debugPrint('PurchaseService: RevenueCat key is placeholder. Skipping SDK configuration to avoid native background errors.');
+      await _verifyWithFirebase();
     }
   }
 

@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
@@ -227,12 +228,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildStreakHero(context, provider),
                 const SizedBox(height: 16),
 
-                // 2. ⚡ 10-MINUTE DAILY RAPID FIRE SPRINT
-                _buildRapidFireSprint(context, provider),
+                // 2. GATE COUNTDOWN (Remaining Days placed above Rapid Fire)
+                _buildCountdown(context, provider, daysLeft, weeksLeft, monthsLeft, urgencyColor),
                 const SizedBox(height: 16),
 
-                // 3. GATE 2027 COUNTDOWN
-                _buildCountdown(context, provider, daysLeft, weeksLeft, monthsLeft, urgencyColor),
+                // 3. ⚡ 10-MINUTE DAILY RAPID FIRE SPRINT
+                _buildRapidFireSprint(context, provider),
                 const SizedBox(height: 16),
 
                 // 4. DAILY MISSIONS (Minimal text, clear progress)
@@ -257,37 +258,54 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // 1. NEUMORPHIC STREAK HERO (Minimal Text, Tactile Day Buttons)
+  // 1. NEUMORPHIC STREAK HERO (Vibrant Orange Container & GateX Purple Inner Text/Accents)
   Widget _buildStreakHero(BuildContext context, AppProvider provider) {
     final streak = provider.streak;
     final todayWeekday = DateTime.now().weekday; // 1 = Mon, 7 = Sun
     const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
-    return NeuContainer(
+    return Container(
       padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: context.isDarkMode
+              ? const [Color(0xFFE65100), Color(0xFFFF6D00)]
+              : const [Color(0xFFFF6D00), Color(0xFFFF8F00)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: const Color(0xFFFFD180).withValues(alpha: 0.7),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFF6D00).withValues(alpha: 0.35),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
       child: Column(
         children: [
           Row(
             children: [
               Container(
-                width: 44,
-                height: 44,
+                width: 46,
+                height: 46,
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFFF9F43), Color(0xFFFF5252)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(14),
+                  color: const Color(0xFF2E0854), // Deep Purple
+                  borderRadius: BorderRadius.circular(15),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.accentFlame.withValues(alpha: 0.35),
-                      blurRadius: 8,
+                      color: const Color(0xFF2E0854).withValues(alpha: 0.4),
+                      blurRadius: 10,
                       offset: const Offset(0, 3),
                     ),
                   ],
                 ),
-                child: const Icon(Icons.local_fire_department_rounded, color: Colors.white, size: 26),
+                child: const Icon(Icons.local_fire_department_rounded, color: Color(0xFFFFB74D), size: 28),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -295,22 +313,48 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '$streak Day Streak',
-                      style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor),
+                      '$streak Day Streak 🔥',
+                      style: GoogleFonts.poppins(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF2E0854), // UI Purple
+                        letterSpacing: -0.3,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      streak > 1 ? 'Goal on track' : 'Solve 1 PYQ to maintain streak',
-                      style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
+                      streak > 1 ? 'Goal on track • Keep pushing!' : 'Solve 1 PYQ to ignite streak',
+                      style: GoogleFonts.outfit(
+                        color: const Color(0xFF3B0764).withValues(alpha: 0.85), // UI Purple
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2E0854).withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFF2E0854).withValues(alpha: 0.3)),
+                ),
+                child: Text(
+                  'ACTIVE',
+                  style: GoogleFonts.outfit(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.8,
+                    color: const Color(0xFF2E0854),
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
 
-          // 7 Tactile Weekday Pills
+          // 7 Weekday Pills with Purple Accents
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(7, (index) {
@@ -320,34 +364,40 @@ class _HomeScreenState extends State<HomeScreen> {
 
               return Column(
                 children: [
-                  NeuContainer(
+                  Container(
                     width: 38,
                     height: 38,
-                    borderRadius: 19,
-                    isRecessed: !isCompleted && !isToday,
-                    padding: EdgeInsets.zero,
-                    color: isCompleted
-                        ? AppTheme.accentFlame
-                        : (isToday ? AppTheme.accentFlame.withValues(alpha: 0.15) : null),
+                    decoration: BoxDecoration(
+                      color: isCompleted
+                          ? const Color(0xFF2E0854) // Solid Purple for completed
+                          : (isToday ? const Color(0xFF2E0854).withValues(alpha: 0.22) : Colors.white.withValues(alpha: 0.25)),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isToday
+                            ? const Color(0xFF2E0854)
+                            : (isCompleted ? Colors.transparent : Colors.white.withValues(alpha: 0.35)),
+                        width: isToday ? 2.0 : 1.0,
+                      ),
+                    ),
                     alignment: Alignment.center,
                     child: isCompleted
-                        ? const Icon(Icons.check_rounded, color: Colors.white, size: 18)
+                        ? const Icon(Icons.check_rounded, color: Colors.white, size: 20)
                         : Text(
                             weekDays[index],
-                            style: TextStyle(
-                              fontSize: 11,
+                            style: GoogleFonts.outfit(
+                              fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: isToday ? AppTheme.accentFlame : context.textSecondaryColor,
+                              color: const Color(0xFF2E0854), // UI Purple
                             ),
                           ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     weekDays[index],
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                      color: isToday ? AppTheme.accentFlame : context.textSecondaryColor,
+                    style: GoogleFonts.outfit(
+                      fontSize: 10.5,
+                      fontWeight: isToday ? FontWeight.bold : FontWeight.w600,
+                      color: const Color(0xFF2E0854), // UI Purple
                     ),
                   ),
                 ],
@@ -458,7 +508,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // 3. GATE 2027 COUNTDOWN
+  // 2. GATE 2027 COUNTDOWN (Modernized & Elevated)
   Widget _buildCountdown(
     BuildContext context,
     AppProvider provider,
@@ -482,56 +532,189 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return NeuContainer(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
+      borderRadius: 22,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                examName,
-                style: TextStyle(
-                  color: context.textSecondaryColor,
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.8,
-                ),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: AppTheme.accentPurple.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.timer_outlined, size: 16, color: AppTheme.accentPurple),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    examName,
+                    style: GoogleFonts.outfit(
+                      color: context.textColor,
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: urgencyColor.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: urgencyColor.withValues(alpha: 0.35)),
                 ),
-                child: Text(
-                  '$daysLeft Days Left',
-                  style: TextStyle(
-                    color: urgencyColor,
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(color: urgencyColor, shape: BoxShape.circle),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      '$daysLeft Days Left',
+                      style: GoogleFonts.outfit(
+                        color: urgencyColor,
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // 3 Countdown metric tiles
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                  decoration: BoxDecoration(
+                    color: context.colorSurfaceElevated,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: context.colorBorder),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        '$daysLeft',
+                        style: GoogleFonts.outfit(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                          color: urgencyColor,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'DAYS LEFT',
+                        style: GoogleFonts.outfit(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: context.textSecondaryColor,
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                  decoration: BoxDecoration(
+                    color: context.colorSurfaceElevated,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: context.colorBorder),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        '$weeksLeft',
+                        style: GoogleFonts.outfit(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.accentMint,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'WEEKS',
+                        style: GoogleFonts.outfit(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: context.textSecondaryColor,
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                  decoration: BoxDecoration(
+                    color: context.colorSurfaceElevated,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: context.colorBorder),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        '1 Feb',
+                        style: GoogleFonts.outfit(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.accentPurple,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'TARGET DATE',
+                        style: GoogleFonts.outfit(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: context.textSecondaryColor,
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
+
+          // Progress Bar & Meta
           NeuProgressBar(
             progress: prepPercentElapsed,
             progressColor: urgencyColor,
-            height: 8,
+            height: 7,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '$weeksLeft wks remaining',
-                style: TextStyle(color: context.textSecondaryColor, fontSize: 10.5),
+                '${(prepPercentElapsed * 100).toStringAsFixed(0)}% prep period elapsed',
+                style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 11, fontWeight: FontWeight.w500),
               ),
               Text(
-                '${(prepPercentElapsed * 100).toStringAsFixed(0)}% Season Elapsed • 1 Feb 2027',
-                style: TextStyle(color: context.textSecondaryColor, fontSize: 10.5, fontWeight: FontWeight.bold),
+                'Make each day count 🚀',
+                style: GoogleFonts.outfit(color: AppTheme.accentPurple, fontSize: 11, fontWeight: FontWeight.bold),
               ),
             ],
           ),

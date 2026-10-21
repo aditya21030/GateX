@@ -507,7 +507,7 @@ class MoreScreen extends StatelessWidget {
         'icon': Icons.insights_rounded,
         'color': AppTheme.accentMint,
         'title': 'Analytics',
-        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MockTrackerScreen())),
+        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MockTrackerScreen(initialTabIndex: 1))),
       },
       {
         'icon': Icons.library_books_rounded,

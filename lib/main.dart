@@ -25,6 +25,15 @@ import 'screens/onboarding_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    debugPrint("Global FlutterError caught: ${details.exception}");
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    debugPrint("Global PlatformDispatcher error caught: $error");
+    return true; // Prevents app termination on uncaught async errors
+  };
+
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

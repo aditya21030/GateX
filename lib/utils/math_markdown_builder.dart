@@ -40,14 +40,18 @@ class BlockMathSyntax extends md.BlockSyntax {
 
 // Builder for inline math
 class MathElementBuilder extends MarkdownElementBuilder {
+  final Color? color;
+  MathElementBuilder({this.color});
+
   @override
   Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
+    final effectiveColor = color ?? preferredStyle?.color ?? AppTheme.textPrimary;
     return Math.tex(
       element.textContent,
       mathStyle: MathStyle.text,
       textStyle: TextStyle(
         fontSize: preferredStyle?.fontSize ?? 14,
-        color: AppTheme.textPrimary,
+        color: effectiveColor,
       ),
       onErrorFallback: (err) => Text(
         '\$${element.textContent}\$',
@@ -59,8 +63,12 @@ class MathElementBuilder extends MarkdownElementBuilder {
 
 // Builder for block math
 class BlockMathElementBuilder extends MarkdownElementBuilder {
+  final Color? color;
+  BlockMathElementBuilder({this.color});
+
   @override
   Widget visitElementAfter(md.Element element, TextStyle? preferredStyle) {
+    final effectiveColor = color ?? preferredStyle?.color ?? AppTheme.textPrimary;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -72,7 +80,7 @@ class BlockMathElementBuilder extends MarkdownElementBuilder {
           mathStyle: MathStyle.display,
           textStyle: TextStyle(
             fontSize: (preferredStyle?.fontSize ?? 14) + 1,
-            color: AppTheme.textPrimary,
+            color: effectiveColor,
           ),
           onErrorFallback: (err) => Text(
             '\$\$${element.textContent}\$\$',

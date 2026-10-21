@@ -709,7 +709,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                       physics: const BouncingScrollPhysics(),
                       children: [
                         // 1. Quick Toggles
-                        const Text('QUESTION TYPE', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+                        Text('QUESTION TYPE', style: TextStyle(color: context.textSecondaryColor, fontSize: 11, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 8),
                         FilterChip(
                           selected: _natOnly,
@@ -731,7 +731,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                         const SizedBox(height: 16),
 
                         // 2. Subject Filter
-                        const Text('SUBJECT', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+                        Text('SUBJECT', style: TextStyle(color: context.textSecondaryColor, fontSize: 11, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
@@ -739,7 +739,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                           children: subjectsList.map((subj) {
                             final isSel = _selectedSubject == subj;
                             return ChoiceChip(
-                              label: Text(subj, style: TextStyle(fontSize: 12, color: isSel ? Colors.white : AppTheme.textSecondary)),
+                              label: Text(subj, style: TextStyle(fontSize: 12, color: isSel ? Colors.white : context.textSecondaryColor)),
                               selected: isSel,
                               selectedColor: AppTheme.accentPurple,
                               backgroundColor: context.colorSurfaceElevated,
@@ -755,7 +755,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                         const SizedBox(height: 16),
 
                         // 3. Year Filter
-                        const Text('YEAR & SET', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+                        Text('YEAR & SET', style: TextStyle(color: context.textSecondaryColor, fontSize: 11, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 8),
                         Wrap(
                           spacing: 8,
@@ -779,7 +779,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                         const SizedBox(height: 16),
 
                         // 4. Difficulty
-                        const Text('DIFFICULTY', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+                        Text('DIFFICULTY', style: TextStyle(color: context.textSecondaryColor, fontSize: 11, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 8),
                         Row(
                           children: difficultiesList.map((diff) {
@@ -788,7 +788,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 3),
                                 child: ChoiceChip(
-                                  label: Center(child: Text(diff, style: TextStyle(fontSize: 11.5, color: isSel ? Colors.white : AppTheme.textSecondary))),
+                                  label: Center(child: Text(diff, style: TextStyle(fontSize: 11.5, color: isSel ? Colors.white : context.textSecondaryColor))),
                                   selected: isSel,
                                   selectedColor: AppTheme.primary,
                                   backgroundColor: context.colorSurfaceElevated,
@@ -845,7 +845,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
           color: isSelected ? AppTheme.primary.withValues(alpha: 0.12) : context.colorSurface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? AppTheme.primary : AppTheme.textSecondary.withValues(alpha: 0.2),
+            color: isSelected ? AppTheme.primary : context.textSecondaryColor.withValues(alpha: 0.25),
             width: isSelected ? 1.5 : 1.0,
           ),
         ),
@@ -863,7 +863,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
             const SizedBox(width: 4),
             Icon(
               Icons.keyboard_arrow_down_rounded,
-              color: isSelected ? AppTheme.primary : AppTheme.textSecondary,
+              color: isSelected ? AppTheme.primary : context.textSecondaryColor,
               size: 16,
             ),
           ],
@@ -904,7 +904,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                       style: AppTheme.poppinsBold(fontSize: 16),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close_rounded, color: AppTheme.textSecondary),
+                      icon: Icon(Icons.close_rounded, color: context.textSecondaryColor),
                       onPressed: () => Navigator.pop(context),
                     ),
                   ],
@@ -1176,6 +1176,13 @@ class _PYQCardState extends State<_PYQCard> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _cachedQuestionTextWidget = null;
+    _cachedExplanationWidget = null;
+  }
+
+  @override
   void initState() {
     super.initState();
     if (widget.pyq.userAnswer != null) {
@@ -1344,13 +1351,13 @@ class _PYQCardState extends State<_PYQCard> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: AppTheme.textSecondary.withOpacity(0.08),
+                    color: context.textSecondaryColor.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     pyq.subject,
-                    style: const TextStyle(
-                      color: AppTheme.textSecondary,
+                    style: TextStyle(
+                      color: context.textSecondaryColor,
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                     ),
@@ -1835,9 +1842,9 @@ class _PYQCardState extends State<_PYQCard> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Enter Numerical Answer:',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppTheme.textSecondary),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: context.textSecondaryColor),
         ),
         const SizedBox(height: 8),
         Row(
@@ -1918,7 +1925,8 @@ class _PYQCardState extends State<_PYQCard> {
   }
 
   Widget _buildQuestionText(String text, {bool isExplanation = false}) {
-    final cacheKey = '${text.hashCode}_$isExplanation';
+    final effectiveTextColor = context.textColor;
+    final cacheKey = '${text.hashCode}_${isExplanation}_${context.isDarkMode}';
     if (_questionWidgetCache.containsKey(cacheKey)) {
       return _questionWidgetCache[cacheKey]!;
     }
@@ -1930,8 +1938,8 @@ class _PYQCardState extends State<_PYQCard> {
         selectable: true,
         extensionSet: md.ExtensionSet.gitHubWeb,
         builders: {
-          'math': MathElementBuilder(),
-          'block_math': BlockMathElementBuilder(),
+          'math': MathElementBuilder(color: effectiveTextColor),
+          'block_math': BlockMathElementBuilder(color: effectiveTextColor),
         },
         inlineSyntaxes: [InlineMathSyntax()],
         blockSyntaxes: [BlockMathSyntax()],
@@ -1939,13 +1947,13 @@ class _PYQCardState extends State<_PYQCard> {
           p: TextStyle(
             fontSize: isExplanation ? 13 : 15,
             fontWeight: isExplanation ? FontWeight.normal : FontWeight.w500,
-            color: context.textColor,
+            color: effectiveTextColor,
             height: 1.4,
           ),
           codeblockDecoration: BoxDecoration(
             color: isExplanation 
                 ? AppTheme.secondary.withValues(alpha: 0.08)
-                : context.colorSurfaceElevated,
+                : (context.isDarkMode ? context.colorSurfaceElevated : const Color(0xFFF1F5F9)),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color: (isExplanation ? AppTheme.secondary : context.colorBorder).withValues(alpha: 0.2),
@@ -1953,7 +1961,7 @@ class _PYQCardState extends State<_PYQCard> {
           ),
           code: AppTheme.monospaceStyle(
             fontSize: 11.5,
-            color: context.textColor,
+            color: effectiveTextColor,
           ),
           tableBorder: TableBorder.all(color: context.colorBorder),
           tableCellsPadding: const EdgeInsets.all(8),

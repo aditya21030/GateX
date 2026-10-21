@@ -18,7 +18,8 @@ import '../services/ad_service.dart';
 import '../widgets/neu_widgets.dart';
 
 class MockTrackerScreen extends StatefulWidget {
-  const MockTrackerScreen({super.key});
+  final int initialTabIndex;
+  const MockTrackerScreen({super.key, this.initialTabIndex = 0});
 
   @override
   State<MockTrackerScreen> createState() => _MockTrackerScreenState();
@@ -31,7 +32,11 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+      initialIndex: widget.initialTabIndex.clamp(0, 1),
+    );
     _tabController.addListener(() {
       setState(() {}); // Rebuild to toggle FAB based on index
     });
