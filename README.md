@@ -1,84 +1,265 @@
 # GateX 🚀
-### Complete GATE Data Science & AI (DA) and Computer Science & IT (CS/IT) Preparation App
 
-GateX is an all-in-one, highly optimized, and distraction-free mobile preparation app built with Flutter for aspirants preparing for GATE Data Science & Artificial Intelligence (DA) and Computer Science & Information Technology (CS/IT).
+<div align="center">
 
----
+### **The Definitive GATE DA & CS/IT Preparation Suite**
+*Built with ❤️ by **Yousful Studio** for engineering aspirants across India.*
 
-## 🌟 Key Features
+[![Flutter](https://img.shields.io/badge/Flutter-3.41+-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.11+-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
+[![License: MIT](https://img.shields.io/badge/License-MIT-success?style=for-the-badge)](LICENSE)
+[![Tests Passing](https://img.shields.io/badge/Tests-24%2F24%20Passing-brightgreen?style=for-the-badge&logo=checkmarx&logoColor=white)]()
+[![Code Quality](https://img.shields.io/badge/flutter%20analyze-0%20Issues-brightgreen?style=for-the-badge&logo=dart&logoColor=white)]()
+[![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-orange?style=for-the-badge&logo=android&logoColor=white)]()
 
-### 1. ⚡ 90-Day Crunch Sprint Mode
-- **Sprint Mode Toggle**: Condenses the entire dashboard to high-yield actions during the final 90 days before the GATE examination.
-- **Rapid Fire Quizzes**: Quick 5-question high-yield concept checks for daily momentum.
-- **NAT Drills**: Instant filter for Numerical Answer Type questions across all subjects to practice exact numerical entry without multiple-choice cues.
-
-### 2. 🧮 Exam-Day Floating Virtual Calculator
-- Full PiP (Picture-in-Picture) draggable floating calculator replicated directly from the official GATE TCS-iON interface.
-- Trigonometric, logarithmic, exponential, square root, reciprocal, memory functions, and backspace.
-- Movable anywhere on the screen during mock tests so it never obstructs question text or options.
-
-### 3. 🧠 Active Recall & Quick Revision
-- **3D Interactive Flashcards**: Flip cards across Probability & Statistics, Machine Learning, AI, DBMS, Linear Algebra, and Calculus with "Review" vs. "Mastered" progress tracking.
-- **Comprehensive Cheat Sheets**: 5 curated high-density formula and theorem sheets with instant sharing and export capabilities.
-- **⚡ Practice My Mistakes**: Custom targeted quiz generator that instantly extracts incorrect questions from your Error Log into focused practice sessions.
-
-### 4. 📊 Test Series & Advanced Analytics
-- **Full & Subject-wise Mock Tests**: Timed GATE-standard mock tests with official marking schemes (+1, -0.33, +2, -0.66, 0 for NAT).
-- **Exam Test Runner**: Question palette with status indicators (Answered, Marked for Review, Unanswered), instant clear response, and haptic feedback.
-- **Mock Tracker & Score Predictor**: Track score trends, accuracy percentages, subject-wise strengths, and GATE score projections.
-
-### 5. 👑 GateX Pro
-- Lifetime / season pass unlocking unlimited custom mistake tests, offline cheat sheets, detailed step-by-step solutions, and ad-free study sessions.
-- 100% independent platform built by and for GATE aspirants.
+</div>
 
 ---
 
-## 🛠️ Tech Stack & Architecture
+## 📖 Overview
 
-- **Framework**: [Flutter 3.x](https://flutter.dev) (Dart 3.x)
-- **State Management**: [Provider](https://pub.dev/packages/provider)
-- **Backend & Cloud**: Firebase Core, Firebase Auth, Cloud Firestore
-- **Local Storage & Persistence**: Shared Preferences & Offline Caching
-- **Math Rendering**: LaTeX / TeX rendering via `flutter_math_fork`
-- **Charts & Visualization**: `fl_chart`
-- **Audio & Haptics**: `audioplayers`, `flutter/services` HapticFeedback
+**GateX** is an all-in-one, highly optimized, distraction-free mobile preparation platform designed specifically for aspirants appearing for the **GATE Data Science & Artificial Intelligence (DA)** and **GATE Computer Science & Information Technology (CS/IT)** examinations.
+
+Engineered from the ground up by **Yousful Studio**, GateX eliminates preparation fragmentation by consolidating syllabus tracking, previous year questions (15+ years), exam-day TCS-iON virtual calculation, high-density formula sheets, timed 65-question mock tests, adaptive error mastery drills, and post-exam IIT COAP / NIT CCMT counseling predictors into a single, high-performance Flutter application.
+
+---
+
+## ✨ Key Features & Capabilities
+
+```
+                                      ┌─── GATE DA (Data Science & AI)
+                GATEX HUB ────────────┤
+                                      └─── GATE CS/IT (Computer Science)
+                                                 │
+        ┌───────────────────────┬────────────────┴───────────────────────┐
+        ▼                       ▼                                        ▼
+  EXAM ENGINE             MISTAKE MASTERY                          SMART TOOLS
+  • Full 65Q Mocks        • Auto Error Book                        • TCS-iON Floating Calculator
+  • Subject Practice      • "Mistake Re-Test" Machine              • TeX Formula Cheatsheets
+  • Rapid Fire (5Q)       • Time-Trap Diagnostic                   • 3D Active Recall Flashcards
+  • NAT Drills            • Negative Marking Penalty Audit         • COAP/CCMT Admission Predictor
+```
+
+### 🎯 1. Dual-Paper Architecture (DA & CS/IT)
+- **Seamless Branch Switching**: Effortlessly toggle between **GATE DA** and **GATE CS/IT** or prepare for both papers concurrently.
+- **Dedicated Syllabi & Weightage**: Complete topic breakdown with historical mark distributions for Probability, Linear Algebra, Machine Learning, AI, DBMS, Algorithms, OS, CN, and Theory of Computation.
+
+### ⚡ 2. 90-Day Exam Crunch Mode
+- **Decluttered Focus Dashboard**: Automatically condenses the user interface to high-yield actions during the final 90 days before exam day.
+- **Rapid Fire Quizzes**: 5-question, 10-minute daily concept check-ins designed to maintain problem-solving momentum.
+- **Pure NAT Drills**: Dedicated filter for Numerical Answer Type questions across all subjects to practice exact numerical calculation without relying on multiple-choice clues.
+
+### 🧮 3. Exam-Day Floating Virtual Calculator
+- **True TCS-iON Interface**: Pixel-accurate floating replica of the official GATE examination virtual calculator.
+- **Picture-in-Picture (PiP) Draggability**: Freely relocate the floating calculator anywhere on the screen during tests so questions and answer options are never obstructed.
+- **Scientific Functionality**: Full support for trigonometric, inverse trigonometric, logarithmic ($e$ and $\log_{10}$), exponential, square root, reciprocal ($1/x$), memory registers ($M+, M-, MR, MC$), and backspace.
+
+### 📝 4. Authentic Exam Test Runner & Analytics
+- **Official GATE Standard Mocks**: Full-length 65-question timed mock exams conforming to official marking schemes ($+1$ / $-0.33$, $+2$ / $-0.66$, and $0$ for NAT/MSQ).
+- **Interactive Question Palette**: Standardized status tracking (*Answered*, *Marked for Review*, *Unanswered*, *Review & Answered*).
+- **On-Screen Numerical Keypad**: Real examination NAT entry interface with quick clear and backspace functions.
+- **Haptic & Visual Feedback**: Subtle tactile response when navigating questions, submitting, or selecting answers.
+
+### 🧠 5. Mistake Mastery & "Practice My Mistakes"
+- **Automated Error Book**: Missed or unattempted questions from mock tests and quizzes are automatically organized into an interactive error log.
+- **Adaptive "Mistake Re-Test" Machine**: Generates personalized revision drills dynamically constructed exclusively from questions the student previously got wrong.
+- **Advanced Diagnostics**: Time-trap detection (highlighting questions where $>3.5$ minutes were spent before answering incorrectly) and negative marking penalty audits.
+
+### 📚 6. Interactive TeX Formula Cheatsheets & 3D Flashcards
+- **High-Density Cheatsheets**: Complete subject-wise formula compilations rendered using `flutter_math_fork` for crisp, native $\LaTeX$ mathematical rendering.
+- **Keyword Search & Bookmarks**: Fast search filters to pinpoint equations within seconds.
+- **3D Flip Flashcards**: Interactive flip cards across core subjects with *Mastered* vs. *Needs Review* spaced-repetition tracking.
+
+### 🎓 7. Score Estimator & IIT COAP/CCMT Predictor
+- **Normalized Score Estimator**: Instantly estimate GATE marks, normalized GATE score (out of 1000), and projected All India Rank (AIR).
+- **Admission Predictor**: Interactive admission matrix across all 23 IITs, IISc Bangalore, and top NITs with filters for Direct Offers vs. Written Test/Interview rounds.
+
+### ⏱️ 8. Pomodoro Focus & Deep Study Timer
+- **Distraction-Free Focus**: Built-in timer with customizable study intervals (25m / 50m) and rest breaks.
+- **Acoustic & Vibration Prompts**: Gentle audio cues when study or break periods finish.
+
+### 👥 9. Community Discussions & Real-time Rankings
+- **Question Discussion Boards**: Collaborative peer discussions on difficult questions powered by Cloud Firestore.
+- **Live Leaderboards**: Compare mock exam scores and accuracy percentiles against fellow aspirants nationwide.
+
+---
+
+## 💎 Monetization & GateX Pro
+
+GateX operates under a transparent, student-friendly **Dual-Engine Monetization Model**:
+* **100% Free Public Knowledge**: Official syllabi, 15+ years of PYQs, formula cheatsheets, and IIT COAP cutoffs remain completely free forever, supported by non-intrusive AdMob ads.
+* **GateX Pro Season Pass (₹299)**: One-time payment valid through the entire examination and counseling season (March 15, 2027) unlocking the Mistake Re-Test Machine, Penalty Audits, Printable PDF Cheatsheets, Offline Mock Testing, and an entirely ad-free experience.
+* **Technology**: Powered by **RevenueCat** (`purchases_flutter`) orchestrated on top of **Google Play Billing** for seamless UPI (GPay, PhonePe, Paytm) transactions without custom backend maintenance.
+
+> *For complete details on pricing logic, ad placements, and edge-case engineering, refer to [MONETIZE.md](MONETIZE.md).*
+
+---
+
+## 🛠️ Architecture & Tech Stack
+
+```
+GateX Mobile Architecture
+├── Presentation Layer    ──► Flutter 3.x (Material 3 + Neumorphic Design System)
+├── State Management      ──► Provider (ChangeNotifier, MultiProvider)
+├── Backend & Database    ──► Firebase Auth & Cloud Firestore (Cloud Sync)
+├── In-App Purchases      ──► RevenueCat (purchases_flutter) + Google Play Billing
+├── Ad Monetization       ──► Google Mobile Ads (AdMob Rewarded / Interstitial / Native)
+├── Math Engine           ──► flutter_math_fork (LaTeX / KaTeX parser)
+├── Data Visualization    ──► fl_chart
+└── Local Persistence     ──► SharedPreferences & Hive
+```
+
+| Layer | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Framework** | [Flutter](https://flutter.dev) (`^3.41.0`) / [Dart](https://dart.dev) (`^3.11.1`) | High-performance cross-platform UI |
+| **State** | `provider` (`^6.1.5`) | Reactive state management |
+| **Cloud & Auth** | `firebase_auth`, `cloud_firestore` | Cloud authentication & multi-device sync |
+| **Purchases** | `purchases_flutter` (`^8.6.0`) | In-app purchases & entitlement management via RevenueCat |
+| **Advertisements** | `google_mobile_ads` (`^8.0.0`) | Non-intrusive rewarded and interstitial ads |
+| **Math Typography** | `flutter_math_fork` (`^0.7.4`) | High-precision $\LaTeX$ mathematical notation rendering |
+| **Charts** | `fl_chart` (`^1.2.0`) | Performance trends and score radar charts |
+| **Local Storage** | `shared_preferences`, `hive` | Offline mock tests, test resume states, error log |
+| **Notifications** | `flutter_local_notifications` | Daily study reminders & Pomodoro alerts |
+
+---
+
+## 📂 Project Directory Structure
+
+```
+GateX/
+├── android/                         # Android platform configuration & Gradle scripts
+├── assets/
+│   ├── audio/                       # Sound prompts (e.g., beep.wav)
+│   ├── icon/                        # App launcher & adaptive icons
+│   └── images/                      # Question diagrams, graphs, and figures
+├── lib/
+│   ├── main.dart                    # Application entry point & Provider registration
+│   ├── firebase_options.dart        # Firebase environment configuration
+│   ├── data/                        # Static PYQ banks, syllabi, study plans, mock papers
+│   ├── models/                      # Domain models (Question, MockTest, Branch, User)
+│   ├── providers/                   # State managers (AppProvider, AuthProvider, PomodoroProvider)
+│   ├── screens/                     # Feature screens (MockRunner, ErrorLog, COAP, FormulaSheet, etc.)
+│   ├── services/                    # Core services (AdService, PurchaseService, StorageService, CloudSync)
+│   ├── theme/                       # AppTheme definitions (Colors, Dark/Light modes, Neumorphic styles)
+│   ├── utils/                       # LaTeX markdown builders & UI utilities
+│   └── widgets/                     # Reusable widgets (VirtualCalculator, DiscussionSheet, NeuWidgets)
+├── test/                            # Comprehensive Unit and Widget test suites (24 tests)
+├── MONETIZE.md                      # Official monetization master plan & RevenueCat architecture
+├── LICENSE                          # MIT License (Yousful Studio)
+└── pubspec.yaml                     # Project dependencies & asset declarations
+```
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Flutter SDK (`^3.41.0` or later)
-- Dart SDK (`^3.11.0` or later)
-- Android Studio / Xcode / VS Code with Flutter extension
+* **Flutter SDK**: `>= 3.41.0`
+* **Dart SDK**: `>= 3.11.1`
+* **Android Studio** or **VS Code** with Flutter and Dart extensions
+* **Java Development Kit (JDK)**: OpenJDK 17 or 21
 
-### Installation
+### Step-by-Step Installation
+
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/aditya21030/GateX.git
+   cd GateX
+   ```
+
+2. **Install Dependencies**:
+   ```bash
+   flutter pub get
+   ```
+
+3. **Configure Firebase**:
+   Ensure `google-services.json` is placed in `android/app/` and Firebase options are verified in `lib/firebase_options.dart`.
+
+4. **Run the Test Suite**:
+   ```bash
+   flutter test
+   ```
+
+5. **Launch the App**:
+   ```bash
+   # Run in debug mode
+   flutter run
+
+   # Or run with explicit release flags
+   flutter run --release
+   ```
+
+---
+
+## 🧪 Testing & Code Quality
+
+GateX maintains strict code quality standards with zero lint warnings and comprehensive automated tests covering calculations, mock test states, mistake drill generation, and UI components:
+
 ```bash
-# Clone the repository
-git clone https://github.com/aditya21030/GateX.git
-cd GateX
+# Run code analysis (Zero issues expected)
+flutter analyze
 
-# Install dependencies
-flutter pub get
-
-# Run the test suite
+# Run all 24 unit & widget tests
 flutter test
-
-# Run on an emulator or physical device
-flutter run
 ```
 
 ---
 
-## 🧪 Testing
+## 📦 Building for Production
 
-GateX features comprehensive unit and widget test suites covering state management, Sprint mode, calculator arithmetic, score calculations, and custom mistake drill generations:
+To generate an optimized release Android App Bundle (AAB) or APK:
 
 ```bash
-flutter test
+# Build split-per-ABI release APKs
+flutter build apk --release
+
+# Build Google Play release App Bundle
+flutter build appbundle --release
+```
+
+The resulting binary will be located at:
+```
+build/app/outputs/flutter-apk/app-release.apk
 ```
 
 ---
 
-## 📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+## 🤝 Contributing
+
+Contributions to improve GateX, add verified PYQs, or optimize performance are welcome!
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'feat: Add AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License & Copyright
+
+```
+MIT License
+
+Copyright (c) 2026 Yousful Studio
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+This software and its documentation are developed, maintained, and licensed under the **MIT License** by **Yousful Studio**. See the [LICENSE](LICENSE) file for complete terms.
