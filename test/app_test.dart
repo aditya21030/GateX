@@ -818,6 +818,78 @@ void main() {
       expect(parseTime('corrupted'), {'hour': 9, 'minute': 0});
     });
   });
+
+  group('COAP & CCMT Predictor Logic & Eligibility Tests', () {
+    int getAdjustedScore(int genScore, String category) {
+      switch (category) {
+        case 'OBC-NCL':
+          return (genScore * 0.90).round();
+        case 'EWS':
+          return (genScore * 0.92).round();
+        case 'SC':
+          return (genScore * 0.68).round();
+        case 'ST':
+          return (genScore * 0.58).round();
+        default:
+          return genScore;
+      }
+    }
+
+    Map<String, dynamic> getOdds(double userScore, int adjustedScore) {
+      if (userScore <= 0) {
+        return {'label': 'Target', 'isEligible': true};
+      }
+      if (userScore >= adjustedScore) {
+        return {'label': 'Safe Match ✓', 'isEligible': true};
+      } else if (userScore >= adjustedScore - 40) {
+        return {'label': 'Competitive', 'isEligible': true};
+      } else {
+        return {'label': 'Reach', 'isEligible': false};
+      }
+    }
+
+    test('Category multipliers apply correctly across all reservation categories', () {
+      const int genScore = 800;
+      expect(getAdjustedScore(genScore, 'General'), 800);
+      expect(getAdjustedScore(genScore, 'OBC-NCL'), 720);
+      expect(getAdjustedScore(genScore, 'EWS'), 736);
+      expect(getAdjustedScore(genScore, 'SC'), 544);
+      expect(getAdjustedScore(genScore, 'ST'), 464);
+    });
+
+    test('Score 721 marks IIT Madras (720) as Safe Match and IIT Bombay (750) as Competitive', () {
+      final madrasOdds = getOdds(721.0, 720);
+      expect(madrasOdds['label'], 'Safe Match ✓');
+      expect(madrasOdds['isEligible'], true);
+
+      final bombayOdds = getOdds(721.0, 750);
+      expect(bombayOdds['label'], 'Competitive');
+      expect(bombayOdds['isEligible'], true);
+
+      final iiscOdds = getOdds(721.0, 800);
+      expect(iiscOdds['label'], 'Reach');
+      expect(iiscOdds['isEligible'], false);
+    });
+
+    test('Eligible filter isolates Safe Match and Competitive programs while excluding Reach', () {
+      final cutoffs = [
+        {'institute': 'IISc', 'genScore': 800},
+        {'institute': 'IIT Bombay', 'genScore': 750},
+        {'institute': 'IIT Madras', 'genScore': 720},
+        {'institute': 'IIT Delhi', 'genScore': 700},
+      ];
+
+      const double userScore = 721.0;
+      final eligibleOnly = cutoffs.where((item) {
+        final adj = getAdjustedScore(item['genScore'] as int, 'General');
+        final odds = getOdds(userScore, adj);
+        return odds['isEligible'] as bool;
+      }).toList();
+
+      expect(eligibleOnly.length, 3);
+      expect(eligibleOnly.any((item) => item['institute'] == 'IISc'), false);
+    });
+  });
 }
 
 

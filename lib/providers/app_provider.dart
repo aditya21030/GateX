@@ -176,8 +176,10 @@ class AppProvider with ChangeNotifier {
   // Score Estimator State
   double _estimatorMockScore = 60.0;
   String _estimatorMockSource = 'GO Classes';
+  double _estimatedGateScore = 721.0;
   double get estimatorMockScore => _estimatorMockScore;
   String get estimatorMockSource => _estimatorMockSource;
+  double get estimatedGateScore => _estimatedGateScore;
 
   // GateX Pro Entitlement
   bool get isPro => PurchaseService().isPro;
@@ -205,6 +207,10 @@ class AppProvider with ChangeNotifier {
     if (themeName != null) {
       _themeMode = ThemeMode.values.firstWhere((e) => e.name == themeName, orElse: () => ThemeMode.dark);
     }
+
+    _estimatedGateScore = _storage.prefs.getDouble('estimated_gate_score') ?? 721.0;
+    _estimatorMockScore = _storage.prefs.getDouble('estimator_mock_score') ?? 60.0;
+    _estimatorMockSource = _storage.prefs.getString('estimator_mock_source') ?? 'GO Classes';
 
     // Request notification permissions in background (do not block startup)
     if (_notificationsEnabled) {
@@ -846,11 +852,19 @@ class AppProvider with ChangeNotifier {
   // Score Estimator setters
   Future<void> setScoreEstimatorScore(double score) async {
     _estimatorMockScore = score;
+    await _storage.prefs.setDouble('estimator_mock_score', score);
     notifyListeners();
   }
 
   Future<void> setScoreEstimatorSource(String source) async {
     _estimatorMockSource = source;
+    await _storage.prefs.setString('estimator_mock_source', source);
+    notifyListeners();
+  }
+
+  Future<void> setEstimatedGateScore(double score) async {
+    _estimatedGateScore = score;
+    await _storage.prefs.setDouble('estimated_gate_score', score);
     notifyListeners();
   }
 

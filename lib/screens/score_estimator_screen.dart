@@ -667,19 +667,25 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                           onPressed: () {
                             HapticFeedback.selectionClick();
                             final estScore = (prediction['gateScore'] as num).toDouble();
+                            provider.setEstimatedGateScore(estScore);
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => COAPScreen(initialGateScore: estScore)),
+                              MaterialPageRoute(
+                                builder: (_) => COAPScreen(
+                                  initialGateScore: estScore,
+                                  showEligibleOnly: true,
+                                ),
+                              ),
                             );
                           },
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.account_balance_rounded, size: 18, color: Colors.white),
-                              SizedBox(width: 8),
+                              const Icon(Icons.account_balance_rounded, size: 18, color: Colors.white),
+                              const SizedBox(width: 8),
                               Text(
-                                'Check Eligible IITs/IISc on COAP Predictor →',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
+                                'Check Eligible IITs/IISc for ${prediction['gateScore']} Score →',
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
                               ),
                             ],
                           ),
