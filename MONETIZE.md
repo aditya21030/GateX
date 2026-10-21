@@ -142,11 +142,54 @@ NativeAd:        'ca-app-pub-8510502760785545/6098115426'
 
 ---
 
-## 7. Final Stage Implementation Checklist
+## 7. In-App Purchase Architecture: RevenueCat + Google Play Billing
 
-When ready to integrate:
-- [ ] **Step 1**: Update `ProUpgradeScreen` copy to reflect **₹299 Season Pass** (valid till March 2027) with the 5 proprietary perks.
-- [ ] **Step 2**: Add `AdService().showInterstitialAd()` on the Estimator &rarr; COAP transition button.
-- [ ] **Step 3**: Verify `promptWatchRewardedAd()` fallback on Full Mocks #2 to #10 in `mock_tracker_screen.dart`.
-- [ ] **Step 4**: Implement the Negative Marking Penalty & Time-Trap calculation on the Mock Test result screen (`mock_test_runner_screen.dart`).
-- [ ] **Step 5**: Hook Google Play In-App Product ID `gatex_pro_season_2027` into Google Play Console.
+### Why RevenueCat is the Industry Gold Standard for GateX
+A common misconception is choosing *either* RevenueCat *or* Google Play Billing. In reality:
+* **Google Play Policy Mandate**: Google strictly requires that all digital goods on Android apps downloaded from the Play Store must process payments via **Google Play Billing** (allowing students to pay securely using UPI, GPay, PhonePe, Paytm, Net Banking, or Cards).
+* **The Problem with Raw Google Play Billing**: Using direct Google Play Billing APIs requires building, hosting, and maintaining a custom backend server (Node.js/Python), managing Google Cloud Service Accounts, parsing base64 cryptographic purchase tokens, setting up Real-Time Developer Notifications (RTDN via Google Cloud Pub/Sub), and handling device restore edge cases manually.
+* **The RevenueCat Advantage**: **RevenueCat sits on top of Google Play Billing as an orchestration and receipt-validation layer.** It replaces the entire backend infrastructure, manages entitlements, provides cross-device synchronization, and detects fraud.
+* **Cost**: RevenueCat is **100% free** up to **$2,500/month** (~₹2,10,000+ monthly revenue), which means ₹0 backend overhead for GateX.
+
+### Architecture Flow Diagram
+
+```
+[ GateX Flutter App ]
+        │  1. User taps "Unlock Pro Pass (₹299)"
+        ▼
+[ purchases_flutter SDK ]
+        │  2. Calls Purchases.purchasePackage(package)
+        ▼
+[ Google Play Billing Engine ]
+        │  3. Displays native Google Play UPI / GPay / Card bottom sheet
+        │  4. User approves payment (₹299 debited)
+        ▼
+[ RevenueCat Cloud Validation ]
+        │  5. Google Play sends cryptographic purchase token to RevenueCat
+        │  6. RevenueCat validates receipt directly with Google Play Developer API
+        ▼
+[ GateX App & Cloud Firestore ]
+        │  7. Entitlement 'gatex_pro' marked active
+        │  8. AdService.setAdSuspended(true) disables all ads instantly
+        │  9. Cloud Firestore synced with 'isPro: true' linked to FirebaseAuth UID
+```
+
+### Key Integration Parameters (`purchase_service.dart`)
+* **Flutter Package**: `purchases_flutter` (already integrated in [`lib/services/purchase_service.dart`](file:///d:/Flutter/Gate%20DA/lib/services/purchase_service.dart))
+* **Entitlement ID**: `gatex_pro` (guards all pro analytics, PDF exports, and mistake machine)
+* **Google Play Product ID**: `gatex_pro_season_pass_2027` (Non-consumable one-time in-app product, ₹299 INR)
+* **User Identity Sync**: `PurchasesConfiguration.appUserID = FirebaseAuth.instance.currentUser?.uid` (seamlessly restores entitlement whenever the user logs into a new device with their Google account)
+
+---
+
+## 8. Final Stage Implementation Checklist
+
+When ready to integrate (as per final roadmap stage):
+- [ ] **Step 1**: Register GateX app on the [RevenueCat Dashboard](https://app.revenuecat.com) and obtain the Android Public SDK key (`goog_...`).
+- [ ] **Step 2**: Link RevenueCat to Google Play Console via Google Cloud Service Account (grants receipt validation permissions).
+- [ ] **Step 3**: Create In-App Product `gatex_pro_season_pass_2027` (Price: ₹299) in Google Play Console & attach it to the `gatex_pro` entitlement in RevenueCat Offerings.
+- [ ] **Step 4**: Update `lib/services/purchase_service.dart` with the live RevenueCat API key and set `proPlanPrice = '₹299'`.
+- [ ] **Step 5**: Update `ProUpgradeScreen` copy to reflect **₹299 Season Pass** (valid till March 2027) with the 5 proprietary perks.
+- [ ] **Step 6**: Add `AdService().showInterstitialAd()` on the Estimator &rarr; COAP transition button.
+- [ ] **Step 7**: Verify `promptWatchRewardedAd()` fallback on Full Mocks #2 to #10 in `mock_tracker_screen.dart`.
+- [ ] **Step 8**: Implement the Negative Marking Penalty & Time-Trap calculation on the Mock Test result screen (`mock_test_runner_screen.dart`).
