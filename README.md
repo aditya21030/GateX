@@ -7,7 +7,7 @@
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.41+-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.11+-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
-[![License: MIT](https://img.shields.io/badge/License-MIT-success?style=for-the-badge)](LICENSE)
+[![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red?style=for-the-badge)](LICENSE)
 [![Tests Passing](https://img.shields.io/badge/Tests-24%2F24%20Passing-brightgreen?style=for-the-badge&logo=checkmarx&logoColor=white)]()
 [![Code Quality](https://img.shields.io/badge/flutter%20analyze-0%20Issues-brightgreen?style=for-the-badge&logo=dart&logoColor=white)]()
 [![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-orange?style=for-the-badge&logo=android&logoColor=white)]()
@@ -239,27 +239,18 @@ Contributions to improve GateX, add verified PYQs, or optimize performance are w
 ## 📄 License & Copyright
 
 ```
-MIT License
+Copyright (c) 2026 Yousful Studio. All rights reserved.
 
-Copyright (c) 2026 Yousful Studio
+PROPRIETARY & CONFIDENTIAL
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This software, along with its source code, documentation, graphics, user interface 
+designs, brand assets, question databases, mock test series, and algorithmic logic, 
+is the exclusive intellectual property of Yousful Studio.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Unauthorized copying, cloning, distribution, modification, public display, reverse 
+engineering, decompilation, sublicensing, or commercial exploitation of this repository 
+or any portion thereof, via any medium or platform, is strictly prohibited without 
+prior express written authorization from Yousful Studio.
 ```
 
-This software and its documentation are developed, maintained, and licensed under the **MIT License** by **Yousful Studio**. See the [LICENSE](LICENSE) file for complete terms.
+This software and its documentation are developed, maintained, and owned exclusively by **Yousful Studio**. All rights are reserved. See the [LICENSE](LICENSE) file for complete terms.
