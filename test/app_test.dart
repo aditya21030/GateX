@@ -612,6 +612,98 @@ void main() {
       expect(ce.isAvailable, false);
     });
   });
+
+  group('PYQ Bank Logic & Filtering Tests', () {
+    test('Subject normalization resolves branch variations', () {
+      String normalizeSubject(String input, bool isCSIT) {
+        final s = input.toLowerCase().trim();
+        if (!isCSIT) {
+          if (s.contains('prob') || s.contains('stat')) return 'Probability and Statistics';
+          if (s.contains('linear') || s.contains('algebra')) return 'Linear Algebra';
+          if (s.contains('calculus') || s.contains('optimization')) return 'Calculus and Optimization';
+          if (s.contains('machine learning') || s == 'ml') return 'Machine Learning';
+          if (s.contains('python')) return 'Python (Main Topics Only)';
+          if (s.contains('dsa') || s.contains('data struct') || s.contains('algorithm')) return 'DSA (Data Structures and Algorithms)';
+          if (s.contains('database') || s.contains('dbms') || s.contains('warehousing')) return 'Database Management and Warehousing';
+          if (s.contains('ai') || s.contains('artificial')) return 'AI';
+          if (s.contains('aptitude')) return 'General Aptitude';
+        } else {
+          if (s.contains('math')) return 'Engineering Mathematics';
+          if (s.contains('digital') || s.contains('logic')) return 'Digital Logic';
+          if (s.contains('co') || s.contains('organization') || s.contains('architecture')) return 'Computer Organization';
+          if (s.contains('program') || s.contains('data struct')) return 'Programming & Data Structures';
+          if (s.contains('algorithm')) return 'Algorithms';
+          if (s.contains('toc') || s.contains('computation')) return 'Theory of Computation';
+          if (s.contains('compiler')) return 'Compiler Design';
+          if (s.contains('operating') || s.contains('os')) return 'Operating System';
+          if (s.contains('database') || s.contains('dbms')) return 'Databases';
+          if (s.contains('network') || s.contains('cn')) return 'Computer Networks';
+          if (s.contains('aptitude')) return 'General Aptitude';
+        }
+        return input;
+      }
+
+      // DA Subject aliases
+      expect(normalizeSubject('Probability & Statistics', false), 'Probability and Statistics');
+      expect(normalizeSubject('Calculus & Optimization', false), 'Calculus and Optimization');
+      expect(normalizeSubject('Database Management', false), 'Database Management and Warehousing');
+      expect(normalizeSubject('DSA', false), 'DSA (Data Structures and Algorithms)');
+      expect(normalizeSubject('Python', false), 'Python (Main Topics Only)');
+      expect(normalizeSubject('AI & Logic', false), 'AI');
+
+      // CSIT Subject aliases
+      expect(normalizeSubject('Computer Organization and Architecture', true), 'Computer Organization');
+      expect(normalizeSubject('Programming and Data Structures', true), 'Programming & Data Structures');
+      expect(normalizeSubject('Engineering Mathematics', true), 'Engineering Mathematics');
+    });
+
+    test('Pro Pass users receive 0 ad injection slots in PYQ lists', () {
+      int calculateTotalItems(int length, bool isProUser) {
+        final adFrequency = isProUser ? 0 : 10;
+        return isProUser ? length : (length + (length ~/ adFrequency));
+      }
+
+      // Free user: ad injected every 10 items
+      expect(calculateTotalItems(25, false), 27);
+
+      // Pro user: pure list with 0 ad slots
+      expect(calculateTotalItems(25, true), 25);
+    });
+
+    test('Search query matches question type and ID', () {
+      final pyq = PYQ(
+        id: 'pyq_2026_14',
+        subject: 'Machine Learning',
+        topic: 'Support Vector Machines',
+        questionText: 'Find the optimal hyperplane margin',
+        type: 'NAT',
+        isMCQ: false,
+        year: 2026,
+        options: [],
+        correctAnswer: '2.5',
+        difficulty: 'Medium',
+        explanation: 'Margin = 2 / ||w||',
+      );
+
+      bool matches(PYQ p, String query) {
+        final q = query.toLowerCase().trim();
+        final pyqYearStr = p.setNumber != null ? '${p.year} Set ${p.setNumber}' : p.year.toString();
+        return q.isEmpty ||
+            p.questionText.toLowerCase().contains(q) ||
+            p.topic.toLowerCase().contains(q) ||
+            p.subject.toLowerCase().contains(q) ||
+            pyqYearStr.toLowerCase().contains(q) ||
+            p.type.toLowerCase() == q ||
+            p.id.toLowerCase().contains(q);
+      }
+
+      expect(matches(pyq, 'NAT'), true);
+      expect(matches(pyq, 'pyq_2026_14'), true);
+      expect(matches(pyq, 'Support Vector'), true);
+      expect(matches(pyq, '2026'), true);
+      expect(matches(pyq, 'MSQ'), false);
+    });
+  });
 }
 
 

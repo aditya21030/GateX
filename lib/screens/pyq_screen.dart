@@ -15,6 +15,7 @@ import '../widgets/virtual_calculator.dart';
 import '../widgets/question_discussion_sheet.dart';
 import '../widgets/neu_widgets.dart';
 import 'mock_test_runner_screen.dart';
+import '../services/storage_service.dart';
 
 class PYQScreen extends StatefulWidget {
   final String? initialSubject;
@@ -70,12 +71,56 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
     );
   }
 
+  String _normalizeSubject(String input, bool isCSIT) {
+    final s = input.toLowerCase().trim();
+    final keys = isCSIT ? StorageService.csitSyllabusData.keys : StorageService.syllabusData.keys;
+
+    for (final key in keys) {
+      if (key.toLowerCase() == s) return key;
+    }
+
+    if (!isCSIT) {
+      if (s.contains('prob') || s.contains('stat')) return 'Probability and Statistics';
+      if (s.contains('linear') || s.contains('algebra')) return 'Linear Algebra';
+      if (s.contains('calculus') || s.contains('optimization')) return 'Calculus and Optimization';
+      if (s.contains('machine learning') || s == 'ml') return 'Machine Learning';
+      if (s.contains('python')) return 'Python (Main Topics Only)';
+      if (s.contains('dsa') || s.contains('data struct') || s.contains('algorithm')) return 'DSA (Data Structures and Algorithms)';
+      if (s.contains('database') || s.contains('dbms') || s.contains('warehousing')) return 'Database Management and Warehousing';
+      if (s.contains('ai') || s.contains('artificial')) return 'AI';
+      if (s.contains('aptitude')) return 'General Aptitude';
+    } else {
+      if (s.contains('math')) return 'Engineering Mathematics';
+      if (s.contains('digital') || s.contains('logic')) return 'Digital Logic';
+      if (s.contains('co') || s.contains('organization') || s.contains('architecture')) return 'Computer Organization';
+      if (s.contains('program') || s.contains('data struct')) return 'Programming & Data Structures';
+      if (s.contains('algorithm')) return 'Algorithms';
+      if (s.contains('toc') || s.contains('computation')) return 'Theory of Computation';
+      if (s.contains('compiler')) return 'Compiler Design';
+      if (s.contains('operating') || s.contains('os')) return 'Operating System';
+      if (s.contains('database') || s.contains('dbms')) return 'Databases';
+      if (s.contains('network') || s.contains('cn')) return 'Computer Networks';
+      if (s.contains('aptitude')) return 'General Aptitude';
+    }
+
+    for (final key in keys) {
+      if (key.toLowerCase().contains(s) || s.contains(key.toLowerCase())) {
+        return key;
+      }
+    }
+    return input;
+  }
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    _tabController.addListener(() {
+      if (mounted) setState(() {});
+    });
     if (widget.initialSubject != null) {
-      _selectedSubject = widget.initialSubject!;
+      final provider = Provider.of<AppProvider>(context, listen: false);
+      _selectedSubject = _normalizeSubject(widget.initialSubject!, provider.activeExam == 'CSIT');
     }
   }
 
@@ -90,11 +135,14 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
     return pyqs.where((p) {
       // 1. Search Query
       final pyqYearStr = p.setNumber != null ? '${p.year} Set ${p.setNumber}' : p.year.toString();
-      final matchesQuery = _searchQuery.isEmpty ||
-          p.questionText.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          p.topic.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          p.subject.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          pyqYearStr.toLowerCase().contains(_searchQuery.toLowerCase());
+      final q = _searchQuery.toLowerCase().trim();
+      final matchesQuery = q.isEmpty ||
+          p.questionText.toLowerCase().contains(q) ||
+          p.topic.toLowerCase().contains(q) ||
+          p.subject.toLowerCase().contains(q) ||
+          pyqYearStr.toLowerCase().contains(q) ||
+          p.type.toLowerCase() == q ||
+          p.id.toLowerCase().contains(q);
 
       // 2. Subject Filter
       final matchesSubject = _selectedSubject == 'All' || p.subject == _selectedSubject;
@@ -147,30 +195,121 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
     final pyqListDone = _applyFilters(allPyqs.where((p) => p.isCompleted).toList());
     final pyqListFlagged = _applyFilters(allPyqs.where((p) => p.isFlaggedForRevision).toList());
 
+    final isCSIT = provider.activeExam == 'CSIT';
     final subjectsList = ['All', ...provider.currentSubjects];
-    
-    List<String> yearsList = ['All'];
-    if (provider.activeExam == 'CSIT') {
-      for (int y = 2026; y >= 1991; y--) {
-        if (y == 2026 || y == 2025 || y == 2024 || y == 2021 || y == 2017 || y == 2016) {
-          yearsList.add('$y Set 1');
-          yearsList.add('$y Set 2');
-        } else if (y == 2015 || y == 2014) {
-          yearsList.add('$y Set 1');
-          yearsList.add('$y Set 2');
-          yearsList.add('$y Set 3');
-        } else {
-          yearsList.add('$y');
-        }
+
+    // Keep subject filter aligned when switching branch
+    if (_selectedSubject != 'All' && !subjectsList.contains(_selectedSubject)) {
+      _selectedSubject = _normalizeSubject(_selectedSubject, isCSIT);
+      if (!subjectsList.contains(_selectedSubject)) {
+        _selectedSubject = 'All';
       }
-    } else {
-      yearsList.addAll(['2026', '2025', '2024']);
     }
+
+    // Dynamic Year & Set list from available questions
+    final extractedYears = allPyqs
+        .map((p) => p.setNumber != null ? '${p.year} Set ${p.setNumber}' : '${p.year}')
+        .toSet()
+        .toList()
+      ..sort((a, b) => b.compareTo(a));
+    final yearsList = ['All', ...extractedYears];
     
     final difficultiesList = ['All', 'Easy', 'Medium', 'Hard'];
 
+    // Tab-contextual question list for instant drill
+    List<PYQ> currentTabList;
+    String drillButtonLabel;
+    switch (_tabController.index) {
+      case 1:
+        currentTabList = pyqListBookmarked;
+        drillButtonLabel = 'Drill Saved (${currentTabList.length})';
+        break;
+      case 2:
+        currentTabList = pyqListDone;
+        drillButtonLabel = 'Drill Done (${currentTabList.length})';
+        break;
+      case 3:
+        currentTabList = pyqListFlagged;
+        drillButtonLabel = 'Drill Flagged (${currentTabList.length})';
+        break;
+      case 0:
+      default:
+        currentTabList = pyqListAll;
+        drillButtonLabel = 'Practice Drill (${currentTabList.length})';
+        break;
+    }
+
     return Scaffold(
-      floatingActionButton: pyqListAll.isNotEmpty
+      backgroundColor: context.colorBackground,
+      appBar: AppBar(
+        backgroundColor: context.colorSurface,
+        elevation: 0,
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: context.textColor),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
+        title: Text(
+          'PYQ Question Bank',
+          style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: context.textColor),
+        ),
+        actions: [
+          if (provider.selectedExam == 'BOTH')
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 11, horizontal: 12),
+              height: 30,
+              decoration: BoxDecoration(
+                color: context.colorSurfaceElevated,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: context.isDarkMode
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.black.withValues(alpha: 0.06),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildSwitchButton(context, provider, 'DA'),
+                  _buildSwitchButton(context, provider, 'CSIT'),
+                ],
+              ),
+            )
+          else
+            GestureDetector(
+              onTap: () {
+                HapticFeedback.selectionClick();
+                _showBranchSwitcherSheet(context, provider);
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppTheme.accentPurple.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      provider.activeExam ?? 'DA',
+                      style: const TextStyle(
+                        color: AppTheme.accentPurple,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                      ),
+                    ),
+                    const SizedBox(width: 3),
+                    const Icon(Icons.arrow_drop_down_rounded, size: 14, color: AppTheme.accentPurple),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+      floatingActionButton: currentTabList.isNotEmpty
           ? Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -191,10 +330,10 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                   elevation: 4,
                   icon: const Icon(Icons.play_arrow_rounded, size: 22),
                   label: Text(
-                    'Practice Drill (${pyqListAll.length})',
+                    drillButtonLabel,
                     style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13),
                   ),
-                  onPressed: () => _startInstantDrill(context, pyqListAll),
+                  onPressed: () => _startInstantDrill(context, currentTabList),
                 ),
               ],
             )
@@ -357,7 +496,11 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                             decoration: BoxDecoration(
                               color: context.colorSurface,
                               borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                              border: Border.all(
+                                color: context.isDarkMode
+                                    ? Colors.white.withValues(alpha: 0.08)
+                                    : Colors.black.withValues(alpha: 0.06),
+                              ),
                             ),
                             child: const Row(
                               mainAxisSize: MainAxisSize.min,
@@ -382,6 +525,13 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                           items: yearsList,
                           selectedValue: _selectedYear,
                           onChanged: (val) => setState(() => _selectedYear = val),
+                        ),
+                        const SizedBox(width: 8),
+                        _buildFilterPill(
+                          title: 'Difficulty',
+                          items: difficultiesList,
+                          selectedValue: _selectedDifficulty,
+                          onChanged: (val) => setState(() => _selectedDifficulty = val),
                         ),
                       ],
                     ),
@@ -421,7 +571,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                     labelPadding: const EdgeInsets.symmetric(horizontal: 4),
                     labelStyle: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12),
                     unselectedLabelStyle: GoogleFonts.outfit(fontWeight: FontWeight.w500, fontSize: 12),
-                    tabs: const [
+                    tabs: [
                       Tab(
                         height: 38,
                         child: FittedBox(
@@ -429,9 +579,9 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.assignment_outlined, size: 14),
-                              SizedBox(width: 4),
-                              Text('All'),
+                              const Icon(Icons.assignment_outlined, size: 14),
+                              const SizedBox(width: 4),
+                              Text('All (${pyqListAll.length})'),
                             ],
                           ),
                         ),
@@ -443,9 +593,9 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.bookmark_outline_rounded, size: 14),
-                              SizedBox(width: 4),
-                              Text('Saved'),
+                              const Icon(Icons.bookmark_outline_rounded, size: 14),
+                              const SizedBox(width: 4),
+                              Text('Saved (${pyqListBookmarked.length})'),
                             ],
                           ),
                         ),
@@ -457,9 +607,9 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.done_all_rounded, size: 14),
-                              SizedBox(width: 4),
-                              Text('Done'),
+                              const Icon(Icons.done_all_rounded, size: 14),
+                              const SizedBox(width: 4),
+                              Text('Done (${pyqListDone.length})'),
                             ],
                           ),
                         ),
@@ -471,9 +621,9 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.flag_outlined, size: 14),
-                              SizedBox(width: 4),
-                              Text('Flagged'),
+                              const Icon(Icons.flag_outlined, size: 14),
+                              const SizedBox(width: 4),
+                              Text('Flagged (${pyqListFlagged.length})'),
                             ],
                           ),
                         ),
@@ -528,7 +678,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                       width: 36,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.white24,
+                        color: context.isDarkMode ? Colors.white24 : Colors.black26,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -610,10 +760,10 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                         Wrap(
                           spacing: 8,
                           runSpacing: 6,
-                          children: yearsList.take(12).map((yr) {
+                          children: yearsList.map((yr) {
                             final isSel = _selectedYear == yr;
                             return ChoiceChip(
-                              label: Text(yr, style: TextStyle(fontSize: 12, color: isSel ? Colors.white : AppTheme.textSecondary)),
+                              label: Text(yr, style: TextStyle(fontSize: 12, color: isSel ? Colors.white : context.textSecondaryColor)),
                               selected: isSel,
                               selectedColor: AppTheme.accentPurple,
                               backgroundColor: context.colorSurfaceElevated,
@@ -641,7 +791,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                                   label: Center(child: Text(diff, style: TextStyle(fontSize: 11.5, color: isSel ? Colors.white : AppTheme.textSecondary))),
                                   selected: isSel,
                                   selectedColor: AppTheme.primary,
-                                  backgroundColor: AppTheme.background,
+                                  backgroundColor: context.colorSurfaceElevated,
                                   onSelected: (selected) {
                                     if (selected) {
                                       setState(() => _selectedDifficulty = diff);
@@ -806,39 +956,194 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.help_center_outlined, size: 56, color: AppTheme.textSecondary.withOpacity(0.4)),
+            Icon(Icons.help_center_outlined, size: 56, color: context.textSecondaryColor.withValues(alpha: 0.4)),
             const SizedBox(height: 12),
-            const Text(
+            Text(
               'No questions found matching the criteria.',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 14, color: context.textColor),
             ),
           ],
         ),
       );
     }
 
-    // We will inject an Ad every 10 PYQs
-    // So if list has 25 items, we inject at index 10, 20.
-    // Total items = list.length + (list.length ~/ 10)
-    final int adFrequency = 10;
-    final int totalItems = list.length + (list.length ~/ adFrequency);
+    final isPro = provider.isPro;
+    // Inject native ad every 10 PYQs only for free tier users
+    final int adFrequency = isPro ? 0 : 10;
+    final int totalItems = isPro ? list.length : (list.length + (list.length ~/ adFrequency));
 
     return ListView.builder(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 88),
       physics: const BouncingScrollPhysics(),
       itemCount: totalItems,
       itemBuilder: (context, index) {
-        if (index > 0 && index % (adFrequency + 1) == adFrequency) {
+        if (!isPro && index > 0 && index % (adFrequency + 1) == adFrequency) {
           return const _NativeAdWrapper();
         }
 
-        final pyqIndex = index - (index ~/ (adFrequency + 1));
+        final pyqIndex = isPro ? index : (index - (index ~/ (adFrequency + 1)));
         final pyq = list[pyqIndex];
         return _PYQCard(pyq: pyq, provider: provider);
       },
     );
   }
 }
+
+  Widget _buildSwitchButton(BuildContext context, AppProvider provider, String exam) {
+    final isSelected = provider.activeExam == exam;
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        provider.setActiveExam(exam);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.accentPurple : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(
+          exam,
+          style: TextStyle(
+            color: isSelected ? Colors.white : context.textSecondaryColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 11,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showBranchSwitcherSheet(BuildContext context, AppProvider provider) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return NeuContainer(
+          borderRadius: 24,
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          color: context.colorSurfaceElevated,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: context.textSecondaryColor.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Select Exam Track',
+                    style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close_rounded, color: context.textSecondaryColor),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              _buildBranchTile(
+                context: context,
+                title: 'GATE DA (Data Science & AI)',
+                subtitle: 'Machine Learning, AI, Probability & Linear Algebra',
+                isSelected: provider.activeExam == 'DA' && provider.selectedExam != 'BOTH',
+                onTap: () {
+                  provider.setExams('DA', 'DA');
+                  Navigator.pop(ctx);
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildBranchTile(
+                context: context,
+                title: 'GATE CS/IT (Computer Science)',
+                subtitle: 'Algorithms, OS, CN, DBMS, TOC, Compiler',
+                isSelected: provider.activeExam == 'CSIT' && provider.selectedExam != 'BOTH',
+                onTap: () {
+                  provider.setExams('CSIT', 'CSIT');
+                  Navigator.pop(ctx);
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildBranchTile(
+                context: context,
+                title: 'Dual Preparation (BOTH)',
+                subtitle: 'Switch between DA & CS/IT anytime via top bar',
+                isSelected: provider.selectedExam == 'BOTH',
+                onTap: () {
+                  provider.setExams('BOTH', provider.activeExam ?? 'DA');
+                  Navigator.pop(ctx);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBranchTile({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
+      child: NeuContainer(
+        borderRadius: 14,
+        padding: const EdgeInsets.all(12),
+        color: isSelected ? AppTheme.accentPurple.withValues(alpha: 0.12) : null,
+        child: Row(
+          children: [
+            Icon(
+              isSelected ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
+              color: isSelected ? AppTheme.accentPurple : context.textSecondaryColor,
+              size: 20,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13.5,
+                      color: isSelected ? AppTheme.accentPurple : context.textColor,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: context.textSecondaryColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
 class _PYQCard extends StatefulWidget {
   final PYQ pyq;
@@ -1207,7 +1512,7 @@ class _PYQCardState extends State<_PYQCard> {
               _buildNATInput(pyq, provider),
 
             const SizedBox(height: 16),
-            const Divider(height: 1, color: AppTheme.textSecondary),
+            Divider(height: 1, color: context.colorBorder),
             const SizedBox(height: 12),
 
             // Card Footer: Done checkbox, Discuss button, and show solution toggle
@@ -1229,10 +1534,42 @@ class _PYQCardState extends State<_PYQCard> {
                         }
                       },
                     ),
-                    const Text(
+                    Text(
                       'Mark Solved',
-                      style: TextStyle(fontSize: 11.5, color: AppTheme.textSecondary, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 11.5, color: context.textSecondaryColor, fontWeight: FontWeight.bold),
                     ),
+                    if (pyq.isCompleted) ...[
+                      const SizedBox(width: 8),
+                      InkWell(
+                        onTap: () {
+                          HapticFeedback.selectionClick();
+                          provider.unsolvePYQ(pyq.id);
+                        },
+                        borderRadius: BorderRadius.circular(6),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppTheme.accentPurple.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.refresh_rounded, size: 12, color: AppTheme.accentPurple),
+                              SizedBox(width: 3),
+                              Text(
+                                'Try Again',
+                                style: TextStyle(
+                                  color: AppTheme.accentPurple,
+                                  fontSize: 10.5,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
 
@@ -1670,7 +2007,8 @@ class _NativeAdWrapperState extends State<_NativeAdWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    if (_nativeAd == null || _isAdFailed) return const SizedBox.shrink();
+    final isPro = Provider.of<AppProvider>(context).isPro;
+    if (isPro || _nativeAd == null || _isAdFailed) return const SizedBox.shrink();
 
     return NeuContainer(
       margin: const EdgeInsets.only(bottom: 14),
