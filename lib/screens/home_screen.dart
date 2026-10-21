@@ -7,7 +7,6 @@ import '../theme/app_theme.dart';
 import '../widgets/neu_widgets.dart';
 import 'error_log_screen.dart';
 import 'pro_upgrade_screen.dart';
-import 'community_screen.dart';
 import 'score_estimator_screen.dart';
 import 'mock_test_runner_screen.dart';
 import '../models/models.dart';
@@ -249,7 +248,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 16),
 
                 // 7. PEER DOUBT COMMUNITY BANNER
-                _buildCommunityBanner(context),
                 const SizedBox(height: 24),
               ],
             ),
@@ -655,27 +653,50 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: BoxDecoration(
           color: context.colorSurfaceElevated,
           borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isCompleted ? AppTheme.accentMint.withValues(alpha: 0.35) : Colors.transparent,
+            width: 1,
+          ),
         ),
         child: Row(
           children: [
             NeuIconTile(
-              icon: icon,
-              iconColor: iconColor,
+              icon: isCompleted ? Icons.check_circle_rounded : icon,
+              iconColor: isCompleted ? AppTheme.accentMint : iconColor,
               size: 34,
               iconSize: 16,
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: isCompleted ? AppTheme.accentMint : context.textColor,
-                  decoration: isCompleted ? TextDecoration.lineThrough : null,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              child: Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: isCompleted ? (context.isDarkMode ? Colors.white : AppTheme.textPrimary) : context.textColor,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (isCompleted) ...[
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppTheme.accentMint.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Text(
+                        'Done',
+                        style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: AppTheme.accentMint),
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
             const SizedBox(width: 8),
@@ -820,21 +841,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             size: 36,
                             iconSize: 18,
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: AppTheme.accentGold.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: const Text(
-                              'AI Predict',
-                              style: TextStyle(
-                                fontSize: 9.5,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.accentGold,
-                              ),
-                            ),
-                          ),
+                          
                         ],
                       ),
                       const SizedBox(height: 12),
@@ -908,83 +915,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 10),
-        // Hub shortcut banner for non-ad utility tools
-        GestureDetector(
-          onTap: () {
-            HapticFeedback.selectionClick();
-            provider.setSelectedIndex(4); // Switch to Hub
-          },
-          child: NeuContainer(
-            borderRadius: 14,
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            child: Row(
-              children: [
-                const Icon(Icons.grid_view_rounded, size: 16, color: AppTheme.accentPurple),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Formulas, Calculator, Weightage & Timer in Hub',
-                    style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: context.textColor),
-                  ),
-                ),
-                const Text(
-                  'Open Hub →',
-                  style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: AppTheme.accentPurple),
-                ),
-              ],
-            ),
-          ),
-        ),
       ],
     );
   }
 
-  // 7. PEER DOUBT COMMUNITY BANNER
-  Widget _buildCommunityBanner(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        Navigator.push(context, MaterialPageRoute(builder: (_) => const CommunityScreen()));
-      },
-      child: NeuContainer(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        borderRadius: 18,
-        child: Row(
-          children: [
-            const NeuIconTile(
-              icon: Icons.forum_rounded,
-              iconColor: AppTheme.accentMint,
-              size: 38,
-              iconSize: 20,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Aspirant Community',
-                    style: AppTheme.poppinsBold(fontSize: 13, color: context.textColor),
-                  ),
-                  Text(
-                    'Discuss doubts with fellow aspirants',
-                    style: TextStyle(color: context.textSecondaryColor, fontSize: 10.5),
-                  ),
-                ],
-              ),
-            ),
-            NeuButton(
-              isPrimary: true,
-              borderRadius: 12,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: const Text('Join', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   void _showBranchSwitcherSheet(BuildContext context, AppProvider provider) {
     showModalBottomSheet(

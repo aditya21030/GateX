@@ -866,6 +866,56 @@ void main() {
       expect(exitSubtitle.contains('warm cup of tea'), isTrue);
     });
   });
+
+  group('Error Log & Cloud Sync Persistence Tests', () {
+    test('ErrorLogEntry correctly stores and serializes wrong user answer and correct answer', () {
+      final entry = ErrorLogEntry(
+        id: 'err_test_1',
+        subject: 'Database Management',
+        topic: 'ER Model',
+        questionText: 'What is cardinality of primary key?',
+        whyWrong: 'Wrong answer in practice',
+        dateAdded: DateTime(2026, 10, 21),
+        userAnswer: 'Many-to-Many',
+        correctAnswer: 'One-to-One',
+        explanation: 'Primary keys enforce entity integrity.',
+      );
+
+      final map = entry.toMap();
+      expect(map['userAnswer'], 'Many-to-Many');
+      expect(map['correctAnswer'], 'One-to-One');
+      expect(map['explanation'], 'Primary keys enforce entity integrity.');
+
+      final restored = ErrorLogEntry.fromMap(map);
+      expect(restored.userAnswer, 'Many-to-Many');
+      expect(restored.correctAnswer, 'One-to-One');
+      expect(restored.explanation, 'Primary keys enforce entity integrity.');
+    });
+
+    test('Study plan integer key parser handles both int and String formats from Firestore', () {
+      final Map<dynamic, dynamic> firestoreMap = {
+        '1': {'isCompleted': true, 'userNote': 'Finished Chapter 1'},
+        2: {'isCompleted': false, 'userNote': ''},
+      };
+
+      final Map<int, Map<String, dynamic>> resolvedStates = {};
+      for (var key in firestoreMap.keys) {
+        int? intKey;
+        if (key is int) {
+          intKey = key;
+        } else if (key is String) {
+          intKey = int.tryParse(key);
+        }
+        if (intKey != null) {
+          resolvedStates[intKey] = Map<String, dynamic>.from(firestoreMap[key]);
+        }
+      }
+
+      expect(resolvedStates[1]?['isCompleted'], true);
+      expect(resolvedStates[2]?['isCompleted'], false);
+      expect(resolvedStates[1]?['userNote'], 'Finished Chapter 1');
+    });
+  });
 }
 
 

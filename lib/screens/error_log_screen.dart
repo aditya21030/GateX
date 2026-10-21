@@ -449,7 +449,92 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                   entry.questionText,
                   style: TextStyle(fontSize: 13.5, color: context.textColor, height: 1.4),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
+
+                // Prominent Wrong Answer vs Correct Answer Display
+                Builder(
+                  builder: (context) {
+                    String userAns = (entry.userAnswer ?? '').toString().trim();
+                    String correctAns = (entry.correctAnswer ?? '').toString().trim();
+
+                    if (userAns.isEmpty && entry.whyWrong.contains('Your Answer:')) {
+                      final match = RegExp(r'Your Answer:\s*([^\n|]+)', caseSensitive: false).firstMatch(entry.whyWrong);
+                      if (match != null) userAns = match.group(1)?.trim() ?? '';
+                    }
+                    if (correctAns.isEmpty && entry.whyWrong.contains('Correct:')) {
+                      final match = RegExp(r'Correct:\s*([^\n|]+)', caseSensitive: false).firstMatch(entry.whyWrong);
+                      if (match != null) correctAns = match.group(1)?.trim() ?? '';
+                    } else if (correctAns.isEmpty && entry.whyWrong.contains('Correct answer:')) {
+                      final match = RegExp(r'Correct answer:\s*([^\n|]+)', caseSensitive: false).firstMatch(entry.whyWrong);
+                      if (match != null) correctAns = match.group(1)?.trim() ?? '';
+                    }
+
+                    if (userAns.isEmpty && correctAns.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 14.0),
+                      child: Row(
+                        children: [
+                          if (userAns.isNotEmpty)
+                            Expanded(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.error.withValues(alpha: 0.12),
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: AppTheme.error.withValues(alpha: 0.3)),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Row(
+                                      children: [
+                                        Icon(Icons.cancel_rounded, size: 14, color: AppTheme.error),
+                                        SizedBox(width: 4),
+                                        Text('MY WRONG ANSWER', style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold, color: AppTheme.error)),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(userAns, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.error)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          if (userAns.isNotEmpty && correctAns.isNotEmpty)
+                            const SizedBox(width: 10),
+                          if (correctAns.isNotEmpty)
+                            Expanded(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.success.withValues(alpha: 0.12),
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: AppTheme.success.withValues(alpha: 0.3)),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Row(
+                                      children: [
+                                        Icon(Icons.check_circle_rounded, size: 14, color: AppTheme.success),
+                                        SizedBox(width: 4),
+                                        Text('CORRECT ANSWER', style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.bold, color: AppTheme.success)),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(correctAns, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTheme.success)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+
                 const Text(
                   'ROOT CAUSE / WHY I GOT IT WRONG:',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: AppTheme.error, letterSpacing: 1.1),

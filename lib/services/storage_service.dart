@@ -499,12 +499,32 @@ class StorageService {
       if (cloudCol.isNotEmpty) {
         // Merge cloud data without wiping local offline progress
         for (var doc in cloudCol.entries) {
+          if (colName == 'studyPlan') {
+            final intKey = int.tryParse(doc.key);
+            if (intKey != null) {
+              await box.put(intKey, doc.value);
+            }
+          }
           await box.put(doc.key, doc.value);
         }
       }
     }
-  }
 
+    // 3. Daily Stats (PYQs solved today, etc.)
+    if (cloudData.containsKey('dailyStats')) {
+      final dailyCol = cloudData['dailyStats']!;
+      for (var entry in dailyCol.entries) {
+        final dateKey = entry.key;
+        final data = entry.value;
+        if (data is Map) {
+          final count = data['daily_pyqs'];
+          if (count is int) {
+            await _prefs.setInt('daily_pyqs_$dateKey', count);
+          }
+        }
+      }
+    }
+  }
 
   Future<void> resetAllData() async {
     await _topicStatusBox.clear();

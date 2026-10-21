@@ -53,6 +53,7 @@ dependencies:
   flutter_math_fork: ^0.7.4
   audioplayers: ^6.7.1
   share_plus: ^13.1.0
+  path_provider: ^2.1.5
   url_launcher: ^6.3.2
   math_expressions: ^3.1.0
   purchases_flutter: ^8.6.0

@@ -14,13 +14,13 @@ import 'pomodoro_screen.dart';
 import 'score_estimator_screen.dart';
 import 'revision_screen.dart';
 import 'weightage_screen.dart';
+import 'mock_tracker_screen.dart';
 
 import 'profile_screen.dart';
 import 'ranking_screen.dart';
 import 'resources_screen.dart';
 import 'formula_sheet_screen.dart';
 import 'pro_upgrade_screen.dart';
-import 'community_screen.dart';
 import 'roadmap_screen.dart';
 import '../widgets/virtual_calculator.dart';
 
@@ -128,9 +128,9 @@ class MoreScreen extends StatelessWidget {
               _buildToolsGrid(context),
               const SizedBox(height: 22),
 
-              // 4. COMMUNITY & RANKING
+              // 4. LEADERBOARD & RANKINGS
               Text(
-                'COMMUNITY',
+                'LEADERBOARD & STANDINGS',
                 style: GoogleFonts.outfit(
                   color: context.textSecondaryColor,
                   fontSize: 11,
@@ -139,28 +139,12 @@ class MoreScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildActionTile(
-                      context: context,
-                      icon: Icons.forum_rounded,
-                      iconColor: AppTheme.accentMint,
-                      title: 'Peer Doubts',
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CommunityScreen())),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _buildActionTile(
-                      context: context,
-                      icon: Icons.emoji_events_rounded,
-                      iconColor: AppTheme.accentGold,
-                      title: 'Leaderboard',
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RankingScreen())),
-                    ),
-                  ),
-                ],
+              _buildActionTile(
+                context: context,
+                icon: Icons.emoji_events_rounded,
+                iconColor: AppTheme.accentGold,
+                title: 'All-India Aspirant Leaderboard',
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RankingScreen())),
               ),
               const SizedBox(height: 22),
 
@@ -520,10 +504,10 @@ class MoreScreen extends StatelessWidget {
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RoadmapScreen())),
       },
       {
-        'icon': Icons.forum_rounded,
-        'color': Colors.blueAccent,
-        'title': 'Doubts',
-        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CommunityScreen())),
+        'icon': Icons.insights_rounded,
+        'color': AppTheme.accentMint,
+        'title': 'Analytics',
+        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MockTrackerScreen())),
       },
       {
         'icon': Icons.library_books_rounded,

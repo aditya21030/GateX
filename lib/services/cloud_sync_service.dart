@@ -72,6 +72,7 @@ class CloudSyncService {
       'mockTests': {},
       'revisionQueue': {},
       'studyPlan': {},
+      'dailyStats': {},
       'settings': {},
     };
 
@@ -101,6 +102,7 @@ class CloudSyncService {
         fetchCollection('mockTests'),
         fetchCollection('revisionQueue'),
         fetchCollection('studyPlan'),
+        fetchCollection('dailyStats'),
       ]);
     } catch (e) {
       print('CloudSyncService syncFromCloud error: $e');

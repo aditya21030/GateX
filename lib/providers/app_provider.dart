@@ -254,10 +254,16 @@ class AppProvider with ChangeNotifier {
     // Load Study Plan states
     _studyPlanDayStates.clear();
     for (var key in _storage.studyPlanBox.keys) {
+      int? intKey;
       if (key is int) {
+        intKey = key;
+      } else if (key is String) {
+        intKey = int.tryParse(key);
+      }
+      if (intKey != null) {
         final val = _storage.studyPlanBox.get(key);
         if (val != null) {
-          _studyPlanDayStates[key] = Map<String, dynamic>.from(val);
+          _studyPlanDayStates[intKey] = Map<String, dynamic>.from(val);
         }
       }
     }
@@ -428,6 +434,7 @@ class AppProvider with ChangeNotifier {
     };
     _studyPlanDayStates[day] = newState;
     await _storage.studyPlanBox.put(day, newState);
+    CloudSyncService().pushToCloud('studyPlan', day.toString(), newState);
     notifyListeners();
     _updateScheduledNotifications();
   }
@@ -441,6 +448,7 @@ class AppProvider with ChangeNotifier {
     };
     _studyPlanDayStates[day] = newState;
     await _storage.studyPlanBox.put(day, newState);
+    CloudSyncService().pushToCloud('studyPlan', day.toString(), newState);
     notifyListeners();
   }
 
@@ -621,8 +629,27 @@ class AppProvider with ChangeNotifier {
       if (!wasCompleted) {
         final todayStr = DateTime.now().toIso8601String().split('T').first;
         final currentDaily = _storage.prefs.getInt('daily_pyqs_$todayStr') ?? 0;
-        await _storage.prefs.setInt('daily_pyqs_$todayStr', currentDaily + 1);
+        final newDaily = currentDaily + 1;
+        await _storage.prefs.setInt('daily_pyqs_$todayStr', newDaily);
+        CloudSyncService().pushToCloud('dailyStats', todayStr, {
+          'date': todayStr,
+          'daily_pyqs': newDaily,
+          'lastUpdated': DateTime.now().toIso8601String(),
+        });
         AdService().incrementPyqCountAndShowAd();
+      }
+
+      // Auto-log mistake to Error Log if answer is incorrect
+      if (!newPyq.isAnswerCorrect(answer)) {
+        addErrorLogEntry(
+          current.subject,
+          current.topic,
+          current.questionText,
+          'Wrong answer in PYQ Practice.\nYour Answer: $answer | Correct: ${current.correctAnswer}',
+          userAnswer: answer,
+          correctAnswer: current.correctAnswer,
+          explanation: current.explanation,
+        );
       }
       notifyListeners();
     }
@@ -631,7 +658,10 @@ class AppProvider with ChangeNotifier {
   /// Number of PYQs solved today (resets every midnight)
   int get todayPyqsSolvedCount {
     final todayStr = DateTime.now().toIso8601String().split('T').first;
-    return _storage.prefs.getInt('daily_pyqs_$todayStr') ?? 0;
+    final prefCount = _storage.prefs.getInt('daily_pyqs_$todayStr') ?? 0;
+    if (prefCount > 0) return prefCount;
+    // Fallback if local storage was cleared on reinstall today
+    return _pyqs.where((p) => p.isCompleted).length;
   }
 
   /// Whether a mock test or drill was taken today
@@ -763,7 +793,31 @@ class AppProvider with ChangeNotifier {
   }
 
   // Error Log: Add entry
-  Future<void> addErrorLogEntry(String subject, String topic, String questionText, String whyWrong) async {
+  Future<void> addErrorLogEntry(
+    String subject,
+    String topic,
+    String questionText,
+    String whyWrong, {
+    String? userAnswer,
+    String? correctAnswer,
+    String? explanation,
+  }) async {
+    final cleanQ = questionText.trim();
+    final existingIdx = _errorLog.indexWhere((e) => e.questionText.trim() == cleanQ);
+    if (existingIdx != -1) {
+      final updated = _errorLog[existingIdx].copyWith(
+        whyWrong: whyWrong,
+        userAnswer: userAnswer ?? _errorLog[existingIdx].userAnswer,
+        correctAnswer: correctAnswer ?? _errorLog[existingIdx].correctAnswer,
+        explanation: explanation ?? _errorLog[existingIdx].explanation,
+      );
+      _errorLog[existingIdx] = updated;
+      await _storage.errorLogBox.put(updated.id, updated.toMap());
+      CloudSyncService().pushToCloud('errorLog', updated.id, updated.toMap());
+      notifyListeners();
+      return;
+    }
+
     final entry = ErrorLogEntry(
       id: 'err_${DateTime.now().millisecondsSinceEpoch}',
       subject: subject,
@@ -771,6 +825,9 @@ class AppProvider with ChangeNotifier {
       questionText: questionText,
       whyWrong: whyWrong,
       dateAdded: DateTime.now(),
+      userAnswer: userAnswer,
+      correctAnswer: correctAnswer,
+      explanation: explanation,
     );
     _errorLog.add(entry);
     await _storage.errorLogBox.put(entry.id, entry.toMap());

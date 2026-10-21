@@ -1,4 +1,8 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:ui' as ui;
+import 'package:flutter/rendering.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -55,6 +59,8 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
 
   // Test state
   bool _isTestSubmitted = false;
+  final GlobalKey _scorecardBoundaryKey = GlobalKey();
+  bool _isSharingImage = false;
 
   // Local MSQ choices: questionId -> Set of options
   final Map<String, Set<String>> _msqSelections = {};
@@ -394,6 +400,23 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
       weakSubjects,
       'GATE CBT Mock Completed.\nScore: ${totalScore.toStringAsFixed(2)} / ${maxPossibleMarks.toStringAsFixed(0)} (Aptitude: ${gaScore.toStringAsFixed(1)}, Core: ${coreScore.toStringAsFixed(1)})\nAccuracy: ${(correctCount / (correctCount + incorrectCount > 0 ? correctCount + incorrectCount : 1) * 100).toStringAsFixed(1)}%\nCorrect: $correctCount, Incorrect: $incorrectCount, Unattempted: $unattemptedCount\nTime: $timeTakenMinutes mins',
     );
+
+    // Auto-log wrong answers to Error Log so user doesn't miss them
+    for (int i = 0; i < widget.questions.length; i++) {
+      final q = widget.questions[i];
+      final uAns = _userAnswers[q.id];
+      if (uAns != null && uAns.isNotEmpty && !q.isAnswerCorrect(uAns)) {
+        provider.addErrorLogEntry(
+          q.subject,
+          q.topic,
+          q.questionText,
+          'Wrong answer in ${widget.testName}.\nYour Answer: $uAns | Correct: ${q.correctAnswer}',
+          userAnswer: uAns,
+          correctAnswer: q.correctAnswer,
+          explanation: q.explanation,
+        );
+      }
+    }
 
     // Show interstitial ad only for non-pro users
     if (!provider.isPro) {
@@ -1648,6 +1671,51 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
     );
   }
 
+    Future<void> _shareScorecardAsImage({
+    required double totalScore,
+    required double maxPossibleMarks,
+    required double accuracy,
+    required String predictedAir,
+    required String iitChance,
+  }) async {
+    HapticFeedback.selectionClick();
+    setState(() => _isSharingImage = true);
+
+    final shareText = '''🎯 GateX CBT Mock Exam Scorecard
+Test: ${widget.testName}
+Score: ${totalScore.toStringAsFixed(2)} / ${maxPossibleMarks.toStringAsFixed(0)} Marks
+Accuracy: ${accuracy.toStringAsFixed(1)}%
+Estimated Rank: $predictedAir ($iitChance)
+
+Prepared with GateX — 100% Student-Centric GATE Prep.
+https://github.com/aditya21030/GateX''';
+
+    try {
+      final boundary = _scorecardBoundaryKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      if (boundary != null) {
+        final image = await boundary.toImage(pixelRatio: 3.0);
+        final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+        if (byteData != null) {
+          final tempDir = await getTemporaryDirectory();
+          final file = File('${tempDir.path}/gatex_scorecard_${DateTime.now().millisecondsSinceEpoch}.png');
+          await file.writeAsBytes(byteData.buffer.asUint8List());
+          await Share.shareXFiles(
+            [XFile(file.path, mimeType: 'image/png')],
+            text: shareText,
+            subject: 'My GateX Mock Test Scorecard',
+          );
+          if (mounted) setState(() => _isSharingImage = false);
+          return;
+        }
+      }
+    } catch (e) {
+      debugPrint('Error generating scorecard image: $e');
+    }
+
+    if (mounted) setState(() => _isSharingImage = false);
+    Share.share(shareText, subject: 'My GateX Mock Test Scorecard');
+  }
+
   // --- Official GATE CBT Scorecard & Analysis Screen ---
   Widget _buildScoreSummaryScreen() {
     double totalScore = 0.0;
@@ -1736,21 +1804,19 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share_rounded, color: AppTheme.accentPurple),
-            tooltip: 'Share Scorecard',
-            onPressed: () {
-              HapticFeedback.selectionClick();
-              final shareText = '''🎯 GateX CBT Mock Exam Scorecard
-Test: ${widget.testName}
-Score: ${totalScore.toStringAsFixed(2)} / ${maxPossibleMarks.toStringAsFixed(0)} Marks
-Accuracy: ${accuracy.toStringAsFixed(1)}%
-Correct: $correctCount | Incorrect: $incorrectCount | Skipped: $unattemptedCount
-Estimated Rank: $predictedAir ($iitChance)
-
-Prepared with GateX — 100% Student-Centric GATE Prep.
-https://github.com/aditya21030/GateX''';
-              Share.share(shareText, subject: 'My GateX Mock Test Scorecard');
-            },
+            icon: _isSharingImage
+                ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: AppTheme.accentPurple))
+                : const Icon(Icons.share_rounded, color: AppTheme.accentPurple),
+            tooltip: 'Share Scorecard Image',
+            onPressed: _isSharingImage
+                ? null
+                : () => _shareScorecardAsImage(
+                      totalScore: totalScore,
+                      maxPossibleMarks: maxPossibleMarks,
+                      accuracy: accuracy,
+                      predictedAir: predictedAir,
+                      iitChance: iitChance,
+                    ),
           ),
         ],
       ),
@@ -1762,7 +1828,9 @@ https://github.com/aditya21030/GateX''';
               // Scorecard Hero Banner
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: NeuContainer(
+                child: RepaintBoundary(
+                  key: _scorecardBoundaryKey,
+                  child: NeuContainer(
                   borderRadius: 20,
                   padding: const EdgeInsets.all(18.0),
                   child: Column(
@@ -1868,8 +1936,21 @@ https://github.com/aditya21030/GateX''';
                           ],
                         ),
                       ],
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.workspace_premium_rounded, size: 13, color: AppTheme.accentPurple.withValues(alpha: 0.8)),
+                          const SizedBox(width: 4),
+                          Text(
+                            'GateX • 100% Student-Centric GATE Preparation',
+                            style: GoogleFonts.outfit(fontSize: 10, color: context.textSecondaryColor, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
+                ),
                 ),
               ),
 

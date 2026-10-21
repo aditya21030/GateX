@@ -271,6 +271,9 @@ class ErrorLogEntry {
   final String whyWrong;
   final DateTime dateAdded;
   final bool isRevised;
+  final String? userAnswer;
+  final String? correctAnswer;
+  final String? explanation;
 
   ErrorLogEntry({
     required this.id,
@@ -280,6 +283,9 @@ class ErrorLogEntry {
     required this.whyWrong,
     required this.dateAdded,
     this.isRevised = false,
+    this.userAnswer,
+    this.correctAnswer,
+    this.explanation,
   });
 
   ErrorLogEntry copyWith({
@@ -290,6 +296,9 @@ class ErrorLogEntry {
     String? whyWrong,
     DateTime? dateAdded,
     bool? isRevised,
+    String? userAnswer,
+    String? correctAnswer,
+    String? explanation,
   }) {
     return ErrorLogEntry(
       id: id ?? this.id,
@@ -299,6 +308,9 @@ class ErrorLogEntry {
       whyWrong: whyWrong ?? this.whyWrong,
       dateAdded: dateAdded ?? this.dateAdded,
       isRevised: isRevised ?? this.isRevised,
+      userAnswer: userAnswer ?? this.userAnswer,
+      correctAnswer: correctAnswer ?? this.correctAnswer,
+      explanation: explanation ?? this.explanation,
     );
   }
 
@@ -311,6 +323,9 @@ class ErrorLogEntry {
       'whyWrong': whyWrong,
       'dateAdded': dateAdded.toIso8601String(),
       'isRevised': isRevised,
+      if (userAnswer != null) 'userAnswer': userAnswer,
+      if (correctAnswer != null) 'correctAnswer': correctAnswer,
+      if (explanation != null) 'explanation': explanation,
     };
   }
 
@@ -325,6 +340,9 @@ class ErrorLogEntry {
           ? DateTime.parse(map['dateAdded'])
           : DateTime.now(),
       isRevised: map['isRevised'] ?? false,
+      userAnswer: map['userAnswer'],
+      correctAnswer: map['correctAnswer'],
+      explanation: map['explanation'],
     );
   }
 }
