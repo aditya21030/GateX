@@ -395,7 +395,10 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
       'GATE CBT Mock Completed.\nScore: ${totalScore.toStringAsFixed(2)} / ${maxPossibleMarks.toStringAsFixed(0)} (Aptitude: ${gaScore.toStringAsFixed(1)}, Core: ${coreScore.toStringAsFixed(1)})\nAccuracy: ${(correctCount / (correctCount + incorrectCount > 0 ? correctCount + incorrectCount : 1) * 100).toStringAsFixed(1)}%\nCorrect: $correctCount, Incorrect: $incorrectCount, Unattempted: $unattemptedCount\nTime: $timeTakenMinutes mins',
     );
 
-    AdService().showInterstitialAd();
+    // Show interstitial ad only for non-pro users
+    if (!provider.isPro) {
+      AdService().showInterstitialAd();
+    }
 
     setState(() {
       _isTestSubmitted = true;
@@ -409,7 +412,7 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: AppTheme.surface,
+          backgroundColor: context.colorSurface,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: const Row(
             children: [
@@ -418,14 +421,14 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
               Text('Exit Mock Exam?', style: TextStyle(color: AppTheme.error, fontWeight: FontWeight.bold, fontSize: 16)),
             ],
           ),
-          content: const Text(
+          content: Text(
             'Are you sure you want to exit? Your exam progress will be lost and this attempt will not be recorded.',
-            style: TextStyle(color: AppTheme.textSecondary, fontSize: 13, height: 1.4),
+            style: TextStyle(color: context.textSecondaryColor, fontSize: 13, height: 1.4),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Resume Test', style: TextStyle(color: AppTheme.textSecondary)),
+              child: Text('Resume Test', style: TextStyle(color: context.textSecondaryColor)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -450,35 +453,39 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: AppTheme.surface,
+          backgroundColor: context.colorSurface,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Row(
+          title: Row(
             children: [
-              Icon(Icons.assignment_turned_in_rounded, color: AppTheme.secondary),
-              SizedBox(width: 8),
-              Text('Submit Examination?', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              const Icon(Icons.assignment_turned_in_rounded, color: AppTheme.secondary),
+              const SizedBox(width: 8),
+              Text('Submit Examination?', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: context.textColor)),
             ],
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Review your attempt summary before final submission:',
-                style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                style: TextStyle(color: context.textSecondaryColor, fontSize: 12),
               ),
               const SizedBox(height: 16),
               Container(
                 decoration: BoxDecoration(
-                  color: AppTheme.background,
+                  color: context.colorSurfaceElevated,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                  border: Border.all(
+                    color: context.isDarkMode
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.black.withValues(alpha: 0.08),
+                  ),
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                 child: Column(
                   children: [
-                    _buildSubmitSummaryRow('Total Questions', '${widget.questions.length}', Colors.white),
-                    const Divider(color: Colors.white10, height: 16),
+                    _buildSubmitSummaryRow('Total Questions', '${widget.questions.length}', context.textColor),
+                    Divider(color: context.colorBorder, height: 16),
                     _buildSubmitSummaryRow('🟢 Answered', '$_answeredCount', AppTheme.success),
                     const SizedBox(height: 6),
                     _buildSubmitSummaryRow('🟣🟢 Ans & Marked (Evaluated)', '$_answeredAndMarkedCount', const Color(0xFFBA68C8)),
@@ -487,26 +494,26 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                     const SizedBox(height: 6),
                     _buildSubmitSummaryRow('🔴 Not Answered', '$_notAnsweredCount', AppTheme.error),
                     const SizedBox(height: 6),
-                    _buildSubmitSummaryRow('⚪ Not Visited', '$_notVisitedCount', AppTheme.textSecondary),
+                    _buildSubmitSummaryRow('⚪ Not Visited', '$_notVisitedCount', context.textSecondaryColor),
                   ],
                 ),
               ),
               const SizedBox(height: 12),
-              const Text(
+              Text(
                 'Note: Questions in "Answered & Marked for Review" will be evaluated for marks as per official GATE rules.',
-                style: TextStyle(color: AppTheme.textSecondary, fontSize: 11, fontStyle: FontStyle.italic),
+                style: TextStyle(color: context.textSecondaryColor, fontSize: 11, fontStyle: FontStyle.italic),
               ),
             ],
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Resume Test', style: TextStyle(color: AppTheme.textSecondary)),
+              child: Text('Resume Test', style: TextStyle(color: context.textSecondaryColor)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.secondary,
-                foregroundColor: AppTheme.background,
+                foregroundColor: Colors.black,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
               ),
@@ -526,7 +533,7 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
+        Text(label, style: TextStyle(fontSize: 12, color: context.textSecondaryColor)),
         Text(value, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: valueColor)),
       ],
     );
@@ -889,10 +896,10 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
             decoration: BoxDecoration(
               color: isExplanation
                   ? AppTheme.secondary.withValues(alpha: 0.04)
-                  : AppTheme.surface,
+                  : context.colorSurfaceElevated,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: (isExplanation ? AppTheme.secondary : AppTheme.textSecondary).withValues(alpha: 0.1),
+                color: (isExplanation ? AppTheme.secondary : context.textSecondaryColor).withValues(alpha: 0.1),
               ),
             ),
             child: SingleChildScrollView(
@@ -902,7 +909,7 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                 blockText,
                 style: AppTheme.monospaceStyle(
                   fontSize: 11.5,
-                  color: textColor ?? AppTheme.textPrimary,
+                  color: textColor ?? context.textColor,
                 ),
               ),
             ),
@@ -1991,27 +1998,27 @@ class _MockQuestionReviewCardState extends State<_MockQuestionReviewCard> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: AppTheme.surface,
+          backgroundColor: context.colorSurface,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: const Text('Add to Error Log', style: TextStyle(color: AppTheme.error, fontWeight: FontWeight.bold, fontSize: 16)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Topic: ${widget.pyq.topic}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              Text('Topic: ${widget.pyq.topic}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor)),
               const SizedBox(height: 12),
-              const Text('Why did you get this wrong? (e.g. Calculation mistake, conceptual confusion):', style: TextStyle(fontSize: 12, color: AppTheme.textSecondary)),
+              Text('Why did you get this wrong? (e.g. Calculation mistake, conceptual confusion):', style: TextStyle(fontSize: 12, color: context.textSecondaryColor)),
               const SizedBox(height: 8),
               TextField(
                 controller: noteController,
-                style: const TextStyle(color: AppTheme.textPrimary, fontSize: 13),
+                style: TextStyle(color: context.textColor, fontSize: 13),
                 maxLines: 2,
                 decoration: InputDecoration(
                   hintText: 'e.g., Overlooked negative sign / Misread option B',
-                  hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                  hintStyle: TextStyle(color: context.textSecondaryColor, fontSize: 12),
                   filled: true,
-                  fillColor: AppTheme.background,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                  fillColor: context.colorSurfaceElevated,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide(color: context.colorBorder)),
                 ),
               ),
             ],
@@ -2019,7 +2026,7 @@ class _MockQuestionReviewCardState extends State<_MockQuestionReviewCard> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel', style: TextStyle(color: AppTheme.textSecondary)),
+              child: Text('Cancel', style: TextStyle(color: context.textSecondaryColor)),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: AppTheme.error),

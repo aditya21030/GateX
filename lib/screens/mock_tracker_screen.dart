@@ -91,32 +91,98 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
   }
 
   List<PYQ> _generateFullMock(AppProvider provider, String difficulty) {
-    if (provider.activeExam == 'DA') {
-      final List<PYQ> pool = List.from(daFullMockQuestionsEasy);
-      if (difficulty == 'Easy') return pool;
-      pool.shuffle();
-      return pool;
+    final List<PYQ> base = provider.activeExam == 'DA'
+        ? List.from(daFullMockQuestionsEasy)
+        : List.from(csFullMockQuestionsEasy);
+
+    if (base.length != 65) return base;
+
+    if (difficulty == 'Easy') {
+      return base;
+    }
+
+    // Preserve GATE Section structure:
+    // Q1-5: GA 1-mark (indices 0..4)
+    // Q6-10: GA 2-mark (indices 5..9)
+    // Q11-35: Core 1-mark (indices 10..34)
+    // Q36-65: Core 2-mark (indices 35..64)
+    final ga1 = base.sublist(0, 5)..shuffle();
+    final ga2 = base.sublist(5, 10)..shuffle();
+    final core1 = base.sublist(10, 35)..shuffle();
+    final core2 = base.sublist(35, 65)..shuffle();
+
+    if (difficulty == 'Hard') {
+      // For Hard tier, apply conceptual variations to core questions
+      final transformedCore1 = core1.map(transformToMockQuestion).toList();
+      final transformedCore2 = core2.map(transformToMockQuestion).toList();
+      return [...ga1, ...ga2, ...transformedCore1, ...transformedCore2];
+    }
+
+    // Medium: section-aware shuffled
+    return [...ga1, ...ga2, ...core1, ...core2];
+  }
+
+  String _mapSubjectToMockKey(String subject, bool isCSIT) {
+    final trimmed = subject.trim();
+    if (isCSIT) {
+      const csitMapping = {
+        'Computer Organization': 'Computer Organization and Architecture',
+        'Programming & Data Structures': 'Programming and Data Structures',
+        'Operating System': 'Operating Systems',
+        'Databases': 'Database Management Systems',
+      };
+      if (csitMapping.containsKey(trimmed)) return csitMapping[trimmed]!;
+      if (csitSubjectWiseMockQuestions.containsKey(trimmed)) return trimmed;
+
+      for (final key in csitSubjectWiseMockQuestions.keys) {
+        if (key.toLowerCase() == trimmed.toLowerCase() ||
+            key.toLowerCase().contains(trimmed.toLowerCase()) ||
+            trimmed.toLowerCase().contains(key.toLowerCase())) {
+          return key;
+        }
+      }
+      return trimmed;
     } else {
-      final List<PYQ> pool = List.from(csFullMockQuestionsEasy);
-      if (difficulty == 'Easy') return pool;
-      pool.shuffle();
-      return pool;
+      const daMapping = {
+        'Probability and Statistics': 'Probability & Statistics',
+        'Calculus and Optimization': 'Calculus & Optimization',
+        'Python (Main Topics Only)': 'Programming, Data Structures & Algorithms',
+        'DSA (Data Structures and Algorithms)': 'Programming, Data Structures & Algorithms',
+        'Database Management and Warehousing': 'Database Management & Warehousing',
+        'AI': 'Artificial Intelligence',
+      };
+      if (daMapping.containsKey(trimmed)) return daMapping[trimmed]!;
+      if (daSubjectWiseMockQuestions.containsKey(trimmed)) return trimmed;
+
+      for (final key in daSubjectWiseMockQuestions.keys) {
+        if (key.toLowerCase() == trimmed.toLowerCase() ||
+            key.toLowerCase().contains(trimmed.toLowerCase()) ||
+            trimmed.toLowerCase().contains(key.toLowerCase())) {
+          return key;
+        }
+      }
+      return trimmed;
     }
   }
 
   List<PYQ> _generateSubjectMock(String subject, AppProvider provider) {
-    if (provider.activeExam == 'DA' && daSubjectWiseMockQuestions.containsKey(subject)) {
-      final List<PYQ> pool = List.from(daSubjectWiseMockQuestions[subject]!);
+    final isCSIT = provider.activeExam != 'DA';
+    final mockKey = _mapSubjectToMockKey(subject, isCSIT);
+
+    if (!isCSIT && daSubjectWiseMockQuestions.containsKey(mockKey)) {
+      final List<PYQ> pool = List.from(daSubjectWiseMockQuestions[mockKey]!);
       pool.shuffle();
       return pool.take(min(10, pool.length)).toList();
-    } else if (provider.activeExam != 'DA' && csitSubjectWiseMockQuestions.containsKey(subject)) {
-      final List<PYQ> pool = List.from(csitSubjectWiseMockQuestions[subject]!);
+    } else if (isCSIT && csitSubjectWiseMockQuestions.containsKey(mockKey)) {
+      final List<PYQ> pool = List.from(csitSubjectWiseMockQuestions[mockKey]!);
       pool.shuffle();
       return pool.take(min(10, pool.length)).toList();
     }
 
     final List<PYQ> pool = provider.mockQuestions
-        .where((q) => q.subject == subject)
+        .where((q) =>
+            q.subject.toLowerCase() == subject.toLowerCase() ||
+            q.subject.toLowerCase() == mockKey.toLowerCase())
         .toList();
     pool.shuffle();
     return pool.take(min(10, pool.length)).toList();
@@ -145,20 +211,253 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     );
   }
 
+  Widget _buildBranchSwitchButton(BuildContext context, AppProvider provider, String exam) {
+    final bool isSelected = provider.activeExam == exam;
+    final String label = exam == 'CSIT' ? 'CS/IT' : exam;
+
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        provider.setExams(provider.selectedExam ?? 'BOTH', exam);
+        setState(() {
+          final subjects = provider.currentSubjects;
+          _selectedSubject = subjects.isNotEmpty ? subjects.first : null;
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.accentPurple : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+            color: isSelected ? Colors.white : context.textSecondaryColor,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showBranchSwitcherSheet(BuildContext context, AppProvider provider) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: context.colorSurface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: context.textSecondaryColor.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Select Active Exam Stream',
+                style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: context.textColor),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Switch the syllabus and test question banks between DA and CS/IT.',
+                style: TextStyle(color: context.textSecondaryColor, fontSize: 13),
+              ),
+              const SizedBox(height: 18),
+              _buildBranchTile(
+                context: context,
+                title: 'GATE DA (Data Science & AI)',
+                subtitle: 'Machine Learning, AI, Probability & Linear Algebra',
+                isSelected: provider.activeExam == 'DA' && provider.selectedExam != 'BOTH',
+                onTap: () {
+                  provider.setExams('DA', 'DA');
+                  setState(() {
+                    final subjects = provider.currentSubjects;
+                    _selectedSubject = subjects.isNotEmpty ? subjects.first : null;
+                  });
+                  Navigator.pop(ctx);
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildBranchTile(
+                context: context,
+                title: 'GATE CS/IT (Computer Science)',
+                subtitle: 'Algorithms, OS, CN, DBMS, TOC, Compiler',
+                isSelected: provider.activeExam == 'CSIT' && provider.selectedExam != 'BOTH',
+                onTap: () {
+                  provider.setExams('CSIT', 'CSIT');
+                  setState(() {
+                    final subjects = provider.currentSubjects;
+                    _selectedSubject = subjects.isNotEmpty ? subjects.first : null;
+                  });
+                  Navigator.pop(ctx);
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildBranchTile(
+                context: context,
+                title: 'Dual Preparation (BOTH)',
+                subtitle: 'Switch between DA & CS/IT anytime via top bar',
+                isSelected: provider.selectedExam == 'BOTH',
+                onTap: () {
+                  provider.setExams('BOTH', provider.activeExam ?? 'DA');
+                  Navigator.pop(ctx);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBranchTile({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.accentPurple.withValues(alpha: 0.12) : context.colorSurfaceElevated,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? AppTheme.accentPurple : (context.isDarkMode ? Colors.white10 : Colors.black12),
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: isSelected ? AppTheme.accentPurple : context.textColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    subtitle,
+                    style: TextStyle(color: context.textSecondaryColor, fontSize: 11.5),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              const Icon(Icons.check_circle_rounded, color: AppTheme.accentPurple, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AppProvider>(context);
     final mocks = provider.mockLogs;
+    final subjects = provider.currentSubjects;
+
+    // Guard against invalid subject value when switching between DA and CS/IT
+    if (_selectedSubject == null || !subjects.contains(_selectedSubject)) {
+      _selectedSubject = subjects.isNotEmpty ? subjects.first : null;
+    }
 
     return Scaffold(
       backgroundColor: context.colorBackground,
       appBar: AppBar(
         backgroundColor: context.colorSurface,
         elevation: 0,
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
         title: Text(
           'Mock Arena',
           style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: context.textColor),
         ),
+        actions: [
+          if (provider.selectedExam == 'BOTH')
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 11, horizontal: 12),
+              height: 30,
+              decoration: BoxDecoration(
+                color: context.colorSurfaceElevated,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: context.isDarkMode
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.black.withValues(alpha: 0.06),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildBranchSwitchButton(context, provider, 'DA'),
+                  _buildBranchSwitchButton(context, provider, 'CSIT'),
+                ],
+              ),
+            )
+          else
+            GestureDetector(
+              onTap: () {
+                HapticFeedback.selectionClick();
+                _showBranchSwitcherSheet(context, provider);
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppTheme.accentPurple.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      provider.activeExam ?? 'DA',
+                      style: const TextStyle(
+                        color: AppTheme.accentPurple,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                      ),
+                    ),
+                    const SizedBox(width: 3),
+                    const Icon(Icons.arrow_drop_down_rounded, size: 14, color: AppTheme.accentPurple),
+                  ],
+                ),
+              ),
+            ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(56),
           child: Container(

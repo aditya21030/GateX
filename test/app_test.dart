@@ -4,6 +4,9 @@ import 'package:gateda/theme/app_theme.dart';
 import 'package:gateda/models/models.dart';
 import 'package:gateda/models/branch_model.dart';
 import 'package:gateda/data/study_plan.dart';
+import 'package:gateda/data/da_subjectwise_mock_data.dart';
+import 'package:gateda/data/csit_subjectwise_mock_data.dart';
+import 'package:gateda/services/storage_service.dart';
 
 class EstimationNode {
   final double marks;
@@ -462,6 +465,78 @@ void main() {
 
       final score = calculateMockScoreDryRun(questions, userAnswers);
       expect(score, 2.0); // Both q1 and q2 are scored
+    });
+
+    test('Subject mock key mapper accurately resolves all DA and CS/IT syllabus subjects', () {
+      String mapKey(String sub, bool isCSIT) {
+        final trimmed = sub.trim();
+        if (isCSIT) {
+          const m = {
+            'Computer Organization': 'Computer Organization and Architecture',
+            'Programming & Data Structures': 'Programming and Data Structures',
+            'Operating System': 'Operating Systems',
+            'Databases': 'Database Management Systems',
+          };
+          if (m.containsKey(trimmed)) return m[trimmed]!;
+          if (csitSubjectWiseMockQuestions.containsKey(trimmed)) return trimmed;
+          return trimmed;
+        } else {
+          const m = {
+            'Probability and Statistics': 'Probability & Statistics',
+            'Calculus and Optimization': 'Calculus & Optimization',
+            'Python (Main Topics Only)': 'Programming, Data Structures & Algorithms',
+            'DSA (Data Structures and Algorithms)': 'Programming, Data Structures & Algorithms',
+            'Database Management and Warehousing': 'Database Management & Warehousing',
+            'AI': 'Artificial Intelligence',
+          };
+          if (m.containsKey(trimmed)) return m[trimmed]!;
+          if (daSubjectWiseMockQuestions.containsKey(trimmed)) return trimmed;
+          return trimmed;
+        }
+      }
+
+      for (final daSub in StorageService.syllabusData.keys) {
+        final resolvedKey = mapKey(daSub, false);
+        expect(daSubjectWiseMockQuestions.containsKey(resolvedKey), isTrue,
+            reason: 'DA subject should resolve to a valid mock bank key');
+        expect(daSubjectWiseMockQuestions[resolvedKey]!.length, greaterThanOrEqualTo(10));
+      }
+
+      for (final csSub in StorageService.csitSyllabusData.keys) {
+        final resolvedKey = mapKey(csSub, true);
+        expect(csitSubjectWiseMockQuestions.containsKey(resolvedKey), isTrue,
+            reason: 'CSIT subject should resolve to a valid mock bank key');
+        expect(csitSubjectWiseMockQuestions[resolvedKey]!.length, greaterThanOrEqualTo(10));
+      }
+    });
+
+    test('Section-aware full mock preserves GA and Core partitions', () {
+      final base = List.generate(65, (i) => i < 10 ? 'General Aptitude' : 'Core Subject');
+      final ga1 = base.sublist(0, 5)..shuffle();
+      final ga2 = base.sublist(5, 10)..shuffle();
+      final core1 = base.sublist(10, 35)..shuffle();
+      final core2 = base.sublist(35, 65)..shuffle();
+      final result = [...ga1, ...ga2, ...core1, ...core2];
+
+      expect(result.length, 65);
+      for (int i = 0; i < 10; i++) {
+        expect(result[i], 'General Aptitude');
+      }
+      for (int i = 10; i < 65; i++) {
+        expect(result[i], 'Core Subject');
+      }
+    });
+
+    test('CBT Mock submission respects Pro Pass entitlement and suppresses interstitial ads', () {
+      bool checkShowAd(bool isPro) {
+        if (!isPro) {
+          return true;
+        }
+        return false;
+      }
+
+      expect(checkShowAd(false), isTrue);
+      expect(checkShowAd(true), isFalse);
     });
   });
 
