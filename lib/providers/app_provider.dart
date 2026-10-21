@@ -440,7 +440,7 @@ class AppProvider with ChangeNotifier {
 
   // Get progress percentage for a study phase
   double getPhaseProgress(String phaseName) {
-    final phaseItems = currentStudyPlanItems.where((item) => item.phase == phaseName).toList();
+    final phaseItems = currentStudyPlanItems.where((item) => item.phase == phaseName || item.subject == phaseName).toList();
     if (phaseItems.isEmpty) return 0.0;
     
     int completedCount = 0;
@@ -519,6 +519,40 @@ class AppProvider with ChangeNotifier {
       _topics[idx] = updated;
     } else {
       _topics.add(updated);
+    }
+
+    await _storage.topicStatusBox.put(key, updated.toMap());
+    CloudSyncService().pushToCloud('topicStatus', key, updated.toMap());
+    notifyListeners();
+    _updateScheduledNotifications();
+  }
+
+  // Agile Checklist: Toggle all milestones (concept, pyq, revise) at once
+  Future<void> toggleAllMilestones(String subject, String topic, bool isCompleted) async {
+    final key = '${subject}_$topic';
+    final current = getTopicStatus(subject, topic);
+
+    final updated = current.copyWith(
+      conceptWatched: isCompleted,
+      pyqSolved: isCompleted,
+      revisedOnce: isCompleted,
+      isCompleted: isCompleted,
+    );
+
+    final idx = _topics.indexWhere((t) => t.subjectName == subject && t.topicName == topic);
+    if (idx != -1) {
+      _topics[idx] = updated;
+    } else {
+      _topics.add(updated);
+    }
+
+    // Also sync with study plan day state if this topic is in study plan
+    final dayItemIndex = currentStudyPlanItems.indexWhere((item) => item.subject == subject && item.topic == topic);
+    if (dayItemIndex != -1) {
+      final dayItem = currentStudyPlanItems[dayItemIndex];
+      if (isStudyDayCompleted(dayItem.day) != isCompleted) {
+        await toggleStudyDayCompletion(dayItem.day);
+      }
     }
 
     await _storage.topicStatusBox.put(key, updated.toMap());

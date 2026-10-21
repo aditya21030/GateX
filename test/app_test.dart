@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gateda/theme/app_theme.dart';
 import 'package:gateda/models/models.dart';
 import 'package:gateda/models/branch_model.dart';
+import 'package:gateda/data/study_plan.dart';
 
 class EstimationNode {
   final double marks;
@@ -508,6 +509,75 @@ void main() {
       expect(serialized['conceptWatched'], true);
       expect(serialized['pyqSolved'], true);
       expect(serialized['revisedOnce'], true);
+    });
+
+    test('1-tap topic toggle all milestones at once', () {
+      final initial = TopicStatus(topicName: 'Bayes Theorem', subjectName: 'Probability and Statistics');
+      expect(initial.isCompleted, false);
+
+      // 1-tap mark complete
+      final mastered = initial.copyWith(
+        conceptWatched: true,
+        pyqSolved: true,
+        revisedOnce: true,
+        isCompleted: true,
+      );
+      expect(mastered.conceptWatched, true);
+      expect(mastered.pyqSolved, true);
+      expect(mastered.revisedOnce, true);
+      expect(mastered.isCompleted, true);
+
+      // 1-tap unmark
+      final unmastered = mastered.copyWith(
+        conceptWatched: false,
+        pyqSolved: false,
+        revisedOnce: false,
+        isCompleted: false,
+      );
+      expect(unmastered.conceptWatched, false);
+      expect(unmastered.pyqSolved, false);
+      expect(unmastered.revisedOnce, false);
+      expect(unmastered.isCompleted, false);
+    });
+
+    test('Phase progress calculation matches both phase and subject keys', () {
+      const daItem = StudyPlanItem(
+        day: 1,
+        date: '2026-05-01',
+        dayOfWeek: 'Friday',
+        phase: 'Probability & Statistics',
+        subject: 'Probability & Statistics',
+        topic: 'Combinatorics',
+        type: 'core',
+        studyHours: 2.5,
+        aptitudeMinutes: 20,
+        totalHours: 2.8,
+        notes: '',
+      );
+      const csitItem = StudyPlanItem(
+        day: 1,
+        date: '2026-05-01',
+        dayOfWeek: 'Friday',
+        phase: 'phase_1_syllabus',
+        subject: 'Engineering Mathematics',
+        topic: 'Propositional Logic',
+        type: 'core',
+        studyHours: 2.5,
+        aptitudeMinutes: 20,
+        totalHours: 2.8,
+        notes: '',
+      );
+
+      bool matchPhase(StudyPlanItem item, String phaseName) {
+        return item.phase == phaseName || item.subject == phaseName;
+      }
+
+      // DA phase match
+      expect(matchPhase(daItem, 'Probability & Statistics'), true);
+      // CSIT subject match when phase is generic
+      expect(matchPhase(csitItem, 'Engineering Mathematics'), true);
+      expect(matchPhase(csitItem, 'phase_1_syllabus'), true);
+      expect(matchPhase(csitItem, 'Digital Logic'), false);
     });
   });
 

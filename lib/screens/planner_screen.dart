@@ -9,6 +9,7 @@ import '../data/study_plan.dart';
 import '../models/models.dart';
 import '../services/storage_service.dart';
 import 'pyq_screen.dart';
+import 'mock_tracker_screen.dart';
 import '../widgets/neu_widgets.dart';
 
 class PlannerScreen extends StatefulWidget {
@@ -244,10 +245,15 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
     _tabController = TabController(length: 3, vsync: this);
     _scrollController = ScrollController();
 
-    // Rolling calendar range: 30 days before today to 120 days after today
     final now = DateTime.now();
-    _calendarStart = DateTime(now.year, now.month, now.day).subtract(const Duration(days: 30));
-    _calendarEnd = DateTime(now.year, now.month, now.day).add(const Duration(days: 120));
+    // Season cycle starts May 1 and ends late February for the upcoming GATE exam
+    final seasonStartYear = now.month < 5 ? now.year - 1 : now.year;
+    final seasonEndYear = seasonStartYear + 1;
+    final cycleStart = DateTime(seasonStartYear, 5, 1);
+    final cycleEnd = DateTime(seasonEndYear, 2, 28);
+    // Expand bounds if now happens to be slightly before or after
+    _calendarStart = now.isBefore(cycleStart) ? DateTime(now.year, now.month, now.day).subtract(const Duration(days: 7)) : cycleStart;
+    _calendarEnd = now.isAfter(cycleEnd) ? DateTime(now.year, now.month, now.day).add(const Duration(days: 14)) : cycleEnd;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = Provider.of<AppProvider>(context, listen: false);
@@ -316,12 +322,156 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
     }
   }
 
+  String _normalizeSubjectToSyllabusKey(String inputSubject, bool isCSIT) {
+    final s = inputSubject.toLowerCase().trim();
+    final syllabus = isCSIT ? StorageService.csitSyllabusData : StorageService.syllabusData;
+
+    // 1. Direct match
+    for (final key in syllabus.keys) {
+      if (key.toLowerCase() == s) return key;
+    }
+
+    // 2. Branch-specific alias mapping
+    if (!isCSIT) {
+      if (s.contains('prob') || s.contains('stat')) return 'Probability and Statistics';
+      if (s.contains('linear') || s.contains('algebra')) return 'Linear Algebra';
+      if (s.contains('calculus') || s.contains('optimization')) return 'Calculus and Optimization';
+      if (s.contains('machine learning') || s == 'ml') return 'Machine Learning';
+      if (s.contains('python')) return 'Python (Main Topics Only)';
+      if (s.contains('dsa') || s.contains('data struct') || s.contains('algorithm')) return 'DSA (Data Structures and Algorithms)';
+      if (s.contains('database') || s.contains('dbms') || s.contains('warehousing')) return 'Database Management and Warehousing';
+      if (s.contains('ai') || s.contains('artificial')) return 'AI';
+      if (s.contains('aptitude')) return 'General Aptitude';
+    } else {
+      if (s.contains('math')) return 'Engineering Mathematics';
+      if (s.contains('digital') || s.contains('logic')) return 'Digital Logic';
+      if (s.contains('co') || s.contains('organization') || s.contains('architecture')) return 'Computer Organization';
+      if (s.contains('program') || s.contains('data struct')) return 'Programming & Data Structures';
+      if (s.contains('algorithm')) return 'Algorithms';
+      if (s.contains('toc') || s.contains('computation')) return 'Theory of Computation';
+      if (s.contains('compiler')) return 'Compiler Design';
+      if (s.contains('operating') || s.contains('os')) return 'Operating System';
+      if (s.contains('database') || s.contains('dbms')) return 'Databases';
+      if (s.contains('network') || s.contains('cn')) return 'Computer Networks';
+      if (s.contains('aptitude')) return 'General Aptitude';
+    }
+
+    // 3. Fallback search
+    for (final key in syllabus.keys) {
+      if (key.toLowerCase().contains(s) || s.contains(key.toLowerCase())) {
+        return key;
+      }
+    }
+    return inputSubject;
+  }
+
   void _jumpToChecklistWithSubject(String subject) {
     HapticFeedback.selectionClick();
+    final isCSIT = Provider.of<AppProvider>(context, listen: false).activeExam == 'CSIT';
+    final resolved = _normalizeSubjectToSyllabusKey(subject, isCSIT);
+
     setState(() {
-      _expandedSubjects.add(subject);
-      _checklistSearchQuery = subject;
-      _searchController.text = subject;
+      _expandedSubjects.add(resolved);
+      _checklistSearchQuery = '';
+      _searchController.clear();
+      _checklistFilter = 'All';
+    });
+    _tabController.animateTo(0);
+  }
+
+  void _jumpToChecklistForPhase(Map<String, dynamic> phase) {
+    HapticFeedback.selectionClick();
+    final isCSIT = Provider.of<AppProvider>(context, listen: false).activeExam == 'CSIT';
+    final phaseNum = phase['num'].toString();
+
+    // Handle Grand Revision & Mock phase
+    if ((!isCSIT && phaseNum == '8') || (isCSIT && phaseNum == '12')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${phase['displayName']} focuses on full tests & formula drills.'),
+          action: SnackBarAction(
+            label: 'Open Mocks',
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const MockTrackerScreen()));
+            },
+          ),
+        ),
+      );
+      return;
+    }
+
+    final syllabus = isCSIT ? StorageService.csitSyllabusData : StorageService.syllabusData;
+    List<String> matchingSubjects = [];
+
+    if (!isCSIT) {
+      switch (phaseNum) {
+        case '1':
+          matchingSubjects = ['Probability and Statistics'];
+          break;
+        case '2':
+          matchingSubjects = ['Linear Algebra'];
+          break;
+        case '3':
+          matchingSubjects = ['Calculus and Optimization'];
+          break;
+        case '4':
+          matchingSubjects = ['Machine Learning'];
+          break;
+        case '5':
+          matchingSubjects = ['Python (Main Topics Only)', 'DSA (Data Structures and Algorithms)'];
+          break;
+        case '6':
+          matchingSubjects = ['Database Management and Warehousing'];
+          break;
+        case '7':
+          matchingSubjects = ['AI'];
+          break;
+      }
+    } else {
+      switch (phaseNum) {
+        case '1':
+          matchingSubjects = ['Engineering Mathematics'];
+          break;
+        case '2':
+          matchingSubjects = ['Digital Logic'];
+          break;
+        case '3':
+          matchingSubjects = ['Computer Organization'];
+          break;
+        case '4':
+          matchingSubjects = ['Programming & Data Structures'];
+          break;
+        case '5':
+          matchingSubjects = ['Algorithms'];
+          break;
+        case '6':
+          matchingSubjects = ['Theory of Computation'];
+          break;
+        case '7':
+          matchingSubjects = ['Compiler Design'];
+          break;
+        case '8':
+          matchingSubjects = ['Operating System'];
+          break;
+        case '9':
+          matchingSubjects = ['Databases'];
+          break;
+        case '10':
+          matchingSubjects = ['Computer Networks'];
+          break;
+        case '11':
+          matchingSubjects = ['General Aptitude'];
+          break;
+      }
+    }
+
+    final validSubjects = matchingSubjects.where((s) => syllabus.containsKey(s)).toList();
+
+    setState(() {
+      _expandedSubjects.clear();
+      _expandedSubjects.addAll(validSubjects);
+      _checklistSearchQuery = '';
+      _searchController.clear();
       _checklistFilter = 'All';
     });
     _tabController.animateTo(0);
@@ -348,6 +498,60 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
             'Syllabus & Planner',
             style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: context.textColor),
           ),
+          actions: [
+            if (provider.selectedExam == 'BOTH')
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 11, horizontal: 12),
+                height: 30,
+                decoration: BoxDecoration(
+                  color: context.colorSurfaceElevated,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: context.isDarkMode
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.black.withValues(alpha: 0.06),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildSwitchButton(context, provider, 'DA'),
+                    _buildSwitchButton(context, provider, 'CSIT'),
+                  ],
+                ),
+              )
+            else
+              GestureDetector(
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  _showBranchSwitcherSheet(context, provider);
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: AppTheme.accentPurple.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        provider.activeExam ?? 'DA',
+                        style: const TextStyle(
+                          color: AppTheme.accentPurple,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
+                      const SizedBox(width: 3),
+                      const Icon(Icons.arrow_drop_down_rounded, size: 14, color: AppTheme.accentPurple),
+                    ],
+                  ),
+                ),
+              ),
+          ],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(56),
             child: Container(
@@ -408,15 +612,23 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
     final isCSIT = provider.activeExam == 'CSIT';
     final syllabus = isCSIT ? StorageService.csitSyllabusData : StorageService.syllabusData;
 
-    // Calculate overall stats
+    // Calculate overall stats & live filter counts
     int totalTopics = 0;
     int masteredTopics = 0;
+    int conceptsLeft = 0;
+    int pyqsLeft = 0;
+    int needsReviseLeft = 0;
+
     syllabus.forEach((subject, topics) {
       totalTopics += topics.length;
       for (final t in topics) {
-        if (provider.getTopicStatus(subject, t).isCompleted) {
+        final st = provider.getTopicStatus(subject, t);
+        if (st.isCompleted) {
           masteredTopics++;
         }
+        if (!st.conceptWatched) conceptsLeft++;
+        if (!st.pyqSolved) pyqsLeft++;
+        if (!st.revisedOnce) needsReviseLeft++;
       }
     });
 
@@ -562,9 +774,9 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
                     children: [
                       _buildFilterChip('All', 'All ($totalTopics)'),
                       _buildFilterChip('Unfinished', 'Pending (${totalTopics - masteredTopics})'),
-                      _buildFilterChip('Concept Left', 'Concepts'),
-                      _buildFilterChip('PYQ Left', 'PYQs'),
-                      _buildFilterChip('Needs Revision', 'Revise'),
+                      _buildFilterChip('Concept Left', 'Concepts Left ($conceptsLeft)'),
+                      _buildFilterChip('PYQ Left', 'PYQs Left ($pyqsLeft)'),
+                      _buildFilterChip('Needs Revision', 'Needs Revise ($needsReviseLeft)'),
                     ],
                   ),
                 ),
@@ -690,7 +902,7 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
                           children: [
                             Text(
                               'Showing ${filteredTopics.length} Topics',
-                              style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11),
+                              style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
                             ),
                             TextButton.icon(
                               style: TextButton.styleFrom(
@@ -712,7 +924,7 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
                           ],
                         ),
                       ),
-                      const Divider(height: 1, color: Colors.white10),
+                      Divider(height: 1, color: context.colorBorder),
                       ...filteredTopics.map((topic) {
                         final status = provider.getTopicStatus(subject, topic);
                         return _buildTopicChecklistItem(context, provider, subject, topic, status);
@@ -806,43 +1018,61 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  topic,
-                  style: GoogleFonts.outfit(
-                    fontSize: 13.5,
-                    fontWeight: isFullyMastered ? FontWeight.bold : FontWeight.w600,
-                    color: isFullyMastered ? AppTheme.accentMint : context.textColor,
+          InkWell(
+            onTap: () {
+              HapticFeedback.mediumImpact();
+              provider.toggleAllMilestones(subject, topic, !isFullyMastered);
+            },
+            borderRadius: BorderRadius.circular(8),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2.0),
+              child: Row(
+                children: [
+                  Icon(
+                    isFullyMastered ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+                    size: 19,
+                    color: isFullyMastered ? AppTheme.accentMint : context.textSecondaryColor.withValues(alpha: 0.6),
                   ),
-                ),
-              ),
-              if (isFullyMastered)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
-                  decoration: BoxDecoration(
-                    color: AppTheme.accentMint.withValues(alpha: 0.16),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.check_circle_rounded, size: 10.5, color: AppTheme.accentMint),
-                      const SizedBox(width: 3.5),
-                      Text(
-                        'MASTERED',
-                        style: GoogleFonts.outfit(
-                          color: AppTheme.accentMint,
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 0.5,
-                        ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      topic,
+                      style: GoogleFonts.outfit(
+                        fontSize: 13.5,
+                        fontWeight: isFullyMastered ? FontWeight.bold : FontWeight.w600,
+                        color: isFullyMastered ? AppTheme.accentMint : context.textColor,
+                        decoration: isFullyMastered ? TextDecoration.lineThrough : null,
+                        decorationColor: AppTheme.accentMint.withValues(alpha: 0.6),
                       ),
-                    ],
+                    ),
                   ),
-                ),
-            ],
+                  if (isFullyMastered)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                      decoration: BoxDecoration(
+                        color: AppTheme.accentMint.withValues(alpha: 0.16),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.check_circle_rounded, size: 10.5, color: AppTheme.accentMint),
+                          const SizedBox(width: 3.5),
+                          Text(
+                            'MASTERED',
+                            style: GoogleFonts.outfit(
+                              color: AppTheme.accentMint,
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
           const SizedBox(height: 9),
           // 3 Checkbox Action Pills
@@ -1684,7 +1914,7 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
 
   Widget _buildPhaseRow(BuildContext context, Map<String, dynamic> phase, bool isCurrent, double progress) {
     return GestureDetector(
-      onTap: () => _jumpToChecklistWithSubject(phase['displayName']),
+      onTap: () => _jumpToChecklistForPhase(phase),
       child: NeuContainer(
         margin: const EdgeInsets.symmetric(vertical: 6),
         borderRadius: 18,
@@ -1777,6 +2007,162 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
                   ),
                 ),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSwitchButton(BuildContext context, AppProvider provider, String exam) {
+    final isSelected = provider.activeExam == exam;
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        provider.setActiveExam(exam);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.accentPurple : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(
+          exam,
+          style: TextStyle(
+            color: isSelected ? Colors.white : context.textSecondaryColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 11,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showBranchSwitcherSheet(BuildContext context, AppProvider provider) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return NeuContainer(
+          borderRadius: 24,
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          color: context.colorSurfaceElevated,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: context.textSecondaryColor.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Select Exam Track',
+                    style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close_rounded, color: context.textSecondaryColor),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              _buildBranchTile(
+                context: context,
+                title: 'GATE DA (Data Science & AI)',
+                subtitle: 'Machine Learning, AI, Probability & Linear Algebra',
+                isSelected: provider.activeExam == 'DA' && provider.selectedExam != 'BOTH',
+                onTap: () {
+                  provider.setExams('DA', 'DA');
+                  Navigator.pop(ctx);
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildBranchTile(
+                context: context,
+                title: 'GATE CS/IT (Computer Science)',
+                subtitle: 'Algorithms, OS, CN, DBMS, TOC, Compiler',
+                isSelected: provider.activeExam == 'CSIT' && provider.selectedExam != 'BOTH',
+                onTap: () {
+                  provider.setExams('CSIT', 'CSIT');
+                  Navigator.pop(ctx);
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildBranchTile(
+                context: context,
+                title: 'Dual Preparation (BOTH)',
+                subtitle: 'Switch between DA & CS/IT anytime via top bar',
+                isSelected: provider.selectedExam == 'BOTH',
+                onTap: () {
+                  provider.setExams('BOTH', provider.activeExam ?? 'DA');
+                  Navigator.pop(ctx);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBranchTile({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
+      child: NeuContainer(
+        borderRadius: 14,
+        padding: const EdgeInsets.all(12),
+        color: isSelected ? AppTheme.accentPurple.withValues(alpha: 0.12) : null,
+        child: Row(
+          children: [
+            Icon(
+              isSelected ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
+              color: isSelected ? AppTheme.accentPurple : context.textSecondaryColor,
+              size: 20,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13.5,
+                      color: isSelected ? AppTheme.accentPurple : context.textColor,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: context.textSecondaryColor,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
