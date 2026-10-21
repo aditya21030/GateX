@@ -6,15 +6,10 @@ import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/neu_widgets.dart';
 import 'error_log_screen.dart';
-import 'formula_sheet_screen.dart';
 import 'pro_upgrade_screen.dart';
 import 'community_screen.dart';
 import 'score_estimator_screen.dart';
-import 'coap_screen.dart';
-import 'weightage_screen.dart';
 import 'mock_test_runner_screen.dart';
-import 'pomodoro_screen.dart';
-import '../widgets/virtual_calculator.dart';
 import '../models/models.dart';
 import '../data/minimock_data.dart';
 
@@ -797,96 +792,149 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // 6. HIGH-YIELD STUDY TOOLS (Tactile Grid with Calculator, Formulas, COAP, Estimator, Mistakes, Doubts, Focus)
+  // 6. HIGH-YIELD PRACTICE & PREDICTION TOOLS
   Widget _buildToolsGrid(BuildContext context, AppProvider provider) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
             Expanded(
-              child: _ToolTile(
-                icon: Icons.functions_rounded,
-                iconColor: AppTheme.accentCyan,
-                label: 'Formulas',
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FormulaSheetScreen())),
+              child: GestureDetector(
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const ScoreEstimatorScreen()));
+                },
+                child: NeuContainer(
+                  borderRadius: 18,
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const NeuIconTile(
+                            icon: Icons.auto_awesome,
+                            iconColor: AppTheme.accentGold,
+                            size: 36,
+                            iconSize: 18,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppTheme.accentGold.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text(
+                              'AI Predict',
+                              style: TextStyle(
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.accentGold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'AIR Predictor',
+                        style: AppTheme.poppinsBold(fontSize: 13.5, color: context.textColor),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Rank & Score Forecast',
+                        style: TextStyle(fontSize: 10.5, color: context.textSecondaryColor),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 12),
             Expanded(
-              child: _ToolTile(
-                icon: Icons.calculate_rounded,
-                iconColor: const Color(0xFF10B981),
-                label: 'Calculator',
-                onTap: () => VirtualCalculator.show(context),
+              child: GestureDetector(
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const ErrorLogScreen()));
+                },
+                child: NeuContainer(
+                  borderRadius: 18,
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const NeuIconTile(
+                            icon: Icons.error_outline_rounded,
+                            iconColor: AppTheme.accentCoral,
+                            size: 36,
+                            iconSize: 18,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppTheme.accentCoral.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              '${provider.errorLog.length} Saved',
+                              style: const TextStyle(
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.accentCoral,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Mistakes Log',
+                        style: AppTheme.poppinsBold(fontSize: 13.5, color: context.textColor),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Turn Errors into Marks',
+                        style: TextStyle(fontSize: 10.5, color: context.textSecondaryColor),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],
         ),
         const SizedBox(height: 10),
-        Row(
-          children: [
-            Expanded(
-              child: _ToolTile(
-                icon: Icons.assessment_outlined,
-                iconColor: AppTheme.accentGold,
-                label: 'Estimator',
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ScoreEstimatorScreen())),
-              ),
+        // Hub shortcut banner for non-ad utility tools
+        GestureDetector(
+          onTap: () {
+            HapticFeedback.selectionClick();
+            provider.setSelectedIndex(4); // Switch to Hub
+          },
+          child: NeuContainer(
+            borderRadius: 14,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Row(
+              children: [
+                const Icon(Icons.grid_view_rounded, size: 16, color: AppTheme.accentPurple),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Formulas, Calculator, Weightage & Timer in Hub',
+                    style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600, color: context.textColor),
+                  ),
+                ),
+                const Text(
+                  'Open Hub →',
+                  style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: AppTheme.accentPurple),
+                ),
+              ],
             ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: _ToolTile(
-                icon: Icons.account_balance_outlined,
-                iconColor: const Color(0xFF38BDF8),
-                label: 'COAP & CCMT',
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const COAPScreen())),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            Expanded(
-              child: _ToolTile(
-                icon: Icons.error_outline_rounded,
-                iconColor: AppTheme.accentCoral,
-                label: 'Mistakes',
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ErrorLogScreen())),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: _ToolTile(
-                icon: Icons.bar_chart_rounded,
-                iconColor: AppTheme.accentMint,
-                label: 'Weightage',
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeightageScreen())),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            Expanded(
-              child: _ToolTile(
-                icon: Icons.forum_rounded,
-                iconColor: AppTheme.accentPurple,
-                label: 'Doubts',
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CommunityScreen())),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: _ToolTile(
-                icon: Icons.timer_outlined,
-                iconColor: const Color(0xFFF59E0B),
-                label: 'Focus Timer',
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PomodoroScreen())),
-              ),
-            ),
-          ],
+          ),
         ),
       ],
     );
@@ -1076,69 +1124,6 @@ class _HomeScreenState extends State<HomeScreen> {
             color: isSelected ? Colors.white : context.textSecondaryColor,
             fontWeight: FontWeight.bold,
             fontSize: 11,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ToolTile extends StatefulWidget {
-  final IconData icon;
-  final Color iconColor;
-  final String label;
-  final VoidCallback onTap;
-
-  const _ToolTile({
-    required this.icon,
-    required this.iconColor,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  State<_ToolTile> createState() => _ToolTileState();
-}
-
-class _ToolTileState extends State<_ToolTile> {
-  bool _isPressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) => setState(() => _isPressed = false),
-      onTapCancel: () => setState(() => _isPressed = false),
-      onTap: () {
-        HapticFeedback.selectionClick();
-        widget.onTap();
-      },
-      child: AnimatedScale(
-        scale: _isPressed ? 0.96 : 1.0,
-        duration: const Duration(milliseconds: 120),
-        curve: Curves.easeOutCubic,
-        child: NeuContainer(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-          borderRadius: 18,
-          child: Row(
-            children: [
-              NeuIconTile(
-                icon: widget.icon,
-                iconColor: widget.iconColor,
-                size: 36,
-                iconSize: 19,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  widget.label,
-                  style: AppTheme.poppinsBold(fontSize: 13, color: context.textColor),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor.withValues(alpha: 0.5), size: 16),
-            ],
           ),
         ),
       ),

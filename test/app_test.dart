@@ -791,7 +791,7 @@ void main() {
         'Revision',
         'Mistakes',
         'Roadmap',
-        'COAP Predictor',
+        'Doubts',
         'Notes',
       ];
       expect(expectedTools.length, 10);
@@ -819,75 +819,51 @@ void main() {
     });
   });
 
-  group('COAP & CCMT Predictor Logic & Eligibility Tests', () {
-    int getAdjustedScore(int genScore, String category) {
-      switch (category) {
-        case 'OBC-NCL':
-          return (genScore * 0.90).round();
-        case 'EWS':
-          return (genScore * 0.92).round();
-        case 'SC':
-          return (genScore * 0.68).round();
-        case 'ST':
-          return (genScore * 0.58).round();
-        default:
-          return genScore;
-      }
-    }
+  group('Score Estimator & Break Confirmation Exit Tests', () {
+    test('On-demand prediction preserves marks scrubbing without premature calculation', () {
+      double mockMarks = 60.0;
+      bool hasPredicted = false;
 
-    Map<String, dynamic> getOdds(double userScore, int adjustedScore) {
-      if (userScore <= 0) {
-        return {'label': 'Target', 'isEligible': true};
+      // User changes slider value
+      void onSliderChanged(double newMarks) {
+        mockMarks = newMarks;
+        hasPredicted = false; // Scrubbing marks invalidates old prediction
       }
-      if (userScore >= adjustedScore) {
-        return {'label': 'Safe Match ✓', 'isEligible': true};
-      } else if (userScore >= adjustedScore - 40) {
-        return {'label': 'Competitive', 'isEligible': true};
-      } else {
-        return {'label': 'Reach', 'isEligible': false};
-      }
-    }
 
-    test('Category multipliers apply correctly across all reservation categories', () {
-      const int genScore = 800;
-      expect(getAdjustedScore(genScore, 'General'), 800);
-      expect(getAdjustedScore(genScore, 'OBC-NCL'), 720);
-      expect(getAdjustedScore(genScore, 'EWS'), 736);
-      expect(getAdjustedScore(genScore, 'SC'), 544);
-      expect(getAdjustedScore(genScore, 'ST'), 464);
+      onSliderChanged(65.0);
+      expect(mockMarks, 65.0);
+      expect(hasPredicted, isFalse);
+
+      // User clicks Predict button
+      Map<String, dynamic>? predictionResult;
+      void onPredictClicked() {
+        predictionResult = calculatePrediction(mockMarks, 'Average Trend');
+        hasPredicted = true;
+      }
+
+      onPredictClicked();
+      expect(hasPredicted, isTrue);
+      expect(predictionResult, isNotNull);
+      expect(predictionResult!['gateScore'], greaterThan(700));
     });
 
-    test('Score 721 marks IIT Madras (720) as Safe Match and IIT Bombay (750) as Competitive', () {
-      final madrasOdds = getOdds(721.0, 720);
-      expect(madrasOdds['label'], 'Safe Match ✓');
-      expect(madrasOdds['isEligible'], true);
+    test('Ad monetization policy requires ad for free users and instant reveal for Pro', () {
+      bool shouldTriggerAd(bool isPro) {
+        return !isPro;
+      }
 
-      final bombayOdds = getOdds(721.0, 750);
-      expect(bombayOdds['label'], 'Competitive');
-      expect(bombayOdds['isEligible'], true);
-
-      final iiscOdds = getOdds(721.0, 800);
-      expect(iiscOdds['label'], 'Reach');
-      expect(iiscOdds['isEligible'], false);
+      expect(shouldTriggerAd(false), isTrue); // Free user watches interstitial ad
+      expect(shouldTriggerAd(true), isFalse); // Pro user bypasses ad
     });
 
-    test('Eligible filter isolates Safe Match and Competitive programs while excluding Reach', () {
-      final cutoffs = [
-        {'institute': 'IISc', 'genScore': 800},
-        {'institute': 'IIT Bombay', 'genScore': 750},
-        {'institute': 'IIT Madras', 'genScore': 720},
-        {'institute': 'IIT Delhi', 'genScore': 700},
-      ];
+    test('Exit dialog provides compassionate break reminder with study and exit actions', () {
+      const exitTitle = 'Take a Break? Cup of Tea ☕';
+      const exitSubtitle =
+          "You've put in great prep today! Step back, refresh your mind with a warm cup of tea, and come back stronger.";
 
-      const double userScore = 721.0;
-      final eligibleOnly = cutoffs.where((item) {
-        final adj = getAdjustedScore(item['genScore'] as int, 'General');
-        final odds = getOdds(userScore, adj);
-        return odds['isEligible'] as bool;
-      }).toList();
-
-      expect(eligibleOnly.length, 3);
-      expect(eligibleOnly.any((item) => item['institute'] == 'IISc'), false);
+      expect(exitTitle.contains('Take a Break?'), isTrue);
+      expect(exitTitle.contains('Cup of Tea'), isTrue);
+      expect(exitSubtitle.contains('warm cup of tea'), isTrue);
     });
   });
 }

@@ -12,6 +12,7 @@ import 'services/notification_service.dart';
 import 'services/ad_service.dart';
 import 'services/storage_service.dart';
 import 'theme/app_theme.dart';
+import 'widgets/neu_widgets.dart';
 import 'screens/home_screen.dart';
 import 'screens/planner_screen.dart';
 import 'screens/pyq_screen.dart';
@@ -355,11 +356,21 @@ class MainNavigationScaffold extends StatelessWidget {
       ),
     ];
 
-    return Scaffold(
-      body: IndexedStack(
-        index: selectedIndex,
-        children: screens,
-      ),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        if (selectedIndex != 0) {
+          Provider.of<AppProvider>(context, listen: false).setSelectedIndex(0);
+          return;
+        }
+        _showExitBreakDialog(context);
+      },
+      child: Scaffold(
+        body: IndexedStack(
+          index: selectedIndex,
+          children: screens,
+        ),
       bottomNavigationBar: SafeArea(
         top: false,
         child: Container(
@@ -419,6 +430,117 @@ class MainNavigationScaffold extends StatelessWidget {
           ),
         ),
       ),
+    ),
+  );
+  }
+
+  void _showExitBreakDialog(BuildContext context) {
+    HapticFeedback.lightImpact();
+    showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          child: NeuContainer(
+            borderRadius: 24,
+            padding: const EdgeInsets.all(22),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 68,
+                  height: 68,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFFF9F43), Color(0xFFFF5252)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(22),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFFF9F43).withValues(alpha: 0.35),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: const Center(
+                    child: Text('☕', style: TextStyle(fontSize: 34)),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  'Take a Break? Cup of Tea ☕',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.outfit(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: context.textColor,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "You've put in great prep today! Step back, refresh your mind with a warm cup of tea, and come back stronger.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    height: 1.45,
+                    color: context.textSecondaryColor,
+                  ),
+                ),
+                const SizedBox(height: 22),
+                Row(
+                  children: [
+                    Expanded(
+                      child: NeuButton(
+                        isPrimary: false,
+                        borderRadius: 14,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        onPressed: () {
+                          HapticFeedback.selectionClick();
+                          Navigator.of(ctx).pop();
+                        },
+                        child: Text(
+                          'Keep Studying',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: context.textColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: NeuButton(
+                        isPrimary: true,
+                        borderRadius: 14,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        onPressed: () {
+                          HapticFeedback.mediumImpact();
+                          Navigator.of(ctx).pop();
+                          SystemNavigator.pop();
+                        },
+                        child: const Text(
+                          'Take a Break',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

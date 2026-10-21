@@ -14,7 +14,7 @@ import 'pomodoro_screen.dart';
 import 'score_estimator_screen.dart';
 import 'revision_screen.dart';
 import 'weightage_screen.dart';
-import 'coap_screen.dart';
+
 import 'profile_screen.dart';
 import 'ranking_screen.dart';
 import 'resources_screen.dart';
@@ -520,10 +520,10 @@ class MoreScreen extends StatelessWidget {
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RoadmapScreen())),
       },
       {
-        'icon': Icons.account_balance_outlined,
+        'icon': Icons.forum_rounded,
         'color': Colors.blueAccent,
-        'title': 'COAP Predictor',
-        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const COAPScreen())),
+        'title': 'Doubts',
+        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CommunityScreen())),
       },
       {
         'icon': Icons.library_books_rounded,

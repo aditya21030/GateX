@@ -4,7 +4,8 @@ import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/neu_widgets.dart';
-import 'coap_screen.dart';
+import '../services/ad_service.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class EstimationNode {
   final double marks;
@@ -29,6 +30,9 @@ class ScoreEstimatorScreen extends StatefulWidget {
 
 class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
   String _targetYearTrend = 'Average Trend';
+  bool _isPredicting = false;
+  bool _hasPredicted = false;
+  Map<String, dynamic>? _prediction;
 
   static const List<EstimationNode> _nodes2026 = [
     EstimationNode(marks: 100.0, gateScore: 1000.0, minRank: 1, maxRank: 1),
@@ -443,6 +447,42 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
     }
   }
 
+  void _runPrediction() {
+    HapticFeedback.selectionClick();
+    final provider = Provider.of<AppProvider>(context, listen: false);
+    final score = provider.estimatorMockScore;
+    final source = provider.estimatorMockSource;
+
+    setState(() => _isPredicting = true);
+
+    void computeAndShow() {
+      final res = _calculatePrediction(score, source, _targetYearTrend);
+      final estScore = (res['gateScore'] as num).toDouble();
+      provider.setEstimatedGateScore(estScore);
+
+      if (mounted) {
+        setState(() {
+          _prediction = res;
+          _hasPredicted = true;
+          _isPredicting = false;
+        });
+        HapticFeedback.heavyImpact();
+      }
+    }
+
+    if (!provider.isPro) {
+      AdService().showInterstitialAd(
+        onDismissed: () {
+          computeAndShow();
+        },
+      );
+    } else {
+      Future.delayed(const Duration(milliseconds: 300), () {
+        computeAndShow();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AppProvider>(context);
@@ -469,7 +509,7 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
     final sourceDisplay = sourcesMap[source] ?? source;
     final trendDisplay = trendsMap[_targetYearTrend] ?? _targetYearTrend;
 
-    final prediction = _calculatePrediction(score, source, _targetYearTrend);
+
 
     return Scaffold(
       backgroundColor: context.scaffoldBackground,
@@ -555,144 +595,224 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                           label: score.toStringAsFixed(0),
                           onChanged: (val) {
                             provider.setScoreEstimatorScore(val);
+                            if (_hasPredicted) {
+                              setState(() => _hasPredicted = false);
+                            }
                           },
+                        ),
+                        const SizedBox(height: 14),
+                        // 1-Tap Predict Action Button (Triggers Interstitial Ad for Free users)
+                        NeuButton(
+                          isPrimary: true,
+                          borderRadius: 14,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          onPressed: _isPredicting ? null : _runPrediction,
+                          child: _isPredicting
+                              ? const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      'Analyzing Score Curve & Trends...',
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5, color: Colors.white),
+                                    ),
+                                  ],
+                                )
+                              : const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.auto_awesome, size: 18, color: Colors.white),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Predict AIR & GATE Score',
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
+                                    ),
+                                  ],
+                                ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 20),
 
-                  // 2. OUTPUT CARD
-                  NeuContainer(
-                    borderRadius: 20,
-                    padding: const EdgeInsets.all(18.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(Icons.auto_awesome, color: prediction['color'], size: 18),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'IIT CHANCE: ${prediction['iitChance'].toUpperCase()}',
-                                  style: TextStyle(
-                                    color: prediction['color'],
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12.5,
-                                    letterSpacing: 1.0,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Estimated Score',
-                                    style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    "${prediction['gateScore']} / 1000",
-                                    style: AppTheme.timerStyle(fontSize: 22, color: context.textColor),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(width: 1, height: 40, color: context.isDarkMode ? Colors.white12 : Colors.black12),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Predicted Rank (AIR)',
-                                    style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    prediction['predictedAir'],
-                                    style: AppTheme.timerStyle(fontSize: 22, color: prediction['color']),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
-                        Divider(height: 1, color: context.isDarkMode ? Colors.white12 : Colors.black12),
-                        const SizedBox(height: 12),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'GATE Equivalent Marks:',
-                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: context.textSecondaryColor),
-                            ),
-                            Text(
-                              "${prediction['scaledMarks'].toStringAsFixed(1)} / 100",
-                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: prediction['color']),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          "Difficulty scaling: ${prediction['multiplier']}x ($sourceDisplay)",
-                          style: TextStyle(fontSize: 10, color: context.textSecondaryColor, fontStyle: FontStyle.italic),
-                        ),
-                        const SizedBox(height: 12),
-                        NeuContainer(
-                          isRecessed: true,
-                          borderRadius: 12,
-                          padding: const EdgeInsets.all(12),
-                          child: Text(
-                            prediction['message'],
-                            style: TextStyle(fontSize: 12.5, height: 1.45, color: context.textColor),
-                          ),
-                        ),
-                        const SizedBox(height: 14),
-                        NeuButton(
-                          isPrimary: true,
-                          borderRadius: 14,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          onPressed: () {
-                            HapticFeedback.selectionClick();
-                            final estScore = (prediction['gateScore'] as num).toDouble();
-                            provider.setEstimatedGateScore(estScore);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => COAPScreen(
-                                  initialGateScore: estScore,
-                                  showEligibleOnly: true,
-                                ),
-                              ),
-                            );
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                  // 2. OUTPUT CARD (Revealed only after clicking Predict button)
+                  if (_hasPredicted && _prediction != null) ...[
+                    NeuContainer(
+                      borderRadius: 20,
+                      padding: const EdgeInsets.all(18.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Icon(Icons.account_balance_rounded, size: 18, color: Colors.white),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Check Eligible IITs/IISc for ${prediction['gateScore']} Score →',
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
+                              Row(
+                                children: [
+                                  Icon(Icons.auto_awesome, color: _prediction!['color'], size: 18),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'IIT CHANCE: ${_prediction!['iitChance'].toUpperCase()}',
+                                    style: TextStyle(
+                                      color: _prediction!['color'],
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12.5,
+                                      letterSpacing: 1.0,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: (_prediction!['color'] as Color).withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: (_prediction!['color'] as Color).withValues(alpha: 0.3)),
+                                ),
+                                child: Text(
+                                  _prediction!['isQualified'] ? 'QUALIFIED' : 'NOT QUALIFIED',
+                                  style: TextStyle(
+                                    color: _prediction!['color'],
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Estimated Score',
+                                      style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      "${_prediction!['gateScore']} / 1000",
+                                      style: AppTheme.timerStyle(fontSize: 22, color: context.textColor),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(width: 1, height: 40, color: context.isDarkMode ? Colors.white12 : Colors.black12),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Predicted Rank (AIR)',
+                                      style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      _prediction!['predictedAir'],
+                                      style: AppTheme.timerStyle(fontSize: 22, color: _prediction!['color']),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 14),
+                          Divider(height: 1, color: context.isDarkMode ? Colors.white12 : Colors.black12),
+                          const SizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'GATE Equivalent Marks:',
+                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: context.textSecondaryColor),
+                              ),
+                              Text(
+                                "${_prediction!['scaledMarks'].toStringAsFixed(1)} / 100",
+                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: _prediction!['color']),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "Difficulty scaling: ${_prediction!['multiplier']}x ($sourceDisplay)",
+                            style: TextStyle(fontSize: 10, color: context.textSecondaryColor, fontStyle: FontStyle.italic),
+                          ),
+                          const SizedBox(height: 12),
+                          NeuContainer(
+                            isRecessed: true,
+                            borderRadius: 12,
+                            padding: const EdgeInsets.all(12),
+                            child: Text(
+                              _prediction!['message'],
+                              style: TextStyle(fontSize: 12.5, height: 1.45, color: context.textColor),
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          NeuButton(
+                            isPrimary: false,
+                            borderRadius: 14,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            onPressed: () {
+                              HapticFeedback.selectionClick();
+                              setState(() {
+                                _hasPredicted = false;
+                              });
+                            },
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.refresh_rounded, size: 16),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Adjust Marks & Recalculate',
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                  ] else ...[
+                    NeuContainer(
+                      borderRadius: 18,
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          const NeuIconTile(
+                            icon: Icons.lightbulb_outline_rounded,
+                            iconColor: AppTheme.accentGold,
+                            size: 44,
+                            iconSize: 22,
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Ready to Predict Your Rank',
+                                  style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold, color: context.textColor),
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  'Set your mock marks above and tap "Predict AIR & GATE Score" to calculate your rank with coaching difficulty weights.',
+                                  style: TextStyle(fontSize: 11.5, color: context.textSecondaryColor, height: 1.35),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 20),
 
                   // 3. REFERENCE TABLE

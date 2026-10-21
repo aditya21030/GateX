@@ -95,10 +95,14 @@ class AdService {
     }
   }
 
-  void showInterstitialAd() {
-    if (_isAdSuspended) return;
+  void showInterstitialAd({VoidCallback? onDismissed}) {
+    if (_isAdSuspended) {
+      onDismissed?.call();
+      return;
+    }
     if (_interstitialAd == null) {
       loadInterstitialAd();
+      onDismissed?.call();
       return;
     }
 
@@ -112,12 +116,14 @@ class AdService {
         ad.dispose();
         _interstitialAd = null;
         loadInterstitialAd();
+        onDismissed?.call();
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
         _isShowingAd = false;
         ad.dispose();
         _interstitialAd = null;
         loadInterstitialAd();
+        onDismissed?.call();
       },
     );
     _interstitialAd!.show();
