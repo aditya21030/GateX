@@ -21,6 +21,8 @@ import 'resources_screen.dart';
 import 'formula_sheet_screen.dart';
 import 'pro_upgrade_screen.dart';
 import 'community_screen.dart';
+import 'roadmap_screen.dart';
+import '../widgets/virtual_calculator.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -42,6 +44,60 @@ class MoreScreen extends StatelessWidget {
         ),
         elevation: 0,
         backgroundColor: context.scaffoldBackground,
+        actions: [
+          if (provider.selectedExam == 'BOTH')
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 11, horizontal: 12),
+              height: 30,
+              decoration: BoxDecoration(
+                color: context.colorSurfaceElevated,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: context.isDarkMode
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.black.withValues(alpha: 0.06),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildBranchSwitchButton(context, provider, 'DA'),
+                  _buildBranchSwitchButton(context, provider, 'CSIT'),
+                ],
+              ),
+            )
+          else
+            GestureDetector(
+              onTap: () {
+                HapticFeedback.selectionClick();
+                _showBranchSwitcherSheet(context, provider);
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppTheme.accentPurple.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      provider.activeExam ?? 'DA',
+                      style: const TextStyle(
+                        color: AppTheme.accentPurple,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                      ),
+                    ),
+                    const SizedBox(width: 3),
+                    const Icon(Icons.arrow_drop_down_rounded, size: 14, color: AppTheme.accentPurple),
+                  ],
+                ),
+              ),
+            ),
+        ],
       ),
       body: Center(
         child: ConstrainedBox(
@@ -303,6 +359,28 @@ class MoreScreen extends StatelessWidget {
                           ],
                         ),
                       ),
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppTheme.accentPurple.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: AppTheme.accentPurple.withValues(alpha: 0.3),
+                            width: 0.8,
+                          ),
+                        ),
+                        child: Text(
+                          provider.selectedExam == 'BOTH'
+                              ? 'DUAL'
+                              : (provider.activeExam == 'CSIT' ? 'CS/IT' : 'GATE DA'),
+                          style: GoogleFonts.outfit(
+                            color: AppTheme.accentPurple,
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 3),
@@ -390,17 +468,69 @@ class MoreScreen extends StatelessWidget {
     );
   }
 
-  // 2-Column Neumorphic Tools Grid
+  // 2-Column Neumorphic Tools Grid (10 Total Comprehensive Tools)
   Widget _buildToolsGrid(BuildContext context) {
     final tools = [
-      {'icon': Icons.functions_rounded, 'color': AppTheme.accentCyan, 'title': 'Formulas', 'screen': const FormulaSheetScreen()},
-      {'icon': Icons.calculate_outlined, 'color': AppTheme.accentGold, 'title': 'Estimator', 'screen': const ScoreEstimatorScreen()},
-      {'icon': Icons.bar_chart_rounded, 'color': AppTheme.accentMint, 'title': 'Weightage', 'screen': const WeightageScreen()},
-      {'icon': Icons.timer_outlined, 'color': AppTheme.accentFlame, 'title': 'Pomodoro', 'screen': const PomodoroScreen()},
-      {'icon': Icons.repeat_rounded, 'color': AppTheme.accentPurple, 'title': 'Revision', 'screen': const RevisionScreen()},
-      {'icon': Icons.error_outline_rounded, 'color': AppTheme.accentCoral, 'title': 'Mistakes', 'screen': const ErrorLogScreen()},
-      {'icon': Icons.account_balance_outlined, 'color': Colors.blueAccent, 'title': 'COAP Predictor', 'screen': const COAPScreen()},
-      {'icon': Icons.library_books_rounded, 'color': Colors.deepPurpleAccent, 'title': 'Notes', 'screen': const ResourcesScreen()},
+      {
+        'icon': Icons.functions_rounded,
+        'color': AppTheme.accentCyan,
+        'title': 'Formulas',
+        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FormulaSheetScreen())),
+      },
+      {
+        'icon': Icons.calculate_rounded,
+        'color': const Color(0xFF10B981),
+        'title': 'Calculator',
+        'onTap': () => VirtualCalculator.show(context),
+      },
+      {
+        'icon': Icons.speed_rounded,
+        'color': AppTheme.accentGold,
+        'title': 'Estimator',
+        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ScoreEstimatorScreen())),
+      },
+      {
+        'icon': Icons.bar_chart_rounded,
+        'color': AppTheme.accentMint,
+        'title': 'Weightage',
+        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeightageScreen())),
+      },
+      {
+        'icon': Icons.timer_outlined,
+        'color': AppTheme.accentFlame,
+        'title': 'Pomodoro',
+        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PomodoroScreen())),
+      },
+      {
+        'icon': Icons.repeat_rounded,
+        'color': AppTheme.accentPurple,
+        'title': 'Revision',
+        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RevisionScreen())),
+      },
+      {
+        'icon': Icons.error_outline_rounded,
+        'color': AppTheme.accentCoral,
+        'title': 'Mistakes',
+        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ErrorLogScreen())),
+      },
+      {
+        'icon': Icons.alt_route_rounded,
+        'color': const Color(0xFF06B6D4),
+        'title': 'Roadmap',
+        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RoadmapScreen())),
+      },
+      {
+        'icon': Icons.account_balance_outlined,
+        'color': Colors.blueAccent,
+        'title': 'COAP Predictor',
+        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const COAPScreen())),
+      },
+      {
+        'icon': Icons.library_books_rounded,
+        'color': Colors.deepPurpleAccent,
+        'title': 'Notes',
+        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ResourcesScreen())),
+      },
     ];
 
     return GridView.builder(
@@ -420,7 +550,7 @@ class MoreScreen extends StatelessWidget {
           icon: tool['icon'] as IconData,
           iconColor: tool['color'] as Color,
           title: tool['title'] as String,
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => tool['screen'] as Widget)),
+          onTap: tool['onTap'] as VoidCallback,
         );
       },
     );
@@ -461,9 +591,13 @@ class MoreScreen extends StatelessWidget {
   }
 
   Future<void> _selectNotificationTime(BuildContext context, AppProvider provider) async {
-    final parts = provider.notificationTime.split(':');
-    final currentHour = int.parse(parts[0]);
-    final currentMinute = int.parse(parts[1]);
+    int currentHour = 9;
+    int currentMinute = 0;
+    if (provider.notificationTime.contains(':')) {
+      final parts = provider.notificationTime.split(':');
+      currentHour = int.tryParse(parts[0]) ?? 9;
+      currentMinute = int.tryParse(parts[1]) ?? 0;
+    }
 
     final TimeOfDay? picked = await showTimePicker(
       context: context,
@@ -504,9 +638,15 @@ class MoreScreen extends StatelessWidget {
         backgroundColor: context.colorSurface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         title: const Text('Reset Study Data?', style: TextStyle(color: AppTheme.accentCoral, fontWeight: FontWeight.bold)),
-        content: const Text('Wipes all local checklist marks and mock scores.'),
+        content: Text(
+          'Wipes all local checklist marks and mock scores.',
+          style: TextStyle(color: context.textSecondaryColor, fontSize: 13),
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Cancel', style: TextStyle(color: context.textSecondaryColor)),
+          ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppTheme.accentCoral),
             onPressed: () {
@@ -518,6 +658,161 @@ class MoreScreen extends StatelessWidget {
             child: const Text('Wipe', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildBranchSwitchButton(BuildContext context, AppProvider provider, String exam) {
+    final bool isSelected = provider.activeExam == exam;
+    final String label = exam == 'CSIT' ? 'CS/IT' : exam;
+
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        provider.setExams(provider.selectedExam ?? 'BOTH', exam);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.accentPurple : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+            color: isSelected ? Colors.white : context.textSecondaryColor,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showBranchSwitcherSheet(BuildContext context, AppProvider provider) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: context.colorSurface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: context.textSecondaryColor.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Select Active Exam Stream',
+                style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: context.textColor),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Switch the syllabus and test question banks between DA and CS/IT.',
+                style: TextStyle(color: context.textSecondaryColor, fontSize: 13),
+              ),
+              const SizedBox(height: 18),
+              _buildBranchTile(
+                context: context,
+                title: 'GATE DA (Data Science & AI)',
+                subtitle: 'Machine Learning, AI, Probability & Linear Algebra',
+                isSelected: provider.activeExam == 'DA' && provider.selectedExam != 'BOTH',
+                onTap: () {
+                  provider.setExams('DA', 'DA');
+                  Navigator.pop(ctx);
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildBranchTile(
+                context: context,
+                title: 'GATE CS/IT (Computer Science)',
+                subtitle: 'Algorithms, OS, CN, DBMS, TOC, Compiler',
+                isSelected: provider.activeExam == 'CSIT' && provider.selectedExam != 'BOTH',
+                onTap: () {
+                  provider.setExams('CSIT', 'CSIT');
+                  Navigator.pop(ctx);
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildBranchTile(
+                context: context,
+                title: 'Dual Preparation (BOTH)',
+                subtitle: 'Switch between DA & CS/IT anytime via top bar',
+                isSelected: provider.selectedExam == 'BOTH',
+                onTap: () {
+                  provider.setExams('BOTH', provider.activeExam ?? 'DA');
+                  Navigator.pop(ctx);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBranchTile({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.accentPurple.withValues(alpha: 0.12) : context.colorSurfaceElevated,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? AppTheme.accentPurple : (context.isDarkMode ? Colors.white10 : Colors.black12),
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: isSelected ? AppTheme.accentPurple : context.textColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    subtitle,
+                    style: TextStyle(color: context.textSecondaryColor, fontSize: 11.5),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              const Icon(Icons.check_circle_rounded, color: AppTheme.accentPurple, size: 20),
+          ],
+        ),
       ),
     );
   }

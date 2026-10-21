@@ -50,6 +50,34 @@ class _FormulaSheetScreenState extends State<FormulaSheetScreen> {
     );
   }
 
+  Widget _buildBranchSwitchButton(BuildContext context, AppProvider provider, String exam) {
+    final bool isSelected = provider.activeExam == exam;
+    final String label = exam == 'CSIT' ? 'CS/IT' : exam;
+
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        provider.setExams(provider.selectedExam ?? 'BOTH', exam);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.accentPurple : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+            color: isSelected ? Colors.white : context.textSecondaryColor,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AppProvider>(context);
@@ -83,6 +111,7 @@ class _FormulaSheetScreenState extends State<FormulaSheetScreen> {
     final tabs = isCSIT ? csitTabs : daTabs;
 
     return DefaultTabController(
+      key: ValueKey(isCSIT),
       length: tabs.length,
       child: Scaffold(
         backgroundColor: context.colorBackground,
@@ -98,6 +127,27 @@ class _FormulaSheetScreenState extends State<FormulaSheetScreen> {
             style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: context.textColor),
           ),
           actions: [
+            if (provider.selectedExam == 'BOTH')
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 11, horizontal: 6),
+                height: 30,
+                decoration: BoxDecoration(
+                  color: context.colorSurfaceElevated,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: context.isDarkMode
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.black.withValues(alpha: 0.06),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildBranchSwitchButton(context, provider, 'DA'),
+                    _buildBranchSwitchButton(context, provider, 'CSIT'),
+                  ],
+                ),
+              ),
             IconButton(
               icon: const Icon(Icons.share_rounded, size: 20, color: AppTheme.accentPurple),
               tooltip: 'Share Formulas',

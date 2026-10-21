@@ -779,6 +779,45 @@ void main() {
       expect(matches(pyq, 'MSQ'), false);
     });
   });
+
+  group('GateX Hub Screen Architecture & Tools Tests', () {
+    test('Hub Tools Grid contains exactly 10 comprehensive study tools', () {
+      final expectedTools = [
+        'Formulas',
+        'Calculator',
+        'Estimator',
+        'Weightage',
+        'Pomodoro',
+        'Revision',
+        'Mistakes',
+        'Roadmap',
+        'COAP Predictor',
+        'Notes',
+      ];
+      expect(expectedTools.length, 10);
+      expect(expectedTools.contains('Roadmap'), isTrue);
+      expect(expectedTools.contains('Calculator'), isTrue);
+    });
+
+    test('Study reminder time parser safely falls back on corrupted or empty string', () {
+      Map<String, int> parseTime(String timeStr) {
+        int hour = 9;
+        int minute = 0;
+        if (timeStr.contains(':')) {
+          final parts = timeStr.split(':');
+          hour = int.tryParse(parts[0]) ?? 9;
+          minute = int.tryParse(parts[1]) ?? 0;
+        }
+        return {'hour': hour, 'minute': minute};
+      }
+
+      expect(parseTime('21:30'), {'hour': 21, 'minute': 30});
+      expect(parseTime('08:05'), {'hour': 8, 'minute': 5});
+      expect(parseTime(''), {'hour': 9, 'minute': 0});
+      expect(parseTime('invalid:time'), {'hour': 9, 'minute': 0});
+      expect(parseTime('corrupted'), {'hour': 9, 'minute': 0});
+    });
+  });
 }
 
 

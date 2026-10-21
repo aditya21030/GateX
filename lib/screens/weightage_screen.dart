@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
@@ -196,6 +197,35 @@ class WeightageScreen extends StatelessWidget {
         title: Text('Subject Weightage', style: AppTheme.poppinsBold(fontSize: 18, color: context.textColor)),
         backgroundColor: context.scaffoldBackground,
         elevation: 0,
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
+        actions: [
+          if (provider.selectedExam == 'BOTH')
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 11, horizontal: 12),
+              height: 30,
+              decoration: BoxDecoration(
+                color: context.colorSurfaceElevated,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: context.isDarkMode
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.black.withValues(alpha: 0.06),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildBranchSwitchButton(context, provider, 'DA'),
+                  _buildBranchSwitchButton(context, provider, 'CSIT'),
+                ],
+              ),
+            ),
+        ],
       ),
       body: Center(
         child: ConstrainedBox(
@@ -452,6 +482,34 @@ class WeightageScreen extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildBranchSwitchButton(BuildContext context, AppProvider provider, String exam) {
+    final bool isSelected = provider.activeExam == exam;
+    final String label = exam == 'CSIT' ? 'CS/IT' : exam;
+
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        provider.setExams(provider.selectedExam ?? 'BOTH', exam);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.accentPurple : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+            color: isSelected ? Colors.white : context.textSecondaryColor,
+          ),
+        ),
       ),
     );
   }
