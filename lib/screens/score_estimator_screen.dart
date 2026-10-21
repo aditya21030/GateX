@@ -260,7 +260,7 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppTheme.background,
+      backgroundColor: context.scaffoldBackground,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -280,16 +280,16 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                   children: [
                     Text(
                       'Select Mock Test Source',
-                      style: AppTheme.poppinsBold(fontSize: 16),
+                      style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close_rounded, color: AppTheme.textSecondary),
+                      icon: Icon(Icons.close_rounded, color: context.textSecondaryColor),
                       onPressed: () => Navigator.pop(context),
                     ),
                   ],
                 ),
               ),
-              const Divider(color: AppTheme.surface, height: 1),
+              Divider(color: context.isDarkMode ? Colors.white12 : Colors.black12, height: 1),
               Expanded(
                 child: ListView(
                   physics: const BouncingScrollPhysics(),
@@ -305,17 +305,17 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                       title: Text(
                         entry.value,
                         style: TextStyle(
-                          color: isSelected ? AppTheme.primary : AppTheme.textPrimary,
+                          color: isSelected ? AppTheme.accentPurple : context.textColor,
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           fontSize: 14,
                         ),
                       ),
                       subtitle: Text(
                         "Difficulty: $difficultyText",
-                        style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary),
+                        style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
                       ),
                       trailing: isSelected
-                          ? const Icon(Icons.check_circle_rounded, color: AppTheme.primary, size: 20)
+                          ? const Icon(Icons.check_circle_rounded, color: AppTheme.accentPurple, size: 20)
                           : null,
                       onTap: () {
                         provider.setScoreEstimatorSource(entry.key);
@@ -342,7 +342,7 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppTheme.background,
+      backgroundColor: context.scaffoldBackground,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -362,16 +362,16 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                   children: [
                     Text(
                       'Select Target Year Trend',
-                      style: AppTheme.poppinsBold(fontSize: 16),
+                      style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close_rounded, color: AppTheme.textSecondary),
+                      icon: Icon(Icons.close_rounded, color: context.textSecondaryColor),
                       onPressed: () => Navigator.pop(context),
                     ),
                   ],
                 ),
               ),
-              const Divider(color: AppTheme.surface, height: 1),
+              Divider(color: context.isDarkMode ? Colors.white12 : Colors.black12, height: 1),
               Expanded(
                 child: ListView(
                   physics: const BouncingScrollPhysics(),
@@ -382,13 +382,13 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                       title: Text(
                         entry.value,
                         style: TextStyle(
-                          color: isSelected ? AppTheme.primary : AppTheme.textPrimary,
+                          color: isSelected ? AppTheme.accentPurple : context.textColor,
                           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           fontSize: 14,
                         ),
                       ),
                       trailing: isSelected
-                          ? const Icon(Icons.check_circle_rounded, color: AppTheme.primary, size: 20)
+                          ? const Icon(Icons.check_circle_rounded, color: AppTheme.accentPurple, size: 20)
                           : null,
                       onTap: () {
                         setState(() {
@@ -666,9 +666,10 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           onPressed: () {
                             HapticFeedback.selectionClick();
+                            final estScore = (prediction['gateScore'] as num).toDouble();
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => const COAPScreen()),
+                              MaterialPageRoute(builder: (_) => COAPScreen(initialGateScore: estScore)),
                             );
                           },
                           child: const Row(
@@ -714,35 +715,35 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
       child: Column(
         children: [
             // Header
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               child: Row(
                 children: [
                   Expanded(
                     flex: 3,
                     child: Text(
                       'Marks Range',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppTheme.textSecondary),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: context.textSecondaryColor),
                     ),
                   ),
                   Expanded(
                     flex: 3,
                     child: Text(
                       'Predicted AIR',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppTheme.textSecondary),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: context.textSecondaryColor),
                     ),
                   ),
                   Expanded(
                     flex: 3,
                     child: Text(
                       'Chance at IIT',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: AppTheme.textSecondary),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: context.textSecondaryColor),
                     ),
                   ),
                 ],
               ),
             ),
-            const Divider(color: AppTheme.textSecondary, height: 1),
+            Divider(color: context.isDarkMode ? Colors.white12 : Colors.black12, height: 1),
             // Rows
             ListView.builder(
               shrinkWrap: true,
@@ -758,7 +759,7 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                         flex: 3,
                         child: Text(
                           row.score,
-                          style: AppTheme.timerStyle(fontSize: 14),
+                          style: AppTheme.timerStyle(fontSize: 14, color: context.textColor),
                         ),
                       ),
                       Expanded(

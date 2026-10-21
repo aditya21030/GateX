@@ -7,7 +7,8 @@ import '../theme/app_theme.dart';
 import '../widgets/neu_widgets.dart';
 
 class COAPScreen extends StatefulWidget {
-  const COAPScreen({super.key});
+  final double? initialGateScore;
+  const COAPScreen({super.key, this.initialGateScore});
 
   @override
   State<COAPScreen> createState() => _COAPScreenState();
@@ -15,10 +16,12 @@ class COAPScreen extends StatefulWidget {
 
 class _COAPScreenState extends State<COAPScreen> {
   String _selectedCategory = 'General';
+  String _processFilter = 'All'; // 'All', 'Direct Offers', 'Interview / Test'
   String _searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
 
   final List<String> _categories = ['General', 'OBC-NCL', 'EWS', 'SC', 'ST'];
+  final List<String> _processes = ['All Processes', 'Direct Offers Only', 'Interview / Test'];
 
   final List<Map<String, dynamic>> _daCutoffs = [
     {
@@ -230,22 +233,34 @@ class _COAPScreenState extends State<COAPScreen> {
     final isCSIT = provider.activeExam == 'CSIT';
     final rawList = isCSIT ? _csitCutoffs : _daCutoffs;
 
-    // Filter by search query
+    // Filter by search query & admission process (Direct Offer vs Interview)
     final query = _searchQuery.trim().toLowerCase();
     final currentCutoffs = rawList.where((item) {
-      if (query.isEmpty) return true;
-      final inst = (item['institute'] as String).toLowerCase();
-      final prog = (item['program'] as String).toLowerCase();
-      return inst.contains(query) || prog.contains(query);
+      if (query.isNotEmpty) {
+        final inst = (item['institute'] as String).toLowerCase();
+        final prog = (item['program'] as String).toLowerCase();
+        if (!inst.contains(query) && !prog.contains(query)) return false;
+      }
+      if (_processFilter == 'Direct Offers Only') {
+        final proc = (item['process'] as String).toLowerCase();
+        if (!proc.contains('direct')) return false;
+      } else if (_processFilter == 'Interview / Test') {
+        final proc = (item['process'] as String).toLowerCase();
+        if (!proc.contains('interview') && !proc.contains('test') && !proc.contains('written')) return false;
+      }
+      return true;
     }).toList();
 
-    // Student latest mock score estimate for odds calculation
-    double userMockScore = 0.0;
-    if (provider.mockLogs.isNotEmpty) {
-      userMockScore = provider.mockLogs.map((m) => m.score).reduce((a, b) => a > b ? a : b);
+    // Student gate score estimate (from Estimator route, mock tests, or calibrated profile)
+    double userScore = widget.initialGateScore ?? 0.0;
+    if (userScore <= 0.0 && provider.mockLogs.isNotEmpty) {
+      final userMockScore = provider.mockLogs.map((m) => m.score).reduce((a, b) => a > b ? a : b);
+      userScore = (userMockScore * 10.0).clamp(200.0, 1000.0);
     }
-    // Convert 100-scale mock percentage to approximate 1000 GATE score
-    final double userEstimatedGateScore = userMockScore > 0 ? (userMockScore * 10.0).clamp(200.0, 1000.0) : 0.0;
+    if (userScore <= 0.0 && provider.estimatorMockScore > 0.0) {
+      userScore = (provider.estimatorMockScore * 10.0).clamp(200.0, 1000.0);
+    }
+    final double userEstimatedGateScore = userScore;
 
     return Scaffold(
       backgroundColor: context.scaffoldBackground,
@@ -270,6 +285,10 @@ class _COAPScreenState extends State<COAPScreen> {
 
               // 2. Category Filter Pills
               _buildCategorySelector(),
+              const SizedBox(height: 10),
+
+              // 2b. Direct Offer vs Interview Process Filter Pills
+              _buildProcessSelector(),
               const SizedBox(height: 14),
 
               // 3. Search Bar
@@ -361,6 +380,65 @@ class _COAPScreenState extends State<COAPScreen> {
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                     color: isSelected ? Colors.white : context.textColor,
                   ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildProcessSelector() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      child: Row(
+        children: _processes.map((proc) {
+          final isSelected = _processFilter == proc;
+          return Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: GestureDetector(
+              onTap: () {
+                HapticFeedback.selectionClick();
+                setState(() => _processFilter = proc);
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? const Color(0xFF06B6D4)
+                      : (context.isDarkMode ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.04)),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isSelected
+                        ? const Color(0xFF06B6D4)
+                        : (context.isDarkMode ? Colors.white10 : Colors.black12),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (proc.contains('Direct'))
+                      Padding(
+                        padding: const EdgeInsets.only(right: 4.0),
+                        child: Icon(Icons.bolt_rounded, size: 13, color: isSelected ? Colors.white : const Color(0xFF06B6D4)),
+                      )
+                    else if (proc.contains('Interview'))
+                      Padding(
+                        padding: const EdgeInsets.only(right: 4.0),
+                        child: Icon(Icons.psychology_rounded, size: 13, color: isSelected ? Colors.white : Colors.amber),
+                      ),
+                    Text(
+                      proc,
+                      style: GoogleFonts.outfit(
+                        fontSize: 11,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                        color: isSelected ? Colors.white : context.textSecondaryColor,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

@@ -21,12 +21,12 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
   String _selectedTagFilter = 'All';
 
   static const List<Map<String, String>> taxonomyTags = [
-    {'name': 'All', 'label': 'All Mistakes', 'icon': ''},
-    {'name': 'Conceptual Gap', 'label': 'Conceptual Gap', 'icon': ''},
-    {'name': 'Calculation Error', 'label': 'Calculation Error', 'icon': ''},
-    {'name': 'Silly Mistake', 'label': 'Silly Mistake', 'icon': ''},
-    {'name': 'Formula Slip', 'label': 'Formula Recall', 'icon': ''},
-    {'name': 'Time Pressure', 'label': 'Time Pressure', 'icon': ''},
+    {'name': 'All', 'label': 'All Mistakes', 'icon': '🎯'},
+    {'name': 'Conceptual Gap', 'label': 'Conceptual', 'icon': '💡'},
+    {'name': 'Calculation Error', 'label': 'Calculation', 'icon': '🔢'},
+    {'name': 'Silly Mistake', 'label': 'Silly Slip', 'icon': '⚠️'},
+    {'name': 'Formula Slip', 'label': 'Formula', 'icon': '📐'},
+    {'name': 'Time Pressure', 'label': 'Time Crunch', 'icon': '⏱️'},
   ];
 
   Color _getTagColor(String tag) {
@@ -208,12 +208,16 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(icon, style: const TextStyle(fontSize: 12)),
-                          const SizedBox(width: 5),
+                          if (icon.isNotEmpty) ...[
+                            Text(icon, style: const TextStyle(fontSize: 12)),
+                            const SizedBox(width: 5),
+                          ],
                           Text(
                             label,
                             style: TextStyle(
-                              color: isSelected ? Colors.white : context.textSecondaryColor,
+                              color: isSelected
+                                  ? (context.isDarkMode ? Colors.white : tagColor)
+                                  : context.textSecondaryColor,
                               fontSize: 11,
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                             ),

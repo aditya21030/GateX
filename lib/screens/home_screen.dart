@@ -13,6 +13,8 @@ import 'score_estimator_screen.dart';
 import 'coap_screen.dart';
 import 'weightage_screen.dart';
 import 'mock_test_runner_screen.dart';
+import 'pomodoro_screen.dart';
+import '../widgets/virtual_calculator.dart';
 import '../models/models.dart';
 import '../data/minimock_data.dart';
 
@@ -126,19 +128,33 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               )
             else
-              Container(
-                margin: const EdgeInsets.only(left: 10),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: AppTheme.accentPurple.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  provider.activeExam ?? 'DA',
-                  style: const TextStyle(
-                    color: AppTheme.accentPurple,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 11,
+              GestureDetector(
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  _showBranchSwitcherSheet(context, provider);
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(left: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: AppTheme.accentPurple.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        provider.activeExam ?? 'DA',
+                        style: const TextStyle(
+                          color: AppTheme.accentPurple,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
+                      const SizedBox(width: 3),
+                      const Icon(Icons.arrow_drop_down_rounded, size: 14, color: AppTheme.accentPurple),
+                    ],
                   ),
                 ),
               ),
@@ -464,12 +480,12 @@ class _HomeScreenState extends State<HomeScreen> {
     final totalPrepDays = examDate.difference(planStart).inDays;
     final today = DateTime.now();
 
-    double prepPercentRemaining = 1.0;
+    double prepPercentElapsed = 0.0;
     if (today.isAfter(examDate)) {
-      prepPercentRemaining = 0.0;
+      prepPercentElapsed = 1.0;
     } else if (today.isAfter(planStart)) {
-      final daysRemaining = examDate.difference(today).inDays;
-      prepPercentRemaining = (daysRemaining / totalPrepDays).clamp(0.0, 1.0);
+      final daysPassed = today.difference(planStart).inDays;
+      prepPercentElapsed = (daysPassed / totalPrepDays).clamp(0.0, 1.0);
     }
 
     return NeuContainer(
@@ -508,7 +524,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 12),
           NeuProgressBar(
-            progress: prepPercentRemaining,
+            progress: prepPercentElapsed,
             progressColor: urgencyColor,
             height: 8,
           ),
@@ -521,7 +537,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(color: context.textSecondaryColor, fontSize: 10.5),
               ),
               Text(
-                '1 Feb 2027',
+                '${(prepPercentElapsed * 100).toStringAsFixed(0)}% Season Elapsed • 1 Feb 2027',
                 style: TextStyle(color: context.textSecondaryColor, fontSize: 10.5, fontWeight: FontWeight.bold),
               ),
             ],
@@ -531,17 +547,17 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // 4. DAILY MISSIONS (Minimal Text, Tactile Rows)
+  // 4. DAILY MISSIONS (Minimal Text, Daily Resetting Goals)
   Widget _buildDailyMissions(BuildContext context, AppProvider provider, TopicStatus? todayTopic) {
     final bool topicDone = todayTopic?.isCompleted ?? false;
-    final int pyqsSolved = provider.pyqs.where((p) => p.isCompleted).length;
-    final bool pyqTargetDone = pyqsSolved >= 5;
-    final bool mockTaken = provider.mockLogs.isNotEmpty;
+    final int todayPyqs = provider.todayPyqsSolvedCount;
+    final bool pyqTargetDone = todayPyqs >= 5;
+    final bool mockTakenToday = provider.isMockTakenToday;
 
     int missionsDone = 0;
     if (topicDone) missionsDone++;
     if (pyqTargetDone) missionsDone++;
-    if (mockTaken) missionsDone++;
+    if (mockTakenToday) missionsDone++;
 
     return NeuContainer(
       padding: const EdgeInsets.all(16),
@@ -594,28 +610,28 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 10),
 
-          // Mission 2: Solve 5 PYQs
+          // Mission 2: Solve 5 PYQs (Daily Reset)
           _buildMissionRow(
             context: context,
             icon: Icons.checklist_rtl_rounded,
             iconColor: AppTheme.accentGold,
-            title: 'Solve 5 PYQs',
-            ratioText: '${min(5, pyqsSolved)}/5',
-            progress: (pyqsSolved / 5.0).clamp(0.0, 1.0),
+            title: 'Solve 5 PYQs Today',
+            ratioText: '${min(5, todayPyqs)}/5',
+            progress: (todayPyqs / 5.0).clamp(0.0, 1.0),
             isCompleted: pyqTargetDone,
             onTap: () => provider.setSelectedIndex(2),
           ),
           const SizedBox(height: 10),
 
-          // Mission 3: Test or Sprint
+          // Mission 3: Test or Sprint (Today)
           _buildMissionRow(
             context: context,
             icon: Icons.sports_score_rounded,
             iconColor: AppTheme.accentCoral,
-            title: 'Mock Test or Drill',
-            ratioText: mockTaken ? '1/1' : '0/1',
-            progress: mockTaken ? 1.0 : 0.0,
-            isCompleted: mockTaken,
+            title: 'Mock Test or Drill Today',
+            ratioText: mockTakenToday ? '1/1' : '0/1',
+            progress: mockTakenToday ? 1.0 : 0.0,
+            isCompleted: mockTakenToday,
             onTap: () => _startRapidFire(provider),
           ),
         ],
@@ -781,7 +797,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // 6. HIGH-YIELD STUDY TOOLS (Tactile Grid with COAP, Formulas, Estimator)
+  // 6. HIGH-YIELD STUDY TOOLS (Tactile Grid with Calculator, Formulas, COAP, Estimator, Mistakes, Doubts, Focus)
   Widget _buildToolsGrid(BuildContext context, AppProvider provider) {
     return Column(
       children: [
@@ -798,10 +814,10 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(width: 10),
             Expanded(
               child: _ToolTile(
-                icon: Icons.calculate_outlined,
-                iconColor: AppTheme.accentGold,
-                label: 'Estimator',
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ScoreEstimatorScreen())),
+                icon: Icons.calculate_rounded,
+                iconColor: const Color(0xFF10B981),
+                label: 'Calculator',
+                onTap: () => VirtualCalculator.show(context),
               ),
             ),
           ],
@@ -809,6 +825,15 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: 10),
         Row(
           children: [
+            Expanded(
+              child: _ToolTile(
+                icon: Icons.assessment_outlined,
+                iconColor: AppTheme.accentGold,
+                label: 'Estimator',
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ScoreEstimatorScreen())),
+              ),
+            ),
+            const SizedBox(width: 10),
             Expanded(
               child: _ToolTile(
                 icon: Icons.account_balance_outlined,
@@ -817,13 +842,26 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const COAPScreen())),
               ),
             ),
-            const SizedBox(width: 10),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
             Expanded(
               child: _ToolTile(
                 icon: Icons.error_outline_rounded,
                 iconColor: AppTheme.accentCoral,
                 label: 'Mistakes',
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ErrorLogScreen())),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _ToolTile(
+                icon: Icons.bar_chart_rounded,
+                iconColor: AppTheme.accentMint,
+                label: 'Weightage',
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeightageScreen())),
               ),
             ),
           ],
@@ -833,19 +871,19 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Expanded(
               child: _ToolTile(
-                icon: Icons.bar_chart_rounded,
-                iconColor: AppTheme.accentMint,
-                label: 'Weightage',
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeightageScreen())),
+                icon: Icons.forum_rounded,
+                iconColor: AppTheme.accentPurple,
+                label: 'Doubts',
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CommunityScreen())),
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: _ToolTile(
-                icon: Icons.forum_rounded,
-                iconColor: AppTheme.accentPurple,
-                label: 'Doubts',
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CommunityScreen())),
+                icon: Icons.timer_outlined,
+                iconColor: const Color(0xFFF59E0B),
+                label: 'Focus Timer',
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PomodoroScreen())),
               ),
             ),
           ],
@@ -893,6 +931,127 @@ class _HomeScreenState extends State<HomeScreen> {
               borderRadius: 12,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: const Text('Join', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showBranchSwitcherSheet(BuildContext context, AppProvider provider) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: context.scaffoldBackground,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Select Active Branch',
+                    style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close_rounded, color: context.textSecondaryColor),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              _buildBranchTile(
+                context: context,
+                title: 'GATE DA (Data Science & AI)',
+                subtitle: 'Machine Learning, AI, Probability & Linear Algebra',
+                isSelected: provider.activeExam == 'DA' && provider.selectedExam != 'BOTH',
+                onTap: () {
+                  provider.setExams('DA', 'DA');
+                  Navigator.pop(context);
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildBranchTile(
+                context: context,
+                title: 'GATE CS/IT (Computer Science)',
+                subtitle: 'Algorithms, OS, CN, DBMS, TOC, Compiler',
+                isSelected: provider.activeExam == 'CSIT' && provider.selectedExam != 'BOTH',
+                onTap: () {
+                  provider.setExams('CSIT', 'CSIT');
+                  Navigator.pop(context);
+                },
+              ),
+              const SizedBox(height: 10),
+              _buildBranchTile(
+                context: context,
+                title: 'Dual Preparation (BOTH)',
+                subtitle: 'Switch between DA & CS/IT anytime via top bar',
+                isSelected: provider.selectedExam == 'BOTH',
+                onTap: () {
+                  provider.setExams('BOTH', provider.activeExam ?? 'DA');
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBranchTile({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
+      child: NeuContainer(
+        borderRadius: 16,
+        padding: const EdgeInsets.all(12),
+        color: isSelected ? AppTheme.accentPurple.withValues(alpha: 0.12) : null,
+        border: Border.all(
+          color: isSelected ? AppTheme.accentPurple : (context.isDarkMode ? Colors.white10 : Colors.black12),
+          width: isSelected ? 1.5 : 1.0,
+        ),
+        child: Row(
+          children: [
+            Icon(
+              isSelected ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
+              color: isSelected ? AppTheme.accentPurple : context.textSecondaryColor,
+              size: 20,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13.5,
+                      color: isSelected ? AppTheme.accentPurple : context.textColor,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

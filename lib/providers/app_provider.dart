@@ -577,12 +577,30 @@ class AppProvider with ChangeNotifier {
       _pyqs[index] = newPyq;
       await _storage.pyqBox.put(id, newPyq.toMap());
       CloudSyncService().pushToCloud('pyqs', id.toString(), newPyq.toMap());
-      notifyListeners();
 
       if (!wasCompleted) {
+        final todayStr = DateTime.now().toIso8601String().split('T').first;
+        final currentDaily = _storage.prefs.getInt('daily_pyqs_$todayStr') ?? 0;
+        await _storage.prefs.setInt('daily_pyqs_$todayStr', currentDaily + 1);
         AdService().incrementPyqCountAndShowAd();
       }
+      notifyListeners();
     }
+  }
+
+  /// Number of PYQs solved today (resets every midnight)
+  int get todayPyqsSolvedCount {
+    final todayStr = DateTime.now().toIso8601String().split('T').first;
+    return _storage.prefs.getInt('daily_pyqs_$todayStr') ?? 0;
+  }
+
+  /// Whether a mock test or drill was taken today
+  bool get isMockTakenToday {
+    final now = DateTime.now();
+    return _mockLogs.any((m) =>
+        m.dateTaken.year == now.year &&
+        m.dateTaken.month == now.month &&
+        m.dateTaken.day == now.day);
   }
 
   // Mark PYQ as Unsolved / Attempt again
