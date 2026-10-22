@@ -139,6 +139,7 @@ class MoreScreen extends StatelessWidget {
                         iconSize: 18,
                       ),
                       title: Text('Streak Protection', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor)),
+                      subtitle: Text('Daily study reminders to preserve your study streak', style: TextStyle(fontSize: 11, color: context.textSecondaryColor)),
                       value: provider.notificationsEnabled,
                       activeColor: AppTheme.accentFlame,
                       onChanged: (val) => provider.updateNotificationSettings(val, provider.notificationTime),
@@ -652,22 +653,6 @@ class MoreScreen extends StatelessWidget {
                       ),
                     ),
                   ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFF8522).withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFFF8522).withValues(alpha: 0.3)),
-                ),
-                child: Text(
-                  isDual ? 'DUAL PREP' : (activeExam == 'CSIT' ? 'GATE CS/IT' : 'GATE DA'),
-                  style: GoogleFonts.outfit(
-                    color: const Color(0xFFFF8522),
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.bold,
-                  ),
                 ),
               ),
             ],

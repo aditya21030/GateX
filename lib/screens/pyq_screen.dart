@@ -544,16 +544,6 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _startInstantDrill(context, pyqListAll),
-        backgroundColor: const Color(0xFFFF8522),
-        elevation: 4,
-        icon: const Icon(Icons.bolt_rounded, color: Colors.white, size: 20),
-        label: Text(
-          'Start Practice Drill',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13),
-        ),
-      ),
     );
   }
 
@@ -1048,17 +1038,6 @@ class _PYQCardState extends State<_PYQCard> {
                   ),
                 ),
                 const Spacer(),
-                // Virtual Calculator shortcut
-                IconButton(
-                  icon: const Icon(Icons.calculate_outlined, size: 19),
-                  color: context.textSecondaryColor,
-                  tooltip: 'Virtual Calculator',
-                  visualDensity: VisualDensity.compact,
-                  onPressed: () {
-                    HapticFeedback.selectionClick();
-                    VirtualCalculator.show(context);
-                  },
-                ),
                 // Flag revision
                 IconButton(
                   icon: Icon(

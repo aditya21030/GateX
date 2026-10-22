@@ -518,156 +518,33 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
       physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.all(16),
       children: [
-        // Top CBT Rules - Official Exam Docket Strip
+        // Minimal CBT Exam Rule Strip
         Container(
-          margin: const EdgeInsets.only(bottom: 14),
-          padding: const EdgeInsets.all(14),
+          margin: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
           decoration: BoxDecoration(
-            color: context.isDarkMode ? const Color(0xFF13151F) : const Color(0xFFF7F8FC),
-            borderRadius: BorderRadius.circular(16),
+            color: context.isDarkMode
+                ? Colors.white.withValues(alpha: 0.04)
+                : Colors.black.withValues(alpha: 0.03),
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: const Color(0xFFFF8522).withValues(alpha: 0.25),
-              width: 1.2,
+              color: context.isDarkMode
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.black.withValues(alpha: 0.06),
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFF8522).withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(
-                      Icons.terminal_rounded,
-                      color: Color(0xFFFF8522),
-                      size: 16,
-                    ),
+              const Icon(Icons.info_outline_rounded, size: 18, color: Color(0xFFFF8522)),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'MCQ: +1/+2 (-⅓ neg) • MSQ & NAT: No negative marking',
+                  style: GoogleFonts.outfit(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: context.textSecondaryColor,
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'GATE CBT PROTOCOL // TCS-iON',
-                    style: GoogleFonts.spaceMono(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.8,
-                      color: const Color(0xFFFF8522),
-                    ),
-                  ),
-                  const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: AppTheme.accentMint.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      'ACTIVE',
-                      style: GoogleFonts.spaceMono(
-                        fontSize: 9.5,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.accentMint,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                decoration: BoxDecoration(
-                  color: context.isDarkMode ? Colors.black.withValues(alpha: 0.25) : Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: context.isDarkMode
-                        ? Colors.white.withValues(alpha: 0.06)
-                        : Colors.black.withValues(alpha: 0.06),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          'MCQ',
-                          style: GoogleFonts.spaceMono(
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.bold,
-                            color: context.textColor,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            '+1/+2 Mark  |  -0.33/-0.66 Neg',
-                            style: GoogleFonts.spaceMono(
-                              fontSize: 10,
-                              color: AppTheme.accentCoral,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            textAlign: TextAlign.end,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Divider(height: 1, color: context.colorBorder),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Text(
-                          'MSQ & NAT',
-                          style: GoogleFonts.spaceMono(
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.bold,
-                            color: context.textColor,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            '+1/+2 Mark  |  Zero Neg (0.0)',
-                            style: GoogleFonts.spaceMono(
-                              fontSize: 10,
-                              color: AppTheme.accentMint,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            textAlign: TextAlign.end,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Divider(height: 1, color: context.colorBorder),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Text(
-                          'CALC',
-                          style: GoogleFonts.spaceMono(
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.bold,
-                            color: context.textColor,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            'TCS-iON Virtual Scientific Calc',
-                            style: GoogleFonts.spaceMono(
-                              fontSize: 10,
-                              color: const Color(0xFFFF8522),
-                              fontWeight: FontWeight.w600,
-                            ),
-                            textAlign: TextAlign.end,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
                 ),
               ),
             ],
