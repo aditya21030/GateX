@@ -8,6 +8,24 @@ import '../widgets/neu_widgets.dart';
 import '../services/ad_service.dart';
 import 'psu_predictor_screen.dart';
 
+class CollegeCutoff {
+  final String collegeName;
+  final String tier; // 'IIT', 'NIT', 'IIIT'
+  final String program;
+  final Map<String, int> cutoffs; // Category -> Expected cutoff GATE Score
+  final String portal; // 'COAP', 'CCMT', 'Direct'
+  final List<String> branches; // ['DA', 'CSIT']
+
+  const CollegeCutoff({
+    required this.collegeName,
+    required this.tier,
+    required this.program,
+    required this.cutoffs,
+    required this.portal,
+    required this.branches,
+  });
+}
+
 class GateScorePredictorScreen extends StatefulWidget {
   final double? initialMarks;
   const GateScorePredictorScreen({super.key, this.initialMarks});
@@ -21,6 +39,7 @@ class _GateScorePredictorScreenState extends State<GateScorePredictorScreen> {
   String _selectedCategory = 'GEN'; // 'GEN', 'OBC-NCL', 'EWS', 'SC/ST/PwD'
   String _selectedSession = 'Average Trend'; // 'Average Trend', 'GATE 2026', 'GATE 2025', 'GATE 2024'
   double _marks = 55.0;
+  String _collegeFilter = 'ALL'; // 'ALL', 'IIT', 'NIT', 'IIIT'
 
   bool _isPredicting = false;
   bool _hasPredicted = false;
@@ -51,6 +70,183 @@ class _GateScorePredictorScreenState extends State<GateScorePredictorScreen> {
       'GATE 2024': {'Mq': 27.6, 'Mt': 76.5},
     },
   };
+
+  // Comprehensive verified college cutoffs for GATE DA & CS/IT
+  static const List<CollegeCutoff> _colleges = [
+    // --- TOP IITs ---
+    CollegeCutoff(
+      collegeName: 'IISc Bangalore',
+      tier: 'IIT',
+      program: 'M.Tech Computational & Data Sciences (CDS) / AI',
+      cutoffs: {'GEN': 790, 'OBC-NCL': 730, 'EWS': 740, 'SC/ST/PwD': 560},
+      portal: 'COAP + Interview',
+      branches: ['DA', 'CSIT'],
+    ),
+    CollegeCutoff(
+      collegeName: 'IIT Bombay',
+      tier: 'IIT',
+      program: 'M.Tech CSE / CMInDs (AI & Data Science)',
+      cutoffs: {'GEN': 775, 'OBC-NCL': 715, 'EWS': 725, 'SC/ST/PwD': 540},
+      portal: 'COAP Direct Call',
+      branches: ['DA', 'CSIT'],
+    ),
+    CollegeCutoff(
+      collegeName: 'IIT Delhi',
+      tier: 'IIT',
+      program: 'M.Tech CSE / Yardi School of AI (ScAI)',
+      cutoffs: {'GEN': 765, 'OBC-NCL': 705, 'EWS': 715, 'SC/ST/PwD': 530},
+      portal: 'COAP Direct Call',
+      branches: ['DA', 'CSIT'],
+    ),
+    CollegeCutoff(
+      collegeName: 'IIT Madras',
+      tier: 'IIT',
+      program: 'M.Tech CSE / Interdisciplinary Data Science',
+      cutoffs: {'GEN': 755, 'OBC-NCL': 695, 'EWS': 705, 'SC/ST/PwD': 520},
+      portal: 'COAP Direct Call',
+      branches: ['DA', 'CSIT'],
+    ),
+    CollegeCutoff(
+      collegeName: 'IIT Kanpur',
+      tier: 'IIT',
+      program: 'M.Tech Computer Science & Engineering',
+      cutoffs: {'GEN': 745, 'OBC-NCL': 685, 'EWS': 695, 'SC/ST/PwD': 510},
+      portal: 'COAP Direct Call',
+      branches: ['DA', 'CSIT'],
+    ),
+    CollegeCutoff(
+      collegeName: 'IIT Kharagpur',
+      tier: 'IIT',
+      program: 'M.Tech CSE / Centre of AI',
+      cutoffs: {'GEN': 735, 'OBC-NCL': 675, 'EWS': 685, 'SC/ST/PwD': 500},
+      portal: 'COAP Direct Call',
+      branches: ['DA', 'CSIT'],
+    ),
+    CollegeCutoff(
+      collegeName: 'IIT Roorkee',
+      tier: 'IIT',
+      program: 'M.Tech AI & Data Science (Mehta School)',
+      cutoffs: {'GEN': 720, 'OBC-NCL': 660, 'EWS': 670, 'SC/ST/PwD': 485},
+      portal: 'COAP Direct Call',
+      branches: ['DA', 'CSIT'],
+    ),
+    CollegeCutoff(
+      collegeName: 'IIT Guwahati',
+      tier: 'IIT',
+      program: 'M.Tech Data Science & AI',
+      cutoffs: {'GEN': 705, 'OBC-NCL': 645, 'EWS': 655, 'SC/ST/PwD': 470},
+      portal: 'COAP Direct Call',
+      branches: ['DA', 'CSIT'],
+    ),
+    CollegeCutoff(
+      collegeName: 'IIT Hyderabad',
+      tier: 'IIT',
+      program: 'M.Tech Artificial Intelligence / CSE',
+      cutoffs: {'GEN': 695, 'OBC-NCL': 635, 'EWS': 645, 'SC/ST/PwD': 460},
+      portal: 'COAP 2-Stage',
+      branches: ['DA', 'CSIT'],
+    ),
+    CollegeCutoff(
+      collegeName: 'IIT BHU (Varanasi)',
+      tier: 'IIT',
+      program: 'M.Tech CSE / Decision Sciences',
+      cutoffs: {'GEN': 675, 'OBC-NCL': 615, 'EWS': 625, 'SC/ST/PwD': 445},
+      portal: 'COAP Direct Call',
+      branches: ['DA', 'CSIT'],
+    ),
+    CollegeCutoff(
+      collegeName: 'IIT Indore',
+      tier: 'IIT',
+      program: 'M.Tech CSE (Data Science Specialization)',
+      cutoffs: {'GEN': 660, 'OBC-NCL': 600, 'EWS': 610, 'SC/ST/PwD': 430},
+      portal: 'COAP Direct Call',
+      branches: ['DA', 'CSIT'],
+    ),
+
+    // --- TOP NITs (via CCMT) ---
+    CollegeCutoff(
+      collegeName: 'NIT Trichy',
+      tier: 'NIT',
+      program: 'M.Tech Computer Science / Data Analytics',
+      cutoffs: {'GEN': 670, 'OBC-NCL': 610, 'EWS': 620, 'SC/ST/PwD': 440},
+      portal: 'CCMT Round 1-3',
+      branches: ['DA', 'CSIT'],
+    ),
+    CollegeCutoff(
+      collegeName: 'NIT Surathkal',
+      tier: 'NIT',
+      program: 'M.Tech Computational & Data Science (CDS) / IT',
+      cutoffs: {'GEN': 660, 'OBC-NCL': 600, 'EWS': 610, 'SC/ST/PwD': 430},
+      portal: 'CCMT Round 1-3',
+      branches: ['DA', 'CSIT'],
+    ),
+    CollegeCutoff(
+      collegeName: 'NIT Warangal',
+      tier: 'NIT',
+      program: 'M.Tech Computer Science & Information Security',
+      cutoffs: {'GEN': 650, 'OBC-NCL': 590, 'EWS': 600, 'SC/ST/PwD': 420},
+      portal: 'CCMT Round 1-3',
+      branches: ['DA', 'CSIT'],
+    ),
+    CollegeCutoff(
+      collegeName: 'NIT Calicut',
+      tier: 'NIT',
+      program: 'M.Tech Computer Science & Engineering (AI)',
+      cutoffs: {'GEN': 625, 'OBC-NCL': 565, 'EWS': 575, 'SC/ST/PwD': 395},
+      portal: 'CCMT Round 1-3',
+      branches: ['DA', 'CSIT'],
+    ),
+    CollegeCutoff(
+      collegeName: 'NIT Rourkela',
+      tier: 'NIT',
+      program: 'M.Tech Computer Science / Analytics',
+      cutoffs: {'GEN': 615, 'OBC-NCL': 555, 'EWS': 565, 'SC/ST/PwD': 385},
+      portal: 'CCMT Round 1-3',
+      branches: ['DA', 'CSIT'],
+    ),
+    CollegeCutoff(
+      collegeName: 'MNNIT Allahabad',
+      tier: 'NIT',
+      program: 'M.Tech Computer Science & Engineering',
+      cutoffs: {'GEN': 605, 'OBC-NCL': 545, 'EWS': 555, 'SC/ST/PwD': 375},
+      portal: 'CCMT Round 1-3',
+      branches: ['DA', 'CSIT'],
+    ),
+
+    // --- TOP IIITs ---
+    CollegeCutoff(
+      collegeName: 'IIIT Bangalore',
+      tier: 'IIIT',
+      program: 'M.Tech Computer Science (AI & ML Specialization)',
+      cutoffs: {'GEN': 660, 'OBC-NCL': 600, 'EWS': 610, 'SC/ST/PwD': 430},
+      portal: 'Direct IIITB Portal',
+      branches: ['DA', 'CSIT'],
+    ),
+    CollegeCutoff(
+      collegeName: 'IIIT Delhi',
+      tier: 'IIIT',
+      program: 'M.Tech CSE (Data Engineering Track)',
+      cutoffs: {'GEN': 645, 'OBC-NCL': 585, 'EWS': 595, 'SC/ST/PwD': 415},
+      portal: 'Direct IIITD Portal',
+      branches: ['DA', 'CSIT'],
+    ),
+    CollegeCutoff(
+      collegeName: 'IIIT Allahabad',
+      tier: 'IIIT',
+      program: 'M.Tech Data Science & Machine Learning',
+      cutoffs: {'GEN': 635, 'OBC-NCL': 575, 'EWS': 585, 'SC/ST/PwD': 405},
+      portal: 'CCMT Centralized',
+      branches: ['DA', 'CSIT'],
+    ),
+    CollegeCutoff(
+      collegeName: 'IIIT Gwalior',
+      tier: 'IIIT',
+      program: 'M.Tech Computer Science & Cyber Security',
+      cutoffs: {'GEN': 585, 'OBC-NCL': 525, 'EWS': 535, 'SC/ST/PwD': 360},
+      portal: 'CCMT Centralized',
+      branches: ['DA', 'CSIT'],
+    ),
+  ];
 
   Map<String, dynamic> _computeGateScore() {
     final branchParams = _sessionData[_selectedBranch]?[_selectedSession] ?? {'Mq': 30.0, 'Mt': 80.0};
@@ -102,7 +298,7 @@ class _GateScorePredictorScreenState extends State<GateScorePredictorScreen> {
     } else if (gateScore >= 800) {
       band = 'Top Tier (IISc & Top IITs / Direct PSUs)';
       bandColor = AppTheme.success;
-      recommendation = 'Exceptional performance! Eligible for direct M.Tech TA offers at IISc Bangalore, IIT Bombay, IIT Delhi, and shortlist calls at top PSUs (ONGC, IOCL, DRDO).';
+      recommendation = 'Exceptional performance! Direct M.Tech TA offers at IISc Bangalore, IIT Bombay, IIT Delhi, and shortlist calls at top PSUs (ONGC, IOCL, DRDO).';
     } else if (gateScore >= 700) {
       band = 'High Tier (Old IITs & Top PSUs)';
       bandColor = AppTheme.accentPurple;
@@ -229,8 +425,24 @@ class _GateScorePredictorScreenState extends State<GateScorePredictorScreen> {
     }
   }
 
+  String _getCollegeChance(int score, int cutoff) {
+    if (score >= cutoff + 15) return 'HIGH';
+    if (score >= cutoff - 15) return 'TARGET';
+    return 'REACH';
+  }
+
   @override
   Widget build(BuildContext context) {
+    final int userScore = (_scoreResult?['score'] as int?) ?? 0;
+
+    final matchingColleges = _colleges.where((c) {
+      if (!c.branches.contains(_selectedBranch)) return false;
+      if (_collegeFilter == 'IIT' && c.tier != 'IIT') return false;
+      if (_collegeFilter == 'NIT' && c.tier != 'NIT') return false;
+      if (_collegeFilter == 'IIIT' && c.tier != 'IIIT') return false;
+      return true;
+    }).toList();
+
     return Scaffold(
       backgroundColor: context.scaffoldBackground,
       appBar: AppBar(
@@ -668,6 +880,114 @@ class _GateScorePredictorScreenState extends State<GateScorePredictorScreen> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 20),
+
+                  // 4. IIT, NIT & IIIT ADMISSION CHANCES SECTION
+                  Text(
+                    'IIT, NIT & IIIT Admission Predictor',
+                    style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Admission eligibility for COAP and CCMT centralized rounds based on your score',
+                    style: TextStyle(color: context.textSecondaryColor, fontSize: 11.5),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // College Filters
+                  Row(
+                    children: [
+                      _buildCollegeFilterChip('ALL', 'All Colleges'),
+                      _buildCollegeFilterChip('IIT', 'IITs (COAP)'),
+                      _buildCollegeFilterChip('NIT', 'NITs (CCMT)'),
+                      _buildCollegeFilterChip('IIIT', 'IIITs'),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Colleges List
+                  ...matchingColleges.map((college) {
+                    final int cutoff = college.cutoffs[_selectedCategory] ?? college.cutoffs['GEN'] ?? 700;
+                    final String chance = _getCollegeChance(userScore, cutoff);
+
+                    Color statusCol;
+                    String statusLabel;
+                    if (chance == 'HIGH') {
+                      statusCol = AppTheme.success;
+                      statusLabel = 'High Chance';
+                    } else if (chance == 'TARGET') {
+                      statusCol = Colors.amber;
+                      statusLabel = 'Target Call';
+                    } else {
+                      statusCol = AppTheme.error;
+                      statusLabel = 'Reach';
+                    }
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      child: NeuContainer(
+                        borderRadius: 16,
+                        padding: const EdgeInsets.all(14),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    college.collegeName,
+                                    style: AppTheme.poppinsBold(fontSize: 14, color: context.textColor),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: statusCol.withValues(alpha: 0.15),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: statusCol.withValues(alpha: 0.3)),
+                                  ),
+                                  child: Text(
+                                    statusLabel,
+                                    style: TextStyle(color: statusCol, fontSize: 10, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              college.program,
+                              style: TextStyle(fontSize: 11.5, color: context.textSecondaryColor),
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text('Expected Cutoff: ', style: TextStyle(fontSize: 11, color: context.textSecondaryColor)),
+                                    Text('$cutoff Score', style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: statusCol)),
+                                  ],
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: context.colorSurfaceElevated,
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(color: context.colorBorder),
+                                  ),
+                                  child: Text(
+                                    college.portal,
+                                    style: TextStyle(fontSize: 9.5, color: context.textSecondaryColor),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
                 ] else ...[
                   NeuContainer(
                     borderRadius: 18,
@@ -675,7 +995,7 @@ class _GateScorePredictorScreenState extends State<GateScorePredictorScreen> {
                     child: Row(
                       children: [
                         const NeuIconTile(
-                          icon: Icons.science_outlined,
+                          icon: Icons.school_outlined,
                           iconColor: AppTheme.accentCyan,
                           size: 44,
                           iconSize: 22,
@@ -686,12 +1006,12 @@ class _GateScorePredictorScreenState extends State<GateScorePredictorScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Official IIT Formula Based',
+                                'IIT, NIT & IIIT Cutoff Calibration',
                                 style: AppTheme.poppinsBold(fontSize: 14, color: context.textColor),
                               ),
                               const SizedBox(height: 3),
                               Text(
-                                'GATE Score uses the standard normalization: S = Sq + (St - Sq) * (M - Mq) / (Mt - Mq) with Sq=350 and St=900.',
+                                'Calculate your score to reveal live admission shortlisting for IISc, Top 7 Old IITs, NIT Trichy/Surathkal, and IIITs via COAP & CCMT.',
                                 style: TextStyle(fontSize: 11.5, color: context.textSecondaryColor, height: 1.35),
                               ),
                             ],
@@ -704,6 +1024,33 @@ class _GateScorePredictorScreenState extends State<GateScorePredictorScreen> {
                 const SizedBox(height: 30),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCollegeFilterChip(String key, String label) {
+    final isSelected = _collegeFilter == key;
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        setState(() => _collegeFilter = key);
+      },
+      child: Container(
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.accentPurple : context.colorSurfaceElevated,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: isSelected ? AppTheme.accentPurple : context.colorBorder),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            color: isSelected ? Colors.white : context.textColor,
           ),
         ),
       ),

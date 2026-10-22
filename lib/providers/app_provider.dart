@@ -680,7 +680,7 @@ class AppProvider with ChangeNotifier {
       final current = _pyqs[index];
       final newPyq = current.copyWith(
         isCompleted: false,
-        userAnswer: null,
+        clearUserAnswer: true,
       );
       _pyqs[index] = newPyq;
       await _storage.pyqBox.put(id, newPyq.toMap());

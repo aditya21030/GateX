@@ -189,6 +189,7 @@ class PYQ {
     bool? isCompleted,
     bool? isFlaggedForRevision,
     String? userAnswer,
+    bool clearUserAnswer = false,
     bool? hasImage,
     String? imagePath,
     int? setNumber,
@@ -209,7 +210,7 @@ class PYQ {
       isBookmarked: isBookmarked ?? this.isBookmarked,
       isCompleted: isCompleted ?? this.isCompleted,
       isFlaggedForRevision: isFlaggedForRevision ?? this.isFlaggedForRevision,
-      userAnswer: userAnswer ?? this.userAnswer,
+      userAnswer: clearUserAnswer ? null : (userAnswer ?? this.userAnswer),
       hasImage: hasImage ?? this.hasImage,
       imagePath: imagePath ?? this.imagePath,
     );

@@ -6,9 +6,9 @@ import 'package:provider/provider.dart';
 import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/neu_widgets.dart';
-import 'error_log_screen.dart';
 import 'pro_upgrade_screen.dart';
 import 'score_estimator_screen.dart';
+import 'psu_predictor_screen.dart';
 import 'mock_test_runner_screen.dart';
 import '../models/models.dart';
 import '../data/minimock_data.dart';
@@ -932,7 +932,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: GestureDetector(
                 onTap: () {
                   HapticFeedback.selectionClick();
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const ErrorLogScreen()));
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const PsuPredictorScreen()));
                 },
                 child: NeuContainer(
                   borderRadius: 18,
@@ -944,23 +944,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const NeuIconTile(
-                            icon: Icons.error_outline_rounded,
-                            iconColor: AppTheme.accentCoral,
+                            icon: Icons.corporate_fare_rounded,
+                            iconColor: Color(0xFF0D9488),
                             size: 36,
                             iconSize: 18,
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                             decoration: BoxDecoration(
-                              color: AppTheme.accentCoral.withValues(alpha: 0.15),
+                              color: const Color(0xFF0D9488).withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(6),
                             ),
-                            child: Text(
-                              '${provider.errorLog.length} Saved',
-                              style: const TextStyle(
+                            child: const Text(
+                              'PSU Jobs',
+                              style: TextStyle(
                                 fontSize: 9.5,
                                 fontWeight: FontWeight.bold,
-                                color: AppTheme.accentCoral,
+                                color: Color(0xFF0D9488),
                               ),
                             ),
                           ),
@@ -968,12 +968,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'Mistakes Log',
+                        'PSU Predictor',
                         style: AppTheme.poppinsBold(fontSize: 13.5, color: context.textColor),
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Turn Errors into Marks',
+                        'Cutoffs, CTC & Calls',
                         style: TextStyle(fontSize: 10.5, color: context.textSecondaryColor),
                       ),
                     ],

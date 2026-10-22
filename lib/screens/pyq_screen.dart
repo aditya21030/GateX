@@ -216,29 +216,6 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
     
     final difficultiesList = ['All', 'Easy', 'Medium', 'Hard'];
 
-    // Tab-contextual question list for instant drill
-    List<PYQ> currentTabList;
-    String drillButtonLabel;
-    switch (_tabController.index) {
-      case 1:
-        currentTabList = pyqListBookmarked;
-        drillButtonLabel = 'Drill Saved (${currentTabList.length})';
-        break;
-      case 2:
-        currentTabList = pyqListDone;
-        drillButtonLabel = 'Drill Done (${currentTabList.length})';
-        break;
-      case 3:
-        currentTabList = pyqListFlagged;
-        drillButtonLabel = 'Drill Flagged (${currentTabList.length})';
-        break;
-      case 0:
-      default:
-        currentTabList = pyqListAll;
-        drillButtonLabel = 'Practice Drill (${currentTabList.length})';
-        break;
-    }
-
     return Scaffold(
       backgroundColor: context.colorBackground,
       appBar: AppBar(
@@ -255,6 +232,15 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
           style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: context.textColor),
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.calculate_outlined, size: 21),
+            tooltip: 'Virtual Calculator',
+            color: context.textColor,
+            onPressed: () {
+              HapticFeedback.selectionClick();
+              VirtualCalculator.show(context);
+            },
+          ),
           if (provider.selectedExam == 'BOTH')
             Container(
               margin: const EdgeInsets.symmetric(vertical: 11, horizontal: 12),
@@ -309,43 +295,18 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
             ),
         ],
       ),
-      floatingActionButton: currentTabList.isNotEmpty
-          ? Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                FloatingActionButton.small(
-                  heroTag: 'pyq_calc',
-                  backgroundColor: context.colorSurface,
-                  foregroundColor: context.textColor,
-                  elevation: 3,
-                  tooltip: 'GATE Virtual Calculator',
-                  onPressed: () => VirtualCalculator.show(context),
-                  child: const Icon(Icons.calculate_outlined, size: 20),
-                ),
-                const SizedBox(width: 10),
-                FloatingActionButton.extended(
-                  heroTag: 'pyq_drill',
-                  backgroundColor: AppTheme.accentPurple,
-                  foregroundColor: Colors.white,
-                  elevation: 4,
-                  icon: const Icon(Icons.play_arrow_rounded, size: 22),
-                  label: Text(
-                    drillButtonLabel,
-                    style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13),
-                  ),
-                  onPressed: () => _startInstantDrill(context, currentTabList),
-                ),
-              ],
-            )
-          : FloatingActionButton(
-              heroTag: 'pyq_calc',
-              backgroundColor: context.colorSurface,
-              foregroundColor: context.textColor,
-              elevation: 3,
-              tooltip: 'GATE Virtual Calculator',
-              onPressed: () => VirtualCalculator.show(context),
-              child: const Icon(Icons.calculate_outlined),
-            ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'pyq_calc',
+        backgroundColor: AppTheme.accentPurple,
+        foregroundColor: Colors.white,
+        elevation: 4,
+        tooltip: 'GATE Virtual Calculator',
+        onPressed: () {
+          HapticFeedback.selectionClick();
+          VirtualCalculator.show(context);
+        },
+        child: const Icon(Icons.calculate_rounded, size: 24),
+      ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -973,7 +934,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
     final int totalItems = isPro ? list.length : (list.length + (list.length ~/ adFrequency));
 
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(12, 12, 12, 88),
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 120),
       physics: const BouncingScrollPhysics(),
       itemCount: totalItems,
       itemBuilder: (context, index) {
@@ -983,7 +944,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
 
         final pyqIndex = isPro ? index : (index - (index ~/ (adFrequency + 1)));
         final pyq = list[pyqIndex];
-        return _PYQCard(pyq: pyq, provider: provider);
+        return _PYQCard(key: ValueKey(pyq.id), pyq: pyq, provider: provider);
       },
     );
   }
@@ -1149,7 +1110,7 @@ class _PYQCard extends StatefulWidget {
   final PYQ pyq;
   final AppProvider provider;
 
-  const _PYQCard({required this.pyq, required this.provider});
+  const _PYQCard({super.key, required this.pyq, required this.provider});
 
   @override
   State<_PYQCard> createState() => _PYQCardState();
@@ -1682,7 +1643,7 @@ class _PYQCardState extends State<_PYQCard> {
               ? (alreadySolved
                   ? (pyq.userAnswer != null && pyq.userAnswer!.split(';').contains(optionLetter))
                   : _selectedMsqOptions.contains(optionLetter))
-              : pyq.userAnswer == optionLetter;
+              : (alreadySolved && pyq.userAnswer == optionLetter);
           final correctLetters = pyq.correctAnswer.split(';');
           final correctIndex = pyq.options.indexOf(pyq.correctAnswer);
           final isCorrectOption = correctLetters.contains(optionLetter) || (correctIndex != -1 && correctIndex == index);

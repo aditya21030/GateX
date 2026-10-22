@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:math_expressions/math_expressions.dart';
 import '../theme/app_theme.dart';
@@ -99,7 +100,12 @@ class _VirtualCalculatorState extends State<VirtualCalculator> {
   @override
   Widget build(BuildContext context) {
     final double cardWidth = widget.isDialog ? 340 : double.infinity;
-    final double cardHeight = _isMinimized ? 90 : (widget.isDialog ? 510 : MediaQuery.of(context).size.height * 0.72);
+    final double screenH = MediaQuery.of(context).size.height;
+    final double cardHeight = _isMinimized
+        ? 90
+        : (widget.isDialog
+            ? min(500.0, screenH * 0.80)
+            : screenH * 0.72);
 
     final content = Transform.translate(
       offset: _dragOffset,
