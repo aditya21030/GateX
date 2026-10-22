@@ -207,31 +207,30 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // 1. NEUMORPHIC STREAK HERO (Refined Warm Ember Orange with Clean Legible Accents)
+  // 1. NEUMORPHIC STREAK HERO (Light Orange Container with Single Clean Streak Title)
   Widget _buildStreakHero(BuildContext context, AppProvider provider) {
     final streak = provider.streak;
     final todayWeekday = DateTime.now().weekday; // 1 = Mon, 7 = Sun
     const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-    const streakOrange = Color(0xFFEA580C);
+    const streakLightOrange = Color(0xFFFFA057);
+    const streakTextColor = Color(0xFF2C1405); // High-contrast deep warm brown
 
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: context.isDarkMode
-              ? const [Color(0xFF8A3008), Color(0xFF5E1F03)]
-              : const [Color(0xFFFFF2E8), Color(0xFFFFE0CC)],
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFFA25B), Color(0xFFFB8A3C)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: streakOrange.withValues(alpha: context.isDarkMode ? 0.45 : 0.7),
+          color: const Color(0xFFFFD4B8),
           width: 1.4,
         ),
         boxShadow: [
           BoxShadow(
-            color: streakOrange.withValues(alpha: context.isDarkMode ? 0.22 : 0.15),
+            color: streakLightOrange.withValues(alpha: 0.28),
             blurRadius: 16,
             offset: const Offset(0, 5),
           ),
@@ -242,59 +241,27 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             children: [
               Container(
-                width: 46,
-                height: 46,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
-                  color: streakOrange.withValues(alpha: context.isDarkMode ? 0.35 : 0.15),
-                  borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: streakOrange.withValues(alpha: 0.4)),
+                  color: streakTextColor,
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.local_fire_department_rounded,
-                  color: context.isDarkMode ? const Color(0xFFFFB088) : streakOrange,
-                  size: 28,
+                  color: Color(0xFFFFB074),
+                  size: 26,
                 ),
               ),
               const SizedBox(width: 14),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '$streak Day Streak 🔥',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16.5,
-                        fontWeight: FontWeight.bold,
-                        color: context.isDarkMode ? Colors.white : const Color(0xFF7C2D12),
-                        letterSpacing: -0.3,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      streak > 1 ? 'Goal on track • Keep pushing!' : 'Solve 1 PYQ to ignite streak',
-                      style: GoogleFonts.outfit(
-                        color: context.isDarkMode ? const Color(0xFFFFD4B8) : const Color(0xFF9A3412),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: streakOrange.withValues(alpha: context.isDarkMode ? 0.25 : 0.12),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: streakOrange.withValues(alpha: context.isDarkMode ? 0.5 : 0.4)),
-                ),
                 child: Text(
-                  'ACTIVE',
-                  style: GoogleFonts.outfit(
-                    fontSize: 10,
+                  '$streak Day Streak 🔥',
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    letterSpacing: 0.8,
-                    color: context.isDarkMode ? const Color(0xFFFFB088) : streakOrange,
+                    color: streakTextColor,
+                    letterSpacing: -0.3,
                   ),
                 ),
               ),
@@ -317,17 +284,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 38,
                     decoration: BoxDecoration(
                       color: isCompleted
-                          ? streakOrange
+                          ? streakTextColor
                           : (isToday
-                              ? streakOrange.withValues(alpha: context.isDarkMode ? 0.3 : 0.18)
-                              : (context.isDarkMode ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05))),
+                              ? streakTextColor.withValues(alpha: 0.16)
+                              : Colors.white.withValues(alpha: 0.35)),
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: isToday
-                            ? streakOrange
+                            ? streakTextColor
                             : (isCompleted
                                 ? Colors.transparent
-                                : (context.isDarkMode ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.1))),
+                                : Colors.white.withValues(alpha: 0.5)),
                         width: isToday ? 2.0 : 1.0,
                       ),
                     ),
@@ -337,11 +304,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         : Text(
                             weekDays[index],
                             style: GoogleFonts.outfit(
-                              fontSize: 12,
+                              fontSize: 12.5,
                               fontWeight: FontWeight.bold,
                               color: isToday
-                                  ? (context.isDarkMode ? const Color(0xFFFFB088) : streakOrange)
-                                  : (context.isDarkMode ? const Color(0xFFFFD4B8).withValues(alpha: 0.6) : const Color(0xFF9A3412).withValues(alpha: 0.6)),
+                                  ? streakTextColor
+                                  : streakTextColor.withValues(alpha: 0.75),
                             ),
                           ),
                   ),
@@ -351,7 +318,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: GoogleFonts.outfit(
                       fontSize: 10.5,
                       fontWeight: isToday ? FontWeight.bold : FontWeight.w600,
-                      color: context.isDarkMode ? const Color(0xFFFFD4B8) : const Color(0xFF7C2D12),
+                      color: streakTextColor,
                     ),
                   ),
                 ],
@@ -476,7 +443,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final examDate = DateTime(2027, 2, 1);
     final totalPrepDays = examDate.difference(planStart).inDays;
     final today = DateTime.now();
-    const streakOrange = Color(0xFFEA580C);
+    const streakLightOrange = Color(0xFFFFA057);
 
     double prepPercentElapsed = 0.0;
     if (today.isAfter(examDate)) {
@@ -536,7 +503,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: GoogleFonts.outfit(
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
-                          color: streakOrange,
+                          color: streakLightOrange,
                         ),
                       ),
                       const SizedBox(height: 3),
@@ -630,10 +597,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 14),
 
-          // Progress Bar (Color matches the streak orange) & Meta
+          // Progress Bar (Color matches the light streak orange) & Meta
           NeuProgressBar(
             progress: prepPercentElapsed,
-            progressColor: streakOrange,
+            progressColor: streakLightOrange,
             height: 7,
           ),
           const SizedBox(height: 8),

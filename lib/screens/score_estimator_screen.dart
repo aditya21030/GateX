@@ -5,7 +5,6 @@ import '../providers/app_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/neu_widgets.dart';
 import '../services/ad_service.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class EstimationNode {
   final double marks;
@@ -29,6 +28,7 @@ class ScoreEstimatorScreen extends StatefulWidget {
 }
 
 class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
+  bool _isRealGateExam = false; // false = Mock Test, true = Real GATE Exam (Response Sheet)
   String _targetYearTrend = 'Average Trend';
   bool _isPredicting = false;
   bool _hasPredicted = false;
@@ -88,7 +88,7 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
     EstimationNode(marks: 0.0, gateScore: 0.0, minRank: 8000, maxRank: 10000),
   ];
 
-    static const Map<String, double> _coachingMultipliers = {
+  static const Map<String, double> _coachingMultipliers = {
     'Self-made': 1.0,
     'GO Classes': 1.03,
     'MADE Easy': 1.01,
@@ -101,7 +101,7 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
   };
 
   Map<String, dynamic> _calculatePrediction(double marks, String source, String yearTrend) {
-    final multiplier = _coachingMultipliers[source] ?? 1.0;
+    final double multiplier = _isRealGateExam ? 1.0 : (_coachingMultipliers[source] ?? 1.0);
     final double scaledMarks = (marks * multiplier).clamp(0.0, 100.0);
 
     List<EstimationNode> nodes;
@@ -166,7 +166,14 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
     return {'score': 0.0, 'minRank': 0.0, 'maxRank': 0.0};
   }
 
-  Map<String, dynamic> _buildResultMap(double score, int minRank, int maxRank, double marks, double cutoff, double multiplier) {
+  Map<String, dynamic> _buildResultMap(
+    double score,
+    int minRank,
+    int maxRank,
+    double marks,
+    double cutoff,
+    double multiplier,
+  ) {
     final bool isQualified = marks >= cutoff;
     String iitChance;
     Color color;
@@ -411,47 +418,75 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
     );
   }
 
-  List<_TableRowData> _buildReferenceRows() {
-    if (_targetYearTrend == 'GATE 2026') {
-      return [
-        _TableRowData('80 – 100', 'AIR 1 – 15', 'High', AppTheme.success),
-        _TableRowData('65 – 79', 'AIR 16 – 200', 'High', AppTheme.success),
-        _TableRowData('50 – 64', 'AIR 201 – 1100', 'Moderate', AppTheme.secondary),
-        _TableRowData('26.4 – 49', 'AIR 1101 – 8500', 'Low', Colors.amber),
-        _TableRowData('Below 26.4', 'Not Qualified', 'None', AppTheme.error),
-      ];
-    } else if (_targetYearTrend == 'GATE 2025') {
-      return [
-        _TableRowData('80 – 100', 'AIR 1 – 100', 'High', AppTheme.success),
-        _TableRowData('65 – 79', 'AIR 101 – 1000', 'High', AppTheme.success),
-        _TableRowData('50 – 64', 'AIR 1001 – 4500', 'Moderate', AppTheme.secondary),
-        _TableRowData('29.0 – 49', 'AIR 4501 – 16000', 'Low', Colors.amber),
-        _TableRowData('Below 29.0', 'Not Qualified', 'None', AppTheme.error),
-      ];
-    } else if (_targetYearTrend == 'GATE 2024') {
-      return [
-        _TableRowData('80 – 100', 'AIR 1 – 25', 'High', AppTheme.success),
-        _TableRowData('65 – 79', 'AIR 26 – 250', 'High', AppTheme.success),
-        _TableRowData('50 – 64', 'AIR 251 – 1500', 'Moderate', AppTheme.secondary),
-        _TableRowData('37.1 – 49', 'AIR 1501 – 5500', 'Low', Colors.amber),
-        _TableRowData('Below 37.1', 'Not Qualified', 'None', AppTheme.error),
-      ];
-    } else {
-      return [
-        _TableRowData('80 – 100', 'AIR 1 – 50', 'High', AppTheme.success),
-        _TableRowData('65 – 79', 'AIR 51 – 500', 'High', AppTheme.success),
-        _TableRowData('50 – 64', 'AIR 501 – 2000', 'Moderate', AppTheme.secondary),
-        _TableRowData('30.8 – 49', 'AIR 2001 – 10000', 'Low', Colors.amber),
-        _TableRowData('Below 30.8', 'Not Qualified', 'None', AppTheme.error),
-      ];
-    }
+  void _showExactMarksDialog(AppProvider provider, double currentScore) {
+    final textController = TextEditingController(
+      text: currentScore.toStringAsFixed(currentScore.truncateToDouble() == currentScore ? 0 : 2),
+    );
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: context.scaffoldBackground,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text('Enter Exact Marks', style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              _isRealGateExam
+                  ? 'Enter marks calculated from your official GATE response sheet (0.00 – 100.00):'
+                  : 'Enter your exact raw marks in mock exam (0.00 – 100.00):',
+              style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
+            ),
+            const SizedBox(height: 14),
+            TextField(
+              controller: textController,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              autofocus: true,
+              style: AppTheme.timerStyle(fontSize: 22, color: AppTheme.accentPurple),
+              decoration: InputDecoration(
+                labelText: 'Marks (out of 100)',
+                hintText: 'e.g. 64.33',
+                labelStyle: TextStyle(color: context.textSecondaryColor, fontSize: 13),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Cancel', style: TextStyle(color: context.textSecondaryColor)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.accentPurple,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            ),
+            onPressed: () {
+              final val = double.tryParse(textController.text.trim());
+              if (val != null && val >= 0.0 && val <= 100.0) {
+                provider.setScoreEstimatorScore(val);
+                if (_hasPredicted) {
+                  setState(() => _hasPredicted = false);
+                }
+                Navigator.pop(ctx);
+              }
+            },
+            child: const Text('Confirm', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
   }
 
   void _runPrediction() {
     HapticFeedback.selectionClick();
     final provider = Provider.of<AppProvider>(context, listen: false);
     final score = provider.estimatorMockScore;
-    final source = provider.estimatorMockSource;
+    final source = _isRealGateExam ? 'Official GATE Exam' : provider.estimatorMockSource;
 
     setState(() => _isPredicting = true);
 
@@ -509,14 +544,12 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
     final sourceDisplay = sourcesMap[source] ?? source;
     final trendDisplay = trendsMap[_targetYearTrend] ?? _targetYearTrend;
 
-
-
     return Scaffold(
       backgroundColor: context.scaffoldBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text('AIR Score Estimator', style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor)),
+        title: Text('AIR Rank Estimator', style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor)),
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: context.textColor),
           onPressed: () => Navigator.pop(context),
@@ -538,25 +571,166 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Calibrated algorithm with difficulty multipliers and previous year curves',
+                    _isRealGateExam
+                        ? 'Official response sheet evaluation based on normalized GATE curves'
+                        : 'Calibrated algorithm with coaching difficulty multipliers and GATE curves',
                     style: TextStyle(color: context.textSecondaryColor, fontSize: 12),
                   ),
                   const SizedBox(height: 16),
 
-                  // 1. INPUT CARD
+                  // 1. EXAM MODE TOGGLE (Real Exam vs Mock Test)
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: context.colorSurfaceElevated,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: context.colorBorder),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              if (_isRealGateExam) {
+                                HapticFeedback.selectionClick();
+                                setState(() {
+                                  _isRealGateExam = false;
+                                  _hasPredicted = false;
+                                });
+                              }
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              decoration: BoxDecoration(
+                                color: !_isRealGateExam ? AppTheme.accentPurple : Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: !_isRealGateExam
+                                    ? [
+                                        BoxShadow(
+                                          color: AppTheme.accentPurple.withValues(alpha: 0.3),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ]
+                                    : null,
+                              ),
+                              alignment: Alignment.center,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.assignment_outlined,
+                                    size: 15,
+                                    color: !_isRealGateExam ? Colors.white : context.textSecondaryColor,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'Coaching Mock',
+                                    style: TextStyle(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.bold,
+                                      color: !_isRealGateExam ? Colors.white : context.textSecondaryColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              if (!_isRealGateExam) {
+                                HapticFeedback.selectionClick();
+                                setState(() {
+                                  _isRealGateExam = true;
+                                  _hasPredicted = false;
+                                });
+                              }
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              decoration: BoxDecoration(
+                                color: _isRealGateExam ? AppTheme.accentPurple : Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: _isRealGateExam
+                                    ? [
+                                        BoxShadow(
+                                          color: AppTheme.accentPurple.withValues(alpha: 0.3),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ]
+                                    : null,
+                              ),
+                              alignment: Alignment.center,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.account_balance_rounded,
+                                    size: 15,
+                                    color: _isRealGateExam ? Colors.white : context.textSecondaryColor,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'Real GATE Exam',
+                                    style: TextStyle(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.bold,
+                                      color: _isRealGateExam ? Colors.white : context.textSecondaryColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+
+                  // 2. INPUT CARD
                   NeuContainer(
                     borderRadius: 20,
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildCustomSelectorCard(
-                          context: context,
-                          label: 'Which Mock Test did you take?',
-                          currentValueDisplay: sourceDisplay,
-                          onTap: () => _showMockSourceBottomSheet(provider, source),
-                        ),
-                        const SizedBox(height: 14),
+                        if (!_isRealGateExam) ...[
+                          _buildCustomSelectorCard(
+                            context: context,
+                            label: 'Which Mock Test did you take?',
+                            currentValueDisplay: sourceDisplay,
+                            onTap: () => _showMockSourceBottomSheet(provider, source),
+                          ),
+                          const SizedBox(height: 14),
+                        ] else ...[
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: AppTheme.accentPurple.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.2)),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.verified_rounded, size: 20, color: AppTheme.accentPurple),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    'Direct evaluation for Official GATE response sheets. No difficulty skews applied (1.0x).',
+                                    style: TextStyle(fontSize: 11.5, color: context.textColor, height: 1.3),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                        ],
 
                         _buildCustomSelectorCard(
                           context: context,
@@ -566,33 +740,44 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                         ),
                         const SizedBox(height: 20),
 
-                        // Marks slider header
+                        // Marks slider & text input trigger header
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Mock Marks (out of 100)',
+                              _isRealGateExam ? 'Real Exam Marks (out of 100)' : 'Mock Marks (out of 100)',
                               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor),
                             ),
-                            NeuContainer(
-                              borderRadius: 10,
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              child: Text(
-                                score.toStringAsFixed(0),
-                                style: AppTheme.timerStyle(fontSize: 16, color: AppTheme.accentPurple),
+                            GestureDetector(
+                              onTap: () => _showExactMarksDialog(provider, score),
+                              child: NeuContainer(
+                                borderRadius: 10,
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      score.toStringAsFixed(score.truncateToDouble() == score ? 0 : 2),
+                                      style: AppTheme.timerStyle(fontSize: 16, color: AppTheme.accentPurple),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Icon(Icons.edit_rounded, size: 13, color: context.textSecondaryColor),
+                                  ],
+                                ),
                               ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 8),
+
                         // Slider
                         Slider(
-                          value: score,
+                          value: score.clamp(0.0, 100.0),
                           min: 0.0,
                           max: 100.0,
-                          divisions: 100,
+                          divisions: 200,
                           activeColor: AppTheme.accentPurple,
-                          label: score.toStringAsFixed(0),
+                          label: score.toStringAsFixed(1),
                           onChanged: (val) {
                             provider.setScoreEstimatorScore(val);
                             if (_hasPredicted) {
@@ -601,6 +786,7 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                           },
                         ),
                         const SizedBox(height: 14),
+
                         // 1-Tap Predict Action Button (Triggers Interstitial Ad for Free users)
                         NeuButton(
                           isPrimary: true,
@@ -623,14 +809,14 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                                     ),
                                   ],
                                 )
-                              : const Row(
+                              : Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.auto_awesome, size: 18, color: Colors.white),
-                                    SizedBox(width: 8),
+                                    const Icon(Icons.auto_awesome, size: 18, color: Colors.white),
+                                    const SizedBox(width: 8),
                                     Text(
-                                      'Predict AIR & GATE Score',
-                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
+                                      _isRealGateExam ? 'Predict Real Exam AIR & Score' : 'Predict Mock AIR & Score',
+                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
                                     ),
                                   ],
                                 ),
@@ -640,7 +826,7 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                   ),
                   const SizedBox(height: 20),
 
-                  // 2. OUTPUT CARD (Revealed only after clicking Predict button)
+                  // 3. OUTPUT CARD (Revealed only after clicking Predict button)
                   if (_hasPredicted && _prediction != null) ...[
                     NeuContainer(
                       borderRadius: 20,
@@ -692,7 +878,7 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Estimated Score',
+                                      'Estimated GATE Score',
                                       style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
                                     ),
                                     const SizedBox(height: 4),
@@ -730,18 +916,20 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'GATE Equivalent Marks:',
+                                _isRealGateExam ? 'Real Exam Marks:' : 'Equivalent GATE Marks:',
                                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: context.textSecondaryColor),
                               ),
                               Text(
-                                "${_prediction!['scaledMarks'].toStringAsFixed(1)} / 100",
+                                "${(_prediction!['scaledMarks'] as double).toStringAsFixed(1)} / 100",
                                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: _prediction!['color']),
                               ),
                             ],
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            "Difficulty scaling: ${_prediction!['multiplier']}x ($sourceDisplay)",
+                            _isRealGateExam
+                                ? "Mode: Real GATE Exam (Direct 1.0x Response Sheet)"
+                                : "Difficulty scaling: ${_prediction!['multiplier']}x ($sourceDisplay)",
                             style: TextStyle(fontSize: 10, color: context.textSecondaryColor, fontStyle: FontStyle.italic),
                           ),
                           const SizedBox(height: 12),
@@ -799,11 +987,13 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                               children: [
                                 Text(
                                   'Ready to Predict Your Rank',
-                                  style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold, color: context.textColor),
+                                  style: AppTheme.poppinsBold(fontSize: 14, color: context.textColor),
                                 ),
                                 const SizedBox(height: 3),
                                 Text(
-                                  'Set your mock marks above and tap "Predict AIR & GATE Score" to calculate your rank with coaching difficulty weights.',
+                                  _isRealGateExam
+                                      ? 'Enter your raw marks from official GATE response key to calculate rank based on standard bell curves.'
+                                      : 'Set your mock marks above and tap "Predict Mock AIR & Score" to calculate your rank with coaching difficulty weights.',
                                   style: TextStyle(fontSize: 11.5, color: context.textSecondaryColor, height: 1.35),
                                 ),
                               ],
@@ -813,16 +1003,7 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                       ),
                     ),
                   ],
-                  const SizedBox(height: 20),
-
-                  // 3. REFERENCE TABLE
-                  Text(
-                    'Score-to-Rank Benchmark',
-                    style: AppTheme.poppinsBold(fontSize: 15, color: context.textColor),
-                  ),
-                  const SizedBox(height: 10),
-                  _buildReferenceTable(context),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),
@@ -831,101 +1012,4 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
       ),
     );
   }
-
-  Widget _buildReferenceTable(BuildContext context) {
-    final rows = _buildReferenceRows();
-
-    return NeuContainer(
-      borderRadius: 18,
-      padding: const EdgeInsets.all(14.0),
-      child: Column(
-        children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: Text(
-                      'Marks Range',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: context.textSecondaryColor),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: Text(
-                      'Predicted AIR',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: context.textSecondaryColor),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: Text(
-                      'Chance at IIT',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: context.textSecondaryColor),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Divider(color: context.isDarkMode ? Colors.white12 : Colors.black12, height: 1),
-            // Rows
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: rows.length,
-              itemBuilder: (context, index) {
-                final row = rows[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: Text(
-                          row.score,
-                          style: AppTheme.timerStyle(fontSize: 14, color: context.textColor),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Text(
-                          row.rank,
-                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: row.color),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: row.color.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            row.chance,
-                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: row.color),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      );
-  }
-}
-
-class _TableRowData {
-  final String score;
-  final String rank;
-  final String chance;
-  final Color color;
-
-  _TableRowData(this.score, this.rank, this.chance, this.color);
 }

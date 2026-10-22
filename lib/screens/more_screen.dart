@@ -12,6 +12,8 @@ import '../widgets/neu_widgets.dart';
 import 'error_log_screen.dart';
 import 'pomodoro_screen.dart';
 import 'score_estimator_screen.dart';
+import 'gate_score_predictor_screen.dart';
+import 'psu_predictor_screen.dart';
 import 'revision_screen.dart';
 import 'weightage_screen.dart';
 import 'mock_tracker_screen.dart';
@@ -452,7 +454,7 @@ class MoreScreen extends StatelessWidget {
     );
   }
 
-  // 2-Column Neumorphic Tools Grid (10 Total Comprehensive Tools)
+  // 2-Column Neumorphic Tools Grid (12 Total Comprehensive Tools)
   Widget _buildToolsGrid(BuildContext context) {
     final tools = [
       {
@@ -508,6 +510,18 @@ class MoreScreen extends StatelessWidget {
         'color': AppTheme.accentMint,
         'title': 'Analytics',
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MockTrackerScreen(initialTabIndex: 1))),
+      },
+      {
+        'icon': Icons.auto_graph_rounded,
+        'color': const Color(0xFF6366F1),
+        'title': 'Score Predictor',
+        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GateScorePredictorScreen())),
+      },
+      {
+        'icon': Icons.corporate_fare_rounded,
+        'color': const Color(0xFF0D9488),
+        'title': 'PSU Predictor',
+        'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PsuPredictorScreen())),
       },
       {
         'icon': Icons.library_books_rounded,

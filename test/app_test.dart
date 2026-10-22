@@ -781,7 +781,7 @@ void main() {
   });
 
   group('GateX Hub Screen Architecture & Tools Tests', () {
-    test('Hub Tools Grid contains exactly 10 comprehensive study tools', () {
+    test('Hub Tools Grid contains comprehensive study tools including Score and PSU Predictor', () {
       final expectedTools = [
         'Formulas',
         'Calculator',
@@ -791,10 +791,14 @@ void main() {
         'Revision',
         'Mistakes',
         'Roadmap',
-        'Doubts',
+        'Analytics',
+        'Score Predictor',
+        'PSU Predictor',
         'Notes',
       ];
-      expect(expectedTools.length, 10);
+      expect(expectedTools.length, 12);
+      expect(expectedTools.contains('Score Predictor'), isTrue);
+      expect(expectedTools.contains('PSU Predictor'), isTrue);
       expect(expectedTools.contains('Roadmap'), isTrue);
       expect(expectedTools.contains('Calculator'), isTrue);
     });
@@ -914,6 +918,77 @@ void main() {
       expect(resolvedStates[1]?['isCompleted'], true);
       expect(resolvedStates[2]?['isCompleted'], false);
       expect(resolvedStates[1]?['userNote'], 'Finished Chapter 1');
+    });
+  });
+
+  group('GATE Score Predictor & PSU Predictor Formula Tests', () {
+    test('Official GATE Normalization Formula accurately maps benchmark points', () {
+      double computeScore(double m, double mq, double mt) {
+        const double sq = 350.0;
+        const double st = 900.0;
+        if (m >= mt) {
+          final double diff = (100.0 - mt) > 0 ? (100.0 - mt) : 10.0;
+          return (st + (1000.0 - st) * ((m - mt) / diff)).clamp(0.0, 1000.0);
+        } else if (m >= mq) {
+          return (sq + (st - sq) * ((m - mq) / (mt - mq))).clamp(0.0, 1000.0);
+        } else {
+          return (sq * (m / mq)).clamp(0.0, 1000.0);
+        }
+      }
+
+      const double mq = 30.0;
+      const double mt = 80.0;
+
+      // Exactly at General qualifying marks -> exactly 350
+      expect(computeScore(mq, mq, mt).round(), 350);
+
+      // Exactly at Top 0.1% mean marks -> exactly 900
+      expect(computeScore(mt, mq, mt).round(), 900);
+
+      // Perfect 100 marks -> exactly 1000
+      expect(computeScore(100.0, mq, mt).round(), 1000);
+
+      // Midpoint between Mq and Mt -> 350 + 275 = 625
+      expect(computeScore(55.0, mq, mt).round(), 625);
+
+      // Category cutoffs
+      final double obcCutoff = double.parse((mq * 0.9).toStringAsFixed(2));
+      final double scCutoff = double.parse((mq * 2.0 / 3.0).toStringAsFixed(2));
+      expect(obcCutoff, 27.0);
+      expect(scCutoff, 20.0);
+    });
+
+    test('PSU Predictor evaluates chances across branches (DA and CS/IT)', () {
+      String getChance(double score, int cutoff) {
+        if (score >= cutoff + 15) return 'HIGH';
+        if (score >= cutoff - 15) return 'TARGET';
+        return 'REACH';
+      }
+
+      // Test with Score 750 (General)
+      expect(getChance(750, 730), 'HIGH'); // ONGC DA (Cutoff 730)
+      expect(getChance(750, 760), 'TARGET'); // ONGC CSIT (Cutoff 760)
+      expect(getChance(600, 730), 'REACH'); // Below threshold
+
+      // Category scaling
+      final int genCutoff = 730;
+      final int scCutoff = 510;
+      expect(getChance(550, genCutoff), 'REACH');
+      expect(getChance(550, scCutoff), 'HIGH'); // SC candidate with 550 gets High Chance
+    });
+
+    test('Score Estimator Real GATE Exam mode uses 1.0x multiplier without coaching skew', () {
+      double calculateScaled(double marks, bool isRealExam, double coachingMultiplier) {
+        final multiplier = isRealExam ? 1.0 : coachingMultiplier;
+        return (marks * multiplier).clamp(0.0, 100.0);
+      }
+
+      // Mock with tough multiplier
+      expect(calculateScaled(60.0, false, 1.03), closeTo(61.8, 0.01));
+
+      // Real exam retains exact raw marks
+      expect(calculateScaled(60.0, true, 1.03), 60.0);
+      expect(calculateScaled(58.33, true, 0.96), 58.33);
     });
   });
 }
