@@ -50,21 +50,21 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
       margin: const EdgeInsets.only(right: 8),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: AppTheme.primary.withValues(alpha: 0.15),
+        color: const Color(0xFFFF8522).withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.primary.withValues(alpha: 0.3)),
+        border: Border.all(color: const Color(0xFFFF8522).withValues(alpha: 0.4)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             label,
-            style: const TextStyle(color: AppTheme.primary, fontSize: 11, fontWeight: FontWeight.bold),
+            style: const TextStyle(color: Color(0xFFFF8522), fontSize: 11, fontWeight: FontWeight.bold),
           ),
           const SizedBox(width: 4),
           InkWell(
             onTap: onRemove,
-            child: const Icon(Icons.close_rounded, size: 13, color: AppTheme.primary),
+            child: const Icon(Icons.close_rounded, size: 13, color: Color(0xFFFF8522)),
           ),
         ],
       ),
@@ -241,58 +241,6 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
               VirtualCalculator.show(context);
             },
           ),
-          if (provider.selectedExam == 'BOTH')
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 11, horizontal: 12),
-              height: 30,
-              decoration: BoxDecoration(
-                color: context.colorSurfaceElevated,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: context.isDarkMode
-                      ? Colors.white.withValues(alpha: 0.08)
-                      : Colors.black.withValues(alpha: 0.06),
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildSwitchButton(context, provider, 'DA'),
-                  _buildSwitchButton(context, provider, 'CSIT'),
-                ],
-              ),
-            )
-          else
-            GestureDetector(
-              onTap: () {
-                HapticFeedback.selectionClick();
-                _showBranchSwitcherSheet(context, provider);
-              },
-              child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
-                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-                decoration: BoxDecoration(
-                  color: AppTheme.accentPurple.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.3)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      provider.activeExam ?? 'DA',
-                      style: const TextStyle(
-                        color: AppTheme.accentPurple,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 11,
-                      ),
-                    ),
-                    const SizedBox(width: 3),
-                    const Icon(Icons.arrow_drop_down_rounded, size: 14, color: AppTheme.accentPurple),
-                  ],
-                ),
-              ),
-            ),
         ],
       ),
       body: SafeArea(
@@ -349,21 +297,21 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                           height: 46,
                           borderRadius: 16,
                           padding: const EdgeInsets.symmetric(horizontal: 14),
-                          color: _activeFilterCount > 0 ? AppTheme.accentPurple.withValues(alpha: 0.15) : null,
+                          color: _activeFilterCount > 0 ? const Color(0xFFFF8522).withValues(alpha: 0.15) : null,
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
                                 Icons.tune_rounded,
                                 size: 19,
-                                color: _activeFilterCount > 0 ? AppTheme.accentPurple : context.textSecondaryColor,
+                                color: _activeFilterCount > 0 ? const Color(0xFFFF8522) : context.textSecondaryColor,
                               ),
                               if (_activeFilterCount > 0) ...[
                                 const SizedBox(width: 6),
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                   decoration: const BoxDecoration(
-                                    color: AppTheme.accentPurple,
+                                    color: Color(0xFFFF8522),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Text(
@@ -443,20 +391,18 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
-                              color: context.colorSurface,
+                              color: const Color(0xFFFF8522).withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: context.isDarkMode
-                                    ? Colors.white.withValues(alpha: 0.08)
-                                    : Colors.black.withValues(alpha: 0.06),
+                                color: const Color(0xFFFF8522).withValues(alpha: 0.35),
                               ),
                             ),
                             child: const Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.bolt_rounded, size: 14, color: AppTheme.secondary),
+                                Icon(Icons.bolt_rounded, size: 14, color: Color(0xFFFF8522)),
                                 SizedBox(width: 4),
-                                Text('NAT Drills', style: TextStyle(color: AppTheme.secondary, fontSize: 11.5, fontWeight: FontWeight.bold)),
+                                Text('NAT Drills', style: TextStyle(color: Color(0xFFFF8522), fontSize: 11.5, fontWeight: FontWeight.bold)),
                               ],
                             ),
                           ),
@@ -596,6 +542,16 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
               ],
             ),
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _startInstantDrill(context, pyqListAll),
+        backgroundColor: const Color(0xFFFF8522),
+        elevation: 4,
+        icon: const Icon(Icons.bolt_rounded, color: Colors.white, size: 20),
+        label: Text(
+          'Start Practice Drill',
+          style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13),
         ),
       ),
     );
@@ -938,162 +894,6 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
   }
 }
 
-  Widget _buildSwitchButton(BuildContext context, AppProvider provider, String exam) {
-    final isSelected = provider.activeExam == exam;
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        provider.setActiveExam(exam);
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          color: isSelected ? AppTheme.accentPurple : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Text(
-          exam,
-          style: TextStyle(
-            color: isSelected ? Colors.white : context.textSecondaryColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 11,
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showBranchSwitcherSheet(BuildContext context, AppProvider provider) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) {
-        return NeuContainer(
-          borderRadius: 24,
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-          color: context.colorSurfaceElevated,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: context.textSecondaryColor.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Select Exam Track',
-                    style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.close_rounded, color: context.textSecondaryColor),
-                    onPressed: () => Navigator.pop(ctx),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              _buildBranchTile(
-                context: context,
-                title: 'GATE DA (Data Science & AI)',
-                subtitle: 'Machine Learning, AI, Probability & Linear Algebra',
-                isSelected: provider.activeExam == 'DA' && provider.selectedExam != 'BOTH',
-                onTap: () {
-                  provider.setExams('DA', 'DA');
-                  Navigator.pop(ctx);
-                },
-              ),
-              const SizedBox(height: 10),
-              _buildBranchTile(
-                context: context,
-                title: 'GATE CS/IT (Computer Science)',
-                subtitle: 'Algorithms, OS, CN, DBMS, TOC, Compiler',
-                isSelected: provider.activeExam == 'CSIT' && provider.selectedExam != 'BOTH',
-                onTap: () {
-                  provider.setExams('CSIT', 'CSIT');
-                  Navigator.pop(ctx);
-                },
-              ),
-              const SizedBox(height: 10),
-              _buildBranchTile(
-                context: context,
-                title: 'Dual Preparation (BOTH)',
-                subtitle: 'Switch between DA & CS/IT anytime via top bar',
-                isSelected: provider.selectedExam == 'BOTH',
-                onTap: () {
-                  provider.setExams('BOTH', provider.activeExam ?? 'DA');
-                  Navigator.pop(ctx);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildBranchTile({
-    required BuildContext context,
-    required String title,
-    required String subtitle,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        onTap();
-      },
-      child: NeuContainer(
-        borderRadius: 14,
-        padding: const EdgeInsets.all(12),
-        color: isSelected ? AppTheme.accentPurple.withValues(alpha: 0.12) : null,
-        child: Row(
-          children: [
-            Icon(
-              isSelected ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
-              color: isSelected ? AppTheme.accentPurple : context.textSecondaryColor,
-              size: 20,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13.5,
-                      color: isSelected ? AppTheme.accentPurple : context.textColor,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: context.textSecondaryColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
 class _PYQCard extends StatefulWidget {
   final PYQ pyq;
   final AppProvider provider;
@@ -1227,20 +1027,20 @@ class _PYQCardState extends State<_PYQCard> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
                   decoration: BoxDecoration(
-                    color: pyq.type == 'MSQ'
-                        ? const Color(0xFFFF9100).withValues(alpha: 0.14)
-                        : pyq.type == 'NAT'
-                            ? AppTheme.accentMint.withValues(alpha: 0.14)
+                    color: pyq.type == 'NAT'
+                        ? const Color(0xFFFF8522).withValues(alpha: 0.16)
+                        : pyq.type == 'MSQ'
+                            ? const Color(0xFFFF9100).withValues(alpha: 0.14)
                             : AppTheme.accentPurple.withValues(alpha: 0.14),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     pyq.type,
                     style: GoogleFonts.outfit(
-                      color: pyq.type == 'MSQ'
-                          ? const Color(0xFFFF9100)
-                          : pyq.type == 'NAT'
-                              ? AppTheme.accentMint
+                      color: pyq.type == 'NAT'
+                          ? const Color(0xFFFF8522)
+                          : pyq.type == 'MSQ'
+                              ? const Color(0xFFFF9100)
                               : AppTheme.accentPurple,
                       fontSize: 10.5,
                       fontWeight: FontWeight.bold,
@@ -1277,7 +1077,7 @@ class _PYQCardState extends State<_PYQCard> {
                 IconButton(
                   icon: Icon(
                     pyq.isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-                    color: pyq.isBookmarked ? const Color(0xFFFFD166) : context.textSecondaryColor,
+                    color: pyq.isBookmarked ? const Color(0xFFFF8522) : context.textSecondaryColor,
                     size: 20,
                   ),
                   onPressed: () {
@@ -1579,13 +1379,13 @@ class _PYQCardState extends State<_PYQCard> {
                         },
                         icon: Icon(
                           _showSolution ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                          color: AppTheme.secondary,
+                          color: const Color(0xFFFF8522),
                           size: 15,
                         ),
                         label: Text(
                           _showSolution ? 'Hide' : 'Solution',
                           style: const TextStyle(
-                            color: AppTheme.secondary,
+                            color: Color(0xFFFF8522),
                             fontWeight: FontWeight.bold,
                             fontSize: 11.5,
                           ),

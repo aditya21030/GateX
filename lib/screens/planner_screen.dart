@@ -400,60 +400,7 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
             'Syllabus & Planner',
             style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: context.textColor),
           ),
-          actions: [
-            if (provider.selectedExam == 'BOTH')
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 11, horizontal: 12),
-                height: 30,
-                decoration: BoxDecoration(
-                  color: context.colorSurfaceElevated,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: context.isDarkMode
-                        ? Colors.white.withValues(alpha: 0.08)
-                        : Colors.black.withValues(alpha: 0.06),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildSwitchButton(context, provider, 'DA'),
-                    _buildSwitchButton(context, provider, 'CSIT'),
-                  ],
-                ),
-              )
-            else
-              GestureDetector(
-                onTap: () {
-                  HapticFeedback.selectionClick();
-                  _showBranchSwitcherSheet(context, provider);
-                },
-                child: Container(
-                  margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
-                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: AppTheme.accentPurple.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.3)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        provider.activeExam ?? 'DA',
-                        style: const TextStyle(
-                          color: AppTheme.accentPurple,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 11,
-                        ),
-                      ),
-                      const SizedBox(width: 3),
-                      const Icon(Icons.arrow_drop_down_rounded, size: 14, color: AppTheme.accentPurple),
-                    ],
-                  ),
-                ),
-              ),
-          ],
+          actions: const [],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(56),
             child: Container(
@@ -539,36 +486,52 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
         // Summary & Search Header
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
-          child: NeuContainer(
-            borderRadius: 22,
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Top Progress Card: Circular Ring + Stat Counters
-                Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Syllabus Mastery Orange Hero Card
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFF8522), Color(0xFFFF5200)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(
+                    color: const Color(0xFFFFC085).withValues(alpha: 0.5),
+                    width: 1.4,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFFF5200).withValues(alpha: 0.35),
+                      blurRadius: 16,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: Row(
                   children: [
                     // Circular Progress Indicator Ring
                     SizedBox(
-                      width: 54,
-                      height: 54,
+                      width: 56,
+                      height: 56,
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
                           CircularProgressIndicator(
                             value: overallProgress,
                             strokeWidth: 5.5,
-                            backgroundColor: context.isDarkMode
-                                ? Colors.white.withValues(alpha: 0.08)
-                                : Colors.black.withValues(alpha: 0.06),
-                            valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.accentMint),
+                            backgroundColor: Colors.white.withValues(alpha: 0.25),
+                            valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                           Text(
                             '${(overallProgress * 100).toStringAsFixed(0)}%',
                             style: GoogleFonts.outfit(
-                              fontSize: 13,
+                              fontSize: 13.5,
                               fontWeight: FontWeight.bold,
-                              color: context.textColor,
+                              color: Colors.white,
                             ),
                           ),
                         ],
@@ -586,26 +549,28 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
                               Text(
                                 'Syllabus Mastery',
                                 style: GoogleFonts.outfit(
-                                  fontSize: 15,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: context.textColor,
+                                  color: Colors.white,
+                                  letterSpacing: -0.2,
                                 ),
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
                                 decoration: BoxDecoration(
-                                  color: AppTheme.accentMint.withValues(alpha: 0.15),
-                                  borderRadius: BorderRadius.circular(6),
+                                  color: Colors.white.withValues(alpha: 0.22),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: Colors.white.withValues(alpha: 0.4), width: 1),
                                 ),
                                 child: Text(
                                   overallProgress >= 0.8
                                       ? 'GATE READY'
                                       : (overallProgress >= 0.4 ? 'ON TRACK' : 'IN PROGRESS'),
                                   style: GoogleFonts.outfit(
-                                    color: AppTheme.accentMint,
+                                    color: Colors.white,
                                     fontSize: 9.5,
                                     fontWeight: FontWeight.bold,
-                                    letterSpacing: 0.5,
+                                    letterSpacing: 0.6,
                                   ),
                                 ),
                               ),
@@ -615,73 +580,78 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
                           Text(
                             '$masteredTopics / $totalTopics Topics Completed',
                             style: GoogleFonts.outfit(
-                              color: context.textSecondaryColor,
+                              color: Colors.white.withValues(alpha: 0.9),
                               fontSize: 12,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                          const SizedBox(height: 6),
-                          NeuProgressBar(
-                            progress: overallProgress,
-                            progressColor: AppTheme.accentMint,
-                            height: 6,
+                          const SizedBox(height: 8),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: LinearProgressIndicator(
+                              value: overallProgress,
+                              minHeight: 6,
+                              backgroundColor: Colors.white.withValues(alpha: 0.25),
+                              valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 14),
-                // Search Bar
-                NeuContainer(
-                  isRecessed: true,
-                  borderRadius: 14,
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: (val) {
-                      setState(() {
-                        _checklistSearchQuery = val.trim();
-                      });
-                    },
-                    style: GoogleFonts.outfit(color: context.textColor, fontSize: 13.5),
-                    decoration: InputDecoration(
-                      hintText: 'Search topics (e.g. Eigenvalues, Bayes)...',
-                      hintStyle: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 13),
-                      prefixIcon: Icon(Icons.search_rounded, size: 18, color: context.textSecondaryColor),
-                      suffixIcon: _checklistSearchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: Icon(Icons.close_rounded, size: 16, color: context.textSecondaryColor),
-                              onPressed: () {
-                                _searchController.clear();
-                                setState(() {
-                                  _checklistSearchQuery = '';
-                                });
-                              },
-                            )
-                          : null,
-                      border: InputBorder.none,
-                      isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
-                    ),
+              ),
+              const SizedBox(height: 12),
+              // Search Bar
+              NeuContainer(
+                isRecessed: true,
+                borderRadius: 14,
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: (val) {
+                    setState(() {
+                      _checklistSearchQuery = val.trim();
+                    });
+                  },
+                  style: GoogleFonts.outfit(color: context.textColor, fontSize: 13.5),
+                  decoration: InputDecoration(
+                    hintText: 'Search topics (e.g. Eigenvalues, Bayes)...',
+                    hintStyle: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 13),
+                    prefixIcon: Icon(Icons.search_rounded, size: 18, color: context.textSecondaryColor),
+                    suffixIcon: _checklistSearchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: Icon(Icons.close_rounded, size: 16, color: context.textSecondaryColor),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() {
+                                _checklistSearchQuery = '';
+                              });
+                            },
+                          )
+                        : null,
+                    border: InputBorder.none,
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
                   ),
                 ),
-                const SizedBox(height: 12),
-                // Filter Chips
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  physics: const BouncingScrollPhysics(),
-                  child: Row(
-                    children: [
-                      _buildFilterChip('All', 'All ($totalTopics)'),
-                      _buildFilterChip('Unfinished', 'Pending (${totalTopics - masteredTopics})'),
-                      _buildFilterChip('Concept Left', 'Concepts Left ($conceptsLeft)'),
-                      _buildFilterChip('PYQ Left', 'PYQs Left ($pyqsLeft)'),
-                      _buildFilterChip('Needs Revision', 'Needs Revise ($needsReviseLeft)'),
-                    ],
-                  ),
+              ),
+              const SizedBox(height: 10),
+              // Filter Chips
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                child: Row(
+                  children: [
+                    _buildFilterChip('All', 'All ($totalTopics)'),
+                    _buildFilterChip('Unfinished', 'Pending (${totalTopics - masteredTopics})'),
+                    _buildFilterChip('Concept Left', 'Concepts Left ($conceptsLeft)'),
+                    _buildFilterChip('PYQ Left', 'PYQs Left ($pyqsLeft)'),
+                    _buildFilterChip('Needs Revision', 'Needs Revise ($needsReviseLeft)'),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
 
@@ -1849,159 +1819,4 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
 
 
 
-  Widget _buildSwitchButton(BuildContext context, AppProvider provider, String exam) {
-    final isSelected = provider.activeExam == exam;
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        provider.setActiveExam(exam);
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          color: isSelected ? AppTheme.accentPurple : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Text(
-          exam,
-          style: TextStyle(
-            color: isSelected ? Colors.white : context.textSecondaryColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 11,
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showBranchSwitcherSheet(BuildContext context, AppProvider provider) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) {
-        return NeuContainer(
-          borderRadius: 24,
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-          color: context.colorSurfaceElevated,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: context.textSecondaryColor.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Select Exam Track',
-                    style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.close_rounded, color: context.textSecondaryColor),
-                    onPressed: () => Navigator.pop(ctx),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              _buildBranchTile(
-                context: context,
-                title: 'GATE DA (Data Science & AI)',
-                subtitle: 'Machine Learning, AI, Probability & Linear Algebra',
-                isSelected: provider.activeExam == 'DA' && provider.selectedExam != 'BOTH',
-                onTap: () {
-                  provider.setExams('DA', 'DA');
-                  Navigator.pop(ctx);
-                },
-              ),
-              const SizedBox(height: 10),
-              _buildBranchTile(
-                context: context,
-                title: 'GATE CS/IT (Computer Science)',
-                subtitle: 'Algorithms, OS, CN, DBMS, TOC, Compiler',
-                isSelected: provider.activeExam == 'CSIT' && provider.selectedExam != 'BOTH',
-                onTap: () {
-                  provider.setExams('CSIT', 'CSIT');
-                  Navigator.pop(ctx);
-                },
-              ),
-              const SizedBox(height: 10),
-              _buildBranchTile(
-                context: context,
-                title: 'Dual Preparation (BOTH)',
-                subtitle: 'Switch between DA & CS/IT anytime via top bar',
-                isSelected: provider.selectedExam == 'BOTH',
-                onTap: () {
-                  provider.setExams('BOTH', provider.activeExam ?? 'DA');
-                  Navigator.pop(ctx);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildBranchTile({
-    required BuildContext context,
-    required String title,
-    required String subtitle,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        onTap();
-      },
-      child: NeuContainer(
-        borderRadius: 14,
-        padding: const EdgeInsets.all(12),
-        color: isSelected ? AppTheme.accentPurple.withValues(alpha: 0.12) : null,
-        child: Row(
-          children: [
-            Icon(
-              isSelected ? Icons.radio_button_checked_rounded : Icons.radio_button_off_rounded,
-              color: isSelected ? AppTheme.accentPurple : context.textSecondaryColor,
-              size: 20,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13.5,
-                      color: isSelected ? AppTheme.accentPurple : context.textColor,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: context.textSecondaryColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

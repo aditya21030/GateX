@@ -46,60 +46,7 @@ class MoreScreen extends StatelessWidget {
         ),
         elevation: 0,
         backgroundColor: context.scaffoldBackground,
-        actions: [
-          if (provider.selectedExam == 'BOTH')
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 11, horizontal: 12),
-              height: 30,
-              decoration: BoxDecoration(
-                color: context.colorSurfaceElevated,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: context.isDarkMode
-                      ? Colors.white.withValues(alpha: 0.08)
-                      : Colors.black.withValues(alpha: 0.06),
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildBranchSwitchButton(context, provider, 'DA'),
-                  _buildBranchSwitchButton(context, provider, 'CSIT'),
-                ],
-              ),
-            )
-          else
-            GestureDetector(
-              onTap: () {
-                HapticFeedback.selectionClick();
-                _showBranchSwitcherSheet(context, provider);
-              },
-              child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
-                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-                decoration: BoxDecoration(
-                  color: AppTheme.accentPurple.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.3)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      provider.activeExam ?? 'DA',
-                      style: const TextStyle(
-                        color: AppTheme.accentPurple,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 11,
-                      ),
-                    ),
-                    const SizedBox(width: 3),
-                    const Icon(Icons.arrow_drop_down_rounded, size: 14, color: AppTheme.accentPurple),
-                  ],
-                ),
-              ),
-            ),
-        ],
+        actions: const [],
       ),
       body: Center(
         child: ConstrainedBox(
@@ -112,7 +59,11 @@ class MoreScreen extends StatelessWidget {
               _buildProfileCard(context, provider),
               const SizedBox(height: 14),
 
-              // 2. PRO UPGRADE TACTILE BANNER
+              // 2. EXAM PREPARATION TRACK SWITCHER
+              _buildExamTrackSwitcher(context, provider),
+              const SizedBox(height: 14),
+
+              // 3. PRO UPGRADE TACTILE BANNER
               _buildProBanner(context, provider),
               const SizedBox(height: 22),
 
@@ -660,156 +611,225 @@ class MoreScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBranchSwitchButton(BuildContext context, AppProvider provider, String exam) {
-    final bool isSelected = provider.activeExam == exam;
-    final String label = exam == 'CSIT' ? 'CS/IT' : exam;
+  Widget _buildExamTrackSwitcher(BuildContext context, AppProvider provider) {
+    final isDual = provider.selectedExam == 'BOTH';
+    final activeExam = provider.activeExam ?? 'DA';
 
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        provider.setExams(provider.selectedExam ?? 'BOTH', exam);
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          color: isSelected ? AppTheme.accentPurple : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-            color: isSelected ? Colors.white : context.textSecondaryColor,
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showBranchSwitcherSheet(BuildContext context, AppProvider provider) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: context.colorSurface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) {
-        return Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return NeuContainer(
+      padding: const EdgeInsets.all(16),
+      borderRadius: 20,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: context.textSecondaryColor.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(2),
+              Container(
+                padding: const EdgeInsets.all(7),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF8522).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.school_rounded, color: Color(0xFFFF8522), size: 18),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Exam Preparation Track',
+                      style: GoogleFonts.outfit(
+                        fontSize: 14.5,
+                        fontWeight: FontWeight.bold,
+                        color: context.textColor,
+                      ),
+                    ),
+                    Text(
+                      'Switch question banks, syllabus & tests',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.textSecondaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF8522).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFFFF8522).withValues(alpha: 0.3)),
+                ),
+                child: Text(
+                  isDual ? 'DUAL PREP' : (activeExam == 'CSIT' ? 'GATE CS/IT' : 'GATE DA'),
+                  style: GoogleFonts.outfit(
+                    color: const Color(0xFFFF8522),
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-              Text(
-                'Select Active Exam Stream',
-                style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: context.textColor),
+            ],
+          ),
+          const SizedBox(height: 14),
+          // 3-way stream selector
+          Row(
+            children: [
+              Expanded(
+                child: _buildTrackSegment(
+                  context: context,
+                  label: 'GATE DA',
+                  isSelected: !isDual && activeExam == 'DA',
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    provider.setExams('DA', 'DA');
+                  },
+                ),
               ),
-              const SizedBox(height: 6),
-              Text(
-                'Switch the syllabus and test question banks between DA and CS/IT.',
-                style: TextStyle(color: context.textSecondaryColor, fontSize: 13),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildTrackSegment(
+                  context: context,
+                  label: 'GATE CS/IT',
+                  isSelected: !isDual && activeExam == 'CSIT',
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    provider.setExams('CSIT', 'CSIT');
+                  },
+                ),
               ),
-              const SizedBox(height: 18),
-              _buildBranchTile(
-                context: context,
-                title: 'GATE DA (Data Science & AI)',
-                subtitle: 'Machine Learning, AI, Probability & Linear Algebra',
-                isSelected: provider.activeExam == 'DA' && provider.selectedExam != 'BOTH',
-                onTap: () {
-                  provider.setExams('DA', 'DA');
-                  Navigator.pop(ctx);
-                },
-              ),
-              const SizedBox(height: 10),
-              _buildBranchTile(
-                context: context,
-                title: 'GATE CS/IT (Computer Science)',
-                subtitle: 'Algorithms, OS, CN, DBMS, TOC, Compiler',
-                isSelected: provider.activeExam == 'CSIT' && provider.selectedExam != 'BOTH',
-                onTap: () {
-                  provider.setExams('CSIT', 'CSIT');
-                  Navigator.pop(ctx);
-                },
-              ),
-              const SizedBox(height: 10),
-              _buildBranchTile(
-                context: context,
-                title: 'Dual Preparation (BOTH)',
-                subtitle: 'Switch between DA & CS/IT anytime via top bar',
-                isSelected: provider.selectedExam == 'BOTH',
-                onTap: () {
-                  provider.setExams('BOTH', provider.activeExam ?? 'DA');
-                  Navigator.pop(ctx);
-                },
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildTrackSegment(
+                  context: context,
+                  label: 'Dual Prep',
+                  isSelected: isDual,
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    provider.setExams('BOTH', activeExam);
+                  },
+                ),
               ),
             ],
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildBranchTile({
-    required BuildContext context,
-    required String title,
-    required String subtitle,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        onTap();
-      },
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected ? AppTheme.accentPurple.withValues(alpha: 0.12) : context.colorSurfaceElevated,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? AppTheme.accentPurple : (context.isDarkMode ? Colors.white10 : Colors.black12),
-            width: isSelected ? 1.5 : 1,
-          ),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          if (isDual) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: context.isDarkMode ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.03),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFFFF8522).withValues(alpha: 0.25),
+                ),
+              ),
+              child: Row(
                 children: [
                   Text(
-                    title,
-                    style: TextStyle(
-                      color: isSelected ? AppTheme.accentPurple : context.textColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                    'Active View:',
+                    style: GoogleFonts.outfit(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: context.textSecondaryColor,
                     ),
                   ),
-                  const SizedBox(height: 3),
-                  Text(
-                    subtitle,
-                    style: TextStyle(color: context.textSecondaryColor, fontSize: 11.5),
+                  const Spacer(),
+                  _buildSubTogglePill(
+                    context: context,
+                    label: 'DA Track',
+                    isActive: activeExam == 'DA',
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      provider.setExams('BOTH', 'DA');
+                    },
+                  ),
+                  const SizedBox(width: 6),
+                  _buildSubTogglePill(
+                    context: context,
+                    label: 'CS/IT Track',
+                    isActive: activeExam == 'CSIT',
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      provider.setExams('BOTH', 'CSIT');
+                    },
                   ),
                 ],
               ),
             ),
-            if (isSelected)
-              const Icon(Icons.check_circle_rounded, color: AppTheme.accentPurple, size: 20),
           ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTrackSegment({
+    required BuildContext context,
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: isSelected
+              ? const Color(0xFFFF8522)
+              : (context.isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04)),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected
+                ? const Color(0xFFFF8522)
+                : (context.isDarkMode ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: const Color(0xFFFF8522).withValues(alpha: 0.35),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.outfit(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: isSelected ? Colors.white : context.textColor,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubTogglePill({
+    required BuildContext context,
+    required String label,
+    required bool isActive,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: isActive ? const Color(0xFFFF8522) : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.outfit(
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+            color: isActive ? Colors.white : context.textSecondaryColor,
+          ),
         ),
       ),
     );

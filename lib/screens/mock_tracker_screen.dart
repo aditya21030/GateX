@@ -216,172 +216,10 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     );
   }
 
-  Widget _buildBranchSwitchButton(BuildContext context, AppProvider provider, String exam) {
-    final bool isSelected = provider.activeExam == exam;
-    final String label = exam == 'CSIT' ? 'CS/IT' : exam;
 
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        provider.setExams(provider.selectedExam ?? 'BOTH', exam);
-        setState(() {
-          final subjects = provider.currentSubjects;
-          _selectedSubject = subjects.isNotEmpty ? subjects.first : null;
-        });
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          color: isSelected ? AppTheme.accentPurple : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 11,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-            color: isSelected ? Colors.white : context.textSecondaryColor,
-          ),
-        ),
-      ),
-    );
-  }
 
-  void _showBranchSwitcherSheet(BuildContext context, AppProvider provider) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: context.colorSurface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) {
-        return Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: context.textSecondaryColor.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Select Active Exam Stream',
-                style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: context.textColor),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                'Switch the syllabus and test question banks between DA and CS/IT.',
-                style: TextStyle(color: context.textSecondaryColor, fontSize: 13),
-              ),
-              const SizedBox(height: 18),
-              _buildBranchTile(
-                context: context,
-                title: 'GATE DA (Data Science & AI)',
-                subtitle: 'Machine Learning, AI, Probability & Linear Algebra',
-                isSelected: provider.activeExam == 'DA' && provider.selectedExam != 'BOTH',
-                onTap: () {
-                  provider.setExams('DA', 'DA');
-                  setState(() {
-                    final subjects = provider.currentSubjects;
-                    _selectedSubject = subjects.isNotEmpty ? subjects.first : null;
-                  });
-                  Navigator.pop(ctx);
-                },
-              ),
-              const SizedBox(height: 10),
-              _buildBranchTile(
-                context: context,
-                title: 'GATE CS/IT (Computer Science)',
-                subtitle: 'Algorithms, OS, CN, DBMS, TOC, Compiler',
-                isSelected: provider.activeExam == 'CSIT' && provider.selectedExam != 'BOTH',
-                onTap: () {
-                  provider.setExams('CSIT', 'CSIT');
-                  setState(() {
-                    final subjects = provider.currentSubjects;
-                    _selectedSubject = subjects.isNotEmpty ? subjects.first : null;
-                  });
-                  Navigator.pop(ctx);
-                },
-              ),
-              const SizedBox(height: 10),
-              _buildBranchTile(
-                context: context,
-                title: 'Dual Preparation (BOTH)',
-                subtitle: 'Switch between DA & CS/IT anytime via top bar',
-                isSelected: provider.selectedExam == 'BOTH',
-                onTap: () {
-                  provider.setExams('BOTH', provider.activeExam ?? 'DA');
-                  Navigator.pop(ctx);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 
-  Widget _buildBranchTile({
-    required BuildContext context,
-    required String title,
-    required String subtitle,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        onTap();
-      },
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected ? AppTheme.accentPurple.withValues(alpha: 0.12) : context.colorSurfaceElevated,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? AppTheme.accentPurple : (context.isDarkMode ? Colors.white10 : Colors.black12),
-            width: isSelected ? 1.5 : 1,
-          ),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      color: isSelected ? AppTheme.accentPurple : context.textColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    subtitle,
-                    style: TextStyle(color: context.textSecondaryColor, fontSize: 11.5),
-                  ),
-                ],
-              ),
-            ),
-            if (isSelected)
-              const Icon(Icons.check_circle_rounded, color: AppTheme.accentPurple, size: 20),
-          ],
-        ),
-      ),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -409,60 +247,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
           'Mock Arena',
           style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: context.textColor),
         ),
-        actions: [
-          if (provider.selectedExam == 'BOTH')
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 11, horizontal: 12),
-              height: 30,
-              decoration: BoxDecoration(
-                color: context.colorSurfaceElevated,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: context.isDarkMode
-                      ? Colors.white.withValues(alpha: 0.08)
-                      : Colors.black.withValues(alpha: 0.06),
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildBranchSwitchButton(context, provider, 'DA'),
-                  _buildBranchSwitchButton(context, provider, 'CSIT'),
-                ],
-              ),
-            )
-          else
-            GestureDetector(
-              onTap: () {
-                HapticFeedback.selectionClick();
-                _showBranchSwitcherSheet(context, provider);
-              },
-              child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
-                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-                decoration: BoxDecoration(
-                  color: AppTheme.accentPurple.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.3)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      provider.activeExam ?? 'DA',
-                      style: const TextStyle(
-                        color: AppTheme.accentPurple,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 11,
-                      ),
-                    ),
-                    const SizedBox(width: 3),
-                    const Icon(Icons.arrow_drop_down_rounded, size: 14, color: AppTheme.accentPurple),
-                  ],
-                ),
-              ),
-            ),
-        ],
+        actions: const [],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(56),
           child: Container(
@@ -498,7 +283,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
               unselectedLabelStyle: GoogleFonts.outfit(fontWeight: FontWeight.w500, fontSize: 13),
               tabs: const [
                 Tab(height: 38, text: 'Test Arena', icon: Icon(Icons.sports_score_rounded, size: 18)),
-                Tab(height: 38, text: 'Score Curve & History', icon: Icon(Icons.show_chart_rounded, size: 18)),
+                Tab(height: 38, text: 'Analytics', icon: Icon(Icons.analytics_rounded, size: 18)),
               ],
             ),
           ),
@@ -528,62 +313,358 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     );
   }
 
-  Widget _buildRulePill(String label, Color color) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.25)),
+  IconData _getSubjectIcon(String subject) {
+    final s = subject.toLowerCase();
+    if (s.contains('math') || s.contains('algebra') || s.contains('calculus')) {
+      return Icons.functions_rounded;
+    } else if (s.contains('prob') || s.contains('stat')) {
+      return Icons.query_stats_rounded;
+    } else if (s.contains('machine') || s.contains('ml') || s.contains('ai') || s.contains('intelligence')) {
+      return Icons.psychology_rounded;
+    } else if (s.contains('dbms') || s.contains('data') || s.contains('sql')) {
+      return Icons.storage_rounded;
+    } else if (s.contains('prog') || s.contains('c') || s.contains('python') || s.contains('dsa') || s.contains('algo')) {
+      return Icons.terminal_rounded;
+    } else if (s.contains('os') || s.contains('operating')) {
+      return Icons.computer_rounded;
+    } else if (s.contains('network') || s.contains('cn')) {
+      return Icons.hub_rounded;
+    } else if (s.contains('toc') || s.contains('compiler')) {
+      return Icons.account_tree_rounded;
+    }
+    return Icons.menu_book_rounded;
+  }
+
+  void _showSubjectPickerModal(BuildContext context, AppProvider provider) {
+    final subjects = provider.currentSubjects;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: context.colorSurface,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      child: Text(
-        label,
-        style: GoogleFonts.outfit(
-          color: color,
-          fontSize: 10.5,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      builder: (ctx) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.65,
+          minChildSize: 0.4,
+          maxChildSize: 0.88,
+          expand: false,
+          builder: (context, scrollController) {
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: context.textSecondaryColor.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFF8522).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(Icons.topic_rounded, color: Color(0xFFFF8522), size: 22),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Select Subject',
+                              style: GoogleFonts.outfit(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: context.textColor,
+                              ),
+                            ),
+                            Text(
+                              'Targeted 10-question sprint for ${provider.activeExam == 'CSIT' ? 'GATE CS/IT' : 'GATE DA'}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: context.textSecondaryColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: ListView.separated(
+                      controller: scrollController,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: subjects.length,
+                      separatorBuilder: (_, index) => const SizedBox(height: 8),
+                      itemBuilder: (context, index) {
+                        final subject = subjects[index];
+                        final isSelected = _selectedSubject == subject;
+                        return InkWell(
+                          onTap: () {
+                            HapticFeedback.selectionClick();
+                            setState(() {
+                              _selectedSubject = subject;
+                            });
+                            Navigator.pop(ctx);
+                          },
+                          borderRadius: BorderRadius.circular(16),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? const Color(0xFFFF8522).withValues(alpha: 0.12)
+                                  : (context.isDarkMode
+                                      ? Colors.white.withValues(alpha: 0.04)
+                                      : Colors.black.withValues(alpha: 0.03)),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: isSelected
+                                    ? const Color(0xFFFF8522).withValues(alpha: 0.5)
+                                    : (context.isDarkMode
+                                        ? Colors.white.withValues(alpha: 0.06)
+                                        : Colors.black.withValues(alpha: 0.06)),
+                                width: isSelected ? 1.5 : 1.0,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 38,
+                                  height: 38,
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? const Color(0xFFFF8522).withValues(alpha: 0.2)
+                                        : (context.isDarkMode
+                                            ? Colors.white.withValues(alpha: 0.06)
+                                            : Colors.black.withValues(alpha: 0.05)),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Icon(
+                                    _getSubjectIcon(subject),
+                                    size: 19,
+                                    color: isSelected ? const Color(0xFFFF8522) : context.textSecondaryColor,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        subject,
+                                        style: GoogleFonts.outfit(
+                                          fontSize: 14,
+                                          fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                                          color: isSelected ? const Color(0xFFFF8522) : context.textColor,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        '10 Questions • 20 Mins',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: context.textSecondaryColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (isSelected)
+                                  const Icon(
+                                    Icons.check_circle_rounded,
+                                    color: Color(0xFFFF8522),
+                                    size: 22,
+                                  )
+                                else
+                                  Icon(
+                                    Icons.radio_button_unchecked_rounded,
+                                    color: context.textSecondaryColor.withValues(alpha: 0.4),
+                                    size: 20,
+                                  ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
   Widget _buildTakeTestTab(BuildContext context) {
     final provider = Provider.of<AppProvider>(context);
-    final subjects = provider.currentSubjects;
 
     return ListView(
       physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.all(16),
       children: [
-        // Top CBT Rules - Compact Neumorphic Strip
-        NeuContainer(
-          borderRadius: 18,
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          child: Row(
+        // Top CBT Rules - Official Exam Docket Strip
+        Container(
+          margin: const EdgeInsets.only(bottom: 14),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: context.isDarkMode ? const Color(0xFF13151F) : const Color(0xFFF7F8FC),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: const Color(0xFFFF8522).withValues(alpha: 0.25),
+              width: 1.2,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const NeuIconTile(
-                icon: Icons.gavel_rounded,
-                iconColor: AppTheme.accentPurple,
-                size: 38,
-                iconSize: 18,
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF8522).withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.terminal_rounded,
+                      color: Color(0xFFFF8522),
+                      size: 16,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'GATE CBT PROTOCOL // TCS-iON',
+                    style: GoogleFonts.spaceMono(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.8,
+                      color: const Color(0xFFFF8522),
+                    ),
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppTheme.accentMint.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      'ACTIVE',
+                      style: GoogleFonts.spaceMono(
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.accentMint,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 12),
-              Expanded(
+              const SizedBox(height: 10),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                decoration: BoxDecoration(
+                  color: context.isDarkMode ? Colors.black.withValues(alpha: 0.25) : Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: context.isDarkMode
+                        ? Colors.white.withValues(alpha: 0.06)
+                        : Colors.black.withValues(alpha: 0.06),
+                  ),
+                ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'CBT Simulator Rules',
-                      style: AppTheme.poppinsBold(fontSize: 13, color: context.textColor),
+                    Row(
+                      children: [
+                        Text(
+                          'MCQ',
+                          style: GoogleFonts.spaceMono(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.bold,
+                            color: context.textColor,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            '+1/+2 Mark  |  -0.33/-0.66 Neg',
+                            style: GoogleFonts.spaceMono(
+                              fontSize: 10,
+                              color: AppTheme.accentCoral,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            textAlign: TextAlign.end,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 4),
-                    Wrap(
-                      spacing: 6,
-                      runSpacing: 4,
+                    Divider(height: 1, color: context.colorBorder),
+                    const SizedBox(height: 4),
+                    Row(
                       children: [
-                        _buildRulePill('+1 / +2 Marks', AppTheme.accentMint),
-                        _buildRulePill('-0.33 / -0.66 Neg', AppTheme.accentCoral),
-                        _buildRulePill('Zero Neg MSQ/NAT', AppTheme.accentGold),
+                        Text(
+                          'MSQ & NAT',
+                          style: GoogleFonts.spaceMono(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.bold,
+                            color: context.textColor,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            '+1/+2 Mark  |  Zero Neg (0.0)',
+                            style: GoogleFonts.spaceMono(
+                              fontSize: 10,
+                              color: AppTheme.accentMint,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            textAlign: TextAlign.end,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Divider(height: 1, color: context.colorBorder),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Text(
+                          'CALC',
+                          style: GoogleFonts.spaceMono(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.bold,
+                            color: context.textColor,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            'TCS-iON Virtual Scientific Calc',
+                            style: GoogleFonts.spaceMono(
+                              fontSize: 10,
+                              color: const Color(0xFFFF8522),
+                              fontWeight: FontWeight.w600,
+                            ),
+                            textAlign: TextAlign.end,
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -599,10 +680,8 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
           title: 'Daily Rapid Fire',
           duration: '10 Mins',
           questionsCount: '5 Questions',
-          badgeText: 'INSTANT RECALL',
-          badgeColor: AppTheme.accentFlame,
           icon: Icons.bolt_rounded,
-          iconColor: AppTheme.accentFlame,
+          iconColor: const Color(0xFFFF8522),
           isPrimary: true,
           gradient: AppTheme.flameGradient,
           buttonText: 'Start 10m Sprint ⚡',
@@ -618,11 +697,10 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
           title: 'Mini Mock Test',
           duration: '30 Mins',
           questionsCount: '15 Questions',
-          badgeText: 'RECOMMENDED',
-          badgeColor: AppTheme.primary,
           icon: Icons.checklist_rtl_rounded,
-          iconColor: AppTheme.primary,
-          isPrimary: false,
+          iconColor: const Color(0xFFFF8522),
+          isPrimary: true,
+          gradient: AppTheme.flameGradient,
           buttonText: 'Start 30m Test 🎯',
           onTap: () {
             final questions = _generateMiniMock(provider);
@@ -642,7 +720,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                 children: [
                   const NeuIconTile(
                     icon: Icons.topic_outlined,
-                    iconColor: AppTheme.accentGold,
+                    iconColor: Color(0xFFFF8522),
                     size: 46,
                     iconSize: 22,
                   ),
@@ -651,36 +729,13 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                'Subject Practice Test',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: context.textColor,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
-                              decoration: BoxDecoration(
-                                color: AppTheme.accentGold.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: AppTheme.accentGold.withValues(alpha: 0.25)),
-                              ),
-                              child: Text(
-                                'DEEP DIVE',
-                                style: GoogleFonts.outfit(
-                                  color: AppTheme.accentGold,
-                                  fontSize: 9.5,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                            ),
-                          ],
+                        Text(
+                          'Subject Practice Test',
+                          style: GoogleFonts.outfit(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: context.textColor,
+                          ),
                         ),
                         const SizedBox(height: 5),
                         Row(
@@ -717,29 +772,72 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
               NeuContainer(
                 isRecessed: true,
                 borderRadius: 14,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: _selectedSubject,
-                    isExpanded: true,
-                    dropdownColor: context.colorSurface,
-                    style: GoogleFonts.outfit(color: context.textColor, fontSize: 13.5, fontWeight: FontWeight.w500),
-                    icon: Icon(Icons.arrow_drop_down_rounded, color: context.textSecondaryColor),
-                    items: subjects.map((sub) {
-                      return DropdownMenuItem(value: sub, child: Text(sub));
-                    }).toList(),
-                    onChanged: (val) {
-                      HapticFeedback.selectionClick();
-                      setState(() {
-                        _selectedSubject = val;
-                      });
-                    },
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                child: InkWell(
+                  onTap: () => _showSubjectPickerModal(context, provider),
+                  child: Row(
+                    children: [
+                      Icon(
+                        _getSubjectIcon(_selectedSubject ?? ''),
+                        size: 20,
+                        color: const Color(0xFFFF8522),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'TARGET SUBJECT',
+                              style: GoogleFonts.outfit(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: context.textSecondaryColor,
+                                letterSpacing: 0.8,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              _selectedSubject ?? 'Select Subject',
+                              style: GoogleFonts.outfit(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: context.textColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFF8522).withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Change',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFFFF8522),
+                              ),
+                            ),
+                            SizedBox(width: 2),
+                            Icon(Icons.keyboard_arrow_down_rounded, size: 16, color: Color(0xFFFF8522)),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
               const SizedBox(height: 14),
               NeuButton(
-                isPrimary: false,
+                isPrimary: true,
+                gradient: AppTheme.flameGradient,
                 onPressed: () {
                   HapticFeedback.selectionClick();
                   if (_selectedSubject != null) {
@@ -747,14 +845,14 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                     _startTest(questions, const Duration(minutes: 20), '$_selectedSubject Practice');
                   }
                 },
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.play_arrow_rounded, color: AppTheme.accentGold, size: 20),
-                    const SizedBox(width: 8),
+                    Icon(Icons.play_arrow_rounded, color: Colors.white, size: 20),
+                    SizedBox(width: 8),
                     Text(
                       'Start Subject Test',
-                      style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13.5, color: context.textColor),
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5, color: Colors.white),
                     ),
                   ],
                 ),
@@ -769,8 +867,6 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
           title: 'Full CBT Mock',
           duration: '180 Mins',
           questionsCount: '65 Questions',
-          badgeText: 'GATE REAL REPLICA',
-          badgeColor: AppTheme.accentMint,
           icon: Icons.quiz_rounded,
           iconColor: AppTheme.accentMint,
           isPrimary: true,
@@ -895,8 +991,6 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     required String title,
     required String duration,
     required String questionsCount,
-    required String badgeText,
-    required Color badgeColor,
     required IconData icon,
     required Color iconColor,
     required VoidCallback onTap,
@@ -923,36 +1017,13 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            title,
-                            style: GoogleFonts.outfit(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: context.textColor,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
-                          decoration: BoxDecoration(
-                            color: badgeColor.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: badgeColor.withValues(alpha: 0.25)),
-                          ),
-                          child: Text(
-                            badgeText,
-                            style: GoogleFonts.outfit(
-                              color: badgeColor,
-                              fontSize: 9.5,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ),
-                      ],
+                    Text(
+                      title,
+                      style: GoogleFonts.outfit(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: context.textColor,
+                      ),
                     ),
                     const SizedBox(height: 5),
                     Row(
@@ -1046,7 +1117,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                   label: 'Mock Average',
                   value: mocks.isNotEmpty ? avgScore.toStringAsFixed(1) : 'N/A',
                   icon: Icons.speed_rounded,
-                  iconColor: AppTheme.accentGold,
+                  iconColor: const Color(0xFFFF8522),
                 ),
               ),
               const SizedBox(width: 8),
@@ -1065,22 +1136,81 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
 
         // Performance graph
         if (mocks.isNotEmpty) ...[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 12, 18, 8),
+            child: Row(
+              children: [
+                const Icon(Icons.trending_up_rounded, size: 20, color: Color(0xFFFF8522)),
+                const SizedBox(width: 8),
+                Text(
+                  'Score Trajectory & Growth',
+                  style: GoogleFonts.outfit(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: context.textColor,
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFF8522).withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: const Color(0xFFFF8522).withValues(alpha: 0.25),
+                      width: 0.8,
+                    ),
+                  ),
+                  child: Text(
+                    '${mocks.length} Attempts',
+                    style: GoogleFonts.outfit(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFFFF8522),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
           NeuContainer(
-            height: 180,
-            padding: const EdgeInsets.fromLTRB(16, 12, 24, 8),
+            height: 195,
+            padding: const EdgeInsets.fromLTRB(16, 14, 24, 10),
             margin: const EdgeInsets.symmetric(horizontal: 16),
             borderRadius: 20,
             child: LineChart(
               LineChartData(
                 minY: 0,
                 maxY: 100,
+                lineTouchData: LineTouchData(
+                  enabled: true,
+                  touchTooltipData: LineTouchTooltipData(
+                    getTooltipColor: (_) => context.isDarkMode ? const Color(0xFF1E202C) : Colors.white,
+                    tooltipPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    getTooltipItems: (touchedSpots) {
+                      return touchedSpots.map((spot) {
+                        final idx = spot.x.toInt();
+                        final name = (idx >= 0 && idx < mocks.length) ? mocks[idx].name : 'Mock';
+                        return LineTooltipItem(
+                          '$name\nScore: ${spot.y.toStringAsFixed(1)}/100',
+                          GoogleFonts.outfit(
+                            color: const Color(0xFFFF8522),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11.5,
+                          ),
+                        );
+                      }).toList();
+                    },
+                  ),
+                ),
                 gridData: FlGridData(
                   show: true,
                   drawVerticalLine: false,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: context.colorBorder,
+                      color: context.colorBorder.withValues(alpha: 0.6),
                       strokeWidth: 1,
+                      dashArray: [4, 4],
                     );
                   },
                 ),
@@ -1126,21 +1256,31 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                       return FlSpot(index.toDouble(), mocks[index].score);
                     }),
                     isCurved: true,
-                    color: AppTheme.accentPurple,
-                    barWidth: 3,
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF8B5CF6), Color(0xFFFF8522)],
+                    ),
+                    barWidth: 3.5,
                     isStrokeCapRound: true,
                     dotData: FlDotData(
                       show: true,
                       getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
-                        radius: 4,
-                        color: AppTheme.accentPurple,
-                        strokeWidth: 1.5,
+                        radius: 4.5,
+                        color: const Color(0xFFFF8522),
+                        strokeWidth: 2,
                         strokeColor: context.colorSurface,
                       ),
                     ),
                     belowBarData: BarAreaData(
                       show: true,
-                      color: AppTheme.accentPurple.withValues(alpha: 0.15),
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color(0xFFFF8522).withValues(alpha: 0.28),
+                          const Color(0xFF8B5CF6).withValues(alpha: 0.08),
+                          Colors.transparent,
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
                     ),
                   ),
                 ],
