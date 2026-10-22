@@ -919,7 +919,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Rank & Score Forecast',
+                        'All India Rank Forecast',
                         style: TextStyle(fontSize: 10.5, color: context.textSecondaryColor),
                       ),
                     ],
@@ -940,29 +940,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const NeuIconTile(
+                          NeuIconTile(
                             icon: Icons.corporate_fare_rounded,
                             iconColor: Color(0xFF0D9488),
                             size: 36,
                             iconSize: 18,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF0D9488).withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: const Text(
-                              'PSU Jobs',
-                              style: TextStyle(
-                                fontSize: 9.5,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF0D9488),
-                              ),
-                            ),
                           ),
                         ],
                       ),

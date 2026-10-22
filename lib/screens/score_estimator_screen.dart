@@ -804,7 +804,7 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                                     ),
                                     SizedBox(width: 10),
                                     Text(
-                                      'Analyzing Score Curve & Trends...',
+                                      'Analyzing Rank Curve & Trends...',
                                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5, color: Colors.white),
                                     ),
                                   ],
@@ -815,7 +815,7 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                                     const Icon(Icons.auto_awesome, size: 18, color: Colors.white),
                                     const SizedBox(width: 8),
                                     Text(
-                                      _isRealGateExam ? 'Predict Real Exam AIR & Score' : 'Predict Mock AIR & Score',
+                                      _isRealGateExam ? 'Predict Real Exam AIR' : 'Predict Mock AIR',
                                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
                                     ),
                                   ],
@@ -871,43 +871,29 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                             ],
                           ),
                           const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Estimated GATE Score',
-                                      style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 6.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Predicted Rank (AIR)',
+                                    style: TextStyle(
+                                      color: context.textSecondaryColor,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 0.5,
                                     ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      "${_prediction!['gateScore']} / 1000",
-                                      style: AppTheme.timerStyle(fontSize: 22, color: context.textColor),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    _prediction!['predictedAir'],
+                                    style: AppTheme.timerStyle(fontSize: 32, color: _prediction!['color']),
+                                  ),
+                                ],
                               ),
-                              Container(width: 1, height: 40, color: context.isDarkMode ? Colors.white12 : Colors.black12),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Predicted Rank (AIR)',
-                                      style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      _prediction!['predictedAir'],
-                                      style: AppTheme.timerStyle(fontSize: 22, color: _prediction!['color']),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                           const SizedBox(height: 14),
                           Divider(height: 1, color: context.isDarkMode ? Colors.white12 : Colors.black12),
@@ -993,7 +979,7 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                                 Text(
                                   _isRealGateExam
                                       ? 'Enter your raw marks from official GATE response key to calculate rank based on standard bell curves.'
-                                      : 'Set your mock marks above and tap "Predict Mock AIR & Score" to calculate your rank with coaching difficulty weights.',
+                                      : 'Set your mock marks above and tap "Predict Mock AIR" to calculate your rank with coaching difficulty weights.',
                                   style: TextStyle(fontSize: 11.5, color: context.textSecondaryColor, height: 1.35),
                                 ),
                               ],

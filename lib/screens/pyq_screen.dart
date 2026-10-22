@@ -295,18 +295,6 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
             ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'pyq_calc',
-        backgroundColor: AppTheme.accentPurple,
-        foregroundColor: Colors.white,
-        elevation: 4,
-        tooltip: 'GATE Virtual Calculator',
-        onPressed: () {
-          HapticFeedback.selectionClick();
-          VirtualCalculator.show(context);
-        },
-        child: const Icon(Icons.calculate_rounded, size: 24),
-      ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -1483,115 +1471,130 @@ class _PYQCardState extends State<_PYQCard> {
             Divider(height: 1, color: context.colorBorder),
             const SizedBox(height: 12),
 
-            // Card Footer: Done checkbox, Discuss button, and show solution toggle
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Completed Checkbox
-                Row(
-                  children: [
-                    Checkbox(
-                      value: pyq.isCompleted,
-                      onChanged: (val) {
-                        if (val != null) {
-                          if (val) {
-                            provider.solvePYQ(pyq.id, pyq.userAnswer ?? '');
-                          } else {
+            // Card Footer: Responsive action controls (Mark Solved, Try Again, Discuss, Solution)
+            SizedBox(
+              width: double.infinity,
+              child: Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 6,
+                runSpacing: 8,
+                children: [
+                  // Completed Checkbox & Try Again
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: Checkbox(
+                          value: pyq.isCompleted,
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: VisualDensity.compact,
+                          onChanged: (val) {
+                            if (val != null) {
+                              if (val) {
+                                provider.solvePYQ(pyq.id, pyq.userAnswer ?? '');
+                              } else {
+                                provider.unsolvePYQ(pyq.id);
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Mark Solved',
+                        style: TextStyle(fontSize: 11.5, color: context.textSecondaryColor, fontWeight: FontWeight.bold),
+                      ),
+                      if (pyq.isCompleted) ...[
+                        const SizedBox(width: 8),
+                        InkWell(
+                          onTap: () {
+                            HapticFeedback.selectionClick();
                             provider.unsolvePYQ(pyq.id);
-                          }
-                        }
-                      },
-                    ),
-                    Text(
-                      'Mark Solved',
-                      style: TextStyle(fontSize: 11.5, color: context.textSecondaryColor, fontWeight: FontWeight.bold),
-                    ),
-                    if (pyq.isCompleted) ...[
-                      const SizedBox(width: 8),
-                      InkWell(
-                        onTap: () {
-                          HapticFeedback.selectionClick();
-                          provider.unsolvePYQ(pyq.id);
-                        },
-                        borderRadius: BorderRadius.circular(6),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: AppTheme.accentPurple.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.refresh_rounded, size: 12, color: AppTheme.accentPurple),
-                              SizedBox(width: 3),
-                              Text(
-                                'Try Again',
-                                style: TextStyle(
-                                  color: AppTheme.accentPurple,
-                                  fontSize: 10.5,
-                                  fontWeight: FontWeight.bold,
+                          },
+                          borderRadius: BorderRadius.circular(6),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: AppTheme.accentPurple.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.refresh_rounded, size: 12, color: AppTheme.accentPurple),
+                                SizedBox(width: 3),
+                                Text(
+                                  'Try Again',
+                                  style: TextStyle(
+                                    color: AppTheme.accentPurple,
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Discuss Button
+                      TextButton.icon(
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          visualDensity: VisualDensity.compact,
+                        ),
+                        onPressed: () {
+                          QuestionDiscussionSheet.show(context, pyq);
+                        },
+                        icon: const Icon(Icons.forum_outlined, color: AppTheme.primary, size: 15),
+                        label: const Text(
+                          'Discuss',
+                          style: TextStyle(
+                            color: AppTheme.primary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11.5,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 2),
+
+                      // Show Solution toggle
+                      TextButton.icon(
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          visualDensity: VisualDensity.compact,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _showSolution = !_showSolution;
+                          });
+                        },
+                        icon: Icon(
+                          _showSolution ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                          color: AppTheme.secondary,
+                          size: 15,
+                        ),
+                        label: Text(
+                          _showSolution ? 'Hide' : 'Solution',
+                          style: const TextStyle(
+                            color: AppTheme.secondary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11.5,
                           ),
                         ),
                       ),
                     ],
-                  ],
-                ),
-
-                Row(
-                  children: [
-                    // Discuss Button
-                    TextButton.icon(
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        visualDensity: VisualDensity.compact,
-                      ),
-                      onPressed: () {
-                        QuestionDiscussionSheet.show(context, pyq);
-                      },
-                      icon: const Icon(Icons.forum_outlined, color: AppTheme.primary, size: 16),
-                      label: const Text(
-                        'Discuss',
-                        style: TextStyle(
-                          color: AppTheme.primary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 11.5,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-
-                    // Show Solution toggle
-                    TextButton.icon(
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        visualDensity: VisualDensity.compact,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _showSolution = !_showSolution;
-                        });
-                      },
-                      icon: Icon(
-                        _showSolution ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                        color: AppTheme.secondary,
-                        size: 16,
-                      ),
-                      label: Text(
-                        _showSolution ? 'Hide Solution' : 'Solution',
-                        style: const TextStyle(
-                          color: AppTheme.secondary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 11.5,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
 
             // Expanded Solution Area
