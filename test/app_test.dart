@@ -8,6 +8,7 @@ import 'package:gateda/data/da_subjectwise_mock_data.dart';
 import 'package:gateda/data/csit_subjectwise_mock_data.dart';
 import 'package:gateda/data/notes_data.dart';
 import 'package:gateda/services/storage_service.dart';
+import 'package:gateda/widgets/iit_onboarding_components.dart';
 
 class EstimationNode {
   final double marks;
@@ -1010,6 +1011,66 @@ void main() {
           expect(pro.examTraps.isNotEmpty, isTrue, reason: '${pro.title} should have exam traps');
         }
       }
+    });
+  });
+
+  group('Google Auth Button & Vector Logo Tests', () {
+    testWidgets('GoogleLogoIcon renders vector CustomPaint without error', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: GoogleLogoIcon(size: 24),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(GoogleLogoIcon), findsOneWidget);
+      expect(find.byType(CustomPaint), findsWidgets);
+    });
+
+    testWidgets('GoogleAuthPillButton displays logo and label', (WidgetTester tester) async {
+      bool tapped = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: GoogleAuthPillButton(
+                label: 'Continue with Google',
+                onPressed: () {
+                  tapped = true;
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(GoogleLogoIcon), findsOneWidget);
+      expect(find.text('Continue with Google'), findsOneWidget);
+
+      await tester.tap(find.byType(GoogleAuthPillButton));
+      await tester.pump();
+      expect(tapped, isTrue);
+    });
+
+    testWidgets('GoogleAuthPillButton displays spinner when loading', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: GoogleAuthPillButton(
+                isLoading: true,
+                onPressed: () {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(GoogleLogoIcon), findsNothing);
     });
   });
 }

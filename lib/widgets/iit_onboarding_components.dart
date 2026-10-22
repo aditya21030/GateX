@@ -1222,15 +1222,110 @@ class CleanAuthInputField extends StatelessWidget {
   }
 }
 
+/// Pixel-perfect official 4-color Google "G" logo vector
+class GoogleLogoIcon extends StatelessWidget {
+  final double size;
+
+  const GoogleLogoIcon({super.key, this.size = 20});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: CustomPaint(
+        size: Size(size, size),
+        painter: _GoogleLogoPainter(),
+      ),
+    );
+  }
+}
+
+class _GoogleLogoPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final scale = size.width / 24.0;
+    canvas.save();
+    canvas.scale(scale, scale);
+
+    final paint = Paint()
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
+
+    // 1. Blue (#4285F4) - Right horizontal bar and upper right
+    paint.color = const Color(0xFF4285F4);
+    final bluePath = Path()
+      ..moveTo(23.745, 12.27)
+      ..cubicTo(23.745, 11.57, 23.685, 10.87, 23.555, 10.2)
+      ..lineTo(12.0, 10.2)
+      ..lineTo(12.0, 14.71)
+      ..lineTo(18.6, 14.71)
+      ..cubicTo(18.31, 16.23, 17.46, 17.51, 16.2, 18.36)
+      ..lineTo(16.2, 21.39)
+      ..lineTo(20.08, 21.39)
+      ..cubicTo(22.35, 19.3, 23.745, 16.22, 23.745, 12.27)
+      ..close();
+    canvas.drawPath(bluePath, paint);
+
+    // 2. Green (#34A853) - Bottom and bottom right
+    paint.color = const Color(0xFF34A853);
+    final greenPath = Path()
+      ..moveTo(12.0, 24.0)
+      ..cubicTo(15.24, 24.0, 17.95, 22.92, 19.93, 21.09)
+      ..lineTo(16.05, 18.06)
+      ..cubicTo(14.97, 18.78, 13.6, 19.22, 12.0, 19.22)
+      ..cubicTo(8.88, 19.22, 6.23, 17.12, 5.28, 14.29)
+      ..lineTo(1.25, 14.29)
+      ..lineTo(1.25, 17.42)
+      ..cubicTo(3.26, 21.36, 7.33, 24.0, 12.0, 24.0)
+      ..close();
+    canvas.drawPath(greenPath, paint);
+
+    // 3. Yellow (#FBBC05) - Left arc
+    paint.color = const Color(0xFFFBBC05);
+    final yellowPath = Path()
+      ..moveTo(5.28, 14.29)
+      ..cubicTo(5.03, 13.57, 4.90, 12.80, 4.90, 12.0)
+      ..cubicTo(4.90, 11.20, 5.04, 10.43, 5.28, 9.71)
+      ..lineTo(5.28, 6.57)
+      ..lineTo(1.25, 6.57)
+      ..cubicTo(0.45, 8.15, 0.0, 9.92, 0.0, 12.0)
+      ..cubicTo(0.0, 14.08, 0.45, 15.85, 1.25, 17.43)
+      ..lineTo(5.28, 14.29)
+      ..close();
+    canvas.drawPath(yellowPath, paint);
+
+    // 4. Red (#EA4335) - Top arc
+    paint.color = const Color(0xFFEA4335);
+    final redPath = Path()
+      ..moveTo(12.0, 4.75)
+      ..cubicTo(13.77, 4.75, 15.35, 5.36, 16.60, 6.55)
+      ..lineTo(20.02, 3.13)
+      ..cubicTo(17.95, 1.19, 15.24, 0.0, 12.0, 0.0)
+      ..cubicTo(7.33, 0.0, 3.26, 2.64, 1.25, 6.57)
+      ..lineTo(5.28, 9.71)
+      ..cubicTo(6.23, 6.88, 8.88, 4.75, 12.0, 4.75)
+      ..close();
+    canvas.drawPath(redPath, paint);
+
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
 /// Google Pill Button
 class GoogleAuthPillButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool isLoading;
+  final String label;
 
   const GoogleAuthPillButton({
     super.key,
     required this.onPressed,
     this.isLoading = false,
+    this.label = 'Continue with Google',
   });
 
   @override
@@ -1250,39 +1345,61 @@ class GoogleAuthPillButton extends StatelessWidget {
                 ? Colors.white.withValues(alpha: 0.1)
                 : const Color(0xFFE4E4E8),
           ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 24,
-              height: 24,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-              ),
-              child: Center(
-                child: Text(
-                  'G',
-                  style: GoogleFonts.outfit(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 15,
-                    color: const Color(0xFFEA4335),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            Text(
-              'Google',
-              style: GoogleFonts.outfit(
-                color: isDark ? Colors.white : const Color(0xFF1D1D24),
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-              ),
+          boxShadow: [
+            BoxShadow(
+              color: isDark
+                  ? Colors.black.withValues(alpha: 0.25)
+                  : Colors.black.withValues(alpha: 0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
+        child: isLoading
+            ? Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      isDark ? Colors.white70 : const Color(0xFF4285F4),
+                    ),
+                  ),
+                ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.08),
+                          blurRadius: 4,
+                          offset: const Offset(0, 1.5),
+                        ),
+                      ],
+                    ),
+                    alignment: Alignment.center,
+                    child: const GoogleLogoIcon(size: 18),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    label,
+                    style: GoogleFonts.outfit(
+                      color: isDark ? Colors.white : const Color(0xFF1D1D24),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.1,
+                    ),
+                  ),
+                ],
+              ),
       ),
     );
   }
