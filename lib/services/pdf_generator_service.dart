@@ -61,7 +61,7 @@ class PdfGeneratorService {
                       ),
                       pw.SizedBox(width: 8),
                       pw.Text(
-                        'OFFICIAL PREPARATION DOSSIER',
+                        'OFFICIAL PREPARATION STUDY NOTES',
                         style: pw.TextStyle(
                           color: textSecondary,
                           fontSize: 9,

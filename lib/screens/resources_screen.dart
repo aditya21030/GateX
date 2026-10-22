@@ -35,8 +35,12 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
         return Icons.functions_rounded;
       case 'query_stats':
         return Icons.query_stats_rounded;
+      case 'calculate':
+        return Icons.calculate_rounded;
       case 'psychology':
         return Icons.psychology_rounded;
+      case 'memory':
+        return Icons.memory_rounded;
       case 'storage':
         return Icons.storage_rounded;
       case 'terminal':
@@ -45,26 +49,40 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
         return Icons.computer_rounded;
       case 'hub':
         return Icons.hub_rounded;
+      case 'code':
+        return Icons.code_rounded;
       default:
         return Icons.menu_book_rounded;
     }
   }
 
   Color _getSubjectColor(String id) {
-    if (id.contains('linear') || id.contains('calculus')) {
+    if (id.contains('linear')) {
       return const Color(0xFF6C5CE7);
     } else if (id.contains('prob')) {
       return const Color(0xFFFFB300);
+    } else if (id.contains('calc')) {
+      return const Color(0xFF00CEC9);
     } else if (id.contains('machine')) {
       return const Color(0xFF10B981);
-    } else if (id.contains('dbms')) {
+    } else if (id.contains('ai') || id.contains('deep')) {
+      return const Color(0xFF8B5CF6);
+    } else if (id.contains('dbms') || id.contains('warehousing') || id.contains('database')) {
       return const Color(0xFFFF8522);
-    } else if (id.contains('dsa')) {
-      return const Color(0xFF00CEC9);
-    } else if (id.contains('operating')) {
+    } else if (id.contains('python') || id.contains('data_structures')) {
+      return const Color(0xFF0984E3);
+    } else if (id.contains('operating') || id.contains('os')) {
       return const Color(0xFFE17055);
     } else if (id.contains('network')) {
-      return const Color(0xFF0984E3);
+      return const Color(0xFF2980B9);
+    } else if (id.contains('theory') || id.contains('computation')) {
+      return const Color(0xFF9B59B6);
+    } else if (id.contains('compiler')) {
+      return const Color(0xFF27AE60);
+    } else if (id.contains('digital') || id.contains('logic')) {
+      return const Color(0xFFF39C12);
+    } else if (id.contains('discrete')) {
+      return const Color(0xFFE84393);
     }
     return const Color(0xFFFF8522);
   }
@@ -75,9 +93,7 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
     final isPro = provider.isPro;
 
     final filteredNotes = allSubjectNotes.where((note) {
-      final matchesBranch = _selectedFilter == 'ALL' ||
-          note.branch == 'BOTH' ||
-          note.branch == _selectedFilter;
+      final matchesBranch = _selectedFilter == 'ALL' || note.branch == _selectedFilter;
       final q = _searchQuery.trim().toLowerCase();
       if (q.isEmpty) return matchesBranch;
 
@@ -97,7 +113,7 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
       backgroundColor: context.scaffoldBackground,
       appBar: AppBar(
         title: Text(
-          'Notes & Study Dossiers',
+          'Notes',
           style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: context.textColor),
         ),
         elevation: 0,
@@ -116,66 +132,7 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
             physics: const BouncingScrollPhysics(),
             children: [
-              // 1. HERO BANNER
-              Container(
-                padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFFF8522), Color(0xFFFF5200)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFFFF8522).withValues(alpha: 0.35),
-                      blurRadius: 14,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: const Icon(Icons.auto_stories_rounded, color: Colors.white, size: 26),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'High-Yield Subject Notes',
-                            style: GoogleFonts.outfit(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 3),
-                          Text(
-                            'Core concepts free for all aspirants • In-depth derivations, GATE traps & printable PDFs for Pro.',
-                            style: TextStyle(
-                              fontSize: 11.5,
-                              color: Colors.white.withValues(alpha: 0.9),
-                              height: 1.3,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 14),
-
-              // 2. SEARCH BAR
+              // 1. SEARCH BAR
               NeuContainer(
                 isRecessed: true,
                 borderRadius: 14,
@@ -209,7 +166,7 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
               ),
               const SizedBox(height: 12),
 
-              // 3. STREAM FILTER CHIPS
+              // 2. STREAM FILTER CHIPS
               Row(
                 children: [
                   _buildFilterChip('ALL', 'All Subjects'),
@@ -343,7 +300,7 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
-                              note.branch == 'BOTH' ? 'DA & CS' : (note.branch == 'CSIT' ? 'CS/IT' : 'GATE DA'),
+                              note.branch == 'CSIT' ? 'GATE CS/IT' : 'GATE DA',
                               style: TextStyle(
                                 fontSize: 9.5,
                                 fontWeight: FontWeight.bold,
@@ -372,56 +329,69 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
             const SizedBox(height: 10),
             Row(
               children: [
-                // Free badge
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: AppTheme.accentMint.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.check_circle_outline_rounded, size: 12, color: AppTheme.accentMint),
-                      SizedBox(width: 4),
-                      Text(
-                        'Free Core Notes',
-                        style: TextStyle(color: AppTheme.accentMint, fontSize: 10, fontWeight: FontWeight.bold),
+                if (isPro)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF8522).withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: const Color(0xFFFF8522).withValues(alpha: 0.4),
+                        width: 0.8,
                       ),
-                    ],
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.workspace_premium_rounded, size: 12, color: Color(0xFFFF8522)),
+                        SizedBox(width: 4),
+                        Text(
+                          'Pro Notes',
+                          style: TextStyle(
+                            color: Color(0xFFFF8522),
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                    decoration: BoxDecoration(
+                      color: context.isDarkMode
+                          ? Colors.white.withValues(alpha: 0.08)
+                          : Colors.black.withValues(alpha: 0.06),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.menu_book_rounded, size: 12, color: context.textSecondaryColor),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Free Notes',
+                          style: TextStyle(
+                            color: context.textSecondaryColor,
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 6),
-                // Pro badge
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFB300).withValues(alpha: 0.14),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.workspace_premium_rounded, size: 12, color: Color(0xFFF59E0B)),
-                      SizedBox(width: 4),
-                      Text(
-                        'Pro Dossier & PDF',
-                        style: TextStyle(color: Color(0xFFF59E0B), fontSize: 10, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
                 const Spacer(),
                 Text(
                   'Read Notes',
                   style: GoogleFonts.outfit(
-                    fontSize: 12,
+                    fontSize: 11.5,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFFFF8522),
                   ),
                 ),
                 const SizedBox(width: 2),
-                const Icon(Icons.chevron_right_rounded, size: 18, color: Color(0xFFFF8522)),
+                const Icon(Icons.arrow_forward_ios_rounded, size: 11, color: Color(0xFFFF8522)),
               ],
             ),
           ],
@@ -465,7 +435,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
         context: context,
         perkTitle: 'Export Printable Study PDF (Pro)',
         perkDescription:
-            'Full-color, printable PDF dossiers with step-by-step derivations and GATE traps are included in GateX Pro Pass (₹199 one-time). Alternatively, watch a short 20s ad to export this subject\'s PDF for free!',
+            'Full-color, printable PDFs with step-by-step derivations and GATE traps are included in GateX Pro Pass (₹199 one-time). Alternatively, watch a short 20s ad to export this subject\'s PDF for free!',
       );
       if (!shouldProceed) return;
     }
@@ -556,8 +526,8 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
               unselectedLabelColor: context.textSecondaryColor,
               labelStyle: GoogleFonts.outfit(fontSize: 12.5, fontWeight: FontWeight.bold),
               tabs: const [
-                Tab(text: 'Core Notes (Free)'),
-                Tab(text: 'Pro Deep Dive & Traps 👑'),
+                Tab(text: 'Free Notes'),
+                Tab(text: 'Pro Notes 👑'),
               ],
             ),
           ),
@@ -716,12 +686,12 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
             ),
             const SizedBox(height: 16),
             Text(
-              'Unlock Pro In-Depth Dossiers',
+              'Unlock Pro Notes & PDF',
               style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: context.textColor),
             ),
             const SizedBox(height: 6),
             Text(
-              'Pro dossiers include step-by-step mathematical proofs, critical GATE exam trick traps, solved numerical benchmarks, and printable PDF export.',
+              'Pro notes include step-by-step mathematical proofs, critical GATE exam trick traps, solved numerical benchmarks, and printable PDF export.',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 12.5, color: context.textSecondaryColor, height: 1.4),
             ),
@@ -749,8 +719,8 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
               onPressed: () async {
                 final success = await AdService().promptWatchRewardedAd(
                   context: context,
-                  perkTitle: '${widget.note.title} (Pro Deep Dive)',
-                  perkDescription: 'Watch a quick 20s sponsored ad to unlock this subject\'s full Pro dossier and PDF export for free!',
+                  perkTitle: '${widget.note.title} (Pro Notes)',
+                  perkDescription: 'Watch a quick 20s sponsored ad to unlock this subject\'s full Pro notes and PDF export for free!',
                 );
                 if (success && mounted) {
                   setState(() {
@@ -790,7 +760,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: const Text(
-                        'PRO DOSSIER',
+                        'PRO NOTES',
                         style: TextStyle(
                           fontSize: 9.5,
                           fontWeight: FontWeight.bold,
