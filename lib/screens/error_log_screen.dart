@@ -526,7 +526,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: AppTheme.accentPurple,
+        backgroundColor: AppTheme.accentFlame,
         foregroundColor: Colors.white,
         elevation: 4,
         onPressed: () => _showAddEntrySheet(context, provider),

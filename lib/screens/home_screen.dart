@@ -207,32 +207,32 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // 1. NEUMORPHIC STREAK HERO (Light Orange Container with Single Clean Streak Title)
+  // 1. NEUMORPHIC STREAK HERO (Vibrant Radiant Flame Orange with crisp white typography)
   Widget _buildStreakHero(BuildContext context, AppProvider provider) {
     final streak = provider.streak;
     final todayWeekday = DateTime.now().weekday; // 1 = Mon, 7 = Sun
     const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-    const streakLightOrange = Color(0xFFFFA057);
-    const streakTextColor = Color(0xFF2C1405); // High-contrast deep warm brown
+    const streakOrangeStart = Color(0xFFFF8522);
+    const streakOrangeEnd = Color(0xFFFF5200);
 
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFFFFA25B), Color(0xFFFB8A3C)],
+          colors: [streakOrangeStart, streakOrangeEnd],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: const Color(0xFFFFD4B8),
+          color: const Color(0xFFFFC085).withValues(alpha: 0.5),
           width: 1.4,
         ),
         boxShadow: [
           BoxShadow(
-            color: streakLightOrange.withValues(alpha: 0.28),
-            blurRadius: 16,
-            offset: const Offset(0, 5),
+            color: streakOrangeEnd.withValues(alpha: 0.35),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -244,12 +244,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: streakTextColor,
+                  color: Colors.white.withValues(alpha: 0.22),
                   borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.35), width: 1),
                 ),
                 child: const Icon(
                   Icons.local_fire_department_rounded,
-                  color: Color(0xFFFFB074),
+                  color: Colors.white,
                   size: 26,
                 ),
               ),
@@ -260,7 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: streakTextColor,
+                    color: Colors.white,
                     letterSpacing: -0.3,
                   ),
                 ),
@@ -284,31 +285,40 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 38,
                     decoration: BoxDecoration(
                       color: isCompleted
-                          ? streakTextColor
+                          ? Colors.white
                           : (isToday
-                              ? streakTextColor.withValues(alpha: 0.16)
-                              : Colors.white.withValues(alpha: 0.35)),
+                              ? Colors.white.withValues(alpha: 0.35)
+                              : Colors.white.withValues(alpha: 0.16)),
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: isToday
-                            ? streakTextColor
+                            ? Colors.white
                             : (isCompleted
                                 ? Colors.transparent
-                                : Colors.white.withValues(alpha: 0.5)),
+                                : Colors.white.withValues(alpha: 0.35)),
                         width: isToday ? 2.0 : 1.0,
                       ),
+                      boxShadow: isCompleted
+                          ? [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.12),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
                     ),
                     alignment: Alignment.center,
                     child: isCompleted
-                        ? const Icon(Icons.check_rounded, color: Colors.white, size: 20)
+                        ? const Icon(Icons.check_rounded, color: streakOrangeEnd, size: 20)
                         : Text(
                             weekDays[index],
                             style: GoogleFonts.outfit(
                               fontSize: 12.5,
                               fontWeight: FontWeight.bold,
                               color: isToday
-                                  ? streakTextColor
-                                  : streakTextColor.withValues(alpha: 0.75),
+                                  ? Colors.white
+                                  : Colors.white.withValues(alpha: 0.85),
                             ),
                           ),
                   ),
@@ -318,7 +328,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: GoogleFonts.outfit(
                       fontSize: 10.5,
                       fontWeight: isToday ? FontWeight.bold : FontWeight.w600,
-                      color: streakTextColor,
+                      color: Colors.white.withValues(alpha: 0.95),
                     ),
                   ),
                 ],
@@ -337,19 +347,19 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(20),
         gradient: LinearGradient(
           colors: [
-            AppTheme.accentPurple.withValues(alpha: context.isDarkMode ? 0.22 : 0.08),
-            const Color(0xFF06B6D4).withValues(alpha: context.isDarkMode ? 0.14 : 0.05),
+            AppTheme.accentFlame.withValues(alpha: context.isDarkMode ? 0.18 : 0.08),
+            AppTheme.accentPurple.withValues(alpha: context.isDarkMode ? 0.10 : 0.04),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         border: Border.all(
-          color: AppTheme.accentPurple.withValues(alpha: context.isDarkMode ? 0.35 : 0.20),
+          color: AppTheme.accentFlame.withValues(alpha: context.isDarkMode ? 0.35 : 0.22),
           width: 1.2,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.accentPurple.withValues(alpha: context.isDarkMode ? 0.16 : 0.06),
+            color: AppTheme.accentFlame.withValues(alpha: context.isDarkMode ? 0.16 : 0.06),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -364,15 +374,11 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppTheme.accentPurple, Color(0xFF06B6D4)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                gradient: AppTheme.flameGradient,
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
-                    color: AppTheme.accentPurple.withValues(alpha: 0.35),
+                    color: AppTheme.accentFlame.withValues(alpha: 0.35),
                     blurRadius: 10,
                     offset: const Offset(0, 3),
                   ),
@@ -395,12 +401,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: AppTheme.accentPurple.withValues(alpha: 0.15),
+                          color: AppTheme.accentFlame.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: const Text(
                           '5 Qs • 10m',
-                          style: TextStyle(color: AppTheme.accentPurple, fontSize: 9.5, fontWeight: FontWeight.bold),
+                          style: TextStyle(color: AppTheme.accentFlame, fontSize: 9.5, fontWeight: FontWeight.bold),
                         ),
                       ),
                       const SizedBox(width: 6),
@@ -415,6 +421,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             NeuButton(
               isPrimary: true,
+              gradient: AppTheme.flameGradient,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               borderRadius: 14,
               onPressed: () => _startRapidFire(provider),
@@ -443,7 +450,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final examDate = DateTime(2027, 2, 1);
     final totalPrepDays = examDate.difference(planStart).inDays;
     final today = DateTime.now();
-    const streakLightOrange = Color(0xFFFFA057);
 
     double prepPercentElapsed = 0.0;
     if (today.isAfter(examDate)) {
@@ -503,7 +509,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: GoogleFonts.outfit(
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
-                          color: streakLightOrange,
+                          color: AppTheme.accentFlame,
                         ),
                       ),
                       const SizedBox(height: 3),
@@ -597,10 +603,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 14),
 
-          // Progress Bar (Color matches the light streak orange) & Meta
+          // Progress Bar (Color matches the radiant flame orange) & Meta
           NeuProgressBar(
             progress: prepPercentElapsed,
-            progressColor: streakLightOrange,
+            progressColor: AppTheme.accentFlame,
             height: 7,
           ),
           const SizedBox(height: 8),
@@ -818,7 +824,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _buildStatTile(
           context: context,
           icon: Icons.menu_book_rounded,
-          iconColor: AppTheme.accentGold,
+          iconColor: AppTheme.accentFlame,
           label: 'PYQs',
           value: '$pyqsSolved',
           onTap: () => Provider.of<AppProvider>(context, listen: false).setSelectedIndex(2),
@@ -905,7 +911,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           const NeuIconTile(
                             icon: Icons.auto_awesome,
-                            iconColor: AppTheme.accentGold,
+                            iconColor: AppTheme.accentFlame,
                             size: 36,
                             iconSize: 18,
                           ),

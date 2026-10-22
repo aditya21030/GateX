@@ -1518,18 +1518,18 @@ class _PYQCardState extends State<_PYQCard> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                             decoration: BoxDecoration(
-                              color: AppTheme.accentPurple.withValues(alpha: 0.12),
+                              color: AppTheme.accentFlame.withValues(alpha: 0.14),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: const Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.refresh_rounded, size: 12, color: AppTheme.accentPurple),
+                                Icon(Icons.refresh_rounded, size: 12, color: AppTheme.accentFlame),
                                 SizedBox(width: 3),
                                 Text(
                                   'Try Again',
                                   style: TextStyle(
-                                    color: AppTheme.accentPurple,
+                                    color: AppTheme.accentFlame,
                                     fontSize: 10.5,
                                     fontWeight: FontWeight.bold,
                                   ),

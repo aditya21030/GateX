@@ -600,10 +600,11 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
           duration: '10 Mins',
           questionsCount: '5 Questions',
           badgeText: 'INSTANT RECALL',
-          badgeColor: AppTheme.accentPurple,
+          badgeColor: AppTheme.accentFlame,
           icon: Icons.bolt_rounded,
-          iconColor: AppTheme.accentPurple,
+          iconColor: AppTheme.accentFlame,
           isPrimary: true,
+          gradient: AppTheme.flameGradient,
           buttonText: 'Start 10m Sprint ⚡',
           onTap: () {
             final questions = _generateRapidFire(provider);

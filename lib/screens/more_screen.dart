@@ -189,7 +189,7 @@ class MoreScreen extends StatelessWidget {
                       ),
                       title: Text('Streak Protection', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor)),
                       value: provider.notificationsEnabled,
-                      activeColor: AppTheme.secondary,
+                      activeColor: AppTheme.accentFlame,
                       onChanged: (val) => provider.updateNotificationSettings(val, provider.notificationTime),
                     ),
                     Divider(height: 1, color: context.colorBorder),
@@ -471,7 +471,7 @@ class MoreScreen extends StatelessWidget {
       },
       {
         'icon': Icons.speed_rounded,
-        'color': AppTheme.accentGold,
+        'color': AppTheme.accentFlame,
         'title': 'Estimator',
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ScoreEstimatorScreen())),
       },

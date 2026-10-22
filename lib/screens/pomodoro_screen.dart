@@ -24,7 +24,7 @@ class PomodoroScreen extends StatelessWidget {
         : 1.0;
 
     final isStudy = provider.timerSessionType == 'Study Session';
-    final themeColor = isStudy ? AppTheme.accentPurple : AppTheme.accentMint;
+    final themeColor = isStudy ? AppTheme.accentFlame : AppTheme.accentMint;
 
     return Scaffold(
       backgroundColor: context.scaffoldBackground,

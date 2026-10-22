@@ -37,7 +37,7 @@ class _RevisionScreenState extends State<RevisionScreen> {
       case 'High':
         return AppTheme.error;
       case 'Medium':
-        return Colors.amber;
+        return AppTheme.accentFlame;
       case 'Low':
         return AppTheme.success;
       default:

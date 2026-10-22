@@ -878,7 +878,7 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
                           Expanded(
                             child: NeuProgressBar(
                               progress: progress,
-                              progressColor: progress == 1.0 ? AppTheme.accentMint : AppTheme.accentPurple,
+                              progressColor: progress == 1.0 ? AppTheme.accentMint : AppTheme.accentFlame,
                               height: 6,
                             ),
                           ),
@@ -1993,7 +1993,7 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
                 Expanded(
                   child: NeuProgressBar(
                     progress: progress,
-                    progressColor: progress == 1.0 ? AppTheme.accentMint : AppTheme.accentPurple,
+                    progressColor: progress == 1.0 ? AppTheme.accentMint : AppTheme.accentFlame,
                     height: 5.5,
                   ),
                 ),

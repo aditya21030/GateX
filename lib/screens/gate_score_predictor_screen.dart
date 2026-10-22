@@ -667,7 +667,7 @@ class _GateScorePredictorScreenState extends State<GateScorePredictorScreen> {
                         min: 0.0,
                         max: 100.0,
                         divisions: 200,
-                        activeColor: AppTheme.accentPurple,
+                        activeColor: AppTheme.accentFlame,
                         label: _marks.toStringAsFixed(1),
                         onChanged: (val) {
                           setState(() {
@@ -681,6 +681,7 @@ class _GateScorePredictorScreenState extends State<GateScorePredictorScreen> {
                       // Predict Button
                       NeuButton(
                         isPrimary: true,
+                        gradient: AppTheme.flameGradient,
                         borderRadius: 14,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         onPressed: _isPredicting ? null : _runPrediction,

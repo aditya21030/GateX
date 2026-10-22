@@ -18,10 +18,19 @@ class AppTheme {
   // Gamification & Accent Tokens (from UI Reference)
   static const Color accentPurple = Color(0xFF7C3AED); // Vibrant Purple
   static const Color accentFlame = Color(0xFFFF7A00); // Streak Orange
+  static const Color accentFlameLight = Color(0xFFFF9233); // Bright Luminous Orange
+  static const Color accentFlameDark = Color(0xFFFF5200); // Deep Warm Sunset Orange
   static const Color accentGold = Color(0xFFFFB300); // XP / Trophy Gold
   static const Color accentCoral = Color(0xFFFF4757); // Target Coral
   static const Color accentCyan = Color(0xFF00B4D8); // Diamonds Azure
   static const Color accentMint = Color(0xFF10B981); // Emerald Mint
+
+  // High-Energy Gradient Tokens
+  static const LinearGradient flameGradient = LinearGradient(
+    colors: [Color(0xFFFF8522), Color(0xFFFF5200)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
 
   // Border & Divider Tokens
   static const Color borderDark = Color(0x18FFFFFF);

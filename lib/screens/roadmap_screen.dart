@@ -467,7 +467,7 @@ class _SubjectExpansionCard extends StatelessWidget {
       case 'Very High':
         return AppTheme.error;
       case 'High':
-        return Colors.orange;
+        return AppTheme.accentFlame;
       case 'Medium':
         return Colors.amber;
       default:
