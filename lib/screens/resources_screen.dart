@@ -740,32 +740,46 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
     }
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       physics: const BouncingScrollPhysics(),
       children: [
-        ...widget.note.proSections.map((proSec) {
+        ...widget.note.proSections.asMap().entries.map((entry) {
+          final index = entry.key;
+          final proSec = entry.value;
+
           return NeuContainer(
-            margin: const EdgeInsets.only(bottom: 16),
+            margin: const EdgeInsets.only(bottom: 20),
             borderRadius: 18,
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // 1. Pro Header with Badge
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
                       decoration: BoxDecoration(
                         color: const Color(0xFFFF8522).withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: const Color(0xFFFF8522).withValues(alpha: 0.4), width: 0.8),
                       ),
-                      child: const Text(
-                        'PRO NOTES',
-                        style: TextStyle(
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFFFF8522),
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.workspace_premium_rounded, size: 12, color: Color(0xFFFF8522)),
+                          const SizedBox(width: 4),
+                          Text(
+                            'PRO SECTION ${index + 1}',
+                            style: const TextStyle(
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFFFF8522),
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -781,18 +795,52 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  proSec.inDepthTheory.trim(),
-                  style: TextStyle(fontSize: 12.5, color: context.textColor, height: 1.45),
+                const SizedBox(height: 12),
+                Divider(height: 1, color: context.colorBorder),
+                const SizedBox(height: 12),
+
+                // 2. In-Depth Theory & Mathematical Proofs
+                Row(
+                  children: [
+                    const Icon(Icons.auto_stories_rounded, size: 15, color: Color(0xFFFF8522)),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Deep Theory & Proof Intuition',
+                      style: GoogleFonts.outfit(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: context.textSecondaryColor,
+                      ),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 6),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: context.isDarkMode ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.02),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: context.colorBorder),
+                  ),
+                  child: Text(
+                    proSec.inDepthTheory.trim(),
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      color: context.textColor,
+                      height: 1.45,
+                    ),
+                  ),
+                ),
+
+                // 3. Exam Traps Box
                 if (proSec.examTraps.isNotEmpty) ...[
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppTheme.accentCoral.withValues(alpha: 0.1),
+                      color: AppTheme.accentCoral.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: AppTheme.accentCoral.withValues(alpha: 0.3)),
                     ),
@@ -814,13 +862,21 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
                             ),
                           ],
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 8),
                         ...proSec.examTraps.map((trap) {
                           return Padding(
-                            padding: const EdgeInsets.only(bottom: 4),
-                            child: Text(
-                              trap,
-                              style: TextStyle(fontSize: 11.5, color: context.textColor, height: 1.35),
+                            padding: const EdgeInsets.only(bottom: 6),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('⚠️ ', style: TextStyle(fontSize: 11)),
+                                Expanded(
+                                  child: Text(
+                                    trap,
+                                    style: TextStyle(fontSize: 12, color: context.textColor, height: 1.35),
+                                  ),
+                                ),
+                              ],
                             ),
                           );
                         }),
@@ -828,8 +884,10 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
                     ),
                   ),
                 ],
+
+                // 4. Solved Benchmark Numerical Card
                 if (proSec.solvedExample.trim().isNotEmpty) ...[
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
@@ -856,28 +914,38 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
                             ),
                           ],
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          proSec.solvedExample.trim(),
-                          style: GoogleFonts.outfit(
-                            fontSize: 11.5,
-                            color: context.textColor,
-                            height: 1.4,
+                        const SizedBox(height: 8),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: context.isDarkMode ? Colors.black.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.7),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            proSec.solvedExample.trim(),
+                            style: GoogleFonts.spaceMono(
+                              fontSize: 11.5,
+                              color: context.textColor,
+                              height: 1.4,
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
                 ],
+
+                // 5. AIR-1 Topper Speed Shortcuts
                 if (proSec.shortcutTips.isNotEmpty) ...[
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: const Color(0xFFFF8522).withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFFFF8522).withValues(alpha: 0.25)),
+                      border: Border.all(color: const Color(0xFFFF8522).withValues(alpha: 0.3)),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -887,7 +955,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
                             Icon(Icons.bolt_rounded, size: 16, color: Color(0xFFFF8522)),
                             SizedBox(width: 6),
                             Text(
-                              'AIR-1 TOPPER SHORTCUT TRICKS',
+                              'AIR-1 TOPPER SPEED SHORTCUT TRICKS',
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
@@ -897,13 +965,21 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
                             ),
                           ],
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 8),
                         ...proSec.shortcutTips.map((tip) {
                           return Padding(
-                            padding: const EdgeInsets.only(bottom: 3),
-                            child: Text(
-                              tip,
-                              style: TextStyle(fontSize: 11.5, color: context.textColor, height: 1.35),
+                            padding: const EdgeInsets.only(bottom: 5),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('⚡ ', style: TextStyle(fontSize: 11)),
+                                Expanded(
+                                  child: Text(
+                                    tip,
+                                    style: TextStyle(fontSize: 12, color: context.textColor, height: 1.35),
+                                  ),
+                                ),
+                              ],
                             ),
                           );
                         }),
@@ -915,6 +991,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
             ),
           );
         }),
+        const SizedBox(height: 24),
       ],
     );
   }
