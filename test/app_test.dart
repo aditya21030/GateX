@@ -6,6 +6,7 @@ import 'package:gateda/models/branch_model.dart';
 import 'package:gateda/data/study_plan.dart';
 import 'package:gateda/data/da_subjectwise_mock_data.dart';
 import 'package:gateda/data/csit_subjectwise_mock_data.dart';
+import 'package:gateda/data/notes_data.dart';
 import 'package:gateda/services/storage_service.dart';
 
 class EstimationNode {
@@ -989,6 +990,26 @@ void main() {
       // Real exam retains exact raw marks
       expect(calculateScaled(60.0, true, 1.03), 60.0);
       expect(calculateScaled(58.33, true, 0.96), 58.33);
+    });
+  });
+
+  group('Notes & Study Dossier Content Tests', () {
+    test('Contains notes for both GATE DA and GATE CS/IT streams', () {
+      expect(allSubjectNotes.isNotEmpty, isTrue);
+      final daNotes = allSubjectNotes.where((n) => n.branch == 'DA' || n.branch == 'BOTH').toList();
+      final csitNotes = allSubjectNotes.where((n) => n.branch == 'CSIT' || n.branch == 'BOTH').toList();
+      expect(daNotes.length, greaterThanOrEqualTo(5));
+      expect(csitNotes.length, greaterThanOrEqualTo(4));
+    });
+
+    test('Every subject note has free sections and pro sections', () {
+      for (final note in allSubjectNotes) {
+        expect(note.freeSections.isNotEmpty, isTrue, reason: '${note.title} should have free sections');
+        expect(note.proSections.isNotEmpty, isTrue, reason: '${note.title} should have pro sections');
+        for (final pro in note.proSections) {
+          expect(pro.examTraps.isNotEmpty, isTrue, reason: '${pro.title} should have exam traps');
+        }
+      }
     });
   });
 }

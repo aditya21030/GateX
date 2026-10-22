@@ -1,508 +1,951 @@
 import 'package:flutter/material.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../models/note_model.dart';
+import '../data/notes_data.dart';
+import '../providers/app_provider.dart';
+import '../services/ad_service.dart';
+import '../services/pdf_generator_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/neu_widgets.dart';
-import 'formula_sheet_screen.dart';
-import 'weightage_screen.dart';
+import 'pro_upgrade_screen.dart';
 
-class ResourcesScreen extends StatelessWidget {
+class ResourcesScreen extends StatefulWidget {
   const ResourcesScreen({super.key});
 
   @override
+  State<ResourcesScreen> createState() => _ResourcesScreenState();
+}
+
+class _ResourcesScreenState extends State<ResourcesScreen> {
+  String _selectedFilter = 'ALL'; // 'ALL', 'DA', 'CSIT'
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  IconData _getSubjectIcon(String iconKey) {
+    switch (iconKey) {
+      case 'functions':
+        return Icons.functions_rounded;
+      case 'query_stats':
+        return Icons.query_stats_rounded;
+      case 'psychology':
+        return Icons.psychology_rounded;
+      case 'storage':
+        return Icons.storage_rounded;
+      case 'terminal':
+        return Icons.terminal_rounded;
+      case 'computer':
+        return Icons.computer_rounded;
+      case 'hub':
+        return Icons.hub_rounded;
+      default:
+        return Icons.menu_book_rounded;
+    }
+  }
+
+  Color _getSubjectColor(String id) {
+    if (id.contains('linear') || id.contains('calculus')) {
+      return const Color(0xFF6C5CE7);
+    } else if (id.contains('prob')) {
+      return const Color(0xFFFFB300);
+    } else if (id.contains('machine')) {
+      return const Color(0xFF10B981);
+    } else if (id.contains('dbms')) {
+      return const Color(0xFFFF8522);
+    } else if (id.contains('dsa')) {
+      return const Color(0xFF00CEC9);
+    } else if (id.contains('operating')) {
+      return const Color(0xFFE17055);
+    } else if (id.contains('network')) {
+      return const Color(0xFF0984E3);
+    }
+    return const Color(0xFFFF8522);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<AppProvider>(context);
+    final isPro = provider.isPro;
+
+    final filteredNotes = allSubjectNotes.where((note) {
+      final matchesBranch = _selectedFilter == 'ALL' ||
+          note.branch == 'BOTH' ||
+          note.branch == _selectedFilter;
+      final q = _searchQuery.trim().toLowerCase();
+      if (q.isEmpty) return matchesBranch;
+
+      final matchesQuery = note.title.toLowerCase().contains(q) ||
+          note.subtitle.toLowerCase().contains(q) ||
+          note.freeSections.any((s) =>
+              s.title.toLowerCase().contains(q) ||
+              s.keyPoints.any((kp) => kp.toLowerCase().contains(q))) ||
+          note.proSections.any((s) =>
+              s.title.toLowerCase().contains(q) ||
+              s.examTraps.any((t) => t.toLowerCase().contains(q)));
+
+      return matchesBranch && matchesQuery;
+    }).toList();
+
     return Scaffold(
       backgroundColor: context.scaffoldBackground,
       appBar: AppBar(
         title: Text(
-          'Revision Resources & Guides',
-          style: AppTheme.poppinsBold(fontSize: 17, color: context.textColor),
+          'Notes & Study Dossiers',
+          style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: context.textColor),
         ),
         elevation: 0,
         backgroundColor: context.scaffoldBackground,
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                onPressed: () => Navigator.pop(context),
+              )
+            : null,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // 1. HERO HEADER
-            NeuContainer(
-              borderRadius: 20,
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  const NeuIconTile(
-                    icon: Icons.menu_book_rounded,
-                    iconColor: AppTheme.primary,
-                    size: 44,
-                    iconSize: 22,
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            physics: const BouncingScrollPhysics(),
+            children: [
+              // 1. HERO BANNER
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFF8522), Color(0xFFFF5200)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  const SizedBox(width: 14),
-                  Expanded(
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFFF8522).withValues(alpha: 0.35),
+                      blurRadius: 14,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: const Icon(Icons.auto_stories_rounded, color: Colors.white, size: 26),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'High-Yield Subject Notes',
+                            style: GoogleFonts.outfit(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            'Core concepts free for all aspirants • In-depth derivations, GATE traps & printable PDFs for Pro.',
+                            style: TextStyle(
+                              fontSize: 11.5,
+                              color: Colors.white.withValues(alpha: 0.9),
+                              height: 1.3,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+
+              // 2. SEARCH BAR
+              NeuContainer(
+                isRecessed: true,
+                borderRadius: 14,
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                child: TextField(
+                  controller: _searchController,
+                  style: GoogleFonts.outfit(fontSize: 13.5, color: context.textColor),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Search topics, formulas, traps (e.g. SVD, Bayes, B+ Tree)...',
+                    hintStyle: TextStyle(color: context.textSecondaryColor, fontSize: 12),
+                    icon: Icon(Icons.search_rounded, color: context.textSecondaryColor, size: 20),
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear_rounded, size: 18),
+                            onPressed: () {
+                              setState(() {
+                                _searchController.clear();
+                                _searchQuery = '';
+                              });
+                            },
+                          )
+                        : null,
+                  ),
+                  onChanged: (val) {
+                    setState(() {
+                      _searchQuery = val;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // 3. STREAM FILTER CHIPS
+              Row(
+                children: [
+                  _buildFilterChip('ALL', 'All Subjects'),
+                  const SizedBox(width: 8),
+                  _buildFilterChip('DA', 'GATE DA'),
+                  const SizedBox(width: 8),
+                  _buildFilterChip('CSIT', 'GATE CS/IT'),
+                ],
+              ),
+              const SizedBox(height: 14),
+
+              // 4. NOTES LIST
+              if (filteredNotes.isEmpty)
+                Container(
+                  padding: const EdgeInsets.all(32),
+                  alignment: Alignment.center,
+                  child: Column(
+                    children: [
+                      Icon(Icons.search_off_rounded, size: 40, color: context.textSecondaryColor),
+                      const SizedBox(height: 8),
+                      Text(
+                        'No matching notes found',
+                        style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold, color: context.textColor),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Try searching for another formula, theorem or subject name.',
+                        style: TextStyle(fontSize: 12, color: context.textSecondaryColor),
+                      ),
+                    ],
+                  ),
+                )
+              else
+                ...filteredNotes.map((note) => _buildNoteCard(context, note, isPro)),
+
+              const SizedBox(height: 24),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilterChip(String key, String label) {
+    final isSelected = _selectedFilter == key;
+    return InkWell(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        setState(() {
+          _selectedFilter = key;
+        });
+      },
+      borderRadius: BorderRadius.circular(10),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? const Color(0xFFFF8522)
+              : (context.isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04)),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isSelected
+                ? const Color(0xFFFF8522)
+                : (context.isDarkMode ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
+          ),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.outfit(
+            fontSize: 11.5,
+            fontWeight: FontWeight.bold,
+            color: isSelected ? Colors.white : context.textSecondaryColor,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNoteCard(BuildContext context, SubjectNote note, bool isPro) {
+    final color = _getSubjectColor(note.id);
+    final icon = _getSubjectIcon(note.iconKey);
+
+    return NeuContainer(
+      margin: const EdgeInsets.only(bottom: 12),
+      borderRadius: 18,
+      padding: const EdgeInsets.all(16),
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => NoteDetailScreen(note: note),
+            ),
+          );
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                NeuIconTile(
+                  icon: icon,
+                  iconColor: color,
+                  size: 42,
+                  iconSize: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              note.title,
+                              style: GoogleFonts.outfit(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: context.textColor,
+                              ),
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: color.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              note.branch == 'BOTH' ? 'DA & CS' : (note.branch == 'CSIT' ? 'CS/IT' : 'GATE DA'),
+                              style: TextStyle(
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.bold,
+                                color: color,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        note.subtitle,
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          color: context.textSecondaryColor,
+                          height: 1.3,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Divider(height: 1, color: context.colorBorder),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                // Free badge
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: AppTheme.accentMint.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.check_circle_outline_rounded, size: 12, color: AppTheme.accentMint),
+                      SizedBox(width: 4),
+                      Text(
+                        'Free Core Notes',
+                        style: TextStyle(color: AppTheme.accentMint, fontSize: 10, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 6),
+                // Pro badge
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFB300).withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.workspace_premium_rounded, size: 12, color: Color(0xFFF59E0B)),
+                      SizedBox(width: 4),
+                      Text(
+                        'Pro Dossier & PDF',
+                        style: TextStyle(color: Color(0xFFF59E0B), fontSize: 10, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  'Read Notes',
+                  style: GoogleFonts.outfit(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFFFF8522),
+                  ),
+                ),
+                const SizedBox(width: 2),
+                const Icon(Icons.chevron_right_rounded, size: 18, color: Color(0xFFFF8522)),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class NoteDetailScreen extends StatefulWidget {
+  final SubjectNote note;
+  const NoteDetailScreen({super.key, required this.note});
+
+  @override
+  State<NoteDetailScreen> createState() => _NoteDetailScreenState();
+}
+
+class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  bool _isExporting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handlePdfExport(BuildContext context, AppProvider provider) async {
+    HapticFeedback.selectionClick();
+    final messenger = ScaffoldMessenger.of(context);
+    final isPro = provider.isPro;
+
+    if (!isPro) {
+      final shouldProceed = await AdService().promptWatchRewardedAd(
+        context: context,
+        perkTitle: 'Export Printable Study PDF (Pro)',
+        perkDescription:
+            'Full-color, printable PDF dossiers with step-by-step derivations and GATE traps are included in GateX Pro Pass (₹199 one-time). Alternatively, watch a short 20s ad to export this subject\'s PDF for free!',
+      );
+      if (!shouldProceed) return;
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _isExporting = true;
+    });
+
+    final success = await PdfGeneratorService().generateAndSharePdf(
+      note: widget.note,
+      isProUser: isPro,
+    );
+
+    if (mounted) {
+      setState(() {
+        _isExporting = false;
+      });
+      if (!success) {
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text('Failed to generate PDF. Please try again.'),
+            backgroundColor: AppTheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = Provider.of<AppProvider>(context);
+    final isPro = provider.isPro;
+
+    return Scaffold(
+      backgroundColor: context.scaffoldBackground,
+      appBar: AppBar(
+        title: Text(
+          widget.note.title,
+          style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold, color: context.textColor),
+        ),
+        elevation: 0,
+        backgroundColor: context.scaffoldBackground,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: _isExporting
+                ? const Center(
+                    child: SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFFF8522)),
+                    ),
+                  )
+                : TextButton.icon(
+                    onPressed: () => _handlePdfExport(context, provider),
+                    icon: const Icon(Icons.picture_as_pdf_rounded, size: 18, color: Color(0xFFFF8522)),
+                    label: Text(
+                      'Export PDF',
+                      style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12.5, color: const Color(0xFFFF8522)),
+                    ),
+                    style: TextButton.styleFrom(
+                      backgroundColor: const Color(0xFFFF8522).withValues(alpha: 0.12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    ),
+                  ),
+          ),
+        ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            decoration: BoxDecoration(
+              color: context.isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: TabBar(
+              controller: _tabController,
+              indicator: BoxDecoration(
+                color: const Color(0xFFFF8522),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              indicatorSize: TabBarIndicatorSize.tab,
+              dividerColor: Colors.transparent,
+              labelColor: Colors.white,
+              unselectedLabelColor: context.textSecondaryColor,
+              labelStyle: GoogleFonts.outfit(fontSize: 12.5, fontWeight: FontWeight.bold),
+              tabs: const [
+                Tab(text: 'Core Notes (Free)'),
+                Tab(text: 'Pro Deep Dive & Traps 👑'),
+              ],
+            ),
+          ),
+        ),
+      ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildFreeTab(context),
+              _buildProTab(context, provider, isPro),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFreeTab(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      physics: const BouncingScrollPhysics(),
+      children: [
+        ...widget.note.freeSections.map((sec) {
+          return NeuContainer(
+            margin: const EdgeInsets.only(bottom: 16),
+            borderRadius: 18,
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  sec.title,
+                  style: GoogleFonts.outfit(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFFFF8522),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  sec.summary,
+                  style: TextStyle(fontSize: 12.5, color: context.textColor, height: 1.4),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Key Principles & Rules:',
+                  style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.bold, color: context.textSecondaryColor),
+                ),
+                const SizedBox(height: 6),
+                ...sec.keyPoints.map((kp) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('• ', style: TextStyle(color: Color(0xFFFF8522), fontWeight: FontWeight.bold)),
+                        Expanded(
+                          child: Text(
+                            kp,
+                            style: TextStyle(fontSize: 12, color: context.textColor, height: 1.35),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+                if (sec.coreFormulas.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: context.isDarkMode ? Colors.black.withValues(alpha: 0.25) : const Color(0xFFF7F8FC),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: context.isDarkMode ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.06),
+                      ),
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Formula & Cheat Sheets',
-                          style: AppTheme.poppinsBold(fontSize: 14, color: context.textColor),
+                        Row(
+                          children: [
+                            const Icon(Icons.functions_rounded, size: 14, color: Color(0xFFFF8522)),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Essential Formulas:',
+                              style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFFFF8522)),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 3),
+                        const SizedBox(height: 6),
+                        ...sec.coreFormulas.map((cf) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    cf,
+                                    style: GoogleFonts.spaceMono(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                      color: context.textColor,
+                                    ),
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.copy_rounded, size: 14),
+                                  color: context.textSecondaryColor,
+                                  visualDensity: VisualDensity.compact,
+                                  onPressed: () {
+                                    Clipboard.setData(ClipboardData(text: cf));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Formula copied to clipboard!'),
+                                        duration: Duration(seconds: 1),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildProTab(BuildContext context, AppProvider provider, bool isPro) {
+    if (!isPro) {
+      return Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFB300).withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(22),
+              ),
+              child: const Icon(Icons.workspace_premium_rounded, size: 36, color: Color(0xFFF59E0B)),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Unlock Pro In-Depth Dossiers',
+              style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: context.textColor),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Pro dossiers include step-by-step mathematical proofs, critical GATE exam trick traps, solved numerical benchmarks, and printable PDF export.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 12.5, color: context.textSecondaryColor, height: 1.4),
+            ),
+            const SizedBox(height: 22),
+            NeuButton(
+              isPrimary: true,
+              gradient: AppTheme.flameGradient,
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const ProUpgradeScreen()));
+              },
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.bolt_rounded, color: Colors.white, size: 18),
+                  SizedBox(width: 8),
+                  Text(
+                    'Get GateX Pro Pass (₹199)',
+                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13.5),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextButton.icon(
+              onPressed: () async {
+                final success = await AdService().promptWatchRewardedAd(
+                  context: context,
+                  perkTitle: '${widget.note.title} (Pro Deep Dive)',
+                  perkDescription: 'Watch a quick 20s sponsored ad to unlock this subject\'s full Pro dossier and PDF export for free!',
+                );
+                if (success && mounted) {
+                  setState(() {
+                    // Temporarily unlocked
+                  });
+                }
+              },
+              icon: const Icon(Icons.play_circle_outline_rounded, size: 18, color: Color(0xFFFF8522)),
+              label: const Text(
+                'Watch 20s Ad to Unlock for Free 🎁',
+                style: TextStyle(color: Color(0xFFFF8522), fontWeight: FontWeight.bold, fontSize: 13),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      physics: const BouncingScrollPhysics(),
+      children: [
+        ...widget.note.proSections.map((proSec) {
+          return NeuContainer(
+            margin: const EdgeInsets.only(bottom: 16),
+            borderRadius: 18,
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFF8522).withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Text(
+                        'PRO DOSSIER',
+                        style: TextStyle(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFFFF8522),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        proSec.title,
+                        style: GoogleFonts.outfit(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: context.textColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  proSec.inDepthTheory.trim(),
+                  style: TextStyle(fontSize: 12.5, color: context.textColor, height: 1.45),
+                ),
+                if (proSec.examTraps.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppTheme.accentCoral.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppTheme.accentCoral.withValues(alpha: 0.3)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Icon(Icons.warning_amber_rounded, size: 16, color: AppTheme.accentCoral),
+                            SizedBox(width: 6),
+                            Text(
+                              'COMMON GATE TRAPS TO AVOID',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.accentCoral,
+                                letterSpacing: 0.6,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        ...proSec.examTraps.map((trap) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: Text(
+                              trap,
+                              style: TextStyle(fontSize: 11.5, color: context.textColor, height: 1.35),
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
+                  ),
+                ],
+                if (proSec.solvedExample.trim().isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppTheme.accentMint.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppTheme.accentMint.withValues(alpha: 0.3)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Icon(Icons.check_circle_outline_rounded, size: 16, color: AppTheme.accentMint),
+                            SizedBox(width: 6),
+                            Text(
+                              'SOLVED BENCHMARK NUMERICAL',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.accentMint,
+                                letterSpacing: 0.6,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
                         Text(
-                          'Curated formulas, probability tables, and rapid recall sheets for revision.',
-                          style: TextStyle(
+                          proSec.solvedExample.trim(),
+                          style: GoogleFonts.outfit(
                             fontSize: 11.5,
-                            color: context.textSecondaryColor,
-                            height: 1.3,
+                            color: context.textColor,
+                            height: 1.4,
                           ),
                         ),
                       ],
                     ),
                   ),
                 ],
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // 2. CORE FORMULA REFERENCE SHORTCUT
-            NeuContainer(
-              borderRadius: 20,
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  const NeuIconTile(
-                    icon: Icons.functions_rounded,
-                    iconColor: AppTheme.secondary,
-                    size: 44,
-                    iconSize: 22,
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
+                if (proSec.shortcutTips.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF8522).withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFFFF8522).withValues(alpha: 0.25)),
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Interactive Formula Book',
-                          style: AppTheme.poppinsBold(fontSize: 14, color: context.textColor),
+                        const Row(
+                          children: [
+                            Icon(Icons.bolt_rounded, size: 16, color: Color(0xFFFF8522)),
+                            SizedBox(width: 6),
+                            Text(
+                              'AIR-1 TOPPER SHORTCUT TRICKS',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFFFF8522),
+                                letterSpacing: 0.6,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 3),
-                        Text(
-                          '1,500+ formulas with full derivations for DA and CS/IT.',
-                          style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
-                        ),
+                        const SizedBox(height: 6),
+                        ...proSec.shortcutTips.map((tip) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 3),
+                            child: Text(
+                              tip,
+                              style: TextStyle(fontSize: 11.5, color: context.textColor, height: 1.35),
+                            ),
+                          );
+                        }),
                       ],
                     ),
                   ),
-                  NeuButton(
-                    isPrimary: true,
-                    borderRadius: 12,
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const FormulaSheetScreen()));
-                    },
-                    child: const Text('OPEN', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.white)),
-                  ),
                 ],
-              ),
+              ],
             ),
-            const SizedBox(height: 20),
-
-            // 3. CURATED QUICK-STUDY CARDS
-            Text(
-              'HIGH-YIELD REVISION GUIDES',
-              style: TextStyle(
-                color: context.textSecondaryColor,
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            _buildGuideCard(
-              context,
-              icon: Icons.analytics_outlined,
-              iconColor: Colors.amber,
-              title: 'Probability Distributions Cheat Sheet',
-              subtitle: 'PMF/PDF, Mean, Variance, MGF, & Memoryless Properties for Uniform, Binomial, Poisson, Normal, & Exponential.',
-              onTap: () => _showDistributionModal(context),
-            ),
-            const SizedBox(height: 12),
-
-            _buildGuideCard(
-              context,
-              icon: Icons.grid_on_rounded,
-              iconColor: Colors.blueAccent,
-              title: 'Linear Algebra Quick Reference',
-              subtitle: 'Eigenvalue properties, Trace-Determinant identities, SVD decomposition, and Projection matrix formulas.',
-              onTap: () => _showLinearAlgebraModal(context),
-            ),
-            const SizedBox(height: 12),
-
-            _buildGuideCard(
-              context,
-              icon: Icons.psychology_outlined,
-              iconColor: Colors.teal,
-              title: 'ML Metrics & Evaluation Table',
-              subtitle: 'Confusion Matrix, Precision, Recall, F1-Score, ROC-AUC, Bias-Variance Tradeoff, and L1 vs L2 regularization.',
-              onTap: () => _showMLModal(context),
-            ),
-            const SizedBox(height: 12),
-
-            _buildGuideCard(
-              context,
-              icon: Icons.functions_rounded,
-              iconColor: Colors.deepPurpleAccent,
-              title: 'Calculus & Optimization Super-Sheet',
-              subtitle: 'Gradients, Hessian matrix, convexity conditions, Taylor expansion, and Gradient Descent update rules.',
-              onTap: () => _showCalculusModal(context),
-            ),
-            const SizedBox(height: 12),
-
-            _buildGuideCard(
-              context,
-              icon: Icons.alt_route_rounded,
-              iconColor: Colors.cyanAccent,
-              title: 'ML Loss Functions & Gradients',
-              subtitle: 'MSE, Binary Cross-Entropy, Categorical Cross-Entropy, Softmax Jacobian, and SVM Hinge loss derivations.',
-              onTap: () => _showLossFunctionsModal(context),
-            ),
-            const SizedBox(height: 12),
-
-            _buildGuideCard(
-              context,
-              icon: Icons.bar_chart_rounded,
-              iconColor: Colors.orange,
-              title: 'Expected Subject Weightage Map',
-              subtitle: 'Detailed topic prioritization based on 2024-2026 actual marks distribution.',
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const WeightageScreen()));
-              },
-            ),
-            const SizedBox(height: 20),
-
-            // 4. SHARE TOOL
-            NeuButton(
-              borderRadius: 14,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              onPressed: () {
-                Share.share(
-                  'Preparing for GATE DA / CSIT? Check out GateX for high-yield formula sheets, past year questions with LaTeX solutions, and full CBT mock tests: https://play.google.com/store/apps/details?id=com.gatex.gateda',
-                );
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.share_outlined, size: 16, color: context.textColor),
-                  const SizedBox(width: 8),
-                  Text('Share Study Guides with Friends', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor)),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGuideCard(
-    BuildContext context, {
-    required IconData icon,
-    required Color iconColor,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: NeuContainer(
-        borderRadius: 18,
-        padding: const EdgeInsets.all(14),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            NeuIconTile(
-              icon: icon,
-              iconColor: iconColor,
-              size: 40,
-              iconSize: 20,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: AppTheme.poppinsBold(fontSize: 13.5, color: context.textColor),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: TextStyle(fontSize: 11, color: context.textSecondaryColor, height: 1.3),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 6),
-            Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor, size: 18),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showDistributionModal(BuildContext context) {
-    _showSheetModal(
-      context,
-      title: 'Probability Distributions',
-      items: const [
-        (
-          title: 'Bernoulli Distribution',
-          details: '• PMF: P(X=1) = p, P(X=0) = 1-p\n• Mean = p\n• Variance = p(1-p)\n• MGF: M_X(t) = (1-p) + p*e^t',
-        ),
-        (
-          title: 'Binomial Distribution B(n, p)',
-          details: '• PMF: P(X=k) = nCk * p^k * (1-p)^(n-k)\n• Mean = np\n• Variance = np(1-p)\n• Mode: floor((n+1)p) if (n+1)p is not an integer.',
-        ),
-        (
-          title: 'Poisson Distribution (λ)',
-          details: '• PMF: P(X=k) = (e^-λ * λ^k) / k!\n• Mean = λ, Variance = λ\n• Property: Sum of independent Poisson variables is Poisson (λ1 + λ2).',
-        ),
-        (
-          title: 'Normal Distribution N(μ, σ²)',
-          details: '• Standard Normal: Z = (X - μ) / σ ~ N(0, 1)\n• 68-95-99.7 Rule: P(μ±σ) ≈ 68.27%, P(μ±2σ) ≈ 95.45%, P(μ±3σ) ≈ 99.73%\n• Linear combo: aX + bY ~ N(aμ_X + bμ_Y, a²σ_X² + b²σ_Y² + 2ab*Cov(X,Y))',
-        ),
-        (
-          title: 'Exponential Distribution (λ)',
-          details: '• PDF: f(x) = λe^(-λx) for x ≥ 0\n• CDF: F(x) = 1 - e^(-λx)\n• Mean = 1/λ, Variance = 1/λ²\n• Memoryless Property: P(X > s + t | X > s) = P(X > t)',
-        ),
-        (
-          title: 'Uniform Distribution U(a, b)',
-          details: '• PDF: f(x) = 1 / (b - a) for a ≤ x ≤ b\n• Mean = (a + b) / 2\n• Variance = (b - a)² / 12',
-        ),
+          );
+        }),
       ],
-    );
-  }
-
-  void _showLinearAlgebraModal(BuildContext context) {
-    _showSheetModal(
-      context,
-      title: 'Linear Algebra Matrix Identities',
-      items: const [
-        (
-          title: 'Trace & Determinant Rules',
-          details: '• Trace(A) = Sum of diagonal elements = Sum of Eigenvalues (∑ λ_i)\n• Det(A) = Product of Eigenvalues (∏ λ_i)\n• Det(AB) = Det(A) * Det(B)\n• Det(cA) = c^n * Det(A) for n×n matrix',
-        ),
-        (
-          title: 'Eigenvalue Transformations',
-          details: '• A has eigenvalues λ_i\n• A^k has eigenvalues λ_i^k\n• A^-1 has eigenvalues 1/λ_i (iff Det(A) ≠ 0)\n• A + cI has eigenvalues λ_i + c',
-        ),
-        (
-          title: 'Rank-Nullity Theorem',
-          details: 'For any m×n matrix A:\nRank(A) + Nullity(A) = n (number of columns)',
-        ),
-        (
-          title: 'Symmetric & Orthogonal Matrices',
-          details: '• Symmetric (A = A^T): All eigenvalues are real. Eigenvectors for distinct eigenvalues are strictly orthogonal.\n• Orthogonal (A^T * A = I): All eigenvalues have |λ| = 1. Det(A) = ±1.',
-        ),
-        (
-          title: 'Singular Value Decomposition (SVD)',
-          details: 'A = U Σ V^T\n• U (m×m): Eigenvectors of A A^T (Left singular vectors)\n• V (n×n): Eigenvectors of A^T A (Right singular vectors)\n• Σ: Diagonal matrix of singular values σ_i = sqrt(λ_i(A^T A))',
-        ),
-      ],
-    );
-  }
-
-  void _showMLModal(BuildContext context) {
-    _showSheetModal(
-      context,
-      title: 'Machine Learning Evaluation Metrics',
-      items: const [
-        (
-          title: 'Classification Metrics',
-          details: '• Precision = TP / (TP + FP) [Minimizes False Positives]\n• Recall (Sensitivity) = TP / (TP + FN) [Minimizes False Negatives]\n• F1-Score = 2 * (Precision * Recall) / (Precision + Recall)\n• Specificity = TN / (TN + FP)',
-        ),
-        (
-          title: 'ROC Curve & AUC Score',
-          details: '• ROC curve plots True Positive Rate (Sensitivity) vs False Positive Rate (1 - Specificity).\n• AUC = 1.0 (Perfect model), AUC = 0.5 (Random guessing).',
-        ),
-        (
-          title: 'Regression Metrics',
-          details: '• MSE = (1/n) ∑ (y_i - ŷ_i)²\n• RMSE = sqrt(MSE)\n• MAE = (1/n) ∑ |y_i - ŷ_i|\n• R² Score = 1 - (SS_res / SS_tot)',
-        ),
-        (
-          title: 'Bias-Variance Tradeoff',
-          details: '• Total Error = Bias² + Variance + Irreducible Error (σ²)\n• High Bias: Underfitting. Solution: Add features, increase model complexity.\n• High Variance: Overfitting. Solution: More data, regularization (L1/L2), reduce features.',
-        ),
-        (
-          title: 'Regularization (L1 vs L2)',
-          details: '• L1 (Lasso): Loss + λ ∑|w_i|. Induces sparsity (feature selection).\n• L2 (Ridge): Loss + λ ∑(w_i)². Shrinks weights towards zero smoothly.',
-        ),
-      ],
-    );
-  }
-
-  void _showCalculusModal(BuildContext context) {
-    _showSheetModal(
-      context,
-      title: 'Calculus & Optimization',
-      items: const [
-        (
-          title: 'Gradient & Directional Derivative',
-          details: '• Gradient ∇f = [∂f/∂x₁, ∂f/∂x₂, ..., ∂f/∂x_n]^T\n• Direction of steepest ascent: ∇f(x)\n• Direction of steepest descent: -∇f(x)\n• Directional derivative in direction u: D_u f = ∇f · u (where |u| = 1)',
-        ),
-        (
-          title: 'Hessian Matrix & Curvature',
-          details: '• H_ij = ∂²f / (∂x_i ∂x_j)\n• Symmetric if second derivatives are continuous.\n• H is Positive Definite (all eigenvalues > 0) => Local Minimum\n• H is Negative Definite (all eigenvalues < 0) => Local Maximum\n• H is Indefinite (both positive and negative eigenvalues) => Saddle Point',
-        ),
-        (
-          title: 'Convexity Conditions',
-          details: '• f is convex iff f(λx + (1-λ)y) ≤ λf(x) + (1-λ)f(y) for λ ∈ [0, 1]\n• First-order condition: f(y) ≥ f(x) + ∇f(x)^T (y - x)\n• Second-order condition: Hessian H(x) ≥ 0 (positive semi-definite) everywhere.',
-        ),
-        (
-          title: 'Taylor Series Expansion (Multivariable)',
-          details: 'f(x + Δx) ≈ f(x) + ∇f(x)^T Δx + (1/2) Δx^T H(x) Δx',
-        ),
-        (
-          title: 'Gradient Descent Convergence',
-          details: '• Update rule: x_{t+1} = x_t - η ∇f(x_t)\n• Learning rate too high: Diverges\n• Learning rate too low: Slow convergence\n• For convex L-smooth functions, converges with rate O(1/t) with η ≤ 1/L.',
-        ),
-      ],
-    );
-  }
-
-  void _showLossFunctionsModal(BuildContext context) {
-    _showSheetModal(
-      context,
-      title: 'Loss Functions & Gradients',
-      items: const [
-        (
-          title: 'Mean Squared Error (MSE)',
-          details: '• Formula: L = (1/2) (y - ŷ)²\n• Gradient: ∂L/∂ŷ = -(y - ŷ)\n• Note: Convex, differentiable, sensitive to outliers.',
-        ),
-        (
-          title: 'Binary Cross-Entropy (BCE / Log Loss)',
-          details: '• Formula: L = -[y ln(ŷ) + (1-y) ln(1-ŷ)]\n• When paired with Sigmoid (ŷ = σ(z)): ∂L/∂z = ŷ - y\n• Note: Heavily penalizes confident wrong predictions.',
-        ),
-        (
-          title: 'Categorical Cross-Entropy',
-          details: '• Formula: L = -∑ y_c ln(ŷ_c)\n• When paired with Softmax (ŷ_c = exp(z_c)/∑ exp(z_j)): ∂L/∂z_k = ŷ_k - y_k\n• Used for multi-class classification.',
-        ),
-        (
-          title: 'Hinge Loss (SVM)',
-          details: '• Formula: L = max(0, 1 - y * ŷ) where y ∈ {-1, +1}\n• Zero loss when prediction is correct and beyond margin (y*ŷ ≥ 1).\n• Sub-gradient: -y if y*ŷ < 1, else 0.',
-        ),
-        (
-          title: 'KL Divergence (Relative Entropy)',
-          details: '• D_KL(P || Q) = ∑ P(x) ln(P(x) / Q(x))\n• Non-negative: D_KL(P || Q) ≥ 0 (Gibbs inequality)\n• Asymmetric: D_KL(P || Q) ≠ D_KL(Q || P)',
-        ),
-      ],
-    );
-  }
-
-  void _showSheetModal(
-    BuildContext context, {
-    required String title,
-    required List<({String title, String details})> items,
-  }) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.85,
-          minChildSize: 0.5,
-          maxChildSize: 0.95,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: BoxDecoration(
-                color: context.scaffoldBackground,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-              ),
-              child: ListView(
-                controller: scrollController,
-                padding: const EdgeInsets.all(20),
-                children: [
-                  Center(
-                    child: Container(
-                      width: 40,
-                      height: 4,
-                      margin: const EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        color: context.textSecondaryColor.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          title,
-                          style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor),
-                        ),
-                      ),
-                      NeuButton(
-                        borderRadius: 10,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        onPressed: () {
-                          final buffer = StringBuffer();
-                          buffer.writeln('📚 GATE DA Revision Sheet: $title\n');
-                          for (final it in items) {
-                            buffer.writeln('▪ ${it.title}');
-                            buffer.writeln('${it.details}\n');
-                          }
-                          buffer.writeln('Shared via GateX');
-                          Share.share(buffer.toString());
-                        },
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.share_rounded, size: 14, color: AppTheme.secondary),
-                            SizedBox(width: 4),
-                            Text('Share', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.secondary)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  ...items.map((it) => _InfoItem(title: it.title, details: it.details)),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-}
-
-class _InfoItem extends StatelessWidget {
-  final String title;
-  final String details;
-
-  const _InfoItem({required this.title, required this.details});
-
-  @override
-  Widget build(BuildContext context) {
-    return NeuContainer(
-      margin: const EdgeInsets.only(bottom: 12),
-      borderRadius: 14,
-      padding: const EdgeInsets.all(14),
-      isRecessed: true,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.secondary)),
-          const SizedBox(height: 6),
-          Text(details, style: TextStyle(fontSize: 12, color: context.textColor, height: 1.4)),
-        ],
-      ),
     );
   }
 }
