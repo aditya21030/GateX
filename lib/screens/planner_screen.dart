@@ -9,7 +9,6 @@ import '../data/study_plan.dart';
 import '../models/models.dart';
 import '../services/storage_service.dart';
 import 'pyq_screen.dart';
-import 'mock_tracker_screen.dart';
 import '../widgets/neu_widgets.dart';
 
 class PlannerScreen extends StatefulWidget {
@@ -242,7 +241,7 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     _scrollController = ScrollController();
 
     final now = DateTime.now();
@@ -379,103 +378,6 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
     _tabController.animateTo(0);
   }
 
-  void _jumpToChecklistForPhase(Map<String, dynamic> phase) {
-    HapticFeedback.selectionClick();
-    final isCSIT = Provider.of<AppProvider>(context, listen: false).activeExam == 'CSIT';
-    final phaseNum = phase['num'].toString();
-
-    // Handle Grand Revision & Mock phase
-    if ((!isCSIT && phaseNum == '8') || (isCSIT && phaseNum == '12')) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${phase['displayName']} focuses on full tests & formula drills.'),
-          action: SnackBarAction(
-            label: 'Open Mocks',
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const MockTrackerScreen()));
-            },
-          ),
-        ),
-      );
-      return;
-    }
-
-    final syllabus = isCSIT ? StorageService.csitSyllabusData : StorageService.syllabusData;
-    List<String> matchingSubjects = [];
-
-    if (!isCSIT) {
-      switch (phaseNum) {
-        case '1':
-          matchingSubjects = ['Probability and Statistics'];
-          break;
-        case '2':
-          matchingSubjects = ['Linear Algebra'];
-          break;
-        case '3':
-          matchingSubjects = ['Calculus and Optimization'];
-          break;
-        case '4':
-          matchingSubjects = ['Machine Learning'];
-          break;
-        case '5':
-          matchingSubjects = ['Python (Main Topics Only)', 'DSA (Data Structures and Algorithms)'];
-          break;
-        case '6':
-          matchingSubjects = ['Database Management and Warehousing'];
-          break;
-        case '7':
-          matchingSubjects = ['AI'];
-          break;
-      }
-    } else {
-      switch (phaseNum) {
-        case '1':
-          matchingSubjects = ['Engineering Mathematics'];
-          break;
-        case '2':
-          matchingSubjects = ['Digital Logic'];
-          break;
-        case '3':
-          matchingSubjects = ['Computer Organization'];
-          break;
-        case '4':
-          matchingSubjects = ['Programming & Data Structures'];
-          break;
-        case '5':
-          matchingSubjects = ['Algorithms'];
-          break;
-        case '6':
-          matchingSubjects = ['Theory of Computation'];
-          break;
-        case '7':
-          matchingSubjects = ['Compiler Design'];
-          break;
-        case '8':
-          matchingSubjects = ['Operating System'];
-          break;
-        case '9':
-          matchingSubjects = ['Databases'];
-          break;
-        case '10':
-          matchingSubjects = ['Computer Networks'];
-          break;
-        case '11':
-          matchingSubjects = ['General Aptitude'];
-          break;
-      }
-    }
-
-    final validSubjects = matchingSubjects.where((s) => syllabus.containsKey(s)).toList();
-
-    setState(() {
-      _expandedSubjects.clear();
-      _expandedSubjects.addAll(validSubjects);
-      _checklistSearchQuery = '';
-      _searchController.clear();
-      _checklistFilter = 'All';
-    });
-    _tabController.animateTo(0);
-  }
 
   @override
   void dispose() {
@@ -586,9 +488,8 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
                 labelStyle: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13),
                 unselectedLabelStyle: GoogleFonts.outfit(fontWeight: FontWeight.w500, fontSize: 13),
                 tabs: const [
-                  Tab(height: 38, text: 'Agile Checklist'),
+                  Tab(height: 38, text: 'Syllabus Checklist'),
                   Tab(height: 38, text: 'Daily Plan'),
-                  Tab(height: 38, text: 'Phase Runway'),
                 ],
               ),
             ),
@@ -599,7 +500,6 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
           children: [
             _buildAgileChecklistTab(context, provider),
             _buildDailyPlanTab(context, provider),
-            _buildPhaseOverviewTab(context, provider),
           ],
         ),
       );
@@ -824,6 +724,11 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
               final isExpanded = _expandedSubjects.contains(subject) || (_checklistSearchQuery.isNotEmpty && filteredTopics.isNotEmpty);
 
               final weightageInfo = _getSubjectWeightageBadge(subject, isCSIT);
+              final phaseInfo = _getSubjectPhaseInfo(subject, isCSIT);
+              final activePhaseNum = _getActivePhaseNumber().toString();
+              final isCurrentPhase = phaseInfo != null && phaseInfo['num'].toString() == activePhaseNum;
+              final weightageLabel = (phaseInfo?['weightage'] as String?) ?? (weightageInfo['label'] as String);
+              final weightageColor = weightageInfo['color'] as Color;
 
               return NeuContainer(
                 borderRadius: 18,
@@ -844,7 +749,7 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
                         }
                       });
                     },
-                    tilePadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    tilePadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     title: Row(
                       children: [
                         Expanded(
@@ -853,17 +758,18 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
                             style: AppTheme.poppinsBold(fontSize: 14, color: context.textColor),
                           ),
                         ),
+                        const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: weightageInfo['color'].withValues(alpha: 0.15),
+                            color: weightageColor.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6),
-                            border: Border.all(color: weightageInfo['color'].withValues(alpha: 0.3)),
+                            border: Border.all(color: weightageColor.withValues(alpha: 0.3)),
                           ),
                           child: Text(
-                            weightageInfo['label'],
+                            weightageLabel,
                             style: TextStyle(
-                              color: weightageInfo['color'],
+                              color: weightageColor,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
@@ -872,24 +778,67 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
                       ],
                     ),
                     subtitle: Padding(
-                      padding: const EdgeInsets.only(top: 6),
-                      child: Row(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: NeuProgressBar(
-                              progress: progress,
-                              progressColor: progress == 1.0 ? AppTheme.accentMint : AppTheme.accentFlame,
-                              height: 6,
+                          if (phaseInfo != null) ...[
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+                                  decoration: BoxDecoration(
+                                    color: isCurrentPhase
+                                        ? AppTheme.accentPurple.withValues(alpha: 0.18)
+                                        : (context.isDarkMode ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.05)),
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: isCurrentPhase ? Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.4), width: 0.8) : null,
+                                  ),
+                                  child: Text(
+                                    isCurrentPhase ? 'PHASE ${phaseInfo['num']} • ACTIVE' : 'PHASE ${phaseInfo['num']}',
+                                    style: GoogleFonts.outfit(
+                                      fontSize: 9.5,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 0.3,
+                                      color: isCurrentPhase ? AppTheme.accentPurple : context.textSecondaryColor,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    '${phaseInfo['runway']} • ${phaseInfo['hours']} Hours target',
+                                    style: TextStyle(
+                                      color: context.textSecondaryColor,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            '$masteredInSubject/${allTopics.length} (${(progress * 100).toStringAsFixed(0)}%)',
-                            style: TextStyle(
-                              color: progress == 1.0 ? AppTheme.accentMint : context.textSecondaryColor,
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            const SizedBox(height: 6),
+                          ],
+                          Row(
+                            children: [
+                              Expanded(
+                                child: NeuProgressBar(
+                                  progress: progress,
+                                  progressColor: progress == 1.0 ? AppTheme.accentMint : AppTheme.accentFlame,
+                                  height: 6,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                '$masteredInSubject/${allTopics.length} (${(progress * 100).toStringAsFixed(0)}%)',
+                                style: TextStyle(
+                                  color: progress == 1.0 ? AppTheme.accentMint : context.textSecondaryColor,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -1005,6 +954,41 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
       return {'label': 'Medium (~9M)', 'color': const Color(0xFFFFD600)};
     }
     return {'label': 'Core (~6M)', 'color': const Color(0xFF64B5F6)};
+  }
+
+  Map<String, dynamic>? _getSubjectPhaseInfo(String subject, bool isCSIT) {
+    final s = subject.toLowerCase().trim();
+    if (!isCSIT) {
+      if (s.contains('prob') || s.contains('stat')) return daPhasesData[0];
+      if (s.contains('linear') || s.contains('algebra')) return daPhasesData[1];
+      if (s.contains('calculus') || s.contains('optimi')) return daPhasesData[2];
+      if (s.contains('machine') || s.contains('ml')) return daPhasesData[3];
+      if (s.contains('python') || s.contains('dsa') || s.contains('data struct') || s.contains('programming')) return daPhasesData[4];
+      if (s.contains('database') || s.contains('warehousing') || s.contains('dbms')) return daPhasesData[5];
+      if (s.contains('ai') || s.contains('artificial') || s.contains('logic')) return daPhasesData[6];
+      if (s.contains('aptitude')) {
+        return {
+          'num': 'GA',
+          'displayName': 'General Aptitude',
+          'runway': '1.5 Weeks',
+          'hours': 25,
+          'weightage': '15 Marks (Fixed)',
+        };
+      }
+    } else {
+      if (s.contains('math')) return csitPhasesData[0];
+      if (s.contains('digital') || s.contains('logic')) return csitPhasesData[1];
+      if (s.contains('organization') || s.contains('architecture') || s.contains('co')) return csitPhasesData[2];
+      if (s.contains('program') && s.contains('struct')) return csitPhasesData[3];
+      if (s.contains('algorithm')) return csitPhasesData[4];
+      if (s.contains('computation') || s.contains('toc')) return csitPhasesData[5];
+      if (s.contains('compiler')) return csitPhasesData[6];
+      if (s.contains('operating') || s.contains('os')) return csitPhasesData[7];
+      if (s.contains('database') || s.contains('dbms')) return csitPhasesData[8];
+      if (s.contains('network') || s.contains('cn')) return csitPhasesData[9];
+      if (s.contains('aptitude')) return csitPhasesData[10];
+    }
+    return null;
   }
 
   Widget _buildTopicChecklistItem(BuildContext context, AppProvider provider, String subject, String topic, TopicStatus status) {
@@ -1863,156 +1847,7 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
     );
   }
 
-  // ==========================================
-  // TAB 3: PHASE RUNWAY (OVERVIEW)
-  // ==========================================
-  Widget _buildPhaseOverviewTab(BuildContext context, AppProvider provider) {
-    final activePhaseNum = _getActivePhaseNumber();
 
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.all(16),
-      child: Center(
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 800),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'SYLLABUS PHASES & RUNWAY',
-                      style: AppTheme.poppinsBold(fontSize: 16, color: context.textColor),
-                    ),
-                    Text(
-                      'Active Phase: #$activePhaseNum',
-                      style: const TextStyle(
-                        color: AppTheme.secondary,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-              ...(provider.activeExam == 'CSIT' ? csitPhasesData : daPhasesData).map((phase) {
-                final isCurrent = phase['num'] == activePhaseNum.toString();
-                final progress = provider.getPhaseProgress(phase['jsonName']);
-
-                return _buildPhaseRow(context, phase, isCurrent, progress);
-              }),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPhaseRow(BuildContext context, Map<String, dynamic> phase, bool isCurrent, double progress) {
-    return GestureDetector(
-      onTap: () => _jumpToChecklistForPhase(phase),
-      child: NeuContainer(
-        margin: const EdgeInsets.symmetric(vertical: 6),
-        borderRadius: 18,
-        padding: const EdgeInsets.all(16),
-        color: isCurrent ? AppTheme.primary.withValues(alpha: 0.08) : null,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 34,
-                  height: 34,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: isCurrent
-                        ? AppTheme.secondary.withValues(alpha: 0.2)
-                        : (context.isDarkMode ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.05)),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    phase['num'],
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: isCurrent ? AppTheme.secondary : context.textColor,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        phase['displayName'],
-                        style: GoogleFonts.outfit(
-                          fontSize: 14.5,
-                          fontWeight: FontWeight.bold,
-                          color: isCurrent ? AppTheme.secondary : context.textColor,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '${phase['runway'] ?? ''} • ${phase['hours']} Hours',
-                        style: TextStyle(
-                          color: context.textSecondaryColor,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primary.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    phase['weightage'] ?? '',
-                    style: const TextStyle(
-                      color: AppTheme.primary,
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Icon(Icons.arrow_forward_ios_rounded, size: 13, color: context.textSecondaryColor),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: NeuProgressBar(
-                    progress: progress,
-                    progressColor: progress == 1.0 ? AppTheme.accentMint : AppTheme.accentFlame,
-                    height: 5.5,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  '${(progress * 100).toStringAsFixed(0)}%',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: progress == 1.0 ? AppTheme.accentMint : context.textSecondaryColor,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildSwitchButton(BuildContext context, AppProvider provider, String exam) {
     final isSelected = provider.activeExam == exam;
