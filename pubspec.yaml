@@ -73,6 +73,7 @@ dev_dependencies:
 
 dependency_overrides:
   objective_c: 9.3.0
+  archive: ^4.0.10
 
 flutter_launcher_icons:
   android: "launcher_icon"
