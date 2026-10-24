@@ -513,7 +513,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
 
     return ListView(
       physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
       children: [
         // Minimal CBT Exam Rule Strip
         Container(
@@ -1184,7 +1184,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
         ),
 
         // Performance graph
-        if (mocks.isNotEmpty) ...[
+        if (mocks.length >= 2) ...[
           Padding(
             padding: const EdgeInsets.fromLTRB(18, 12, 18, 8),
             child: Row(
@@ -1339,19 +1339,50 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
         ] else
           NeuContainer(
             isRecessed: true,
-            height: 110,
-            width: double.infinity,
-            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             margin: const EdgeInsets.symmetric(horizontal: 16),
             borderRadius: 18,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.show_chart_rounded, color: context.textSecondaryColor, size: 28),
-                const SizedBox(height: 6),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppTheme.accentPurple.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.auto_graph_rounded, color: AppTheme.accentPurple, size: 24),
+                ),
+                const SizedBox(height: 8),
                 Text(
-                  'No mock tests attempted yet.',
-                  style: TextStyle(color: context.textSecondaryColor, fontSize: 12),
+                  mocks.isEmpty ? 'Your AIR Score Trajectory Curve' : '1 Attempt Logged — Need 1 More for Curve',
+                  style: GoogleFonts.outfit(fontSize: 13.5, fontWeight: FontWeight.bold, color: context.textColor),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Complete 2 or more CBT mocks to unlock your AIR score trajectory curve and subject accuracy trends!',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 11.5, height: 1.35),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    HapticFeedback.selectionClick();
+                    _tabController.animateTo(0);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.accentPurple,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  icon: const Icon(Icons.play_arrow_rounded, size: 16),
+                  label: Text(
+                    'Start Diagnostic Mock 01',
+                    style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 11.5),
+                  ),
                 ),
               ],
             ),
@@ -1376,7 +1407,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                   ),
                 )
               : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
                   physics: const BouncingScrollPhysics(),
                   itemCount: mocks.length,
                   itemBuilder: (context, index) {

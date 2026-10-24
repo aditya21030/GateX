@@ -658,7 +658,7 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
         // Subject Accordions
         Expanded(
           child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            padding: const EdgeInsets.fromLTRB(14, 10, 14, 100),
             physics: const BouncingScrollPhysics(),
             itemCount: syllabus.keys.length,
             itemBuilder: (context, index) {
@@ -1084,7 +1084,9 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
         borderRadius: BorderRadius.circular(10),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(vertical: 6.5, horizontal: 6),
+          constraints: const BoxConstraints(minHeight: 44.0),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
           decoration: BoxDecoration(
             color: isDone
                 ? activeColor.withValues(alpha: 0.16)
@@ -1147,7 +1149,7 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
         Expanded(
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
             child: itemIndex == -1
                 ? _buildAgileDailyMission(context, provider, selectedDate)
                 : _buildDayDetailCard(context, provider, items[itemIndex]),

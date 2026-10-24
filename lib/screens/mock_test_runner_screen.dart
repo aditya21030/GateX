@@ -1118,6 +1118,7 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                       color: isLowTime ? AppTheme.accentCoral : context.textColor,
+                      fontFeatures: const [ui.FontFeature.tabularFigures()],
                     ),
                   ),
                 ],

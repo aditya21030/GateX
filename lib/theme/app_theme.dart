@@ -242,13 +242,14 @@ class AppTheme {
     );
   }
 
-  // Rajdhani Font Styles for Timer/Countdown
+  // Rajdhani Font Styles for Timer/Countdown with Tabular Figures
   static TextStyle timerStyle({required double fontSize, Color color = textPrimary}) {
     return GoogleFonts.rajdhani(
       fontSize: fontSize,
       fontWeight: FontWeight.bold,
       color: color,
       letterSpacing: 1.5,
+      fontFeatures: const [FontFeature.tabularFigures()],
     );
   }
 

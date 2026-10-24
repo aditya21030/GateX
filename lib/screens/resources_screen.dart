@@ -129,7 +129,7 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
           child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 100.0),
             physics: const BouncingScrollPhysics(),
             children: [
               // 1. SEARCH BAR
@@ -550,7 +550,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
 
   Widget _buildFreeTab(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
       physics: const BouncingScrollPhysics(),
       children: [
         ...widget.note.freeSections.map((sec) {
@@ -740,7 +740,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
     }
 
     return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 100),
       physics: const BouncingScrollPhysics(),
       children: [
         ...widget.note.proSections.asMap().entries.map((entry) {

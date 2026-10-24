@@ -169,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
           constraints: const BoxConstraints(maxWidth: 800),
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+            padding: const EdgeInsets.fromLTRB(16.0, 12.0, 16.0, 100.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

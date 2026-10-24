@@ -1111,37 +1111,43 @@ class AuthPurpleHeaderWithIIT extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 220,
+    final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+    final headerHeight = isKeyboardOpen ? 110.0 : 220.0;
+    final assetSize = isKeyboardOpen ? 75.0 : 140.0;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      height: headerHeight,
       width: double.infinity,
       child: Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.center,
         children: [
           // Background ambient spotlight glow
-          Positioned(
-            top: 15,
-            child: Container(
-              width: 170,
-              height: 170,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    Colors.white.withValues(alpha: 0.16),
-                    const Color(0xFF8338EC).withValues(alpha: 0.22),
-                    Colors.transparent,
-                  ],
+          if (!isKeyboardOpen)
+            Positioned(
+              top: 15,
+              child: Container(
+                width: 170,
+                height: 170,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      Colors.white.withValues(alpha: 0.16),
+                      const Color(0xFF8338EC).withValues(alpha: 0.22),
+                      Colors.transparent,
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
 
           // Central 3D IIT Monument Asset
           Positioned(
             bottom: 4,
             child: IITMonument3DAsset(
-              size: 140,
+              size: assetSize,
               targetIIT: targetIIT,
               airRank: airRank,
             ),

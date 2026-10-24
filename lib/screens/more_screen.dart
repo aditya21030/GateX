@@ -53,7 +53,7 @@ class MoreScreen extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 800),
           child: ListView(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
             children: [
               // 1. NEUMORPHIC PROFILE CARD
               _buildProfileCard(context, provider),
@@ -519,12 +519,12 @@ class MoreScreen extends StatelessWidget {
         onTap();
       },
       child: NeuContainer(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        borderRadius: 18,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        borderRadius: 16,
         child: Row(
           children: [
-            NeuIconTile(icon: icon, iconColor: iconColor, size: 36, iconSize: 19),
-            const SizedBox(width: 10),
+            NeuIconTile(icon: icon, iconColor: iconColor, size: 34, iconSize: 18),
+            const SizedBox(width: 8),
             Expanded(
               child: Text(
                 title,

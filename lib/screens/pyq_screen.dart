@@ -1674,9 +1674,10 @@ class _PYQCardState extends State<_PYQCard> {
       return _questionWidgetCache[cacheKey]!;
     }
 
-    final widget = Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: MarkdownBody(
+    final widget = RepaintBoundary(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: MarkdownBody(
         data: text,
         selectable: true,
         extensionSet: md.ExtensionSet.gitHubWeb,
@@ -1710,6 +1711,7 @@ class _PYQCardState extends State<_PYQCard> {
           tableCellsPadding: const EdgeInsets.all(8),
         ),
       ),
+    ),
     );
 
     _questionWidgetCache[cacheKey] = widget;
