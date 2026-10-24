@@ -411,73 +411,73 @@ class MoreScreen extends StatelessWidget {
     final tools = [
       {
         'icon': Icons.functions_rounded,
-        'color': AppTheme.accentCyan,
+        'color': const Color(0xFF00B4D8), // Vibrant Electric Cyan
         'title': 'Formulas',
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FormulaSheetScreen())),
       },
       {
         'icon': Icons.calculate_rounded,
-        'color': const Color(0xFF10B981),
+        'color': const Color(0xFF10B981), // Emerald Mint
         'title': 'Calculator',
         'onTap': () => VirtualCalculator.show(context),
       },
       {
         'icon': Icons.speed_rounded,
-        'color': AppTheme.accentFlame,
+        'color': const Color(0xFFFF7A00), // Flame Sunset Orange
         'title': 'Estimator',
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ScoreEstimatorScreen())),
       },
       {
         'icon': Icons.bar_chart_rounded,
-        'color': AppTheme.accentMint,
+        'color': const Color(0xFF0D9488), // Deep Teal Jade
         'title': 'Weightage',
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WeightageScreen())),
       },
       {
         'icon': Icons.timer_outlined,
-        'color': AppTheme.accentFlame,
+        'color': const Color(0xFFFF4757), // Coral Red
         'title': 'Pomodoro',
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PomodoroScreen())),
       },
       {
         'icon': Icons.repeat_rounded,
-        'color': AppTheme.accentPurple,
+        'color': const Color(0xFF8B5CF6), // Royal Purple
         'title': 'Revision',
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RevisionScreen())),
       },
       {
         'icon': Icons.error_outline_rounded,
-        'color': AppTheme.accentCoral,
+        'color': const Color(0xFFFF3838), // Crimson Warning
         'title': 'Mistakes',
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ErrorLogScreen())),
       },
       {
         'icon': Icons.alt_route_rounded,
-        'color': const Color(0xFF06B6D4),
+        'color': const Color(0xFF3B82F6), // Royal Sky Blue
         'title': 'Roadmap',
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RoadmapScreen())),
       },
       {
         'icon': Icons.insights_rounded,
-        'color': AppTheme.accentMint,
+        'color': const Color(0xFF059669), // Spring Green
         'title': 'Analytics',
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MockTrackerScreen(initialTabIndex: 1))),
       },
       {
         'icon': Icons.auto_graph_rounded,
-        'color': const Color(0xFF6366F1),
+        'color': const Color(0xFF6366F1), // Cosmic Indigo
         'title': 'Score Predictor',
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GateScorePredictorScreen())),
       },
       {
         'icon': Icons.corporate_fare_rounded,
-        'color': const Color(0xFF0D9488),
+        'color': const Color(0xFF14B8A6), // PSU Mint Teal
         'title': 'PSU Predictor',
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PsuPredictorScreen())),
       },
       {
         'icon': Icons.library_books_rounded,
-        'color': Colors.deepPurpleAccent,
+        'color': const Color(0xFFA855F7), // Orchid Violet
         'title': 'Notes',
         'onTap': () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ResourcesScreen())),
       },

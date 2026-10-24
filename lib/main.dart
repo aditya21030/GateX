@@ -337,31 +337,36 @@ class MainNavigationScaffold extends StatelessWidget {
       const MoreScreen(),
     ];
 
-    const navItems = [
-      _NavItem(
+    final navItems = [
+      const _NavItem(
         icon: Icons.home_outlined,
         activeIcon: Icons.home_rounded,
         label: 'Home',
+        activeColor: Color(0xFF7C3AED), // Vibrant Royal Violet
       ),
-      _NavItem(
+      const _NavItem(
         icon: Icons.checklist_rtl_rounded,
         activeIcon: Icons.checklist_rtl_rounded,
         label: 'Checklist',
+        activeColor: Color(0xFF10B981), // Emerald Mint
       ),
-      _NavItem(
+      const _NavItem(
         icon: Icons.menu_book_outlined,
         activeIcon: Icons.menu_book_rounded,
         label: 'PYQ Bank',
+        activeColor: Color(0xFFFF7A00), // Flame Sunset Orange
       ),
-      _NavItem(
+      const _NavItem(
         icon: Icons.sports_score_outlined,
         activeIcon: Icons.sports_score_rounded,
         label: 'Mock Arena',
+        activeColor: Color(0xFF6366F1), // Royal Indigo
       ),
-      _NavItem(
+      const _NavItem(
         icon: Icons.grid_view_outlined,
         activeIcon: Icons.grid_view_rounded,
         label: 'Hub',
+        activeColor: Color(0xFF00B4D8), // Electric Cyan
       ),
     ];
 
@@ -585,11 +590,11 @@ class _NavBarItem extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             gradient: isSelected
-                ? const LinearGradient(
+                ? LinearGradient(
                     colors: [
-                      Color(0xFF9061F9),
-                      AppTheme.accentPurple,
-                      Color(0xFF5B21B6),
+                      HSLColor.fromColor(item.activeColor).withLightness((HSLColor.fromColor(item.activeColor).lightness + 0.16).clamp(0.0, 0.95)).toColor(),
+                      item.activeColor,
+                      HSLColor.fromColor(item.activeColor).withLightness((HSLColor.fromColor(item.activeColor).lightness - 0.20).clamp(0.0, 1.0)).toColor(),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -597,19 +602,19 @@ class _NavBarItem extends StatelessWidget {
                 : null,
             borderRadius: BorderRadius.circular(24),
             border: isSelected
-                ? Border.all(color: Colors.white.withValues(alpha: 0.35), width: 1.2)
+                ? Border.all(color: Colors.white.withValues(alpha: 0.40), width: 1.2)
                 : null,
             boxShadow: isSelected
                 ? [
                     // 3D physical ledge shadow
-                    const BoxShadow(
-                      color: Color(0xFF4C1D95),
-                      offset: Offset(0, 2.5),
+                    BoxShadow(
+                      color: HSLColor.fromColor(item.activeColor).withLightness((HSLColor.fromColor(item.activeColor).lightness - 0.30).clamp(0.0, 1.0)).toColor(),
+                      offset: const Offset(0, 2.5),
                       blurRadius: 0,
                     ),
                     // Ambient colored glow
                     BoxShadow(
-                      color: AppTheme.accentPurple.withValues(alpha: 0.45),
+                      color: item.activeColor.withValues(alpha: 0.45),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -656,5 +661,11 @@ class _NavItem {
   final IconData icon;
   final IconData activeIcon;
   final String label;
-  const _NavItem({required this.icon, required this.activeIcon, required this.label});
+  final Color activeColor;
+  const _NavItem({
+    required this.icon,
+    required this.activeIcon,
+    required this.label,
+    this.activeColor = AppTheme.accentPurple,
+  });
 }

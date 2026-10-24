@@ -102,12 +102,13 @@ class NeuContainer extends StatelessWidget {
 
 /// Universal 3D Dimensional Icon
 /// Renders an icon with volumetric depth, directional shadows, chromatic glow,
-/// and subtle specular lighting.
+/// and rich multi-colored 3D gradient shading.
 class Icon3D extends StatelessWidget {
   final IconData icon;
   final Color color;
   final double size;
   final bool hasGlow;
+  final Gradient? gradient;
 
   const Icon3D(
     this.icon, {
@@ -115,27 +116,47 @@ class Icon3D extends StatelessWidget {
     required this.color,
     this.size = 22,
     this.hasGlow = true,
+    this.gradient,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Icon(
-      icon,
-      size: size,
-      color: color,
-      shadows: [
-        Shadow(
-          color: Colors.black.withValues(alpha: 0.45),
-          offset: Offset(0, (size * 0.08).clamp(1.0, 3.0)),
-          blurRadius: (size * 0.12).clamp(1.5, 4.0),
-        ),
-        if (hasGlow)
+    final HSLColor hsl = HSLColor.fromColor(color);
+    final Color topHighlight = hsl.withLightness((hsl.lightness + 0.18).clamp(0.0, 0.98)).toColor();
+    final Color bottomShadow = hsl.withLightness((hsl.lightness - 0.15).clamp(0.0, 1.0)).toColor();
+
+    final effectiveGradient = gradient ??
+        LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            topHighlight,
+            color,
+            bottomShadow,
+          ],
+          stops: const [0.0, 0.5, 1.0],
+        );
+
+    return ShaderMask(
+      shaderCallback: (bounds) => effectiveGradient.createShader(bounds),
+      child: Icon(
+        icon,
+        size: size,
+        color: Colors.white,
+        shadows: [
           Shadow(
-            color: color.withValues(alpha: 0.55),
-            offset: Offset(0, (size * 0.12).clamp(1.5, 5.0)),
-            blurRadius: (size * 0.25).clamp(3.0, 8.0),
+            color: Colors.black.withValues(alpha: 0.55),
+            offset: Offset(0, (size * 0.08).clamp(1.0, 3.0)),
+            blurRadius: (size * 0.12).clamp(1.5, 4.0),
           ),
-      ],
+          if (hasGlow)
+            Shadow(
+              color: color.withValues(alpha: 0.70),
+              offset: Offset(0, (size * 0.10).clamp(1.5, 5.0)),
+              blurRadius: (size * 0.28).clamp(3.0, 8.0),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -263,9 +284,9 @@ class _NeuButtonState extends State<NeuButton> {
   }
 }
 
-/// 3D Claymorphic Dimensional Icon Tile
-/// Renders an extruded 3D squircle with directional lighting, specular highlight,
-/// dual-layer volumetric depth, and colored ambient glow.
+/// 3D Colorful Claymorphic Dimensional Icon Tile
+/// Renders an extruded 3D squircle with rich saturated gradients, directional lighting,
+/// glossy top specular sheen, solid physical 3D ledge, and chromatic ambient glow.
 class NeuIconTile extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
@@ -284,6 +305,26 @@ class NeuIconTile extends StatelessWidget {
     this.gradient,
   });
 
+  Gradient _resolve3DGradient(Color baseColor, bool isDark) {
+    if (gradient != null) return gradient!;
+
+    final HSLColor hsl = HSLColor.fromColor(baseColor);
+    final Color topHighlight = hsl.withLightness((hsl.lightness + 0.16).clamp(0.0, 0.95)).toColor();
+    final Color middleColor = baseColor;
+    final Color bottomShadow = hsl.withLightness((hsl.lightness - 0.18).clamp(0.0, 1.0)).toColor();
+
+    return LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        topHighlight,
+        middleColor,
+        bottomShadow,
+      ],
+      stops: const [0.0, 0.45, 1.0],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDarkMode;
@@ -300,66 +341,58 @@ class NeuIconTile extends StatelessWidget {
       );
     }
 
-    // 3D Dimensional Volumetric Tile
+    final HSLColor hsl = HSLColor.fromColor(iconColor);
+    final Color ledgeColor = hsl.withLightness((hsl.lightness - 0.28).clamp(0.0, 1.0)).toColor();
+    final double ledgeHeight = (size * 0.08).clamp(2.0, 3.5);
+
+    // 3D Colorful Volumetric Claymorphic Tile
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(radius),
-        gradient: gradient ??
-            LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: isDark
-                  ? [
-                      iconColor.withValues(alpha: 0.28),
-                      iconColor.withValues(alpha: 0.12),
-                      const Color(0xFF141320),
-                    ]
-                  : [
-                      Colors.white,
-                      iconColor.withValues(alpha: 0.14),
-                      iconColor.withValues(alpha: 0.24),
-                    ],
-              stops: const [0.0, 0.55, 1.0],
-            ),
+        gradient: _resolve3DGradient(iconColor, isDark),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.20)
-              : Colors.white.withValues(alpha: 0.85),
+          color: Colors.white.withValues(alpha: 0.40),
           width: 1.2,
         ),
         boxShadow: [
-          // 1. Ambient colored volumetric glow
+          // 1. Solid physical 3D extrusion ledge
           BoxShadow(
-            color: iconColor.withValues(alpha: isDark ? 0.35 : 0.28),
-            offset: Offset(0, size * 0.12),
-            blurRadius: size * 0.25,
-            spreadRadius: -2,
+            color: ledgeColor,
+            offset: Offset(0, ledgeHeight),
+            blurRadius: 0,
           ),
-          // 2. Physical contact drop-shadow
+          // 2. High-energy colorful ambient glow radiating outwards
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.14),
-            offset: Offset(0, size * 0.10),
+            color: iconColor.withValues(alpha: isDark ? 0.45 : 0.36),
+            offset: Offset(0, size * 0.14),
+            blurRadius: size * 0.28,
+            spreadRadius: -1,
+          ),
+          // 3. Contact shadow on surface
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.16),
+            offset: Offset(0, size * 0.12),
             blurRadius: size * 0.18,
           ),
-          // 3. Top-left light specular reflection
+          // 4. Specular top rim reflection
           BoxShadow(
-            color: Colors.white.withValues(alpha: isDark ? 0.12 : 0.65),
+            color: Colors.white.withValues(alpha: 0.65),
             offset: const Offset(-1.5, -1.5),
-            blurRadius: 3,
+            blurRadius: 2.5,
           ),
         ],
       ),
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Top curved glossy light glint (sheen)
+          // Top curved glossy glass sheen (ultra-slick 3D reflection)
           Positioned(
-            top: 2,
-            left: 3,
-            right: 3,
-            height: size * 0.38,
+            top: 1.5,
+            left: 2.5,
+            right: 2.5,
+            height: size * 0.42,
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(radius - 2)),
@@ -367,29 +400,29 @@ class NeuIconTile extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.white.withValues(alpha: isDark ? 0.22 : 0.55),
+                    Colors.white.withValues(alpha: 0.55),
                     Colors.white.withValues(alpha: 0.0),
                   ],
                 ),
               ),
             ),
           ),
-          // 3D Shadowed Icon Glyph
+          // Crisp 3D Illuminated Icon Glyph
           Icon(
             icon,
             size: iconSize,
-            color: iconColor,
+            color: Colors.white,
             shadows: [
-              // Sharp drop shadow
+              // Sharp bottom contact shadow
               Shadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.55 : 0.30),
-                offset: const Offset(0, 1.8),
+                color: Colors.black.withValues(alpha: 0.55),
+                offset: const Offset(0, 2.0),
                 blurRadius: 2.5,
               ),
-              // Soft chromatic glow
+              // Soft ambient internal glow
               Shadow(
-                color: iconColor.withValues(alpha: 0.60),
-                offset: const Offset(0, 3.5),
+                color: Colors.white.withValues(alpha: 0.70),
+                offset: const Offset(0, 0),
                 blurRadius: 5.0,
               ),
             ],
