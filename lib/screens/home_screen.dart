@@ -113,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.local_fire_department_rounded, size: 16, color: AppTheme.accentFlame),
+                const Icon3D(Icons.local_fire_department_rounded, size: 16, color: AppTheme.accentFlame),
                 const SizedBox(width: 4),
                 Text(
                   '${provider.streak}d',
@@ -142,9 +142,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
+                    Icon3D(
                       provider.isPro ? Icons.workspace_premium_rounded : Icons.star_border_rounded,
-                      size: 14,
+                      size: 15,
                       color: provider.isPro ? AppTheme.accentGold : context.textSecondaryColor,
                     ),
                     const SizedBox(width: 4),
@@ -240,18 +240,15 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Row(
             children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.22),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.35), width: 1),
-                ),
-                child: const Icon(
-                  Icons.local_fire_department_rounded,
-                  color: Colors.white,
-                  size: 26,
+              const NeuIconTile(
+                icon: Icons.local_fire_department_rounded,
+                iconColor: Colors.white,
+                size: 46,
+                iconSize: 26,
+                gradient: LinearGradient(
+                  colors: [Color(0xFFFFB300), Color(0xFFFF5200)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
               ),
               const SizedBox(width: 14),
@@ -370,21 +367,12 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                gradient: AppTheme.flameGradient,
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppTheme.accentFlame.withValues(alpha: 0.35),
-                    blurRadius: 10,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: const Icon(Icons.bolt_rounded, color: Colors.white, size: 24),
+            const NeuIconTile(
+              icon: Icons.bolt_rounded,
+              iconColor: Colors.white,
+              size: 46,
+              iconSize: 24,
+              gradient: AppTheme.flameGradient,
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -467,13 +455,11 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: AppTheme.accentPurple.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(Icons.timer_outlined, size: 16, color: AppTheme.accentPurple),
+              const NeuIconTile(
+                icon: Icons.timer_outlined,
+                iconColor: AppTheme.accentPurple,
+                size: 32,
+                iconSize: 16,
               ),
               const SizedBox(width: 8),
               Text(

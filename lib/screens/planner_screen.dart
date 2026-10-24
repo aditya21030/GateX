@@ -1089,8 +1089,18 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
           decoration: BoxDecoration(
             color: isDone
-                ? activeColor.withValues(alpha: 0.16)
+                ? null
                 : (context.isDarkMode ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.02)),
+            gradient: isDone
+                ? LinearGradient(
+                    colors: [
+                      activeColor.withValues(alpha: 0.28),
+                      activeColor.withValues(alpha: 0.12),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  )
+                : null,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color: isDone
@@ -1100,10 +1110,16 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
             ),
             boxShadow: isDone
                 ? [
+                    // 3D physical ledge
                     BoxShadow(
-                      color: activeColor.withValues(alpha: 0.20),
+                      color: activeColor.withValues(alpha: 0.35),
+                      offset: const Offset(0, 2),
+                      blurRadius: 0,
+                    ),
+                    BoxShadow(
+                      color: activeColor.withValues(alpha: 0.25),
                       blurRadius: 6,
-                      offset: const Offset(0, 1),
+                      offset: const Offset(0, 3),
                     ),
                   ]
                 : null,
@@ -1111,9 +1127,9 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              Icon3D(
                 isDone ? Icons.check_circle_rounded : icon,
-                size: 13,
+                size: 14,
                 color: isDone ? activeColor : context.textSecondaryColor,
               ),
               const SizedBox(width: 4),

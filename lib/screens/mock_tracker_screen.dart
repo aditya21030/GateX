@@ -532,7 +532,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
           ),
           child: Row(
             children: [
-              const Icon(Icons.info_outline_rounded, size: 18, color: Color(0xFFFF8522)),
+              const Icon3D(Icons.info_outline_rounded, size: 18, color: Color(0xFFFF8522)),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -719,10 +719,10 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                     _startTest(questions, const Duration(minutes: 20), '$_selectedSubject Practice');
                   }
                 },
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.play_arrow_rounded, color: Colors.white, size: 20),
+                    const Icon3D(Icons.play_arrow_rounded, color: Colors.white, size: 20),
                     SizedBox(width: 8),
                     Text(
                       'Start Subject Test',
@@ -1189,7 +1189,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
             padding: const EdgeInsets.fromLTRB(18, 12, 18, 8),
             child: Row(
               children: [
-                const Icon(Icons.trending_up_rounded, size: 20, color: Color(0xFFFF8522)),
+                const Icon3D(Icons.trending_up_rounded, size: 20, color: Color(0xFFFF8522)),
                 const SizedBox(width: 8),
                 Text(
                   'Score Trajectory & Growth',
@@ -1351,7 +1351,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                     color: AppTheme.accentPurple.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.auto_graph_rounded, color: AppTheme.accentPurple, size: 24),
+                  child: const Icon3D(Icons.auto_graph_rounded, color: AppTheme.accentPurple, size: 24),
                 ),
                 const SizedBox(height: 8),
                 Text(

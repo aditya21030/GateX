@@ -100,7 +100,47 @@ class NeuContainer extends StatelessWidget {
   }
 }
 
-/// Tactile Soft Button with press animation & haptic feedback
+/// Universal 3D Dimensional Icon
+/// Renders an icon with volumetric depth, directional shadows, chromatic glow,
+/// and subtle specular lighting.
+class Icon3D extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final double size;
+  final bool hasGlow;
+
+  const Icon3D(
+    this.icon, {
+    super.key,
+    required this.color,
+    this.size = 22,
+    this.hasGlow = true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Icon(
+      icon,
+      size: size,
+      color: color,
+      shadows: [
+        Shadow(
+          color: Colors.black.withValues(alpha: 0.45),
+          offset: Offset(0, (size * 0.08).clamp(1.0, 3.0)),
+          blurRadius: (size * 0.12).clamp(1.5, 4.0),
+        ),
+        if (hasGlow)
+          Shadow(
+            color: color.withValues(alpha: 0.55),
+            offset: Offset(0, (size * 0.12).clamp(1.5, 5.0)),
+            blurRadius: (size * 0.25).clamp(3.0, 8.0),
+          ),
+      ],
+    );
+  }
+}
+
+/// Tactile 3D Soft Button with physical extrusion, press depression & haptic feedback
 class NeuButton extends StatefulWidget {
   final Widget child;
   final VoidCallback? onPressed;
@@ -111,6 +151,7 @@ class NeuButton extends StatefulWidget {
   final bool isPrimary;
   final double? width;
   final double? height;
+  final bool is3D;
 
   const NeuButton({
     super.key,
@@ -123,6 +164,7 @@ class NeuButton extends StatefulWidget {
     this.isPrimary = false,
     this.width,
     this.height,
+    this.is3D = true,
   });
 
   @override
@@ -134,43 +176,21 @@ class _NeuButtonState extends State<NeuButton> {
 
   @override
   Widget build(BuildContext context) {
-    Widget content = AnimatedScale(
-      scale: _isPressed ? 0.97 : 1.0,
-      duration: const Duration(milliseconds: 100),
-      child: widget.isPrimary
-          ? Container(
-              width: widget.width,
-              height: widget.height,
-              padding: widget.padding,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                gradient: widget.gradient ??
-                    const LinearGradient(
-                      colors: [Color(0xFF7C3AED), Color(0xFF6D28D9)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                borderRadius: BorderRadius.circular(widget.borderRadius),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppTheme.accentPurple.withValues(alpha: _isPressed ? 0.2 : 0.4),
-                    offset: _isPressed ? const Offset(0, 2) : const Offset(0, 6),
-                    blurRadius: _isPressed ? 6 : 14,
-                  ),
-                ],
-              ),
-              child: widget.child,
-            )
-          : NeuContainer(
-              width: widget.width,
-              height: widget.height,
-              isRecessed: _isPressed,
-              borderRadius: widget.borderRadius,
-              padding: widget.padding,
-              color: widget.color,
-              child: Center(child: widget.child),
-            ),
-    );
+    final isDark = context.isDarkMode;
+
+    // 3D physical extrusion height
+    final double ledgeHeight = widget.is3D ? (_isPressed ? 1.0 : 4.0) : 0.0;
+    final double pressOffset = widget.is3D ? (_isPressed ? 3.0 : 0.0) : 0.0;
+
+    final primaryGradient = widget.gradient ??
+        const LinearGradient(
+          colors: [Color(0xFF8B5CF6), Color(0xFF6D28D9), Color(0xFF5B21B6)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        );
+
+    final nonPrimaryColor = widget.color ??
+        (isDark ? const Color(0xFF1E1C2E) : const Color(0xFFF1F5F9));
 
     return GestureDetector(
       onTapDown: (_) {
@@ -188,17 +208,71 @@ class _NeuButtonState extends State<NeuButton> {
       onTapCancel: () {
         if (_isPressed) setState(() => _isPressed = false);
       },
-      child: content,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 70),
+        curve: Curves.easeOut,
+        margin: EdgeInsets.only(top: pressOffset, bottom: 4.0 - pressOffset),
+        width: widget.width,
+        height: widget.height,
+        padding: widget.padding,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: widget.isPrimary ? null : nonPrimaryColor,
+          gradient: widget.isPrimary ? primaryGradient : null,
+          borderRadius: BorderRadius.circular(widget.borderRadius),
+          border: Border.all(
+            color: widget.isPrimary
+                ? Colors.white.withValues(alpha: 0.25)
+                : (isDark ? Colors.white.withValues(alpha: 0.12) : Colors.white.withValues(alpha: 0.8)),
+            width: 1.2,
+          ),
+          boxShadow: [
+            // 3D extruded ledge shadow
+            if (widget.is3D && ledgeHeight > 0)
+              BoxShadow(
+                color: widget.isPrimary
+                    ? const Color(0xFF4C1D95)
+                    : (isDark ? const Color(0xFF0D0C15) : const Color(0xFFCBD5E1)),
+                offset: Offset(0, ledgeHeight),
+                blurRadius: 0,
+              ),
+            // Ambient soft colored glow
+            if (widget.isPrimary)
+              BoxShadow(
+                color: AppTheme.accentPurple.withValues(alpha: _isPressed ? 0.20 : 0.38),
+                offset: Offset(0, _isPressed ? 2 : 6),
+                blurRadius: _isPressed ? 6 : 14,
+              )
+            else
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.08),
+                offset: Offset(0, _isPressed ? 1 : 4),
+                blurRadius: _isPressed ? 4 : 8,
+              ),
+            // Top specular glint highlight
+            BoxShadow(
+              color: Colors.white.withValues(alpha: isDark ? 0.10 : 0.5),
+              offset: const Offset(-1, -1),
+              blurRadius: 2,
+            ),
+          ],
+        ),
+        child: widget.child,
+      ),
     );
   }
 }
 
-/// Embossed Icon Tile (Soft squircle molded into the surface)
+/// 3D Claymorphic Dimensional Icon Tile
+/// Renders an extruded 3D squircle with directional lighting, specular highlight,
+/// dual-layer volumetric depth, and colored ambient glow.
 class NeuIconTile extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
   final double size;
   final double iconSize;
+  final bool is3D;
+  final Gradient? gradient;
 
   const NeuIconTile({
     super.key,
@@ -206,17 +280,122 @@ class NeuIconTile extends StatelessWidget {
     required this.iconColor,
     this.size = 46,
     this.iconSize = 22,
+    this.is3D = true,
+    this.gradient,
   });
 
   @override
   Widget build(BuildContext context) {
-    return NeuContainer(
+    final isDark = context.isDarkMode;
+    final radius = size * 0.32;
+
+    if (!is3D) {
+      return NeuContainer(
+        width: size,
+        height: size,
+        borderRadius: radius,
+        padding: EdgeInsets.zero,
+        alignment: Alignment.center,
+        child: Icon(icon, color: iconColor, size: iconSize),
+      );
+    }
+
+    // 3D Dimensional Volumetric Tile
+    return Container(
       width: size,
       height: size,
-      borderRadius: size * 0.35,
-      padding: EdgeInsets.zero,
-      alignment: Alignment.center,
-      child: Icon(icon, color: iconColor, size: iconSize),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(radius),
+        gradient: gradient ??
+            LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: isDark
+                  ? [
+                      iconColor.withValues(alpha: 0.28),
+                      iconColor.withValues(alpha: 0.12),
+                      const Color(0xFF141320),
+                    ]
+                  : [
+                      Colors.white,
+                      iconColor.withValues(alpha: 0.14),
+                      iconColor.withValues(alpha: 0.24),
+                    ],
+              stops: const [0.0, 0.55, 1.0],
+            ),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.20)
+              : Colors.white.withValues(alpha: 0.85),
+          width: 1.2,
+        ),
+        boxShadow: [
+          // 1. Ambient colored volumetric glow
+          BoxShadow(
+            color: iconColor.withValues(alpha: isDark ? 0.35 : 0.28),
+            offset: Offset(0, size * 0.12),
+            blurRadius: size * 0.25,
+            spreadRadius: -2,
+          ),
+          // 2. Physical contact drop-shadow
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.14),
+            offset: Offset(0, size * 0.10),
+            blurRadius: size * 0.18,
+          ),
+          // 3. Top-left light specular reflection
+          BoxShadow(
+            color: Colors.white.withValues(alpha: isDark ? 0.12 : 0.65),
+            offset: const Offset(-1.5, -1.5),
+            blurRadius: 3,
+          ),
+        ],
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Top curved glossy light glint (sheen)
+          Positioned(
+            top: 2,
+            left: 3,
+            right: 3,
+            height: size * 0.38,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(radius - 2)),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.white.withValues(alpha: isDark ? 0.22 : 0.55),
+                    Colors.white.withValues(alpha: 0.0),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // 3D Shadowed Icon Glyph
+          Icon(
+            icon,
+            size: iconSize,
+            color: iconColor,
+            shadows: [
+              // Sharp drop shadow
+              Shadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.55 : 0.30),
+                offset: const Offset(0, 1.8),
+                blurRadius: 2.5,
+              ),
+              // Soft chromatic glow
+              Shadow(
+                color: iconColor.withValues(alpha: 0.60),
+                offset: const Offset(0, 3.5),
+                blurRadius: 5.0,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

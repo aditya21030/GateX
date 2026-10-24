@@ -796,15 +796,11 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: iconColor.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: iconColor.withValues(alpha: 0.25)),
-            ),
-            child: Icon(icon, color: iconColor, size: 22),
+          NeuIconTile(
+            icon: icon,
+            iconColor: iconColor,
+            size: 44,
+            iconSize: 22,
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -1063,11 +1059,18 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                           end: Alignment.bottomRight,
                         ),
                         borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.35), width: 1.2),
                         boxShadow: [
+                          // 3D physical ledge extrusion
+                          const BoxShadow(
+                            color: Color(0xFFB45309),
+                            offset: Offset(0, 4),
+                            blurRadius: 0,
+                          ),
                           BoxShadow(
-                            color: const Color(0xFFFFB300).withValues(alpha: 0.35),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
+                            color: const Color(0xFFFFB300).withValues(alpha: 0.40),
+                            blurRadius: 14,
+                            offset: const Offset(0, 6),
                           ),
                         ],
                       ),

@@ -587,20 +587,31 @@ class _NavBarItem extends StatelessWidget {
             gradient: isSelected
                 ? const LinearGradient(
                     colors: [
+                      Color(0xFF9061F9),
                       AppTheme.accentPurple,
-                      Color(0xFF8B5CF6),
+                      Color(0xFF5B21B6),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   )
                 : null,
             borderRadius: BorderRadius.circular(24),
+            border: isSelected
+                ? Border.all(color: Colors.white.withValues(alpha: 0.35), width: 1.2)
+                : null,
             boxShadow: isSelected
                 ? [
+                    // 3D physical ledge shadow
+                    const BoxShadow(
+                      color: Color(0xFF4C1D95),
+                      offset: Offset(0, 2.5),
+                      blurRadius: 0,
+                    ),
+                    // Ambient colored glow
                     BoxShadow(
-                      color: AppTheme.accentPurple.withValues(alpha: 0.42),
+                      color: AppTheme.accentPurple.withValues(alpha: 0.45),
                       blurRadius: 10,
-                      offset: const Offset(0, 3),
+                      offset: const Offset(0, 4),
                     ),
                   ]
                 : null,
@@ -612,6 +623,14 @@ class _NavBarItem extends StatelessWidget {
                 isSelected ? item.activeIcon : item.icon,
                 color: isSelected ? Colors.white : context.textSecondaryColor,
                 size: 20,
+                shadows: isSelected
+                    ? const [
+                        Shadow(color: Colors.black45, offset: Offset(0, 1.8), blurRadius: 2.5),
+                        Shadow(color: Colors.white70, offset: Offset(0, 0), blurRadius: 6),
+                      ]
+                    : [
+                        Shadow(color: Colors.black.withValues(alpha: 0.25), offset: const Offset(0, 1), blurRadius: 1.5),
+                      ],
               ),
               if (isSelected) ...[
                 const SizedBox(width: 5),

@@ -288,7 +288,7 @@ class MoreScreen extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.local_fire_department_rounded, size: 12, color: AppTheme.accentFlame),
+                            const Icon3D(Icons.local_fire_department_rounded, size: 12, color: AppTheme.accentFlame),
                             const SizedBox(width: 3),
                             Text(
                               '${provider.streak}d',

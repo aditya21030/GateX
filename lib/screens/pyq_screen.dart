@@ -397,10 +397,10 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                                 color: const Color(0xFFFF8522).withValues(alpha: 0.35),
                               ),
                             ),
-                            child: const Row(
+                            child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.bolt_rounded, size: 14, color: Color(0xFFFF8522)),
+                                const Icon3D(Icons.bolt_rounded, size: 14, color: Color(0xFFFF8522)),
                                 SizedBox(width: 4),
                                 Text('NAT Drills', style: TextStyle(color: Color(0xFFFF8522), fontSize: 11.5, fontWeight: FontWeight.bold)),
                               ],
@@ -474,7 +474,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.assignment_outlined, size: 14),
+                              const Icon3D(Icons.assignment_outlined, size: 15, color: Colors.white),
                               const SizedBox(width: 4),
                               Text('All (${pyqListAll.length})'),
                             ],
@@ -488,7 +488,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.bookmark_outline_rounded, size: 14),
+                              const Icon3D(Icons.bookmark_outline_rounded, size: 15, color: Colors.white),
                               const SizedBox(width: 4),
                               Text('Saved (${pyqListBookmarked.length})'),
                             ],
@@ -502,7 +502,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.done_all_rounded, size: 14),
+                              const Icon3D(Icons.done_all_rounded, size: 15, color: Colors.white),
                               const SizedBox(width: 4),
                               Text('Done (${pyqListDone.length})'),
                             ],
@@ -516,7 +516,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.flag_outlined, size: 14),
+                              const Icon3D(Icons.flag_outlined, size: 15, color: Colors.white),
                               const SizedBox(width: 4),
                               Text('Flagged (${pyqListFlagged.length})'),
                             ],
@@ -1040,7 +1040,7 @@ class _PYQCardState extends State<_PYQCard> {
                 const Spacer(),
                 // Flag revision
                 IconButton(
-                  icon: Icon(
+                  icon: Icon3D(
                     pyq.isFlaggedForRevision ? Icons.flag_rounded : Icons.flag_outlined,
                     color: pyq.isFlaggedForRevision ? AppTheme.error : context.textSecondaryColor,
                     size: 19,
@@ -1054,7 +1054,7 @@ class _PYQCardState extends State<_PYQCard> {
                 ),
                 // Bookmark
                 IconButton(
-                  icon: Icon(
+                  icon: Icon3D(
                     pyq.isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
                     color: pyq.isBookmarked ? const Color(0xFFFF8522) : context.textSecondaryColor,
                     size: 20,
@@ -1333,7 +1333,7 @@ class _PYQCardState extends State<_PYQCard> {
                         onPressed: () {
                           QuestionDiscussionSheet.show(context, pyq);
                         },
-                        icon: const Icon(Icons.forum_outlined, color: AppTheme.primary, size: 15),
+                        icon: const Icon3D(Icons.forum_outlined, color: AppTheme.primary, size: 15),
                         label: const Text(
                           'Discuss',
                           style: TextStyle(
@@ -1356,7 +1356,7 @@ class _PYQCardState extends State<_PYQCard> {
                             _showSolution = !_showSolution;
                           });
                         },
-                        icon: Icon(
+                        icon: Icon3D(
                           _showSolution ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                           color: const Color(0xFFFF8522),
                           size: 15,

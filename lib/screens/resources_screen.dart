@@ -493,7 +493,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
                   )
                 : TextButton.icon(
                     onPressed: () => _handlePdfExport(context, provider),
-                    icon: const Icon(Icons.picture_as_pdf_rounded, size: 18, color: Color(0xFFFF8522)),
+                    icon: const Icon3D(Icons.picture_as_pdf_rounded, size: 18, color: Color(0xFFFF8522)),
                     label: Text(
                       'Export PDF',
                       style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 12.5, color: const Color(0xFFFF8522)),
@@ -728,7 +728,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
                   });
                 }
               },
-              icon: const Icon(Icons.play_circle_outline_rounded, size: 18, color: Color(0xFFFF8522)),
+              icon: const Icon3D(Icons.play_circle_outline_rounded, size: 18, color: Color(0xFFFF8522)),
               label: const Text(
                 'Watch 20s Ad to Unlock for Free 🎁',
                 style: TextStyle(color: Color(0xFFFF8522), fontWeight: FontWeight.bold, fontSize: 13),
@@ -950,9 +950,9 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Row(
+                        Row(
                           children: [
-                            Icon(Icons.bolt_rounded, size: 16, color: Color(0xFFFF8522)),
+                            const Icon3D(Icons.bolt_rounded, size: 16, color: Color(0xFFFF8522)),
                             SizedBox(width: 6),
                             Text(
                               'AIR-1 TOPPER SPEED SHORTCUT TRICKS',
