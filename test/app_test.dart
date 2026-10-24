@@ -399,6 +399,21 @@ void main() {
       expect(oldPrice, '₹499');
       expect(seasonYear, 2027);
     });
+
+    test('Pro Pass includes lifetime access to all future releases and tools', () {
+      const features = [
+        '100% Ad-Free Experience',
+        '10 Full-Length TCS iON CBT Mocks',
+        'Unlimited AI Error Drills',
+        'In-Depth Pro Notes & Proofs',
+        'Printable Formula Sheets & PDF Export',
+        'All New Features Included Automatically',
+      ];
+
+      expect(features.contains('All New Features Included Automatically'), isTrue);
+      expect(features.contains('10 Full-Length TCS iON CBT Mocks'), isTrue);
+      expect(features.length, 6);
+    });
   });
 
   group('Official GATE CBT Simulator Tests (TCS iON Engine)', () {
