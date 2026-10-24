@@ -391,13 +391,15 @@ void main() {
     });
 
     test('Pro Pass pricing and seasonal parameters match specification', () {
-      const price = '₹199';
-      const oldPrice = '₹499';
+      const price = '₹299';
+      const oldPrice = '₹599';
       const seasonYear = 2027;
+      const validityDate = '31st March 2027';
 
-      expect(price, '₹199');
-      expect(oldPrice, '₹499');
+      expect(price, '₹299');
+      expect(oldPrice, '₹599');
       expect(seasonYear, 2027);
+      expect(validityDate, '31st March 2027');
     });
 
     test('Pro Pass includes lifetime access to all future releases and tools', () {
@@ -611,14 +613,17 @@ void main() {
       expect(qExact.isAnswerCorrect('105.0'), isFalse);
     });
 
-    test('10 Full-Length Mocks Series defines Mock 01 Free and Mocks 02-10 for Pro', () {
+    test('10 Full-Length Mocks Series defines Mock 1 Free, Mock 2 Free via Ad, and Mocks 3-10 for Pro', () {
       const mockCount = 10;
       final freeMockIndices = [1];
-      final proMockIndices = List.generate(9, (i) => i + 2);
+      final adFreeMockIndices = [2];
+      final proMockIndices = List.generate(8, (i) => i + 3);
 
       expect(mockCount, 10);
       expect(freeMockIndices.contains(1), isTrue);
-      expect(proMockIndices.length, 9);
+      expect(adFreeMockIndices.contains(2), isTrue);
+      expect(proMockIndices.length, 8);
+      expect(proMockIndices.contains(3), isTrue);
       expect(proMockIndices.contains(10), isTrue);
     });
   });

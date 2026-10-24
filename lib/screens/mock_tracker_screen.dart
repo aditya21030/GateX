@@ -14,6 +14,7 @@ import '../data/da_subjectwise_mock_data.dart';
 import '../data/csit_subjectwise_mock_data.dart';
 import '../data/minimock_data.dart';
 import 'mock_test_runner_screen.dart';
+import 'pro_upgrade_screen.dart';
 import '../services/ad_service.dart';
 import '../widgets/neu_widgets.dart';
 
@@ -756,16 +757,16 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
 
   void _showMockDifficultySheet(BuildContext context, AppProvider provider) {
     const mockConfigs = [
-      {'title': 'Mock 01: Official Diagnostic Mock', 'desc': 'Official syllabus baseline • Balanced GATE exam pattern', 'isFree': true, 'tier': 'Standard'},
-      {'title': 'Mock 02: High-Yield Core Concept Mock', 'desc': 'Core engineering topics • Fundamental derivations', 'isFree': false, 'tier': 'Standard'},
-      {'title': 'Mock 03: Multi-Topic Integration Mock', 'desc': 'Cross-subject interlinked problems & applications', 'isFree': false, 'tier': 'Standard'},
-      {'title': 'Mock 04: Advanced Analytics & NAT Focus', 'desc': 'Calculation-heavy NAT questions & precision math', 'isFree': false, 'tier': 'Standard'},
-      {'title': 'Mock 05: Speed & Time-Management Drill', 'desc': '180-min exam endurance • Fast elimination tactics', 'isFree': false, 'tier': 'Advanced'},
-      {'title': 'Mock 06: Tricky MSQ Special Simulator', 'desc': 'Multi-select MSQ challenge with zero negative marking', 'isFree': false, 'tier': 'Advanced'},
-      {'title': 'Mock 07: AIR-100 Benchmark Mock', 'desc': 'Challenging high-rank differentiator questions', 'isFree': false, 'tier': 'Advanced'},
-      {'title': 'Mock 08: Deep Conceptual Traps Mock', 'desc': 'Common exam-hall pitfalls and distractors tested', 'isFree': false, 'tier': 'Hard'},
-      {'title': 'Mock 09: Previous Year Trend Predictor', 'desc': 'Curated questions based on recent 2024–2026 trends', 'isFree': false, 'tier': 'Hard'},
-      {'title': 'Mock 10: Final Grand Full CBT Simulation', 'desc': 'Full dress-rehearsal CBT mock before real exam', 'isFree': false, 'tier': 'Hard'},
+      {'title': 'Mock 1', 'desc': '65 Questions • 100 Marks • 180 Mins', 'isFree': true, 'allowAd': false},
+      {'title': 'Mock 2', 'desc': '65 Questions • 100 Marks • 180 Mins', 'isFree': false, 'allowAd': true},
+      {'title': 'Mock 3', 'desc': '65 Questions • 100 Marks • 180 Mins', 'isFree': false, 'allowAd': false},
+      {'title': 'Mock 4', 'desc': '65 Questions • 100 Marks • 180 Mins', 'isFree': false, 'allowAd': false},
+      {'title': 'Mock 5', 'desc': '65 Questions • 100 Marks • 180 Mins', 'isFree': false, 'allowAd': false},
+      {'title': 'Mock 6', 'desc': '65 Questions • 100 Marks • 180 Mins', 'isFree': false, 'allowAd': false},
+      {'title': 'Mock 7', 'desc': '65 Questions • 100 Marks • 180 Mins', 'isFree': false, 'allowAd': false},
+      {'title': 'Mock 8', 'desc': '65 Questions • 100 Marks • 180 Mins', 'isFree': false, 'allowAd': false},
+      {'title': 'Mock 9', 'desc': '65 Questions • 100 Marks • 180 Mins', 'isFree': false, 'allowAd': false},
+      {'title': 'Mock 10', 'desc': '65 Questions • 100 Marks • 180 Mins', 'isFree': false, 'allowAd': false},
     ];
 
     showModalBottomSheet(
@@ -842,7 +843,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                   itemBuilder: (ctx, index) {
                     final cfg = mockConfigs[index];
                     final isFree = cfg['isFree'] as bool;
-                    final isUnlocked = isFree || provider.isPro;
+                    final allowAd = cfg['allowAd'] as bool;
                     final mockNumber = index + 1;
 
                     return _buildMockItemCard(
@@ -851,9 +852,8 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                       mockNumber: mockNumber,
                       title: cfg['title'] as String,
                       subtitle: cfg['desc'] as String,
-                      isUnlocked: isUnlocked,
                       isFree: isFree,
-                      tier: cfg['tier'] as String,
+                      allowAd: allowAd,
                     );
                   },
                 ),
@@ -871,42 +871,72 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     required int mockNumber,
     required String title,
     required String subtitle,
-    required bool isUnlocked,
     required bool isFree,
-    required String tier,
+    required bool allowAd,
   }) {
     final isDark = context.isDarkMode;
+    final isUnlocked = isFree || provider.isPro;
 
     return InkWell(
       borderRadius: BorderRadius.circular(16),
       onTap: () async {
         HapticFeedback.selectionClick();
         final messenger = ScaffoldMessenger.of(this.context);
+        final navigator = Navigator.of(this.context);
         Navigator.pop(context);
 
-        if (!isUnlocked) {
-          final shouldProceed = await AdService().promptWatchRewardedAd(
-            context: this.context,
-            perkTitle: 'Mock $mockNumber (GateX Pro)',
-            perkDescription:
-                'Full-length CBT Mock $mockNumber is unlocked with GateX Pro Pass (₹199 one-time). Alternatively, watch a 20s ad to unlock this mock attempt for free!',
-          );
-          if (!shouldProceed) return;
-        }
-
-        if (!mounted) return;
-
-        final questions = _generateFullMock(provider, mockNumber: mockNumber);
-        if (questions.isEmpty) {
-          messenger.showSnackBar(
-            const SnackBar(
-              content: Text('Mock questions are loading!'),
-              backgroundColor: AppTheme.primary,
-            ),
-          );
+        // Mock 1 (Free) or already Pro user
+        if (isFree || provider.isPro) {
+          final questions = _generateFullMock(provider, mockNumber: mockNumber);
+          if (questions.isEmpty) {
+            messenger.showSnackBar(
+              const SnackBar(
+                content: Text('Mock questions are loading!'),
+                backgroundColor: AppTheme.primary,
+              ),
+            );
+            return;
+          }
+          _startTest(questions, const Duration(minutes: 180), 'Full CBT Mock ');
           return;
         }
-        _startTest(questions, const Duration(minutes: 180), 'Full CBT Mock $mockNumber - $title');
+
+        // Mock 2: Can be unlocked for free through rewarded ad
+        if (allowAd) {
+          final shouldProceed = await AdService().promptWatchRewardedAd(
+            context: this.context,
+            perkTitle: 'Mock 2 (Free With Ad)',
+            perkDescription:
+                'Watch a short video ad to unlock Mock 2 for free! Or upgrade to GateX Pro Pass (₹299) for unlimited instant ad-free access.',
+          );
+          if (!shouldProceed || !mounted) return;
+
+          final questions = _generateFullMock(provider, mockNumber: mockNumber);
+          if (questions.isEmpty) return;
+          _startTest(questions, const Duration(minutes: 180), 'Full CBT Mock 2');
+          return;
+        }
+
+        // Mock 3 to 10: Exclusively PRO!
+        navigator.push(
+          MaterialPageRoute(builder: (_) => const ProUpgradeScreen()),
+        );
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text('Mock  requires GateX Pro Pass (valid till 31st March 2027).'),
+            backgroundColor: const Color(0xFFB45309),
+            duration: const Duration(seconds: 3),
+            action: SnackBarAction(
+              label: 'UPGRADE',
+              textColor: Colors.white,
+              onPressed: () {
+                navigator.push(
+                  MaterialPageRoute(builder: (_) => const ProUpgradeScreen()),
+                );
+              },
+            ),
+          ),
+        );
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -918,21 +948,25 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                 ? AppTheme.accentMint.withValues(alpha: 0.3)
                 : (isUnlocked
                     ? const Color(0xFFFFB300).withValues(alpha: 0.25)
-                    : (isDark ? Colors.white10 : const Color(0xFFE5E5EA))),
+                    : (allowAd
+                        ? const Color(0xFFF59E0B).withValues(alpha: 0.3)
+                        : (isDark ? Colors.white10 : const Color(0xFFE5E5EA)))),
           ),
         ),
         child: Row(
           children: [
             // Number Circle
             Container(
-              width: 36,
-              height: 36,
+              width: 38,
+              height: 38,
               decoration: BoxDecoration(
                 color: isFree
                     ? AppTheme.accentMint.withValues(alpha: 0.15)
                     : (isUnlocked
                         ? const Color(0xFFFFB300).withValues(alpha: 0.15)
-                        : Colors.grey.withValues(alpha: 0.1)),
+                        : (allowAd
+                            ? const Color(0xFFF59E0B).withValues(alpha: 0.15)
+                            : Colors.grey.withValues(alpha: 0.1))),
                 shape: BoxShape.circle,
               ),
               child: Center(
@@ -943,7 +977,9 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                     fontSize: 13,
                     color: isFree
                         ? AppTheme.accentMint
-                        : (isUnlocked ? const Color(0xFFFFB300) : Colors.grey),
+                        : (isUnlocked
+                            ? const Color(0xFFFFB300)
+                            : (allowAd ? const Color(0xFFF59E0B) : Colors.grey)),
                   ),
                 ),
               ),
@@ -956,22 +992,18 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                 children: [
                   Row(
                     children: [
-                      Expanded(
-                        child: Text(
-                          title,
-                          style: GoogleFonts.outfit(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13.5,
-                            color: context.textColor,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                      Text(
+                        title,
+                        style: GoogleFonts.outfit(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14.5,
+                          color: context.textColor,
                         ),
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(width: 8),
                       if (isFree)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
                           decoration: BoxDecoration(
                             color: AppTheme.accentMint.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6),
@@ -980,17 +1012,50 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                             'FREE',
                             style: GoogleFonts.outfit(
                               color: AppTheme.accentMint,
-                              fontSize: 9,
+                              fontSize: 9.5,
                               fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
                             ),
+                          ),
+                        )
+                      else if (allowAd && !provider.isPro)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: const Color(0xFFF59E0B).withValues(alpha: 0.35),
+                              width: 0.8,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.smart_display_rounded, size: 10, color: Color(0xFFF59E0B)),
+                              const SizedBox(width: 3.5),
+                              Text(
+                                'FREE WITH AD 🎁',
+                                style: GoogleFonts.outfit(
+                                  color: const Color(0xFFF59E0B),
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                            ],
                           ),
                         )
                       else if (!provider.isPro)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
                           decoration: BoxDecoration(
                             color: const Color(0xFFFFB300).withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: const Color(0xFFFFB300).withValues(alpha: 0.35),
+                              width: 0.8,
+                            ),
                           ),
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
@@ -1001,6 +1066,30 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                                 'PRO',
                                 style: TextStyle(
                                   color: Color(0xFFFFB300),
+                                  fontSize: 9.5,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.4,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      else
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                          decoration: BoxDecoration(
+                            color: AppTheme.accentMint.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.check_circle_rounded, size: 10, color: AppTheme.accentMint),
+                              SizedBox(width: 3),
+                              Text(
+                                'UNLOCKED',
+                                style: TextStyle(
+                                  color: AppTheme.accentMint,
                                   fontSize: 9,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -1014,7 +1103,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                   Text(
                     subtitle,
                     style: GoogleFonts.outfit(
-                      fontSize: 11,
+                      fontSize: 11.5,
                       color: context.textSecondaryColor,
                     ),
                     maxLines: 1,
@@ -1026,8 +1115,12 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
             const SizedBox(width: 8),
 
             Icon(
-              Icons.chevron_right_rounded,
-              color: context.textSecondaryColor,
+              isFree || provider.isPro
+                  ? Icons.play_arrow_rounded
+                  : (allowAd ? Icons.smart_display_rounded : Icons.lock_outline_rounded),
+              color: isFree || provider.isPro
+                  ? AppTheme.accentMint
+                  : (allowAd ? const Color(0xFFF59E0B) : const Color(0xFFFFB300)),
               size: 20,
             ),
           ],
@@ -1380,7 +1473,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                   ),
                   icon: const Icon(Icons.play_arrow_rounded, size: 16),
                   label: Text(
-                    'Start Diagnostic Mock 01',
+                    'Start Diagnostic Mock 1',
                     style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 11.5),
                   ),
                 ),

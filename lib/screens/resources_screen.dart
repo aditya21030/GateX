@@ -435,7 +435,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
         context: context,
         perkTitle: 'Export Printable Study PDF (Pro)',
         perkDescription:
-            'Full-color, printable PDFs with step-by-step derivations and GATE traps are included in GateX Pro Pass (₹199 one-time). Alternatively, watch a short 20s ad to export this subject\'s PDF for free!',
+            'Full-color, printable PDFs with step-by-step derivations and GATE traps are included in GateX Pro Pass (₹299 one-time - Valid till 31st March 2027). Alternatively, watch a short 20s ad to export this subject\'s PDF for free!',
       );
       if (!shouldProceed) return;
     }
@@ -708,7 +708,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
                   Icon(Icons.bolt_rounded, color: Colors.white, size: 18),
                   SizedBox(width: 8),
                   Text(
-                    'Get GateX Pro Pass (₹199)',
+                    'Get GateX Pro Pass (₹299)',
                     style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13.5),
                   ),
                 ],

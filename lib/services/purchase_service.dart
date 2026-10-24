@@ -14,8 +14,9 @@ class PurchaseService with ChangeNotifier {
   static const String proPrefKey = 'is_gatex_pro_member';
   static const String proEntitlement = 'gatex_pro';
   static const String proProductId = 'gatex_pro_season_pass_2027';
-  static const String proPlanPrice = '₹199';
-  static const String proPlanOldPrice = '₹499';
+  static const String proPlanPrice = '₹299';
+  static const String proPlanOldPrice = '₹599';
+  static const String proPlanValidity = 'Valid till 31st March 2027';
 
   // RevenueCat Public API Key placeholder (Configured with Google Play Console)
   static const String _revenueCatApiKey = 'goog_gatex_pro_season_pass_key';
@@ -109,7 +110,7 @@ class PurchaseService with ChangeNotifier {
     }
   }
 
-  /// Purchase Pro Season Pass (₹199 one-time)
+  /// Purchase Pro Season Pass (₹299 one-time - Valid till 31st March 2027)
   Future<bool> purchaseProPass({String planId = proProductId}) async {
     _isLoading = true;
     notifyListeners();

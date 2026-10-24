@@ -393,7 +393,7 @@ class MoreScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    isPro ? 'All 10 CBT Mocks Unlocked • Ad-free' : '₹199 One-Time • 10 CBT Mocks & Full Analytics',
+                    isPro ? 'All 10 CBT Mocks Unlocked • Ad-free' : '₹299 One-Time • Valid till 31st March 2027',
                     style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 11.5),
                   ),
                 ],
