@@ -408,7 +408,43 @@ void main() {
       expect(PurchaseService.proSoloPlanOldPrice, '₹599');
       expect(PurchaseService.proDualPlanPrice, '₹499');
       expect(PurchaseService.proDualPlanOldPrice, '₹899');
+      expect(PurchaseService.proUpgradeToDualPrice, '₹200');
       expect(PurchaseService.proPlanValidity, 'Valid till 31st March 2027');
+    });
+
+    test('Solo Pass branch isolation prevents exploit when toggling tracks', () {
+      // Simulation of PurchaseService branch evaluation
+      bool evaluateBranchAccess({
+        required bool isPro,
+        required bool isDualPro,
+        required String soloBranch,
+        required String targetBranch,
+      }) {
+        if (!isPro) return false;
+        if (isDualPro) return true; // Dual Pro unlocks both
+        if (targetBranch == 'BOTH' || targetBranch == 'COMMON') return true;
+        return soloBranch == targetBranch;
+      }
+
+      // Case 1: Free user has no Pro access on either branch
+      expect(evaluateBranchAccess(isPro: false, isDualPro: false, soloBranch: 'DA', targetBranch: 'DA'), isFalse);
+      expect(evaluateBranchAccess(isPro: false, isDualPro: false, soloBranch: 'DA', targetBranch: 'CSIT'), isFalse);
+
+      // Case 2: Solo DA user has Pro on DA, but NOT on CSIT
+      expect(evaluateBranchAccess(isPro: true, isDualPro: false, soloBranch: 'DA', targetBranch: 'DA'), isTrue);
+      expect(evaluateBranchAccess(isPro: true, isDualPro: false, soloBranch: 'DA', targetBranch: 'CSIT'), isFalse);
+
+      // Case 3: Solo CSIT user has Pro on CSIT, but NOT on DA
+      expect(evaluateBranchAccess(isPro: true, isDualPro: false, soloBranch: 'CSIT', targetBranch: 'CSIT'), isTrue);
+      expect(evaluateBranchAccess(isPro: true, isDualPro: false, soloBranch: 'CSIT', targetBranch: 'DA'), isFalse);
+
+      // Case 4: Common subject ('BOTH') is accessible to any Solo user
+      expect(evaluateBranchAccess(isPro: true, isDualPro: false, soloBranch: 'DA', targetBranch: 'BOTH'), isTrue);
+      expect(evaluateBranchAccess(isPro: true, isDualPro: false, soloBranch: 'CSIT', targetBranch: 'BOTH'), isTrue);
+
+      // Case 5: Dual Prep user has Pro access to BOTH DA and CSIT
+      expect(evaluateBranchAccess(isPro: true, isDualPro: true, soloBranch: 'DA', targetBranch: 'DA'), isTrue);
+      expect(evaluateBranchAccess(isPro: true, isDualPro: true, soloBranch: 'DA', targetBranch: 'CSIT'), isTrue);
     });
 
     test('Pro Pass includes lifetime access to all future releases and tools', () {

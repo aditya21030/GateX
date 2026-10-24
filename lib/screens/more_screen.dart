@@ -387,7 +387,9 @@ class MoreScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    isPro ? 'GateX Pro Active' : 'GateX Pro Season Pass',
+                    provider.isDualPro
+                        ? 'GateX Dual Pro Active'
+                        : (isPro ? 'GateX Solo Pro (${provider.soloBranch})' : 'GateX Pro Season Pass'),
                     style: GoogleFonts.outfit(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -396,7 +398,11 @@ class MoreScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    isPro ? 'All CBT Mocks Unlocked • Ad-Free Active' : 'Unlock Full CBT Mocks, AI Drills & Pro Notes',
+                    provider.isDualPro
+                        ? 'All 20 CBT Mocks Unlocked • DA + CS/IT'
+                        : (isPro
+                            ? '10 Mocks (${provider.soloBranch}) • Tap to upgrade to Dual (₹200)'
+                            : 'Unlock Full CBT Mocks, AI Drills & Pro Notes'),
                     style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 11.5),
                   ),
                 ],

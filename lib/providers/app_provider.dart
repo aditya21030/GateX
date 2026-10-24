@@ -185,6 +185,8 @@ class AppProvider with ChangeNotifier {
   bool get isPro => PurchaseService().isPro;
   bool get isDualPro => PurchaseService().isDualPro;
   String get proPlanType => PurchaseService().planType;
+  String get soloBranch => PurchaseService().soloBranch;
+  bool isProForBranch(String? branch) => PurchaseService().isProForBranch(branch);
 
   Future<void> init() async {
     await _storage.init();

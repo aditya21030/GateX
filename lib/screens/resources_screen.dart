@@ -340,7 +340,7 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
                         width: 0.8,
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.workspace_premium_rounded, size: 12, color: Color(0xFFFF8522)),
@@ -428,7 +428,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
   Future<void> _handlePdfExport(BuildContext context, AppProvider provider) async {
     HapticFeedback.selectionClick();
     final messenger = ScaffoldMessenger.of(context);
-    final isPro = provider.isPro;
+    final isPro = provider.isProForBranch(widget.note.branch);
 
     if (!isPro) {
       final shouldProceed = await AdService().promptWatchRewardedAd(
@@ -469,7 +469,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AppProvider>(context);
-    final isPro = provider.isPro;
+    final isPro = provider.isProForBranch(widget.note.branch);
 
     return Scaffold(
       backgroundColor: context.scaffoldBackground,
@@ -702,14 +702,14 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const ProUpgradeScreen()));
               },
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.bolt_rounded, color: Colors.white, size: 18),
                   SizedBox(width: 8),
                   Text(
-                    'Get GateX Pro Pass (₹299)',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13.5),
+                    provider.isPro ? 'Upgrade to Dual Prep Pass (₹200)' : 'Get GateX Pro Pass (₹299)',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13.5),
                   ),
                 ],
               ),

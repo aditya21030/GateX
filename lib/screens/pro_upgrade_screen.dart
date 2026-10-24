@@ -17,6 +17,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
   final PurchaseService _purchaseService = PurchaseService();
   bool _isProcessing = false;
   bool _isDualSelected = false;
+  String _selectedSoloBranch = 'DA';
   bool _initializedSelection = false;
 
   @override
@@ -25,6 +26,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
     if (!_initializedSelection) {
       final provider = Provider.of<AppProvider>(context, listen: false);
       _isDualSelected = provider.selectedExam == 'BOTH';
+      _selectedSoloBranch = (provider.activeExam ?? 'DA').toUpperCase().contains('CS') ? 'CSIT' : 'DA';
       _initializedSelection = true;
     }
   }
@@ -33,11 +35,22 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
     HapticFeedback.mediumImpact();
     setState(() => _isProcessing = true);
 
-    final planId = _isDualSelected
-        ? PurchaseService.proDualProductId
-        : PurchaseService.proSoloProductId;
+    final provider = Provider.of<AppProvider>(context, listen: false);
+    final isExistingSolo = provider.isPro && !provider.isDualPro;
 
-    final success = await _purchaseService.purchaseProPass(planId: planId);
+    final String planId;
+    if (isExistingSolo) {
+      planId = PurchaseService.proUpgradeToDualProductId;
+    } else if (_isDualSelected) {
+      planId = PurchaseService.proDualProductId;
+    } else {
+      planId = PurchaseService.proSoloProductId;
+    }
+
+    final success = await _purchaseService.purchaseProPass(
+      planId: planId,
+      targetBranch: _selectedSoloBranch,
+    );
 
     if (!mounted) return;
     setState(() => _isProcessing = false);
@@ -48,9 +61,9 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            _isDualSelected
+            isExistingSolo || _isDualSelected
                 ? '🎉 Welcome to GateX Dual Pro! DA & CS/IT unlocked till 31st March 2027.'
-                : '🎉 Welcome to GateX Pro! All perks unlocked till 31st March 2027.',
+                : '🎉 Welcome to GateX Solo Pro ($_selectedSoloBranch)! Unlocked till 31st March 2027.',
           ),
           backgroundColor: AppTheme.success,
           duration: const Duration(seconds: 3),
@@ -103,6 +116,10 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
     final provider = Provider.of<AppProvider>(context);
     final isPro = provider.isPro;
     final isDualPro = provider.isDualPro;
+    final soloBranch = provider.soloBranch;
+
+    // Check if user is a Solo pass holder who can upgrade to Dual
+    final isSoloUpgradeCandidate = isPro && !isDualPro;
 
     return Scaffold(
       backgroundColor: const Color(0xFF0C0A07),
@@ -137,7 +154,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
           SafeArea(
             child: Column(
               children: [
-                // Top App Bar: Close (X) & Restore (No borders or dividers)
+                // Top App Bar: Close (X) & Restore
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Row(
@@ -149,7 +166,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                         tooltip: 'Close',
                         splashRadius: 20,
                       ),
-                      if (!isPro)
+                      if (!isDualPro)
                         TextButton(
                           onPressed: _isProcessing ? null : _handleRestore,
                           child: Text(
@@ -178,16 +195,19 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                             const SizedBox(height: 6),
 
                             // Top Golden Medallion
-                            _buildTopMedallion(isPro: isPro),
+                            _buildTopMedallion(isPro: isPro, isDual: isDualPro),
                             const SizedBox(height: 16),
 
-                            // Title: GateX Pro
+                            // Title
                             Text(
-                              isPro
-                                  ? (isDualPro ? 'GateX Dual Pro Member' : 'GateX Pro Member')
-                                  : 'GateX Pro',
+                              isDualPro
+                                  ? 'GateX Dual Pro Member'
+                                  : (isSoloUpgradeCandidate
+                                      ? 'Upgrade to Dual Prep Pass'
+                                      : 'GateX Pro'),
+                              textAlign: TextAlign.center,
                               style: GoogleFonts.outfit(
-                                fontSize: 28,
+                                fontSize: 26,
                                 fontWeight: FontWeight.w800,
                                 color: const Color(0xFFFFF8EC),
                                 letterSpacing: -0.5,
@@ -197,9 +217,11 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
 
                             // Subtitle
                             Text(
-                              isPro
-                                  ? 'Your pass is active and valid till 31st March 2027.\nEnjoy unlimited ad-free mocks and AI drills!'
-                                  : 'Aspirants have so much more fun & score\nhigher with GateX Pro!',
+                              isDualPro
+                                  ? 'Your Dual Pass is active and unlocks all 20 CBT mocks and study materials across both GATE DA and CS/IT.'
+                                  : (isSoloUpgradeCandidate
+                                      ? 'You have Solo Pass (GATE $soloBranch). Upgrade for just the difference (₹200) to unlock both DA + CS/IT!'
+                                      : 'Aspirants have so much more fun & score\nhigher with GateX Pro!'),
                               textAlign: TextAlign.center,
                               style: GoogleFonts.outfit(
                                 fontSize: 13.5,
@@ -210,9 +232,12 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                             ),
                             const SizedBox(height: 20),
 
-                            // 2-Option Tier Selector: Solo (₹299) vs Dual Prep (₹499)
+                            // Plan Switcher (For Free users only)
                             if (!isPro) ...[
                               _buildPlanSelector(),
+                              const SizedBox(height: 20),
+                            ] else if (isSoloUpgradeCandidate) ...[
+                              _buildUpgradeComparisonCard(soloBranch: soloBranch),
                               const SizedBox(height: 20),
                             ],
 
@@ -228,12 +253,12 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                             _buildFeatureCard(
                               iconEmoji: '💻',
                               iconBg: const Color(0xFF3B82F6),
-                              title: _isDualSelected
+                              title: (_isDualSelected || isDualPro || isSoloUpgradeCandidate)
                                   ? '20 Full-Length CBT Mocks'
                                   : '10 Full-Length CBT Mocks',
-                              subtitle: _isDualSelected
+                              subtitle: (_isDualSelected || isDualPro || isSoloUpgradeCandidate)
                                   ? '10 GATE DA + 10 CS/IT authentic TCS iON simulator mocks.'
-                                  : 'Authentic TCS iON simulator with official NAT calculator.',
+                                  : '10 full-length mocks for GATE $_selectedSoloBranch.',
                             ),
                             const SizedBox(height: 10),
 
@@ -248,10 +273,10 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                             _buildFeatureCard(
                               iconEmoji: '📚',
                               iconBg: const Color(0xFF8B5CF6),
-                              title: _isDualSelected
+                              title: (_isDualSelected || isDualPro || isSoloUpgradeCandidate)
                                   ? 'All 14 Subject Pro Notes'
                                   : 'In-Depth Pro Notes',
-                              subtitle: _isDualSelected
+                              subtitle: (_isDualSelected || isDualPro || isSoloUpgradeCandidate)
                                   ? 'Complete proofs, derivations & exam traps across DA & CS/IT.'
                                   : 'Full mathematical proofs, exam traps & speed shortcuts.',
                             ),
@@ -280,8 +305,12 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                   ),
                 ),
 
-                // Sticky Bottom CTA Area (Seamless blend, no harsh horizontal cut line)
-                _buildStickyBottom(isPro: isPro, isDualPro: isDualPro),
+                // Sticky Bottom CTA Area
+                _buildStickyBottom(
+                  isPro: isPro,
+                  isDualPro: isDualPro,
+                  isSoloUpgradeCandidate: isSoloUpgradeCandidate,
+                ),
               ],
             ),
           ),
@@ -291,7 +320,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
   }
 
   /// Top 3D Golden Medallion
-  Widget _buildTopMedallion({required bool isPro}) {
+  Widget _buildTopMedallion({required bool isPro, required bool isDual}) {
     return Container(
       width: 76,
       height: 76,
@@ -332,51 +361,185 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
     );
   }
 
-  /// Plan Selector: Solo Pass (₹299) vs Dual Prep Pass (₹499)
-  Widget _buildPlanSelector() {
+  /// Upgrade Comparison Card for existing Solo users
+  Widget _buildUpgradeComparisonCard({required String soloBranch}) {
+    final otherBranch = soloBranch == 'CSIT' ? 'GATE DA' : 'GATE CS/IT';
+
     return Container(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF161410),
+        color: const Color(0xFF1C1710),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: Colors.white.withValues(alpha: 0.08),
-          width: 1,
+          color: const Color(0xFFFFB800).withValues(alpha: 0.6),
+          width: 1.2,
         ),
       ),
-      child: Row(
+      child: Column(
         children: [
-          // 1. Solo Pass (₹299)
-          Expanded(
-            child: _buildPlanOptionTile(
-              isSelected: !_isDualSelected,
-              title: 'Solo Pass',
-              subtitle: 'DA or CS/IT • 10 Mocks',
-              price: '₹299',
-              onTap: () {
-                HapticFeedback.selectionClick();
-                setState(() => _isDualSelected = false);
-              },
-            ),
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppTheme.accentMint.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  'CURRENT: SOLO ($soloBranch)',
+                  style: GoogleFonts.outfit(
+                    color: AppTheme.accentMint,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF38290A),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  'UPGRADE: ₹200 ONLY',
+                  style: GoogleFonts.outfit(
+                    color: const Color(0xFFFFB800),
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 4),
-
-          // 2. Dual Prep Pass (₹499)
-          Expanded(
-            child: _buildPlanOptionTile(
-              isSelected: _isDualSelected,
-              title: 'Dual Prep',
-              subtitle: 'Both Papers • 20 Mocks',
-              price: '₹499',
-              badgeText: 'BEST VALUE 🔥',
-              onTap: () {
-                HapticFeedback.selectionClick();
-                setState(() => _isDualSelected = true);
-              },
+          const SizedBox(height: 10),
+          Text(
+            'Add full access to $otherBranch with 10 extra mocks and complete pro notes across all subjects.',
+            style: GoogleFonts.outfit(
+              fontSize: 12,
+              color: const Color(0xFFD6C8B4),
+              height: 1.3,
             ),
           ),
         ],
       ),
+    );
+  }
+
+  /// Plan Selector: Solo Pass (₹299) vs Dual Prep Pass (₹499)
+  Widget _buildPlanSelector() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: const Color(0xFF161410),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.08),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              // 1. Solo Pass (₹299)
+              Expanded(
+                child: _buildPlanOptionTile(
+                  isSelected: !_isDualSelected,
+                  title: 'Solo Pass',
+                  subtitle: '$_selectedSoloBranch • 10 Mocks',
+                  price: '₹299',
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    setState(() => _isDualSelected = false);
+                  },
+                ),
+              ),
+              const SizedBox(width: 4),
+
+              // 2. Dual Prep Pass (₹499)
+              Expanded(
+                child: _buildPlanOptionTile(
+                  isSelected: _isDualSelected,
+                  title: 'Dual Prep',
+                  subtitle: 'Both Papers • 20 Mocks',
+                  price: '₹499',
+                  badgeText: 'BEST VALUE 🔥',
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    setState(() => _isDualSelected = true);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // If Solo is selected: let them pick which stream they are buying Solo for!
+        if (!_isDualSelected) ...[
+          const SizedBox(height: 10),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1A1612),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white10),
+            ),
+            child: Row(
+              children: [
+                Text(
+                  'Solo Paper Focus:',
+                  style: GoogleFonts.outfit(fontSize: 11.5, color: const Color(0xFFA89F91)),
+                ),
+                const Spacer(),
+                GestureDetector(
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    setState(() => _selectedSoloBranch = 'DA');
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: _selectedSoloBranch == 'DA' ? const Color(0xFFFFB800) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'GATE DA',
+                      style: GoogleFonts.outfit(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: _selectedSoloBranch == 'DA' ? Colors.black : const Color(0xFFA89F91),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                GestureDetector(
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    setState(() => _selectedSoloBranch = 'CSIT');
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: _selectedSoloBranch == 'CSIT' ? const Color(0xFFFFB800) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'GATE CS/IT',
+                      style: GoogleFonts.outfit(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: _selectedSoloBranch == 'CSIT' ? Colors.black : const Color(0xFFA89F91),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
     );
   }
 
@@ -578,9 +741,18 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
   Widget _buildStickyBottom({
     required bool isPro,
     required bool isDualPro,
+    required bool isSoloUpgradeCandidate,
   }) {
-    final priceLabel = _isDualSelected ? '₹499' : '₹299';
-    final planLabel = _isDualSelected ? 'Dual Pass' : 'Solo Pass';
+    final String ctaText;
+    if (isDualPro) {
+      ctaText = 'GateX Dual Pro Active — Back to Studies';
+    } else if (isSoloUpgradeCandidate) {
+      ctaText = 'Upgrade to Dual Pass — ₹200 🔒';
+    } else if (_isDualSelected) {
+      ctaText = 'Upgrade Dual Pass — ₹499 🔒';
+    } else {
+      ctaText = 'Upgrade Solo Pass ($_selectedSoloBranch) — ₹299 🔒';
+    }
 
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -606,8 +778,8 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (isPro) ...[
-                // Pro Member Active Button
+              if (isDualPro) ...[
+                // Dual Pro Member Active Button
                 InkWell(
                   onTap: () => Navigator.pop(context),
                   borderRadius: BorderRadius.circular(32),
@@ -632,9 +804,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            isDualPro
-                                ? 'GateX Dual Pro Active — Back to Studies'
-                                : 'GateX Pro Active — Back to Studies',
+                            'GateX Dual Pro Active — Back to Studies',
                             style: GoogleFonts.outfit(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
@@ -690,25 +860,14 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                                 color: Color(0xFF161005),
                               ),
                             )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Upgrade $planLabel — $priceLabel',
-                                  style: GoogleFonts.outfit(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: const Color(0xFF161005),
-                                    letterSpacing: 0.2,
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                const Icon(
-                                  Icons.lock_rounded,
-                                  size: 17,
-                                  color: Color(0xFF161005),
-                                ),
-                              ],
+                          : Text(
+                              ctaText,
+                              style: GoogleFonts.outfit(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFF161005),
+                                letterSpacing: 0.2,
+                              ),
                             ),
                     ),
                   ),
@@ -734,7 +893,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                     foregroundColor: const Color(0xFFA89F91),
                   ),
                   child: Text(
-                    'No thanks!',
+                    isSoloUpgradeCandidate ? 'Keep Solo Pass' : 'No thanks!',
                     style: GoogleFonts.outfit(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,

@@ -875,7 +875,9 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     required bool allowAd,
   }) {
     final isDark = context.isDarkMode;
-    final isUnlocked = isFree || provider.isPro;
+    final activeBranch = provider.activeExam ?? 'DA';
+    final isBranchPro = provider.isProForBranch(activeBranch);
+    final isUnlocked = isFree || isBranchPro;
 
     return InkWell(
       borderRadius: BorderRadius.circular(16),
@@ -885,8 +887,8 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
         final navigator = Navigator.of(this.context);
         Navigator.pop(context);
 
-        // Mock 1 (Free) or already Pro user
-        if (isFree || provider.isPro) {
+        // Mock 1 (Free) or already Pro user for this branch
+        if (isFree || isBranchPro) {
           final questions = _generateFullMock(provider, mockNumber: mockNumber);
           if (questions.isEmpty) {
             messenger.showSnackBar(
@@ -897,7 +899,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
             );
             return;
           }
-          _startTest(questions, const Duration(minutes: 180), 'Full CBT Mock ');
+          _startTest(questions, const Duration(minutes: 180), 'Full CBT Mock $mockNumber');
           return;
         }
 
@@ -917,15 +919,20 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
           return;
         }
 
-        // Mock 3 to 10: Exclusively PRO!
+        // Mock 3 to 10: Requires PRO for this branch!
         navigator.push(
           MaterialPageRoute(builder: (_) => const ProUpgradeScreen()),
         );
+
+        final upgradeMsg = provider.isPro && !isBranchPro
+            ? 'Your Solo Pass is for GATE ${provider.soloBranch}. Upgrade to Dual Pass (₹200) to unlock GATE $activeBranch mocks!'
+            : 'Mock $mockNumber requires GateX Pro Pass (valid till 31st March 2027).';
+
         messenger.showSnackBar(
           SnackBar(
-            content: Text('Mock  requires GateX Pro Pass (valid till 31st March 2027).'),
+            content: Text(upgradeMsg),
             backgroundColor: const Color(0xFFB45309),
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 4),
             action: SnackBarAction(
               label: 'UPGRADE',
               textColor: Colors.white,
@@ -1018,7 +1025,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                             ),
                           ),
                         )
-                      else if (allowAd && !provider.isPro)
+                      else if (allowAd && !isBranchPro)
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
                           decoration: BoxDecoration(
@@ -1046,7 +1053,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                             ],
                           ),
                         )
-                      else if (!provider.isPro)
+                      else if (!isBranchPro)
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
                           decoration: BoxDecoration(
@@ -1057,14 +1064,14 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                               width: 0.8,
                             ),
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.lock_rounded, size: 10, color: Color(0xFFFFB300)),
-                              SizedBox(width: 3),
+                              const Icon(Icons.lock_rounded, size: 10, color: Color(0xFFFFB300)),
+                              const SizedBox(width: 3),
                               Text(
-                                'PRO',
-                                style: TextStyle(
+                                provider.isPro ? 'DUAL REQ' : 'PRO',
+                                style: const TextStyle(
                                   color: Color(0xFFFFB300),
                                   fontSize: 9.5,
                                   fontWeight: FontWeight.bold,
@@ -1115,10 +1122,10 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
             const SizedBox(width: 8),
 
             Icon(
-              isFree || provider.isPro
+              isFree || isBranchPro
                   ? Icons.play_arrow_rounded
                   : (allowAd ? Icons.smart_display_rounded : Icons.lock_outline_rounded),
-              color: isFree || provider.isPro
+              color: isFree || isBranchPro
                   ? AppTheme.accentMint
                   : (allowAd ? const Color(0xFFF59E0B) : const Color(0xFFFFB300)),
               size: 20,

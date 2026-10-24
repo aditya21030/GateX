@@ -13,12 +13,14 @@ class PurchaseService with ChangeNotifier {
 
   static const String proPrefKey = 'is_gatex_pro_member';
   static const String proPlanTypeKey = 'gatex_pro_plan_type'; // 'SOLO' or 'DUAL'
+  static const String proSoloBranchKey = 'gatex_pro_solo_branch'; // 'DA' or 'CSIT'
   static const String proEntitlement = 'gatex_pro';
   static const String proDualEntitlement = 'gatex_pro_dual';
 
   static const String proProductId = 'gatex_pro_solo_2027';
   static const String proSoloProductId = 'gatex_pro_solo_2027';
   static const String proDualProductId = 'gatex_pro_dual_2027';
+  static const String proUpgradeToDualProductId = 'gatex_pro_upgrade_dual_2027';
 
   // Solo Plan (DA or CSIT): ₹299
   static const String proPlanPrice = '₹299';
@@ -29,6 +31,10 @@ class PurchaseService with ChangeNotifier {
   // Dual Prep Plan (Both DA & CSIT): ₹499
   static const String proDualPlanPrice = '₹499';
   static const String proDualPlanOldPrice = '₹899';
+
+  // Upgrade difference for existing Solo users: ₹499 - ₹299 = ₹200
+  static const String proUpgradeToDualPrice = '₹200';
+  static const String proUpgradeToDualOldPrice = '₹400';
 
   static const String proPlanValidity = 'Valid till 31st March 2027';
 
@@ -44,6 +50,20 @@ class PurchaseService with ChangeNotifier {
   String _planType = 'SOLO';
   String get planType => _planType;
 
+  String _soloBranch = 'DA';
+  String get soloBranch => _soloBranch;
+
+  /// Returns true if user has Pro privileges for the specified branch (DA or CSIT)
+  bool isProForBranch(String? branch) {
+    if (!_isPro) return false;
+    if (_isDualPro) return true; // Dual Pro unlocks both DA and CS/IT
+    if (branch == null || branch.isEmpty) return true;
+    final b = branch.toUpperCase().trim();
+    if (b == 'BOTH' || b == 'COMMON') return true;
+    final targetBranch = b.contains('CS') ? 'CSIT' : 'DA';
+    return _soloBranch == targetBranch;
+  }
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
@@ -55,6 +75,7 @@ class PurchaseService with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     _isPro = prefs.getBool(proPrefKey) ?? false;
     _planType = prefs.getString(proPlanTypeKey) ?? 'SOLO';
+    _soloBranch = prefs.getString(proSoloBranchKey) ?? 'DA';
     _isDualPro = _isPro && _planType == 'DUAL';
     if (_isPro) {
       AdService().setAdSuspended(true);
@@ -133,10 +154,15 @@ class PurchaseService with ChangeNotifier {
   }
 
   /// Purchase Pro Season Pass (Solo ₹299 or Dual ₹499 - Valid till 31st March 2027)
-  Future<bool> purchaseProPass({String planId = proSoloProductId}) async {
-    final isDual = planId == proDualProductId;
+  Future<bool> purchaseProPass({
+    String planId = proSoloProductId,
+    String targetBranch = 'DA',
+  }) async {
     _isLoading = true;
     notifyListeners();
+
+    final isDual = planId == proDualProductId || planId == proUpgradeToDualProductId;
+    final normalizedBranch = targetBranch.toUpperCase().contains('CS') ? 'CSIT' : 'DA';
 
     try {
       if (_currentOffering?.availablePackages.isNotEmpty == true) {
@@ -146,10 +172,20 @@ class PurchaseService with ChangeNotifier {
           final isProNow = purchaseResult.entitlements.all[proEntitlement]?.isActive ?? false;
           if (isProNow) {
             _isPro = true;
+            if (isDual) {
+              _isDualPro = true;
+              _planType = 'DUAL';
+            } else {
+              _isDualPro = false;
+              _planType = 'SOLO';
+              _soloBranch = normalizedBranch;
+            }
             final prefs = await SharedPreferences.getInstance();
             await prefs.setBool(proPrefKey, true);
+            await prefs.setString(proPlanTypeKey, _planType);
+            await prefs.setString(proSoloBranchKey, _soloBranch);
             AdService().setAdSuspended(true);
-            await _syncProToFirebase(planId);
+            await _syncProToFirebase(planId, soloBranch: _soloBranch);
             _isLoading = false;
             notifyListeners();
             return true;
@@ -163,14 +199,21 @@ class PurchaseService with ChangeNotifier {
       await Future.delayed(const Duration(milliseconds: 1200));
 
       _isPro = true;
-      _isDualPro = isDual;
-      _planType = isDual ? 'DUAL' : 'SOLO';
+      if (isDual) {
+        _isDualPro = true;
+        _planType = 'DUAL';
+      } else {
+        _isDualPro = false;
+        _planType = 'SOLO';
+        _soloBranch = normalizedBranch;
+      }
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(proPrefKey, true);
       await prefs.setString(proPlanTypeKey, _planType);
+      await prefs.setString(proSoloBranchKey, _soloBranch);
       AdService().setAdSuspended(true);
 
-      await _syncProToFirebase(planId);
+      await _syncProToFirebase(planId, soloBranch: _soloBranch);
 
       _isLoading = false;
       notifyListeners();
@@ -183,12 +226,20 @@ class PurchaseService with ChangeNotifier {
     }
   }
 
-  Future<void> _syncProToFirebase(String planId) async {
+  /// Upgrade from Solo Pass to Dual Prep Pass (₹200)
+  Future<bool> upgradeToDualPass() async {
+    return purchaseProPass(planId: proUpgradeToDualProductId);
+  }
+
+  Future<void> _syncProToFirebase(String planId, {String? soloBranch}) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
           'isPro': true,
+          'isDualPro': _isDualPro,
+          'proPlanType': _planType,
+          'proSoloBranch': soloBranch ?? _soloBranch,
           'proPurchasedAt': FieldValue.serverTimestamp(),
           'proPlanId': planId,
         }, SetOptions(merge: true));
@@ -254,9 +305,11 @@ class PurchaseService with ChangeNotifier {
     _isPro = false;
     _isDualPro = false;
     _planType = 'SOLO';
+    _soloBranch = 'DA';
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(proPrefKey, false);
     await prefs.setString(proPlanTypeKey, 'SOLO');
+    await prefs.setString(proSoloBranchKey, 'DA');
     AdService().setAdSuspended(false);
     notifyListeners();
   }
