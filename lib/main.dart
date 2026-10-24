@@ -612,11 +612,11 @@ class _NavBarItem extends StatelessWidget {
                       offset: const Offset(0, 2.5),
                       blurRadius: 0,
                     ),
-                    // Ambient colored glow
+                    // Clean contact shadow (no hazy ambient light)
                     BoxShadow(
-                      color: item.activeColor.withValues(alpha: 0.45),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+                      color: Colors.black.withValues(alpha: 0.25),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
                     ),
                   ]
                 : null,
@@ -630,8 +630,7 @@ class _NavBarItem extends StatelessWidget {
                 size: 20,
                 shadows: isSelected
                     ? const [
-                        Shadow(color: Colors.black45, offset: Offset(0, 1.8), blurRadius: 2.5),
-                        Shadow(color: Colors.white70, offset: Offset(0, 0), blurRadius: 6),
+                        Shadow(color: Colors.black38, offset: Offset(0, 1.2), blurRadius: 1.5),
                       ]
                     : [
                         Shadow(color: Colors.black.withValues(alpha: 0.25), offset: const Offset(0, 1), blurRadius: 1.5),

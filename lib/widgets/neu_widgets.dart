@@ -145,16 +145,10 @@ class Icon3D extends StatelessWidget {
         color: Colors.white,
         shadows: [
           Shadow(
-            color: Colors.black.withValues(alpha: 0.55),
-            offset: Offset(0, (size * 0.08).clamp(1.0, 3.0)),
-            blurRadius: (size * 0.12).clamp(1.5, 4.0),
+            color: Colors.black.withValues(alpha: 0.45),
+            offset: Offset(0, (size * 0.06).clamp(1.0, 2.5)),
+            blurRadius: (size * 0.08).clamp(1.0, 2.0),
           ),
-          if (hasGlow)
-            Shadow(
-              color: color.withValues(alpha: 0.70),
-              offset: Offset(0, (size * 0.10).clamp(1.5, 5.0)),
-              blurRadius: (size * 0.28).clamp(3.0, 8.0),
-            ),
         ],
       ),
     );
@@ -363,24 +357,17 @@ class NeuIconTile extends StatelessWidget {
             offset: Offset(0, ledgeHeight),
             blurRadius: 0,
           ),
-          // 2. High-energy colorful ambient glow radiating outwards
+          // 2. Crisp, clean contact shadow on surface (no hazy ambient bloom)
           BoxShadow(
-            color: iconColor.withValues(alpha: isDark ? 0.45 : 0.36),
-            offset: Offset(0, size * 0.14),
-            blurRadius: size * 0.28,
-            spreadRadius: -1,
+            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.12),
+            offset: Offset(0, size * 0.08),
+            blurRadius: size * 0.10,
           ),
-          // 3. Contact shadow on surface
+          // 3. Specular top rim reflection
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.16),
-            offset: Offset(0, size * 0.12),
-            blurRadius: size * 0.18,
-          ),
-          // 4. Specular top rim reflection
-          BoxShadow(
-            color: Colors.white.withValues(alpha: 0.65),
-            offset: const Offset(-1.5, -1.5),
-            blurRadius: 2.5,
+            color: Colors.white.withValues(alpha: 0.55),
+            offset: const Offset(-1.0, -1.0),
+            blurRadius: 1.5,
           ),
         ],
       ),
@@ -415,15 +402,9 @@ class NeuIconTile extends StatelessWidget {
             shadows: [
               // Sharp bottom contact shadow
               Shadow(
-                color: Colors.black.withValues(alpha: 0.55),
-                offset: const Offset(0, 2.0),
-                blurRadius: 2.5,
-              ),
-              // Soft ambient internal glow
-              Shadow(
-                color: Colors.white.withValues(alpha: 0.70),
-                offset: const Offset(0, 0),
-                blurRadius: 5.0,
+                color: Colors.black.withValues(alpha: 0.50),
+                offset: const Offset(0, 1.5),
+                blurRadius: 2.0,
               ),
             ],
           ),

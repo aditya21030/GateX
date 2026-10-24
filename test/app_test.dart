@@ -8,6 +8,7 @@ import 'package:gateda/data/da_subjectwise_mock_data.dart';
 import 'package:gateda/data/csit_subjectwise_mock_data.dart';
 import 'package:gateda/data/notes_data.dart';
 import 'package:gateda/services/storage_service.dart';
+import 'package:gateda/services/purchase_service.dart';
 import 'package:gateda/widgets/iit_onboarding_components.dart';
 
 class EstimationNode {
@@ -400,6 +401,14 @@ void main() {
       expect(oldPrice, '₹599');
       expect(seasonYear, 2027);
       expect(validityDate, '31st March 2027');
+    });
+
+    test('Solo (₹299) and Dual Prep (₹499) pricing parameters match specification', () {
+      expect(PurchaseService.proSoloPlanPrice, '₹299');
+      expect(PurchaseService.proSoloPlanOldPrice, '₹599');
+      expect(PurchaseService.proDualPlanPrice, '₹499');
+      expect(PurchaseService.proDualPlanOldPrice, '₹899');
+      expect(PurchaseService.proPlanValidity, 'Valid till 31st March 2027');
     });
 
     test('Pro Pass includes lifetime access to all future releases and tools', () {

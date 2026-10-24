@@ -403,7 +403,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(height: 22),
 
-                // 4. PREPARATION TRACK
+                // 4. PREPARATION TRACK (Status Overview)
                 Text(
                   'Preparation Track',
                   style: TextStyle(
@@ -415,7 +415,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 const SizedBox(height: 10),
                 NeuContainer(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Row(
                     children: [
                       const NeuIconTile(
@@ -430,37 +430,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Target Exam',
-                              style: TextStyle(color: context.textSecondaryColor, fontSize: 10.5),
+                              'Active Focus Track',
+                              style: TextStyle(color: context.textSecondaryColor, fontSize: 11),
                             ),
+                            const SizedBox(height: 2),
                             Text(
                               targetExamLabel,
-                              style: AppTheme.poppinsBold(fontSize: 14, color: context.textColor),
+                              style: AppTheme.poppinsBold(fontSize: 14.5, color: context.textColor),
                             ),
                           ],
                         ),
                       ),
-                      DropdownButton<String>(
-                        value: appProvider.activeExam,
-                        dropdownColor: context.colorSurface,
-                        underline: const SizedBox(),
-                        icon: const Icon(Icons.arrow_drop_down_rounded, color: AppTheme.accentPurple),
-                        items: const [
-                          DropdownMenuItem(value: 'DA', child: Text('GATE DA')),
-                          DropdownMenuItem(value: 'CSIT', child: Text('GATE CSIT')),
-                        ],
-                        onChanged: (val) {
-                          if (val != null) appProvider.setActiveExam(val);
-                        },
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppTheme.accentPurple.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: AppTheme.accentPurple.withValues(alpha: 0.3),
+                            width: 0.8,
+                          ),
+                        ),
+                        child: Text(
+                          appProvider.selectedExam == 'BOTH' ? 'DUAL PREP' : 'SOLO',
+                          style: const TextStyle(
+                            color: AppTheme.accentPurple,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 20),
 
-                // 5. SECURITY & PREFERENCES
+                // 5. ACCOUNT & SECURITY
                 Text(
-                  'Preferences',
+                  'Account & Security',
                   style: TextStyle(
                     color: context.textSecondaryColor,
                     fontSize: 11,
@@ -473,21 +481,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: EdgeInsets.zero,
                   child: Column(
                     children: [
-                      ListTile(
-                        leading: const NeuIconTile(
-                          icon: Icons.dark_mode_rounded,
-                          iconColor: Colors.blue,
-                          size: 36,
-                          iconSize: 18,
-                        ),
-                        title: Text('Dark Theme', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor)),
-                        trailing: Switch(
-                          value: appProvider.themeMode == ThemeMode.dark,
-                          activeColor: AppTheme.secondary,
-                          onChanged: (_) => appProvider.toggleTheme(),
-                        ),
-                      ),
-                      Divider(height: 1, color: context.colorBorder),
                       if (authProvider.isLoggedIn)
                         ListTile(
                           leading: const NeuIconTile(

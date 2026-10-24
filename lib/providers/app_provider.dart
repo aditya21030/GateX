@@ -183,6 +183,8 @@ class AppProvider with ChangeNotifier {
 
   // GateX Pro Entitlement
   bool get isPro => PurchaseService().isPro;
+  bool get isDualPro => PurchaseService().isDualPro;
+  String get proPlanType => PurchaseService().planType;
 
   Future<void> init() async {
     await _storage.init();

@@ -12,10 +12,24 @@ class PurchaseService with ChangeNotifier {
   PurchaseService._internal();
 
   static const String proPrefKey = 'is_gatex_pro_member';
+  static const String proPlanTypeKey = 'gatex_pro_plan_type'; // 'SOLO' or 'DUAL'
   static const String proEntitlement = 'gatex_pro';
-  static const String proProductId = 'gatex_pro_season_pass_2027';
+  static const String proDualEntitlement = 'gatex_pro_dual';
+
+  static const String proProductId = 'gatex_pro_solo_2027';
+  static const String proSoloProductId = 'gatex_pro_solo_2027';
+  static const String proDualProductId = 'gatex_pro_dual_2027';
+
+  // Solo Plan (DA or CSIT): ₹299
   static const String proPlanPrice = '₹299';
   static const String proPlanOldPrice = '₹599';
+  static const String proSoloPlanPrice = '₹299';
+  static const String proSoloPlanOldPrice = '₹599';
+
+  // Dual Prep Plan (Both DA & CSIT): ₹499
+  static const String proDualPlanPrice = '₹499';
+  static const String proDualPlanOldPrice = '₹899';
+
   static const String proPlanValidity = 'Valid till 31st March 2027';
 
   // RevenueCat Public API Key placeholder (Configured with Google Play Console)
@@ -23,6 +37,12 @@ class PurchaseService with ChangeNotifier {
 
   bool _isPro = false;
   bool get isPro => _isPro;
+
+  bool _isDualPro = false;
+  bool get isDualPro => _isDualPro;
+
+  String _planType = 'SOLO';
+  String get planType => _planType;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -34,6 +54,8 @@ class PurchaseService with ChangeNotifier {
   Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
     _isPro = prefs.getBool(proPrefKey) ?? false;
+    _planType = prefs.getString(proPlanTypeKey) ?? 'SOLO';
+    _isDualPro = _isPro && _planType == 'DUAL';
     if (_isPro) {
       AdService().setAdSuspended(true);
     }
@@ -110,8 +132,9 @@ class PurchaseService with ChangeNotifier {
     }
   }
 
-  /// Purchase Pro Season Pass (₹299 one-time - Valid till 31st March 2027)
-  Future<bool> purchaseProPass({String planId = proProductId}) async {
+  /// Purchase Pro Season Pass (Solo ₹299 or Dual ₹499 - Valid till 31st March 2027)
+  Future<bool> purchaseProPass({String planId = proSoloProductId}) async {
+    final isDual = planId == proDualProductId;
     _isLoading = true;
     notifyListeners();
 
@@ -140,8 +163,11 @@ class PurchaseService with ChangeNotifier {
       await Future.delayed(const Duration(milliseconds: 1200));
 
       _isPro = true;
+      _isDualPro = isDual;
+      _planType = isDual ? 'DUAL' : 'SOLO';
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(proPrefKey, true);
+      await prefs.setString(proPlanTypeKey, _planType);
       AdService().setAdSuspended(true);
 
       await _syncProToFirebase(planId);
@@ -226,8 +252,11 @@ class PurchaseService with ChangeNotifier {
   /// Reset Pro status (For QA/Testing only)
   Future<void> resetProForTesting() async {
     _isPro = false;
+    _isDualPro = false;
+    _planType = 'SOLO';
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(proPrefKey, false);
+    await prefs.setString(proPlanTypeKey, 'SOLO');
     AdService().setAdSuspended(false);
     notifyListeners();
   }

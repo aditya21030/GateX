@@ -266,7 +266,7 @@ class MoreScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Flexible(
+                      Expanded(
                         child: Text(
                           userName,
                           maxLines: 1,
@@ -276,19 +276,19 @@ class MoreScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
                         decoration: BoxDecoration(
-                          color: AppTheme.accentFlame.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(10),
+                          color: AppTheme.accentFlame.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: AppTheme.accentFlame.withValues(alpha: 0.3),
+                            color: AppTheme.accentFlame.withValues(alpha: 0.25),
                             width: 0.8,
                           ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon3D(Icons.local_fire_department_rounded, size: 12, color: AppTheme.accentFlame),
+                            const Icon(Icons.local_fire_department_rounded, size: 13, color: AppTheme.accentFlame),
                             const SizedBox(width: 3),
                             Text(
                               '${provider.streak}d',
@@ -297,36 +297,39 @@ class MoreScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(width: 6),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
                         decoration: BoxDecoration(
                           color: AppTheme.accentPurple.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: AppTheme.accentPurple.withValues(alpha: 0.3),
-                            width: 0.8,
-                          ),
+                          borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
                           provider.selectedExam == 'BOTH'
-                              ? 'DUAL'
-                              : (provider.activeExam == 'CSIT' ? 'CS/IT' : 'GATE DA'),
+                              ? 'DUAL PREP'
+                              : (provider.activeExam == 'CSIT' ? 'GATE CS/IT' : 'GATE DA'),
                           style: GoogleFonts.outfit(
                             color: AppTheme.accentPurple,
-                            fontSize: 10.5,
+                            fontSize: 10,
                             fontWeight: FontWeight.bold,
+                            letterSpacing: 0.3,
                           ),
                         ),
                       ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          userEmail,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 11.5),
+                        ),
+                      ),
                     ],
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    userEmail,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 12),
                   ),
                 ],
               ),
@@ -365,8 +368,8 @@ class MoreScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
-                    color: (isPro ? AppTheme.accentMint : const Color(0xFFFFB300)).withValues(alpha: 0.35),
-                    blurRadius: 8,
+                    color: Colors.black.withValues(alpha: 0.25),
+                    blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
                 ],
@@ -393,7 +396,7 @@ class MoreScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    isPro ? 'All 10 CBT Mocks Unlocked • Ad-free' : '₹299 One-Time • Valid till 31st March 2027',
+                    isPro ? 'All CBT Mocks Unlocked • Ad-Free Active' : 'Unlock Full CBT Mocks, AI Drills & Pro Notes',
                     style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 11.5),
                   ),
                 ],

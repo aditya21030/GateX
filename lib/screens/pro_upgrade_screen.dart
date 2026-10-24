@@ -16,12 +16,28 @@ class ProUpgradeScreen extends StatefulWidget {
 class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
   final PurchaseService _purchaseService = PurchaseService();
   bool _isProcessing = false;
+  bool _isDualSelected = false;
+  bool _initializedSelection = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initializedSelection) {
+      final provider = Provider.of<AppProvider>(context, listen: false);
+      _isDualSelected = provider.selectedExam == 'BOTH';
+      _initializedSelection = true;
+    }
+  }
 
   Future<void> _handlePurchase() async {
     HapticFeedback.mediumImpact();
     setState(() => _isProcessing = true);
 
-    final success = await _purchaseService.purchaseProPass();
+    final planId = _isDualSelected
+        ? PurchaseService.proDualProductId
+        : PurchaseService.proSoloProductId;
+
+    final success = await _purchaseService.purchaseProPass(planId: planId);
 
     if (!mounted) return;
     setState(() => _isProcessing = false);
@@ -30,10 +46,14 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
       HapticFeedback.selectionClick();
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('🎉 Welcome to GateX Pro! All perks unlocked till 31st March 2027.'),
+        SnackBar(
+          content: Text(
+            _isDualSelected
+                ? '🎉 Welcome to GateX Dual Pro! DA & CS/IT unlocked till 31st March 2027.'
+                : '🎉 Welcome to GateX Pro! All perks unlocked till 31st March 2027.',
+          ),
           backgroundColor: AppTheme.success,
-          duration: Duration(seconds: 3),
+          duration: const Duration(seconds: 3),
         ),
       );
     } else {
@@ -82,6 +102,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
   Widget build(BuildContext context) {
     final provider = Provider.of<AppProvider>(context);
     final isPro = provider.isPro;
+    final isDualPro = provider.isDualPro;
 
     return Scaffold(
       backgroundColor: const Color(0xFF0C0A07),
@@ -112,33 +133,11 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
             ),
           ),
 
-          // 2. Ambient Bottom Glow
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: IgnorePointer(
-              child: Container(
-                height: 200,
-                decoration: const BoxDecoration(
-                  gradient: RadialGradient(
-                    center: Alignment(0, 1.0),
-                    radius: 0.8,
-                    colors: [
-                      Color(0x1CFFA000),
-                      Colors.transparent,
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // 3. Main Screen Content
+          // 2. Main Screen Content
           SafeArea(
             child: Column(
               children: [
-                // Top App Bar: Close (X) & Restore
+                // Top App Bar: Close (X) & Restore (No borders or dividers)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Row(
@@ -176,53 +175,65 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                         constraints: const BoxConstraints(maxWidth: 520),
                         child: Column(
                           children: [
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 6),
 
                             // Top Golden Medallion
                             _buildTopMedallion(isPro: isPro),
-                            const SizedBox(height: 18),
+                            const SizedBox(height: 16),
 
                             // Title: GateX Pro
                             Text(
-                              isPro ? 'You\'re on GateX Pro' : 'GateX Pro',
+                              isPro
+                                  ? (isDualPro ? 'GateX Dual Pro Member' : 'GateX Pro Member')
+                                  : 'GateX Pro',
                               style: GoogleFonts.outfit(
-                                fontSize: 30,
+                                fontSize: 28,
                                 fontWeight: FontWeight.w800,
                                 color: const Color(0xFFFFF8EC),
                                 letterSpacing: -0.5,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 6),
 
                             // Subtitle
                             Text(
                               isPro
-                                  ? 'Your membership is active and valid till 31st March 2027.\nEnjoy unlimited ad-free mocks and AI drills!'
+                                  ? 'Your pass is active and valid till 31st March 2027.\nEnjoy unlimited ad-free mocks and AI drills!'
                                   : 'Aspirants have so much more fun & score\nhigher with GateX Pro!',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.outfit(
-                                fontSize: 14,
+                                fontSize: 13.5,
                                 fontWeight: FontWeight.w500,
                                 color: const Color(0xFFA89F91),
                                 height: 1.35,
                               ),
                             ),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: 20),
 
-                            // Feature List Cards (Locket Gold Style)
+                            // 2-Option Tier Selector: Solo (₹299) vs Dual Prep (₹499)
+                            if (!isPro) ...[
+                              _buildPlanSelector(),
+                              const SizedBox(height: 20),
+                            ],
+
+                            // Feature List Cards (Locket Gold Style with full wrap text)
                             _buildFeatureCard(
                               iconEmoji: '🚫',
                               iconBg: const Color(0xFFEF4444),
                               title: 'Remove ads',
-                              subtitle: 'Never see an ad during tests or practice!',
+                              subtitle: '100% ad-free during tests, drills, and practice sessions.',
                             ),
                             const SizedBox(height: 10),
 
                             _buildFeatureCard(
                               iconEmoji: '💻',
                               iconBg: const Color(0xFF3B82F6),
-                              title: '10 Full-Length CBT Mocks',
-                              subtitle: 'Authentic TCS iON simulator & NAT calculator!',
+                              title: _isDualSelected
+                                  ? '20 Full-Length CBT Mocks'
+                                  : '10 Full-Length CBT Mocks',
+                              subtitle: _isDualSelected
+                                  ? '10 GATE DA + 10 CS/IT authentic TCS iON simulator mocks.'
+                                  : 'Authentic TCS iON simulator with official NAT calculator.',
                             ),
                             const SizedBox(height: 10),
 
@@ -230,15 +241,19 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                               iconEmoji: '⚡',
                               iconBg: const Color(0xFFF59E0B),
                               title: 'AI Error Drills',
-                              subtitle: 'Targeted 15-question drills from your mistake log!',
+                              subtitle: 'Targeted 15-question drills generated from your mistake log.',
                             ),
                             const SizedBox(height: 10),
 
                             _buildFeatureCard(
                               iconEmoji: '📚',
                               iconBg: const Color(0xFF8B5CF6),
-                              title: 'In-Depth Pro Notes',
-                              subtitle: 'Full mathematical proofs, exam traps & shortcuts!',
+                              title: _isDualSelected
+                                  ? 'All 14 Subject Pro Notes'
+                                  : 'In-Depth Pro Notes',
+                              subtitle: _isDualSelected
+                                  ? 'Complete proofs, derivations & exam traps across DA & CS/IT.'
+                                  : 'Full mathematical proofs, exam traps & speed shortcuts.',
                             ),
                             const SizedBox(height: 10),
 
@@ -246,7 +261,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                               iconEmoji: '📄',
                               iconBg: const Color(0xFF10B981),
                               title: 'Clean PDF Export',
-                              subtitle: 'Export & print beautiful formula sheets!',
+                              subtitle: 'Download & print publication-grade formula cheat sheets.',
                             ),
                             const SizedBox(height: 10),
 
@@ -254,10 +269,10 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                               iconEmoji: '👑',
                               iconBg: const Color(0xFFFFB300),
                               title: 'All New Features Included',
-                              subtitle: 'Valid till 31st March 2027 • Zero monthly renewals!',
+                              subtitle: 'Valid till 31st March 2027 • Zero monthly renewals.',
                               badgeText: 'GATE 2027',
                             ),
-                            const SizedBox(height: 28),
+                            const SizedBox(height: 24),
                           ],
                         ),
                       ),
@@ -265,8 +280,8 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                   ),
                 ),
 
-                // Sticky Bottom CTA Area
-                _buildStickyBottom(isPro: isPro),
+                // Sticky Bottom CTA Area (Seamless blend, no harsh horizontal cut line)
+                _buildStickyBottom(isPro: isPro, isDualPro: isDualPro),
               ],
             ),
           ),
@@ -278,11 +293,11 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
   /// Top 3D Golden Medallion
   Widget _buildTopMedallion({required bool isPro}) {
     return Container(
-      width: 78,
-      height: 78,
+      width: 76,
+      height: 76,
       decoration: BoxDecoration(
         color: const Color(0xFF1E1912),
-        borderRadius: BorderRadius.circular(26),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: const Color(0xFFFFB800).withValues(alpha: 0.5),
           width: 1.5,
@@ -290,14 +305,9 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
         boxShadow: [
           BoxShadow(
             color: const Color(0xFFFFB800).withValues(alpha: 0.35),
-            blurRadius: 30,
+            blurRadius: 28,
             spreadRadius: 2,
             offset: const Offset(0, 4),
-          ),
-          const BoxShadow(
-            color: Color(0xFF0C0A07),
-            blurRadius: 10,
-            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -314,7 +324,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
           ).createShader(bounds),
           child: Icon(
             isPro ? Icons.workspace_premium_rounded : Icons.star_rounded,
-            size: 46,
+            size: 44,
             color: Colors.white,
           ),
         ),
@@ -322,7 +332,147 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
     );
   }
 
-  /// Feature Card matching Locket Gold styling
+  /// Plan Selector: Solo Pass (₹299) vs Dual Prep Pass (₹499)
+  Widget _buildPlanSelector() {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: const Color(0xFF161410),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.08),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          // 1. Solo Pass (₹299)
+          Expanded(
+            child: _buildPlanOptionTile(
+              isSelected: !_isDualSelected,
+              title: 'Solo Pass',
+              subtitle: 'DA or CS/IT • 10 Mocks',
+              price: '₹299',
+              onTap: () {
+                HapticFeedback.selectionClick();
+                setState(() => _isDualSelected = false);
+              },
+            ),
+          ),
+          const SizedBox(width: 4),
+
+          // 2. Dual Prep Pass (₹499)
+          Expanded(
+            child: _buildPlanOptionTile(
+              isSelected: _isDualSelected,
+              title: 'Dual Prep',
+              subtitle: 'Both Papers • 20 Mocks',
+              price: '₹499',
+              badgeText: 'BEST VALUE 🔥',
+              onTap: () {
+                HapticFeedback.selectionClick();
+                setState(() => _isDualSelected = true);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlanOptionTile({
+    required bool isSelected,
+    required String title,
+    required String subtitle,
+    required String price,
+    String? badgeText,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 220),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF262016) : Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
+          border: isSelected
+              ? Border.all(
+                  color: const Color(0xFFFFB800).withValues(alpha: 0.7),
+                  width: 1.4,
+                )
+              : null,
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: const Color(0xFFFFB800).withValues(alpha: 0.15),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Column(
+          children: [
+            if (badgeText != null)
+              Container(
+                margin: const EdgeInsets.only(bottom: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF38290A),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(
+                    color: const Color(0xFFFFB800).withValues(alpha: 0.6),
+                    width: 0.8,
+                  ),
+                ),
+                child: Text(
+                  badgeText,
+                  style: GoogleFonts.outfit(
+                    color: const Color(0xFFFFB800),
+                    fontSize: 8.5,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              )
+            else
+              const SizedBox(height: 17),
+            Text(
+              title,
+              style: GoogleFonts.outfit(
+                fontSize: 13.5,
+                fontWeight: FontWeight.bold,
+                color: isSelected ? Colors.white : const Color(0xFFA89F91),
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              price,
+              style: GoogleFonts.outfit(
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                color: isSelected ? const Color(0xFFFFB800) : Colors.white70,
+              ),
+            ),
+            const SizedBox(height: 3),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.outfit(
+                fontSize: 10,
+                color: const Color(0xFF8A8275),
+                height: 1.2,
+              ),
+              maxLines: 2,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Feature Card matching Locket Gold styling with natural text wrapping
   Widget _buildFeatureCard({
     required String iconEmoji,
     required Color iconBg,
@@ -331,21 +481,22 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
     String? badgeText,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
       decoration: BoxDecoration(
         color: const Color(0xFF181511),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.07),
           width: 1,
         ),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Left Icon Squircle
           Container(
-            width: 42,
-            height: 42,
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
               color: iconBg.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
@@ -354,19 +505,19 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                 width: 1,
               ),
             ),
-            child: Center(
-              child: Text(
-                iconEmoji,
-                style: const TextStyle(fontSize: 20),
-              ),
+            alignment: Alignment.center,
+            child: Text(
+              iconEmoji,
+              style: const TextStyle(fontSize: 19),
             ),
           ),
           const SizedBox(width: 14),
 
-          // Title & Subtitle
+          // Title & Subtitle with full wrapping (never cut down)
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
                   children: [
@@ -374,12 +525,10 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                       child: Text(
                         title,
                         style: GoogleFonts.outfit(
-                          fontSize: 15,
+                          fontSize: 14.5,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     if (badgeText != null) ...[
@@ -388,7 +537,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                         decoration: BoxDecoration(
                           color: const Color(0xFF38290A),
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             color: const Color(0xFFFFB800).withValues(alpha: 0.6),
                             width: 0.8,
@@ -398,7 +547,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                           badgeText,
                           style: GoogleFonts.outfit(
                             color: const Color(0xFFFFB800),
-                            fontSize: 9.5,
+                            fontSize: 9,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.4,
                           ),
@@ -411,12 +560,11 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                 Text(
                   subtitle,
                   style: GoogleFonts.outfit(
-                    fontSize: 12.5,
+                    fontSize: 12,
                     color: const Color(0xFF9E9589),
-                    height: 1.25,
+                    height: 1.3,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
                 ),
               ],
             ),
@@ -426,23 +574,31 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
     );
   }
 
-  /// Sticky Bottom Section with Gold Pill CTA & Dismiss link
-  Widget _buildStickyBottom({required bool isPro}) {
+  /// Sticky Bottom Section with Soft Fade (No harsh cut-line)
+  Widget _buildStickyBottom({
+    required bool isPro,
+    required bool isDualPro,
+  }) {
+    final priceLabel = _isDualSelected ? '₹499' : '₹299';
+    final planLabel = _isDualSelected ? 'Dual Pass' : 'Solo Pass';
+
     return Container(
       padding: EdgeInsets.fromLTRB(
         20,
-        12,
+        14,
         20,
         12 + MediaQuery.of(context).padding.bottom,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xFF0C0A07).withValues(alpha: 0.95),
-        border: Border(
-          top: BorderSide(
-            color: Colors.white.withValues(alpha: 0.05),
-            width: 1,
+        color: const Color(0xFF0C0A07),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0C0A07).withValues(alpha: 0.95),
+            offset: const Offset(0, -14),
+            blurRadius: 18,
+            spreadRadius: 6,
           ),
-        ),
+        ],
       ),
       child: Center(
         child: Container(
@@ -476,9 +632,11 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'GateX Pro Active — Back to Studies',
+                            isDualPro
+                                ? 'GateX Dual Pro Active — Back to Studies'
+                                : 'GateX Pro Active — Back to Studies',
                             style: GoogleFonts.outfit(
-                              fontSize: 15.5,
+                              fontSize: 15,
                               fontWeight: FontWeight.bold,
                               color: const Color(0xFFFFB800),
                             ),
@@ -498,7 +656,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                   ),
                 ),
               ] else ...[
-                // Main CTA Button: Upgrade to GateX Pro — ₹299 🔒
+                // Main CTA Button
                 InkWell(
                   onTap: _isProcessing ? null : _handlePurchase,
                   borderRadius: BorderRadius.circular(32),
@@ -536,9 +694,9 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Upgrade to GateX Pro — ₹299',
+                                  'Upgrade $planLabel — $priceLabel',
                                   style: GoogleFonts.outfit(
-                                    fontSize: 16.5,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                     color: const Color(0xFF161005),
                                     letterSpacing: 0.2,
