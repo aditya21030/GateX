@@ -145,22 +145,39 @@ class PYQ {
     final cleanCorrect = correctAnswer.trim().toLowerCase();
 
     if (type == 'NAT') {
-      // If correct answer contains " to "
-      if (cleanCorrect.contains(' to ')) {
-        final parts = cleanCorrect.split(' to ');
-        if (parts.length == 2) {
-          final double? lower = double.tryParse(parts[0].trim());
-          final double? upper = double.tryParse(parts[1].trim());
-          final double? userVal = double.tryParse(cleanUser);
-          if (lower != null && upper != null && userVal != null) {
-            return userVal >= lower && userVal <= upper;
-          }
+      // Check range formats: "X to Y", "X - Y", "[X, Y]"
+      String rangeString = cleanCorrect;
+      if (rangeString.startsWith('[') && rangeString.endsWith(']')) {
+        rangeString = rangeString.substring(1, rangeString.length - 1);
+      }
+      
+      List<String> rangeParts = [];
+      if (rangeString.contains(' to ')) {
+        rangeParts = rangeString.split(' to ');
+      } else if (rangeString.contains(' - ')) {
+        rangeParts = rangeString.split(' - ');
+      } else if (rangeString.contains(',')) {
+        rangeParts = rangeString.split(',');
+      }
+
+      if (rangeParts.length == 2) {
+        final double? lower = double.tryParse(rangeParts[0].trim());
+        final double? upper = double.tryParse(rangeParts[1].trim());
+        final double? userVal = double.tryParse(cleanUser);
+        if (lower != null && upper != null && userVal != null) {
+          final minVal = lower < upper ? lower : upper;
+          final maxVal = lower < upper ? upper : lower;
+          return userVal >= (minVal - 0.01) && userVal <= (maxVal + 0.01);
         }
       }
+
       final double? userNum = double.tryParse(cleanUser);
       final double? correctNum = double.tryParse(cleanCorrect);
       if (userNum != null && correctNum != null) {
-        return (userNum - correctNum).abs() < 0.05;
+        // Absolute tolerance of 0.05 or relative tolerance of 1%
+        final absDiff = (userNum - correctNum).abs();
+        final maxAllowed = (0.05 > (correctNum.abs() * 0.01)) ? 0.05 : (correctNum.abs() * 0.01);
+        return absDiff <= maxAllowed;
       }
       return cleanUser == cleanCorrect;
     } else if (type == 'MSQ') {

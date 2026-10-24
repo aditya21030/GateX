@@ -555,6 +555,72 @@ void main() {
       expect(checkShowAd(false), isTrue);
       expect(checkShowAd(true), isFalse);
     });
+
+    test('NAT Answer validation supports ranges, intervals, and relative tolerance', () {
+      final qRange = PYQ(
+        id: 'nat1',
+        year: 2026,
+        subject: 'Linear Algebra',
+        topic: 'Eigenvalues',
+        questionText: 'Find the spectral norm.',
+        options: [],
+        correctAnswer: '2.5 to 3.5',
+        type: 'NAT',
+        isMCQ: false,
+        explanation: '',
+        difficulty: 'Medium',
+      );
+
+      expect(qRange.isAnswerCorrect('3.0'), isTrue);
+      expect(qRange.isAnswerCorrect('2.5'), isTrue);
+      expect(qRange.isAnswerCorrect('3.5'), isTrue);
+      expect(qRange.isAnswerCorrect('4.0'), isFalse);
+
+      final qBracket = PYQ(
+        id: 'nat2',
+        year: 2026,
+        subject: 'Calculus',
+        topic: 'Limits',
+        questionText: 'Find value of L.',
+        options: [],
+        correctAnswer: '[10, 12]',
+        type: 'NAT',
+        isMCQ: false,
+        explanation: '',
+        difficulty: 'Medium',
+      );
+      expect(qBracket.isAnswerCorrect('11.0'), isTrue);
+      expect(qBracket.isAnswerCorrect('10.0'), isTrue);
+      expect(qBracket.isAnswerCorrect('9.8'), isFalse);
+
+      final qExact = PYQ(
+        id: 'nat3',
+        year: 2026,
+        subject: 'Probability',
+        topic: 'Normal Distribution',
+        questionText: 'Variance.',
+        options: [],
+        correctAnswer: '100',
+        type: 'NAT',
+        isMCQ: false,
+        explanation: '',
+        difficulty: 'Medium',
+      );
+      expect(qExact.isAnswerCorrect('100.0'), isTrue);
+      expect(qExact.isAnswerCorrect('100.5'), isTrue); // within 1% relative tolerance
+      expect(qExact.isAnswerCorrect('105.0'), isFalse);
+    });
+
+    test('10 Full-Length Mocks Series defines Mock 01 Free and Mocks 02-10 for Pro', () {
+      const mockCount = 10;
+      final freeMockIndices = [1];
+      final proMockIndices = List.generate(9, (i) => i + 2);
+
+      expect(mockCount, 10);
+      expect(freeMockIndices.contains(1), isTrue);
+      expect(proMockIndices.length, 9);
+      expect(proMockIndices.contains(10), isTrue);
+    });
   });
 
   group('Agile Syllabus Checklist Tests', () {

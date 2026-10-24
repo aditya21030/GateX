@@ -95,35 +95,32 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     }
   }
 
-  List<PYQ> _generateFullMock(AppProvider provider, String difficulty) {
+  List<PYQ> _generateFullMock(AppProvider provider, {int mockNumber = 1, String difficulty = 'Standard'}) {
     final List<PYQ> base = provider.activeExam == 'DA'
         ? List.from(daFullMockQuestionsEasy)
         : List.from(csFullMockQuestionsEasy);
 
     if (base.length != 65) return base;
 
-    if (difficulty == 'Easy') {
-      return base;
-    }
-
     // Preserve GATE Section structure:
     // Q1-5: GA 1-mark (indices 0..4)
     // Q6-10: GA 2-mark (indices 5..9)
     // Q11-35: Core 1-mark (indices 10..34)
     // Q36-65: Core 2-mark (indices 35..64)
-    final ga1 = base.sublist(0, 5)..shuffle();
-    final ga2 = base.sublist(5, 10)..shuffle();
-    final core1 = base.sublist(10, 35)..shuffle();
-    final core2 = base.sublist(35, 65)..shuffle();
+    final rand = Random(mockNumber * 49287 + 1337);
 
-    if (difficulty == 'Hard') {
-      // For Hard tier, apply conceptual variations to core questions
+    final ga1 = List<PYQ>.from(base.sublist(0, 5))..shuffle(rand);
+    final ga2 = List<PYQ>.from(base.sublist(5, 10))..shuffle(rand);
+    final core1 = List<PYQ>.from(base.sublist(10, 35))..shuffle(rand);
+    final core2 = List<PYQ>.from(base.sublist(35, 65))..shuffle(rand);
+
+    if (mockNumber >= 5 || difficulty == 'Hard') {
+      // For higher-numbered mocks, apply conceptual variations to core questions
       final transformedCore1 = core1.map(transformToMockQuestion).toList();
       final transformedCore2 = core2.map(transformToMockQuestion).toList();
       return [...ga1, ...ga2, ...transformedCore1, ...transformedCore2];
     }
 
-    // Medium: section-aware shuffled
     return [...ga1, ...ga2, ...core1, ...core2];
   }
 
@@ -741,7 +738,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
 
         // 3. FULL LENGTH MOCK TEST
         _buildTestOptionCard(
-          title: 'Full CBT Mock',
+          title: '10 Full CBT Mocks',
           duration: '180 Mins',
           questionsCount: '65 Questions',
           icon: Icons.quiz_rounded,
@@ -758,35 +755,109 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
   }
 
   void _showMockDifficultySheet(BuildContext context, AppProvider provider) {
+    const mockConfigs = [
+      {'title': 'Mock 01: Official Diagnostic Mock', 'desc': 'Official syllabus baseline • Balanced GATE exam pattern', 'isFree': true, 'tier': 'Standard'},
+      {'title': 'Mock 02: High-Yield Core Concept Mock', 'desc': 'Core engineering topics • Fundamental derivations', 'isFree': false, 'tier': 'Standard'},
+      {'title': 'Mock 03: Multi-Topic Integration Mock', 'desc': 'Cross-subject interlinked problems & applications', 'isFree': false, 'tier': 'Standard'},
+      {'title': 'Mock 04: Advanced Analytics & NAT Focus', 'desc': 'Calculation-heavy NAT questions & precision math', 'isFree': false, 'tier': 'Standard'},
+      {'title': 'Mock 05: Speed & Time-Management Drill', 'desc': '180-min exam endurance • Fast elimination tactics', 'isFree': false, 'tier': 'Advanced'},
+      {'title': 'Mock 06: Tricky MSQ Special Simulator', 'desc': 'Multi-select MSQ challenge with zero negative marking', 'isFree': false, 'tier': 'Advanced'},
+      {'title': 'Mock 07: AIR-100 Benchmark Mock', 'desc': 'Challenging high-rank differentiator questions', 'isFree': false, 'tier': 'Advanced'},
+      {'title': 'Mock 08: Deep Conceptual Traps Mock', 'desc': 'Common exam-hall pitfalls and distractors tested', 'isFree': false, 'tier': 'Hard'},
+      {'title': 'Mock 09: Previous Year Trend Predictor', 'desc': 'Curated questions based on recent 2024–2026 trends', 'isFree': false, 'tier': 'Hard'},
+      {'title': 'Mock 10: Final Grand Full CBT Simulation', 'desc': 'Full dress-rehearsal CBT mock before real exam', 'isFree': false, 'tier': 'Hard'},
+    ];
+
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: context.colorSurface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(24.0),
+      builder: (bottomSheetContext) {
+        return Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.82,
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 10),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Select Mock Difficulty',
-                style: AppTheme.poppinsBold(fontSize: 18, color: context.textColor),
+              // Header Drag Handle
+              Center(
+                child: Container(
+                  width: 44,
+                  height: 4.5,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: context.textSecondaryColor.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
               ),
-              const SizedBox(height: 6),
-              Text(
-                'Choose difficulty tier for 65-question simulation.',
-                style: TextStyle(color: context.textSecondaryColor, fontSize: 13),
+
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppTheme.accentMint.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.quiz_rounded, size: 20, color: AppTheme.accentMint),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '10 Full-Length CBT Mocks',
+                          style: GoogleFonts.outfit(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: context.textColor,
+                          ),
+                        ),
+                        Text(
+                          '65 Questions • 100 Marks • 180 Mins • TCS iON Engine',
+                          style: GoogleFonts.outfit(
+                            fontSize: 11.5,
+                            color: context.textSecondaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-              _buildDifficultyOption(context, provider, 'Easy', AppTheme.accentMint),
-              const SizedBox(height: 12),
-              _buildDifficultyOption(context, provider, 'Medium', AppTheme.accentGold),
-              const SizedBox(height: 12),
-              _buildDifficultyOption(context, provider, 'Hard', AppTheme.accentCoral),
               const SizedBox(height: 16),
+
+              Expanded(
+                child: ListView.separated(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: mockConfigs.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 10),
+                  itemBuilder: (ctx, index) {
+                    final cfg = mockConfigs[index];
+                    final isFree = cfg['isFree'] as bool;
+                    final isUnlocked = isFree || provider.isPro;
+                    final mockNumber = index + 1;
+
+                    return _buildMockItemCard(
+                      context: context,
+                      provider: provider,
+                      mockNumber: mockNumber,
+                      title: cfg['title'] as String,
+                      subtitle: cfg['desc'] as String,
+                      isUnlocked: isUnlocked,
+                      isFree: isFree,
+                      tier: cfg['tier'] as String,
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         );
@@ -794,72 +865,173 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     );
   }
 
-  Widget _buildDifficultyOption(BuildContext context, AppProvider provider, String difficulty, Color color) {
-    final isLocked = difficulty != 'Easy' && !provider.isPro;
+  Widget _buildMockItemCard({
+    required BuildContext context,
+    required AppProvider provider,
+    required int mockNumber,
+    required String title,
+    required String subtitle,
+    required bool isUnlocked,
+    required bool isFree,
+    required String tier,
+  }) {
+    final isDark = context.isDarkMode;
 
-    return NeuButton(
-      isPrimary: false,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      onPressed: () async {
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: () async {
         HapticFeedback.selectionClick();
         final messenger = ScaffoldMessenger.of(this.context);
         Navigator.pop(context);
-        if (isLocked) {
+
+        if (!isUnlocked) {
           final shouldProceed = await AdService().promptWatchRewardedAd(
             context: this.context,
-            perkTitle: '$difficulty Mock Test (Pro)',
+            perkTitle: 'Mock $mockNumber (GateX Pro)',
             perkDescription:
-                'Full-length $difficulty CBT Mocks are unlocked with GateX Pro Pass (₹199 one-time). Alternatively, watch a short 20s ad to unlock this mock attempt for free!',
+                'Full-length CBT Mock $mockNumber is unlocked with GateX Pro Pass (₹199 one-time). Alternatively, watch a 20s ad to unlock this mock attempt for free!',
           );
           if (!shouldProceed) return;
         }
 
         if (!mounted) return;
 
-        final questions = _generateFullMock(provider, difficulty);
+        final questions = _generateFullMock(provider, mockNumber: mockNumber);
         if (questions.isEmpty) {
           messenger.showSnackBar(
-            SnackBar(
-              content: Text('$difficulty mock questions are loading!'),
+            const SnackBar(
+              content: Text('Mock questions are loading!'),
               backgroundColor: AppTheme.primary,
             ),
           );
           return;
         }
-        _startTest(questions, const Duration(minutes: 180), 'App Full Mock - $difficulty');
+        _startTest(questions, const Duration(minutes: 180), 'Full CBT Mock $mockNumber - $title');
       },
-      child: Row(
-        children: [
-          Icon(Icons.bar_chart_rounded, color: color, size: 20),
-          const SizedBox(width: 14),
-          Text(
-            difficulty,
-            style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 15, color: color),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: context.colorSurfaceElevated,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isFree
+                ? AppTheme.accentMint.withValues(alpha: 0.3)
+                : (isUnlocked
+                    ? const Color(0xFFFFB300).withValues(alpha: 0.25)
+                    : (isDark ? Colors.white10 : const Color(0xFFE5E5EA))),
           ),
-          if (isLocked) ...[
-            const SizedBox(width: 8),
+        ),
+        child: Row(
+          children: [
+            // Number Circle
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
-                color: const Color(0xFFFFB300).withValues(alpha: 0.18),
-                borderRadius: BorderRadius.circular(6),
+                color: isFree
+                    ? AppTheme.accentMint.withValues(alpha: 0.15)
+                    : (isUnlocked
+                        ? const Color(0xFFFFB300).withValues(alpha: 0.15)
+                        : Colors.grey.withValues(alpha: 0.1)),
+                shape: BoxShape.circle,
               ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
+              child: Center(
+                child: Text(
+                  mockNumber.toString().padLeft(2, '0'),
+                  style: GoogleFonts.outfit(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: isFree
+                        ? AppTheme.accentMint
+                        : (isUnlocked ? const Color(0xFFFFB300) : Colors.grey),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.lock_outline_rounded, size: 11, color: AppTheme.secondary),
-                  SizedBox(width: 3),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: GoogleFonts.outfit(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13.5,
+                            color: context.textColor,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      if (isFree)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: AppTheme.accentMint.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            'FREE',
+                            style: GoogleFonts.outfit(
+                              color: AppTheme.accentMint,
+                              fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                      else if (!provider.isPro)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFB300).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.lock_rounded, size: 10, color: Color(0xFFFFB300)),
+                              SizedBox(width: 3),
+                              Text(
+                                'PRO',
+                                style: TextStyle(
+                                  color: Color(0xFFFFB300),
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 3),
                   Text(
-                    'PRO',
-                    style: TextStyle(color: AppTheme.secondary, fontSize: 9.5, fontWeight: FontWeight.bold),
+                    subtitle,
+                    style: GoogleFonts.outfit(
+                      fontSize: 11,
+                      color: context.textSecondaryColor,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
+            const SizedBox(width: 8),
+
+            Icon(
+              Icons.chevron_right_rounded,
+              color: context.textSecondaryColor,
+              size: 20,
+            ),
           ],
-          const Spacer(),
-          Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor, size: 20),
-        ],
+        ),
       ),
     );
   }

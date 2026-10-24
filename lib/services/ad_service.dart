@@ -23,27 +23,44 @@ class AdService {
 
   void setAdSuspended(bool suspended) {
     _isAdSuspended = suspended;
+    if (suspended) {
+      _interstitialAd?.dispose();
+      _interstitialAd = null;
+      _rewardedAd?.dispose();
+      _rewardedAd = null;
+      debugPrint("AdService: All ads suspended and preloaded instances disposed.");
+    }
   }
 
-  // --- AD UNIT IDs ---
+  // --- AD UNIT IDs (Auto-switches to official test IDs in debug mode to prevent policy strikes) ---
   
   static String get appOpenAdUnitId {
-    return ''; // Add Production ID here if needed later
+    if (!Platform.isAndroid) return '';
+    return kDebugMode ? 'ca-app-pub-3940256099942544/9257395921' : '';
   }
 
   static String get interstitialAdUnitId {
-    return Platform.isAndroid ? 'ca-app-pub-8510502760785545/9044635553' : '';
+    if (!Platform.isAndroid) return '';
+    return kDebugMode
+        ? 'ca-app-pub-3940256099942544/1033173712' // Google Official Test ID
+        : 'ca-app-pub-8510502760785545/9044635553'; // Production Unit ID
   }
 
   static String get rewardedAdUnitId {
-    return Platform.isAndroid ? 'ca-app-pub-8510502760785545/5954413688' : '';
+    if (!Platform.isAndroid) return '';
+    return kDebugMode
+        ? 'ca-app-pub-3940256099942544/5224354917' // Google Official Test ID
+        : 'ca-app-pub-8510502760785545/5954413688'; // Production Unit ID
   }
 
   static String get nativeAdUnitId {
-    return Platform.isAndroid ? 'ca-app-pub-8510502760785545/6098115426' : '';
+    if (!Platform.isAndroid) return '';
+    return kDebugMode
+        ? 'ca-app-pub-3940256099942544/2247696110' // Google Official Test ID
+        : 'ca-app-pub-8510502760785545/6098115426'; // Production Unit ID
   }
 
-  Future<void> init() async {
+  Future<void> init({List<String>? additionalTestDevices}) async {
     if (_initialized) return;
     if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) {
       _initialized = true;
@@ -53,9 +70,20 @@ class AdService {
 
     try {
       await MobileAds.instance.initialize();
+      
+      // Configure test device identifiers to protect against invalid traffic violations
+      final testDevices = <String>['EMULATOR'];
+      if (additionalTestDevices != null) {
+        testDevices.addAll(additionalTestDevices);
+      }
+      final requestConfig = RequestConfiguration(testDeviceIds: testDevices);
+      await MobileAds.instance.updateRequestConfiguration(requestConfig);
+
       _initialized = true;
-      loadInterstitialAd();
-      loadRewardedAd();
+      if (!_isAdSuspended) {
+        loadInterstitialAd();
+        loadRewardedAd();
+      }
     } catch (e) {
       debugPrint("Error initializing MobileAds: $e");
     }
@@ -64,7 +92,7 @@ class AdService {
   // --- INTERSTITIAL AD ---
 
   void loadInterstitialAd() {
-    if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) return;
+    if (_isAdSuspended || kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) return;
 
     InterstitialAd.load(
       adUnitId: interstitialAdUnitId,
@@ -132,7 +160,7 @@ class AdService {
   // --- REWARDED AD ---
 
   void loadRewardedAd() {
-    if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) return;
+    if (_isAdSuspended || kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) return;
 
     RewardedAd.load(
       adUnitId: rewardedAdUnitId,
@@ -234,7 +262,7 @@ class AdService {
   // --- NATIVE AD ---
 
   NativeAd? getNativeAd({required VoidCallback onAdLoaded, VoidCallback? onAdFailed}) {
-    if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) return null;
+    if (_isAdSuspended || kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) return null;
 
     final nativeAd = NativeAd(
       adUnitId: nativeAdUnitId,
