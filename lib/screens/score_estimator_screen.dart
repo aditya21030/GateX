@@ -507,6 +507,7 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
 
     if (!provider.isPro) {
       AdService().showInterstitialAd(
+        enforceCooldown: true,
         onDismissed: () {
           computeAndShow();
         },

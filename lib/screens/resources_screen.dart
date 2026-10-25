@@ -413,6 +413,7 @@ class NoteDetailScreen extends StatefulWidget {
 class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isExporting = false;
+  bool _isAdUnlocked = false;
 
   @override
   void initState() {
@@ -429,7 +430,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
   Future<void> _handlePdfExport(BuildContext context, AppProvider provider) async {
     HapticFeedback.selectionClick();
     final messenger = ScaffoldMessenger.of(context);
-    final isPro = provider.isProForBranch(widget.note.branch);
+    final isPro = provider.isProForBranch(widget.note.branch) || _isAdUnlocked;
 
     if (!isPro) {
       final shouldProceed = await AdService().promptWatchRewardedAd(
@@ -439,6 +440,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
             'Full-color, printable PDFs with step-by-step derivations and GATE traps are included in GateX Pro Pass (₹299 one-time - Valid till 31st March 2027). Alternatively, watch a short 20s ad to export this subject\'s PDF for free!',
       );
       if (!shouldProceed) return;
+      if (mounted) setState(() => _isAdUnlocked = true);
     }
 
     if (!mounted) return;
@@ -492,7 +494,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AppProvider>(context);
-    final isPro = provider.isProForBranch(widget.note.branch);
+    final isPro = provider.isProForBranch(widget.note.branch) || _isAdUnlocked;
 
     return Scaffold(
       backgroundColor: context.scaffoldBackground,
@@ -828,7 +830,8 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
   }
 
   Widget _buildProTab(BuildContext context, AppProvider provider, bool isPro) {
-    if (!isPro) {
+    final hasAccess = isPro || _isAdUnlocked;
+    if (!hasAccess) {
       return Padding(
         padding: const EdgeInsets.all(22.0),
         child: Column(
@@ -885,7 +888,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
                 );
                 if (success && mounted) {
                   setState(() {
-                    // Temporarily unlocked
+                    _isAdUnlocked = true;
                   });
                 }
               },

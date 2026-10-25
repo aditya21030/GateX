@@ -123,10 +123,17 @@ class AdService {
     }
   }
 
-  void showInterstitialAd({VoidCallback? onDismissed}) {
+  void showInterstitialAd({VoidCallback? onDismissed, bool enforceCooldown = false}) {
     if (_isAdSuspended) {
       onDismissed?.call();
       return;
+    }
+    if (enforceCooldown && _lastAdShownTime != null) {
+      final diff = DateTime.now().difference(_lastAdShownTime!).inMinutes;
+      if (diff < 5) {
+        onDismissed?.call();
+        return;
+      }
     }
     if (_interstitialAd == null) {
       loadInterstitialAd();

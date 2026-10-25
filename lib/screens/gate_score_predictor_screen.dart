@@ -414,6 +414,7 @@ class _GateScorePredictorScreenState extends State<GateScorePredictorScreen> {
 
     if (!provider.isPro) {
       AdService().showInterstitialAd(
+        enforceCooldown: true,
         onDismissed: () {
           computeAndShow();
         },

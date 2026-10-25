@@ -1761,7 +1761,7 @@ class _NativeAdWrapperState extends State<_NativeAdWrapper> {
   @override
   Widget build(BuildContext context) {
     final isPro = Provider.of<AppProvider>(context).isPro;
-    if (isPro || _nativeAd == null || _isAdFailed) return const SizedBox.shrink();
+    if (isPro || _nativeAd == null || _isAdFailed || !_isAdLoaded) return const SizedBox.shrink();
 
     return NeuContainer(
       margin: const EdgeInsets.only(bottom: 14),
@@ -1770,15 +1770,11 @@ class _NativeAdWrapperState extends State<_NativeAdWrapper> {
       child: Container(
         constraints: const BoxConstraints(
           minWidth: 320,
-          minHeight: 320,
+          minHeight: 300,
           maxWidth: 400,
-          maxHeight: 400,
+          maxHeight: 380,
         ),
-        child: _isAdLoaded
-            ? AdWidget(ad: _nativeAd!)
-            : const Center(
-                child: CircularProgressIndicator(color: AppTheme.accentPurple),
-              ),
+        child: AdWidget(ad: _nativeAd!),
       ),
     );
   }

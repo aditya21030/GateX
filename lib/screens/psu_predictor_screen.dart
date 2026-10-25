@@ -438,6 +438,7 @@ class _PsuPredictorScreenState extends State<PsuPredictorScreen> {
 
     if (!provider.isPro) {
       AdService().showInterstitialAd(
+        enforceCooldown: true,
         onDismissed: () {
           finish();
         },
