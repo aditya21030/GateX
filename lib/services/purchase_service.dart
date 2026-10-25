@@ -251,42 +251,58 @@ class PurchaseService with ChangeNotifier {
     try {
       if (RevenueCatConfig.isConfigured) {
         final package = findPackageForPlan(planId);
-        if (package != null) {
-          try {
-            final purchaseResult = await Purchases.purchasePackage(package);
-            final isDualActive = purchaseResult.entitlements.all[RevenueCatConfig.entitlementDualPro]?.isActive ?? false;
-            final isSoloActive = purchaseResult.entitlements.all[RevenueCatConfig.entitlementPro]?.isActive ?? false;
+        if (package == null) {
+          debugPrint('PurchaseService: Package not found in current offering for plan: $planId');
+          _isLoading = false;
+          notifyListeners();
+          return false;
+        }
 
-            if (isDualActive || isSoloActive || isDual) {
-              _isPro = true;
-              if (isDual || isDualActive) {
-                _isDualPro = true;
-                _planType = 'DUAL';
-              } else {
-                _isDualPro = false;
-                _planType = 'SOLO';
-                _soloBranch = normalizedBranch;
-              }
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setBool(proPrefKey, true);
-              await prefs.setString(proPlanTypeKey, _planType);
-              await prefs.setString(proSoloBranchKey, _soloBranch);
-              AdService().setAdSuspended(true);
-              await _syncProToFirebase(planId, soloBranch: _soloBranch);
-              _isLoading = false;
-              notifyListeners();
-              return true;
+        try {
+          final purchaseResult = await Purchases.purchasePackage(package);
+          final isDualActive = purchaseResult.entitlements.all[RevenueCatConfig.entitlementDualPro]?.isActive ?? false;
+          final isSoloActive = purchaseResult.entitlements.all[RevenueCatConfig.entitlementPro]?.isActive ?? false;
+
+          // STRICT CHECK: Entitlement MUST be active in RevenueCat
+          if (isDualActive || isSoloActive) {
+            _isPro = true;
+            _isDualPro = isDualActive || isDual;
+            _planType = _isDualPro ? 'DUAL' : 'SOLO';
+            if (!_isDualPro) {
+              _soloBranch = normalizedBranch;
             }
-          } catch (e) {
-            debugPrint('Purchases.purchasePackage failed: $e');
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setBool(proPrefKey, true);
+            await prefs.setString(proPlanTypeKey, _planType);
+            await prefs.setString(proSoloBranchKey, _soloBranch);
+            AdService().setAdSuspended(true);
+            await _syncProToFirebase(planId, soloBranch: _soloBranch);
+            _isLoading = false;
+            notifyListeners();
+            return true;
+          } else {
+            debugPrint('PurchaseService: Purchase finished but no active entitlement returned from store.');
             _isLoading = false;
             notifyListeners();
             return false;
           }
+        } catch (e) {
+          debugPrint('Purchases.purchasePackage cancelled or failed: $e');
+          _isLoading = false;
+          notifyListeners();
+          return false;
         }
       }
 
-      // Development / Direct sandbox fallback (when API key is placeholder or local testing)
+      // PRODUCTION PROTECTION: Release builds NEVER allow mock/free purchases
+      if (!kDebugMode) {
+        debugPrint('PurchaseService: Purchase denied in release mode because RevenueCat is unconfigured.');
+        _isLoading = false;
+        notifyListeners();
+        return false;
+      }
+
+      // Local Debug simulator ONLY (during local flutter run)
       await Future.delayed(const Duration(milliseconds: 1200));
 
       _isPro = true;
