@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/models.dart';
+import '../models/note_model.dart';
 import '../services/storage_service.dart';
 import '../services/cloud_sync_service.dart';
 import '../services/notification_service.dart';
@@ -75,6 +76,37 @@ class AppProvider with ChangeNotifier {
 
   String? _userAvatarId;
   String? get userAvatarId => _userAvatarId;
+
+  // Live Remote Announcement Banner
+  Map<String, dynamic>? _liveAnnouncement;
+  Map<String, dynamic>? get liveAnnouncement => _liveAnnouncement;
+
+  bool isAnnouncementDismissed(String id) {
+    return _storage.prefs.getBool('announcement_dismissed_$id') ?? false;
+  }
+
+  void dismissAnnouncement(String id) {
+    _storage.prefs.setBool('announcement_dismissed_$id', true);
+    notifyListeners();
+  }
+
+  Future<void> syncLiveAnnouncement() async {
+    try {
+      final ann = await CloudSyncService().fetchLiveAnnouncement();
+      if (ann != null) {
+        _liveAnnouncement = ann;
+        notifyListeners();
+      }
+    } catch (e) {
+      print('syncLiveAnnouncement error: $e');
+    }
+  }
+
+  /// Resolves note with OTA dynamic updates if available
+  SubjectNote getResolvedNote(SubjectNote bundledNote) {
+    final dynamicNote = _storage.getDynamicNote(bundledNote.id);
+    return dynamicNote ?? bundledNote;
+  }
 
   Future<void> setUserAvatarId(String? id) async {
     _userAvatarId = id;
@@ -210,6 +242,8 @@ class AppProvider with ChangeNotifier {
     // Fetch global data in background (do not await)
     syncGlobalData();
     CloudSyncService().syncDynamicMocks(_storage);
+    CloudSyncService().syncDynamicNotes(_storage);
+    syncLiveAnnouncement();
   }
 
   Future<void> _loadData() async {

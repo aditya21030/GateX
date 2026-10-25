@@ -156,6 +156,51 @@ class CloudSyncService {
     }
   }
 
+  /// Syncs dynamic subject notes & formula sheets from Firestore (OTA)
+  Future<void> syncDynamicNotes(StorageService storage) async {
+    try {
+      // 1. Check notes version metadata (Only 1 document read!)
+      final metaSnap = await _firestore.collection('metadata').doc('notes_version').get();
+      if (!metaSnap.exists || metaSnap.data() == null) return;
+
+      final data = metaSnap.data()!;
+      final int remoteVersion = data['version'] is int
+          ? data['version']
+          : int.tryParse(data['version'].toString()) ?? 0;
+      final int localVersion = storage.prefs.getInt('local_notes_version') ?? 0;
+
+      if (remoteVersion <= localVersion) return;
+
+      print('CloudSyncService: Found new notes & formulas version (remote: $remoteVersion, local: $localVersion). Syncing OTA notes...');
+
+      // 2. Fetch updated subject notes from /notes collection
+      final notesSnap = await _firestore.collection('notes').get();
+      for (var doc in notesSnap.docs) {
+        final noteData = doc.data();
+        await storage.dynamicNotesBox.put(doc.id, noteData);
+      }
+
+      // 3. Atomically update local version
+      await storage.prefs.setInt('local_notes_version', remoteVersion);
+      print('CloudSyncService: Successfully synced dynamic notes to version $remoteVersion.');
+    } catch (e) {
+      print('CloudSyncService syncDynamicNotes offline/error: $e');
+    }
+  }
+
+  /// Fetches live home screen announcement from Firestore
+  Future<Map<String, dynamic>?> fetchLiveAnnouncement() async {
+    try {
+      final doc = await _firestore.collection('metadata').doc('announcement').get();
+      if (doc.exists && doc.data() != null) {
+        return doc.data();
+      }
+    } catch (e) {
+      print('CloudSyncService fetchLiveAnnouncement error: $e');
+    }
+    return null;
+  }
+
   /// Fetch all global PYQs and Mock Tests from Firestore
   Future<Map<String, List<Map<String, dynamic>>>> fetchGlobalData() async {
     final Map<String, List<Map<String, dynamic>>> result = {

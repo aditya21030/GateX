@@ -9,6 +9,9 @@ import '../widgets/neu_widgets.dart';
 import 'pro_upgrade_screen.dart';
 import 'score_estimator_screen.dart';
 import 'psu_predictor_screen.dart';
+import 'gate_score_predictor_screen.dart';
+import 'mock_tracker_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'mock_test_runner_screen.dart';
 import '../models/models.dart';
 
@@ -159,6 +162,9 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // LIVE OTA ANNOUNCEMENT BANNER
+                _buildLiveAnnouncementBanner(context, provider),
+
                 // 1. NEUMORPHIC STREAK & WEEKDAY HERO
                 _buildStreakHero(context, provider),
                 const SizedBox(height: 16),
@@ -189,6 +195,164 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  // LIVE OTA ANNOUNCEMENT BANNER
+  Widget _buildLiveAnnouncementBanner(BuildContext context, AppProvider provider) {
+    final ann = provider.liveAnnouncement;
+    if (ann == null || ann['enabled'] != true) return const SizedBox.shrink();
+
+    final String id = ann['id']?.toString() ?? 'ann_default';
+    if (provider.isAnnouncementDismissed(id)) return const SizedBox.shrink();
+
+    final String title = ann['title']?.toString() ?? 'Announcement';
+    final String message = ann['message']?.toString() ?? '';
+    final String type = ann['type']?.toString().toLowerCase() ?? 'info';
+    final String? actionText = ann['actionText']?.toString();
+    final String? actionUrl = ann['actionUrl']?.toString();
+
+    // Type styling
+    Color accentColor;
+    IconData icon;
+    switch (type) {
+      case 'urgent':
+        accentColor = AppTheme.accentCoral;
+        icon = Icons.error_outline_rounded;
+        break;
+      case 'pro_sale':
+        accentColor = const Color(0xFFFFB300);
+        icon = Icons.workspace_premium_rounded;
+        break;
+      case 'celebration':
+        accentColor = AppTheme.accentPurple;
+        icon = Icons.celebration_rounded;
+        break;
+      case 'info':
+      default:
+        accentColor = const Color(0xFF00D2FF);
+        icon = Icons.campaign_rounded;
+        break;
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.fromLTRB(14, 12, 10, 12),
+      decoration: BoxDecoration(
+        color: context.isDarkMode
+            ? accentColor.withValues(alpha: 0.12)
+            : accentColor.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: accentColor.withValues(alpha: 0.45),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: accentColor.withValues(alpha: 0.15),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(7),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, size: 18, color: accentColor),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  title,
+                  style: GoogleFonts.outfit(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: context.textColor,
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.close_rounded, size: 18),
+                color: context.textSecondaryColor,
+                visualDensity: VisualDensity.compact,
+                tooltip: 'Dismiss',
+                onPressed: () {
+                  HapticFeedback.selectionClick();
+                  provider.dismissAnnouncement(id);
+                },
+              ),
+            ],
+          ),
+          if (message.isNotEmpty) ...[
+            Padding(
+              padding: const EdgeInsets.only(left: 4, right: 6, top: 4, bottom: 8),
+              child: Text(
+                message,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 13,
+                  color: context.textSecondaryColor,
+                  height: 1.45,
+                ),
+              ),
+            ),
+          ],
+          if (actionText != null && actionText.isNotEmpty) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () async {
+                    HapticFeedback.selectionClick();
+                    if (actionUrl != null) {
+                      if (actionUrl == 'route:pro') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const ProUpgradeScreen()));
+                      } else if (actionUrl == 'route:predictor') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const GateScorePredictorScreen()));
+                      } else if (actionUrl == 'route:mocks') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const MockTrackerScreen()));
+                      } else if (actionUrl == 'route:psu') {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const PsuPredictorScreen()));
+                      } else if (actionUrl.startsWith('http')) {
+                        final uri = Uri.parse(actionUrl);
+                        if (await canLaunchUrl(uri)) {
+                          await launchUrl(uri, mode: LaunchMode.externalApplication);
+                        }
+                      }
+                    }
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: accentColor.withValues(alpha: 0.2),
+                    foregroundColor: accentColor,
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        actionText,
+                        style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(Icons.arrow_forward_rounded, size: 14),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
       ),
     );
   }

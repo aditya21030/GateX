@@ -92,7 +92,8 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
     final provider = Provider.of<AppProvider>(context);
     final isPro = provider.isPro;
 
-    final filteredNotes = allSubjectNotes.where((note) {
+    final resolvedNotes = allSubjectNotes.map(provider.getResolvedNote).toList();
+    final filteredNotes = resolvedNotes.where((note) {
       final matchesBranch = _selectedFilter == 'ALL' || note.branch == _selectedFilter;
       final q = _searchQuery.trim().toLowerCase();
       if (q.isEmpty) return matchesBranch;

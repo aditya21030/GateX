@@ -1,6 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/models.dart';
+import '../models/note_model.dart';
 import 'cloud_sync_service.dart';
 import '../data/sample_pyqs.dart';
 import '../data/csit_sample_pyqs.dart';
@@ -21,6 +22,7 @@ class StorageService {
   late Box _revisionQueueBox;
   late Box _studyPlanBox;
   late Box _dynamicMockBox;
+  late Box _dynamicNotesBox;
 
                   // Syllabus mapping
   static final Map<String, List<String>> syllabusData = {
@@ -271,6 +273,7 @@ class StorageService {
   Box get revisionQueueBox => _revisionQueueBox;
   Box get studyPlanBox => _studyPlanBox;
   Box get dynamicMockBox => _dynamicMockBox;
+  Box get dynamicNotesBox => _dynamicNotesBox;
   SharedPreferences get prefs => _prefs;
 
   Future<void> init() async {
@@ -285,6 +288,7 @@ class StorageService {
     _revisionQueueBox = await Hive.openBox('revision_queue_box');
     _studyPlanBox = await Hive.openBox('study_plan_box');
     _dynamicMockBox = await Hive.openBox('dynamic_mock_box');
+    _dynamicNotesBox = await Hive.openBox('dynamic_notes_box');
 
     // SharedPreferences
     _prefs = await SharedPreferences.getInstance();
@@ -577,6 +581,30 @@ class StorageService {
     }
   }
 
+  /// Retrieve dynamic subject note/formula sheet cached from cloud
+  SubjectNote? getDynamicNote(String noteId) {
+    try {
+      if (_dynamicNotesBox.containsKey(noteId)) {
+        final raw = _dynamicNotesBox.get(noteId);
+        if (raw is Map) {
+          return SubjectNote.fromMap(Map<String, dynamic>.from(raw));
+        }
+      }
+    } catch (e) {
+      print('getDynamicNote error: $e');
+    }
+    return null;
+  }
+
+  /// Save dynamic subject note to Hive cache
+  Future<void> saveDynamicNote(SubjectNote note) async {
+    try {
+      await _dynamicNotesBox.put(note.id, note.toMap());
+    } catch (e) {
+      print('saveDynamicNote error: $e');
+    }
+  }
+
   Future<void> resetAllData() async {
     await _topicStatusBox.clear();
     await _pyqBox.clear();
@@ -585,6 +613,7 @@ class StorageService {
     await _revisionQueueBox.clear();
     await _studyPlanBox.clear();
     await _dynamicMockBox.clear();
+    await _dynamicNotesBox.clear();
     await _prefs.clear();
     await _seedInitialData();
     await updateStreak();
