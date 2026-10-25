@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
-import '../providers/app_provider.dart';
-import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/neu_widgets.dart';
 
@@ -19,29 +16,6 @@ class _RankingScreenState extends State<RankingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<AppProvider>(context);
-    final authProvider = Provider.of<AuthProvider>(context);
-
-    final pyqs = provider.pyqs;
-    final int solvedCount = pyqs.where((p) => p.isCompleted).length;
-    final int totalPyqs = pyqs.isNotEmpty ? pyqs.length : 1;
-
-    int correctCount = 0;
-    for (var p in pyqs.where((p) => p.isCompleted && p.userAnswer != null)) {
-      if (p.isAnswerCorrect(p.userAnswer)) correctCount++;
-    }
-    final double accuracy = solvedCount > 0 ? (correctCount / solvedCount) * 100 : 0.0;
-
-    final mockLogs = provider.mockLogs;
-    double avgMockScore = 0.0;
-    if (mockLogs.isNotEmpty) {
-      avgMockScore = mockLogs.map((m) => m.score).reduce((a, b) => a + b) / mockLogs.length;
-    }
-
-    final userName = authProvider.isLoggedIn && authProvider.userName.isNotEmpty
-        ? authProvider.userName
-        : 'GATE Aspirant';
-
     return Scaffold(
       backgroundColor: context.colorBackground,
       appBar: AppBar(
@@ -52,7 +26,7 @@ class _RankingScreenState extends State<RankingScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'All-India Leaderboard',
+          'GateX Leaderboard',
           style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 18, color: context.textColor),
         ),
       ),
@@ -274,73 +248,7 @@ class _RankingScreenState extends State<RankingScreen> {
                 title: 'Study Streak Hall of Fame',
                 subtitle: 'Showcase consistency badges, problem-solving streaks, and revision milestones.',
               ),
-              const SizedBox(height: 22),
 
-              // User's Current Preparation Stats
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: Text(
-                  'YOUR PREPARATION PULSE',
-                  style: GoogleFonts.outfit(
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.1,
-                    color: context.textSecondaryColor,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              NeuContainer(
-                borderRadius: 20,
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            color: AppTheme.accentPurple.withValues(alpha: 0.15),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(Icons.person_rounded, color: AppTheme.accentPurple, size: 20),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                userName,
-                                style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 14.5, color: context.textColor),
-                              ),
-                              Text(
-                                '${provider.activeExam ?? "DA"} Aspirant • GATE 2026',
-                                style: GoogleFonts.outfit(fontSize: 11.5, color: context.textSecondaryColor),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
-                    Divider(color: context.isDarkMode ? Colors.white10 : Colors.black12, height: 1),
-                    const SizedBox(height: 14),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildPulseTile(context, 'Solved PYQs', '$solvedCount / $totalPyqs', AppTheme.accentPurple),
-                        _buildPulseTile(context, 'Active Streak', '${provider.streak} Days 🔥', AppTheme.accentGold),
-                        _buildPulseTile(context, 'Accuracy', '${accuracy.toStringAsFixed(0)}%', AppTheme.accentMint),
-                        _buildPulseTile(context, 'Mock Avg', avgMockScore > 0 ? avgMockScore.toStringAsFixed(1) : 'N/A', AppTheme.accentCoral),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
               const SizedBox(height: 24),
             ],
           ),
@@ -390,19 +298,5 @@ class _RankingScreenState extends State<RankingScreen> {
     );
   }
 
-  Widget _buildPulseTile(BuildContext context, String label, String value, Color color) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: GoogleFonts.outfit(fontSize: 15, fontWeight: FontWeight.bold, color: color),
-        ),
-        const SizedBox(height: 3),
-        Text(
-          label,
-          style: GoogleFonts.outfit(fontSize: 10.5, color: context.textSecondaryColor, fontWeight: FontWeight.w500),
-        ),
-      ],
-    );
-  }
+
 }

@@ -73,6 +73,19 @@ class AppProvider with ChangeNotifier {
   bool _notificationsEnabled = true;
   bool get notificationsEnabled => _notificationsEnabled;
 
+  String? _userAvatarId;
+  String? get userAvatarId => _userAvatarId;
+
+  Future<void> setUserAvatarId(String? id) async {
+    _userAvatarId = id;
+    if (id == null) {
+      await _storage.prefs.remove('user_avatar_id');
+    } else {
+      await _storage.prefs.setString('user_avatar_id', id);
+    }
+    notifyListeners();
+  }
+
   // Theme Selection
   ThemeMode _themeMode = ThemeMode.dark;
   ThemeMode get themeMode => _themeMode;
@@ -206,6 +219,7 @@ class AppProvider with ChangeNotifier {
     _selectedExam = _storage.prefs.getString('selected_exam');
     _activeExam = _storage.prefs.getString('active_exam') ?? (_selectedExam == 'BOTH' ? 'DA' : _selectedExam);
     _isSprintMode = _storage.prefs.getBool('is_sprint_mode') ?? true;
+    _userAvatarId = _storage.prefs.getString('user_avatar_id');
 
     final themeName = _storage.prefs.getString('theme_mode');
     if (themeName != null) {

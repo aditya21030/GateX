@@ -555,42 +555,70 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
       children: [
         ...widget.note.freeSections.map((sec) {
           return NeuContainer(
-            margin: const EdgeInsets.only(bottom: 16),
-            borderRadius: 18,
-            padding: const EdgeInsets.all(16),
+            margin: const EdgeInsets.only(bottom: 18),
+            borderRadius: 20,
+            padding: const EdgeInsets.all(18),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   sec.title,
                   style: GoogleFonts.outfit(
-                    fontSize: 15,
+                    fontSize: 16.5,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFFFF8522),
                   ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
                 Text(
                   sec.summary,
-                  style: TextStyle(fontSize: 12.5, color: context.textColor, height: 1.4),
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    color: context.textColor,
+                    height: 1.55,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  'Key Principles & Rules:',
-                  style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.bold, color: context.textSecondaryColor),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    const Icon(Icons.check_circle_outline_rounded, size: 15, color: Color(0xFFFF8522)),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Key Principles & Core Rules',
+                      style: GoogleFonts.outfit(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.bold,
+                        color: context.textSecondaryColor,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
                 ...sec.keyPoints.map((kp) {
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 5),
+                    padding: const EdgeInsets.only(bottom: 8),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('• ', style: TextStyle(color: Color(0xFFFF8522), fontWeight: FontWeight.bold)),
+                        Container(
+                          margin: const EdgeInsets.only(top: 7, right: 10),
+                          width: 6,
+                          height: 6,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFFF8522),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
                         Expanded(
                           child: Text(
                             kp,
-                            style: TextStyle(fontSize: 12, color: context.textColor, height: 1.35),
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 13.5,
+                              color: context.textColor,
+                              height: 1.55,
+                            ),
                           ),
                         ),
                       ],
@@ -598,15 +626,16 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
                   );
                 }),
                 if (sec.coreFormulas.isNotEmpty) ...[
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: context.isDarkMode ? Colors.black.withValues(alpha: 0.25) : const Color(0xFFF7F8FC),
-                      borderRadius: BorderRadius.circular(12),
+                      color: context.isDarkMode ? const Color(0xFF14121A) : const Color(0xFFF6F8FC),
+                      borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: context.isDarkMode ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.06),
+                        color: context.isDarkMode ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.07),
+                        width: 1,
                       ),
                     ),
                     child: Column(
@@ -614,40 +643,58 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.functions_rounded, size: 14, color: Color(0xFFFF8522)),
+                            const Icon(Icons.functions_rounded, size: 16, color: Color(0xFFFF8522)),
                             const SizedBox(width: 6),
                             Text(
-                              'Essential Formulas:',
-                              style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFFFF8522)),
+                              'Essential GATE Formulas',
+                              style: GoogleFonts.outfit(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: const Color(0xFFFF8522),
+                                letterSpacing: 0.4,
+                              ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 10),
                         ...sec.coreFormulas.map((cf) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 4),
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: context.isDarkMode ? Colors.black.withValues(alpha: 0.35) : Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: context.isDarkMode ? Colors.white10 : Colors.black12,
+                                width: 0.8,
+                              ),
+                            ),
                             child: Row(
                               children: [
                                 Expanded(
-                                  child: Text(
+                                  child: SelectableText(
                                     cf,
-                                    style: GoogleFonts.spaceMono(
-                                      fontSize: 11,
+                                    style: GoogleFonts.jetBrainsMono(
+                                      fontSize: 13,
                                       fontWeight: FontWeight.w600,
                                       color: context.textColor,
+                                      height: 1.4,
                                     ),
                                   ),
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.copy_rounded, size: 14),
+                                  icon: const Icon(Icons.copy_rounded, size: 15),
                                   color: context.textSecondaryColor,
                                   visualDensity: VisualDensity.compact,
+                                  tooltip: 'Copy formula',
                                   onPressed: () {
+                                    HapticFeedback.selectionClick();
                                     Clipboard.setData(ClipboardData(text: cf));
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text('Formula copied to clipboard!'),
                                         duration: Duration(seconds: 1),
+                                        behavior: SnackBarBehavior.floating,
                                       ),
                                     );
                                   },
@@ -671,31 +718,32 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
   Widget _buildProTab(BuildContext context, AppProvider provider, bool isPro) {
     if (!isPro) {
       return Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(22.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 64,
-              height: 64,
+              width: 70,
+              height: 70,
               decoration: BoxDecoration(
                 color: const Color(0xFFFFB300).withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(22),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: const Color(0xFFFFB300).withValues(alpha: 0.3), width: 1.2),
               ),
-              child: const Icon(Icons.workspace_premium_rounded, size: 36, color: Color(0xFFF59E0B)),
+              child: const Icon(Icons.workspace_premium_rounded, size: 38, color: Color(0xFFF59E0B)),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
             Text(
-              'Unlock Pro Notes & PDF',
-              style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: context.textColor),
+              'Unlock Pro Notes & PDF Export',
+              style: GoogleFonts.outfit(fontSize: 19, fontWeight: FontWeight.bold, color: context.textColor),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
-              'Pro notes include step-by-step mathematical proofs, critical GATE exam trick traps, solved numerical benchmarks, and printable PDF export.',
+              'Pro notes include in-depth theory proofs, critical GATE exam traps, solved numerical benchmarks, and printable PDF export.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12.5, color: context.textSecondaryColor, height: 1.4),
+              style: GoogleFonts.plusJakartaSans(fontSize: 13.5, color: context.textSecondaryColor, height: 1.5),
             ),
-            const SizedBox(height: 22),
+            const SizedBox(height: 24),
             NeuButton(
               isPrimary: true,
               gradient: AppTheme.flameGradient,
@@ -705,16 +753,16 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.bolt_rounded, color: Colors.white, size: 18),
-                  SizedBox(width: 8),
+                  const Icon(Icons.bolt_rounded, color: Colors.white, size: 18),
+                  const SizedBox(width: 8),
                   Text(
                     provider.isPro ? 'Upgrade to Dual Prep Pass (₹200)' : 'Get GateX Pro Pass (₹299)',
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13.5),
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             TextButton.icon(
               onPressed: () async {
                 final success = await AdService().promptWatchRewardedAd(
@@ -740,7 +788,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
     }
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 100),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 110),
       physics: const BouncingScrollPhysics(),
       children: [
         ...widget.note.proSections.asMap().entries.map((entry) {
@@ -748,9 +796,9 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
           final proSec = entry.value;
 
           return NeuContainer(
-            margin: const EdgeInsets.only(bottom: 20),
-            borderRadius: 18,
-            padding: const EdgeInsets.all(16),
+            margin: const EdgeInsets.only(bottom: 22),
+            borderRadius: 22,
+            padding: const EdgeInsets.all(18),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -759,35 +807,35 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                       decoration: BoxDecoration(
                         color: const Color(0xFFFF8522).withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: const Color(0xFFFF8522).withValues(alpha: 0.4), width: 0.8),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: const Color(0xFFFF8522).withValues(alpha: 0.45), width: 1),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.workspace_premium_rounded, size: 12, color: Color(0xFFFF8522)),
-                          const SizedBox(width: 4),
+                          const Icon(Icons.workspace_premium_rounded, size: 13, color: Color(0xFFFF8522)),
+                          const SizedBox(width: 5),
                           Text(
                             'PRO SECTION ${index + 1}',
-                            style: const TextStyle(
-                              fontSize: 9.5,
+                            style: GoogleFonts.outfit(
+                              fontSize: 10,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFFFF8522),
-                              letterSpacing: 0.5,
+                              color: const Color(0xFFFF8522),
+                              letterSpacing: 0.6,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         proSec.title,
                         style: GoogleFonts.outfit(
-                          fontSize: 15,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: context.textColor,
                         ),
@@ -795,197 +843,45 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
                 Divider(height: 1, color: context.colorBorder),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
 
                 // 2. In-Depth Theory & Mathematical Proofs
                 Row(
                   children: [
-                    const Icon(Icons.auto_stories_rounded, size: 15, color: Color(0xFFFF8522)),
-                    const SizedBox(width: 6),
+                    const Icon(Icons.auto_stories_rounded, size: 16, color: Color(0xFFFF8522)),
+                    const SizedBox(width: 7),
                     Text(
-                      'Deep Theory & Proof Intuition',
+                      'Deep Theory & Mathematical Proofs',
                       style: GoogleFonts.outfit(
-                        fontSize: 12,
+                        fontSize: 13,
                         fontWeight: FontWeight.bold,
                         color: context.textSecondaryColor,
+                        letterSpacing: 0.3,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 6),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: context.isDarkMode ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.02),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: context.colorBorder),
-                  ),
-                  child: Text(
-                    proSec.inDepthTheory.trim(),
-                    style: TextStyle(
-                      fontSize: 12.5,
-                      color: context.textColor,
-                      height: 1.45,
-                    ),
-                  ),
-                ),
+                const SizedBox(height: 10),
+                _buildInDepthTheoryCard(context, proSec.inDepthTheory),
 
                 // 3. Exam Traps Box
                 if (proSec.examTraps.isNotEmpty) ...[
-                  const SizedBox(height: 14),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppTheme.accentCoral.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppTheme.accentCoral.withValues(alpha: 0.3)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Row(
-                          children: [
-                            Icon(Icons.warning_amber_rounded, size: 16, color: AppTheme.accentCoral),
-                            SizedBox(width: 6),
-                            Text(
-                              'COMMON GATE TRAPS TO AVOID',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.accentCoral,
-                                letterSpacing: 0.6,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        ...proSec.examTraps.map((trap) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 6),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('⚠️ ', style: TextStyle(fontSize: 11)),
-                                Expanded(
-                                  child: Text(
-                                    trap,
-                                    style: TextStyle(fontSize: 12, color: context.textColor, height: 1.35),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }),
-                      ],
-                    ),
-                  ),
+                  const SizedBox(height: 16),
+                  _buildExamTrapsCard(context, proSec.examTraps),
                 ],
 
                 // 4. Solved Benchmark Numerical Card
                 if (proSec.solvedExample.trim().isNotEmpty) ...[
-                  const SizedBox(height: 14),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppTheme.accentMint.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppTheme.accentMint.withValues(alpha: 0.3)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Row(
-                          children: [
-                            Icon(Icons.check_circle_outline_rounded, size: 16, color: AppTheme.accentMint),
-                            SizedBox(width: 6),
-                            Text(
-                              'SOLVED BENCHMARK NUMERICAL',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.accentMint,
-                                letterSpacing: 0.6,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: context.isDarkMode ? Colors.black.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.7),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            proSec.solvedExample.trim(),
-                            style: GoogleFonts.spaceMono(
-                              fontSize: 11.5,
-                              color: context.textColor,
-                              height: 1.4,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  const SizedBox(height: 16),
+                  _buildSolvedExampleCard(context, proSec.solvedExample),
                 ],
 
                 // 5. AIR-1 Topper Speed Shortcuts
                 if (proSec.shortcutTips.isNotEmpty) ...[
-                  const SizedBox(height: 14),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFF8522).withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: const Color(0xFFFF8522).withValues(alpha: 0.3)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon3D(Icons.bolt_rounded, size: 16, color: Color(0xFFFF8522)),
-                            SizedBox(width: 6),
-                            Text(
-                              'AIR-1 TOPPER SPEED SHORTCUT TRICKS',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFFFF8522),
-                                letterSpacing: 0.6,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        ...proSec.shortcutTips.map((tip) {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 5),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('⚡ ', style: TextStyle(fontSize: 11)),
-                                Expanded(
-                                  child: Text(
-                                    tip,
-                                    style: TextStyle(fontSize: 12, color: context.textColor, height: 1.35),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }),
-                      ],
-                    ),
-                  ),
+                  const SizedBox(height: 16),
+                  _buildShortcutTipsCard(context, proSec.shortcutTips),
                 ],
               ],
             ),
@@ -993,6 +889,452 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> with SingleTickerPr
         }),
         const SizedBox(height: 24),
       ],
+    );
+  }
+
+  /// High-readability In-Depth Theory renderer with paragraph separation & numbered points
+  Widget _buildInDepthTheoryCard(BuildContext context, String rawTheory) {
+    final cleaned = rawTheory.trim();
+    final paragraphs = cleaned.split(RegExp(r'\n\s*\n'));
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: context.isDarkMode ? const Color(0xFF16151E) : const Color(0xFFF8F9FD),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: context.isDarkMode ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: paragraphs.map((para) {
+          final lines = para.trim().split('\n');
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: lines.map((line) {
+                final trimmed = line.trim();
+                final isNumbered = RegExp(r'^\d+\.\s').hasMatch(trimmed);
+
+                if (isNumbered) {
+                  final dotIndex = trimmed.indexOf('.');
+                  final numStr = trimmed.substring(0, dotIndex);
+                  final rest = trimmed.substring(dotIndex + 1).trim();
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(top: 2, right: 10),
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFF8522).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: const Color(0xFFFF8522).withValues(alpha: 0.35),
+                              width: 0.8,
+                            ),
+                          ),
+                          child: Text(
+                            numStr,
+                            style: GoogleFonts.outfit(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFFFF8522),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            rest,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 14,
+                              height: 1.62,
+                              color: context.textColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Text(
+                    trimmed,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      height: 1.62,
+                      color: context.textColor,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  /// High-contrast Exam Traps cards with clear warning indicators
+  Widget _buildExamTrapsCard(BuildContext context, List<String> traps) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.accentCoral.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.accentCoral.withValues(alpha: 0.35),
+          width: 1.2,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.warning_amber_rounded, size: 18, color: AppTheme.accentCoral),
+              const SizedBox(width: 8),
+              Text(
+                'COMMON GATE EXAM TRAPS TO AVOID',
+                style: GoogleFonts.outfit(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.accentCoral,
+                  letterSpacing: 0.6,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...traps.map((trap) {
+            String trapContent = trap;
+            if (trapContent.startsWith('TRAP:')) {
+              trapContent = trapContent.replaceFirst('TRAP:', '').trim();
+            }
+
+            return Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: context.isDarkMode ? const Color(0xFF26151B) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppTheme.accentCoral.withValues(alpha: 0.25),
+                  width: 0.8,
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 1),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: AppTheme.accentCoral.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      'TRAP',
+                      style: GoogleFonts.outfit(
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.accentCoral,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      trapContent,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13.5,
+                        color: context.textColor,
+                        height: 1.55,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  /// Structural Solved Example parser & renderer (Problem, Steps, Final Answer)
+  Widget _buildSolvedExampleCard(BuildContext context, String exampleText) {
+    final cleaned = exampleText.trim();
+    String? problem;
+    String? solution;
+    String? answer;
+
+    if (cleaned.contains('[Problem]') && cleaned.contains('[Step-by-Step Solution]')) {
+      final pIndex = cleaned.indexOf('[Problem]');
+      final sIndex = cleaned.indexOf('[Step-by-Step Solution]');
+      final aIndex = cleaned.indexOf('[Final Answer]');
+
+      problem = cleaned.substring(pIndex + '[Problem]'.length, sIndex).trim();
+      if (aIndex != -1) {
+        solution = cleaned.substring(sIndex + '[Step-by-Step Solution]'.length, aIndex).trim();
+        answer = cleaned.substring(aIndex + '[Final Answer]'.length).trim();
+      } else {
+        solution = cleaned.substring(sIndex + '[Step-by-Step Solution]'.length).trim();
+      }
+    }
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.accentMint.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppTheme.accentMint.withValues(alpha: 0.35),
+          width: 1.2,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.check_circle_outline_rounded, size: 18, color: AppTheme.accentMint),
+              const SizedBox(width: 8),
+              Text(
+                'SOLVED BENCHMARK NUMERICAL',
+                style: GoogleFonts.outfit(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.accentMint,
+                  letterSpacing: 0.6,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          if (problem != null) ...[
+            // Problem Section
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: context.isDarkMode ? const Color(0xFF161F1E) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: AppTheme.accentMint.withValues(alpha: 0.25),
+                  width: 0.8,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppTheme.accentMint.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          'PROBLEM',
+                          style: GoogleFonts.outfit(
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.accentMint,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    problem,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: context.textColor,
+                      height: 1.55,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            // Solution Steps
+            if (solution != null) ...[
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: context.isDarkMode ? const Color(0xFF141918) : const Color(0xFFF6FAF8),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: AppTheme.accentMint.withValues(alpha: 0.2),
+                    width: 0.8,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'STEP-BY-STEP DERIVATION',
+                      style: GoogleFonts.outfit(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.accentMint,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SelectableText(
+                      solution,
+                      style: GoogleFonts.jetBrainsMono(
+                        fontSize: 12.5,
+                        color: context.textColor,
+                        height: 1.55,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+
+            // Final Answer
+            if (answer != null) ...[
+              const SizedBox(height: 10),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppTheme.accentMint.withValues(alpha: 0.16),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: AppTheme.accentMint.withValues(alpha: 0.6),
+                    width: 1.2,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.task_alt_rounded, size: 18, color: AppTheme.accentMint),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        answer,
+                        style: GoogleFonts.outfit(
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.accentMint,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ] else ...[
+            // Fallback for unstructured text
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: context.isDarkMode ? Colors.black.withValues(alpha: 0.35) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: SelectableText(
+                cleaned,
+                style: GoogleFonts.jetBrainsMono(
+                  fontSize: 12.5,
+                  color: context.textColor,
+                  height: 1.5,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// High-impact Topper Speed Shortcut cards
+  Widget _buildShortcutTipsCard(BuildContext context, List<String> shortcuts) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFF8522).withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: const Color(0xFFFF8522).withValues(alpha: 0.35),
+          width: 1.2,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon3D(Icons.bolt_rounded, size: 18, color: Color(0xFFFF8522)),
+              const SizedBox(width: 8),
+              Text(
+                'AIR-1 TOPPER SPEED SHORTCUT TRICKS',
+                style: GoogleFonts.outfit(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFFFF8522),
+                  letterSpacing: 0.6,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...shortcuts.map((tip) {
+            return Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: context.isDarkMode ? const Color(0xFF241C15) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFFFF8522).withValues(alpha: 0.25),
+                  width: 0.8,
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('⚡ ', style: TextStyle(fontSize: 14)),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      tip,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13.5,
+                        color: context.textColor,
+                        height: 1.55,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
     );
   }
 }

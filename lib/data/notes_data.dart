@@ -213,6 +213,47 @@ Reject H_0 at alpha = 0.05. The mean is significantly greater than 50.
           'MLE of rate parameter lambda for Exponential(lambda) is 1 / X_bar. Always the reciprocal of the sample mean.',
         ],
       ),
+      ProNoteSection(
+        title: 'Hypothesis Testing, P-Values, Power & Neyman-Pearson Lemma',
+        inDepthTheory: '''
+In GATE DA, hypothesis testing questions focus on Type I / Type II error tradeoffs and critical regions:
+1. Null Hypothesis (H_0) represents status-quo/no-effect. Alternative (H_1) represents research claim.
+2. Type I Error (alpha, significance level): P(Reject H_0 | H_0 is true). Setting alpha = 0.05 means a 5% false-alarm risk.
+3. Type II Error (beta): P(Fail to reject H_0 | H_0 is false).
+4. Power of the test = 1 - beta = P(Reject H_0 | H_0 is false). Higher power indicates a superior test.
+5. Neyman-Pearson Lemma: For testing simple H_0: theta = theta_0 vs H_1: theta = theta_1, the most powerful test rejects H_0 when the likelihood ratio Lambda(x) = L(theta_0; x) / L(theta_1; x) <= k.
+6. P-value definition: The probability of obtaining a test statistic at least as extreme as observed, assuming H_0 is true. If p-value <= alpha, reject H_0.
+''',
+        examTraps: [
+          'TRAP: Confusing P-value with P(H_0 is true). P-value is NOT the probability that H_0 is correct. P-value assumes H_0 is true from the outset!',
+          'TRAP: Failing to divide alpha by 2 for a two-tailed test. For alpha = 0.05 two-tailed, each tail has alpha/2 = 0.025 (Z = +-1.96). For one-tailed right test, all alpha = 0.05 is in the right tail (Z = +1.645).',
+        ],
+        solvedExample: '''
+[Problem]
+A machine learning latency benchmark specifies H_0: mu = 50ms vs H_1: mu > 50ms. Population standard deviation sigma = 8ms. A sample of n = 64 query runs is observed with sample mean X_bar = 52.2ms. At significance level alpha = 0.01, test whether query latency has significantly increased.
+
+[Step-by-Step Solution]
+1. Identify hypotheses and test type:
+   H_0: mu = 50, H_1: mu > 50 (One-tailed upper test).
+   Significance level alpha = 0.01.
+2. Critical value:
+   For one-tailed upper Z-test at alpha = 0.01, Z_crit = 2.326.
+3. Standard error of sample mean:
+   SE = sigma / sqrt(n) = 8 / sqrt(64) = 8 / 8 = 1.0 ms.
+4. Calculate Z test statistic:
+   Z_stat = (X_bar - mu_0) / SE = (52.2 - 50.0) / 1.0 = 2.20.
+5. Comparison:
+   Z_stat = 2.20 is LESS than Z_crit = 2.326.
+   Therefore, we fail to reject H_0 at alpha = 0.01 level.
+
+[Final Answer]
+Fail to reject H_0 (Z_stat = 2.20 < Z_crit = 2.326). There is insufficient statistical evidence at 1% significance level to conclude latency has increased.
+''',
+        shortcutTips: [
+          'Z critical thresholds to memorize for GATE: Two-tailed: 90% -> 1.645, 95% -> 1.96, 99% -> 2.576. One-tailed: 95% -> 1.645, 99% -> 2.326.',
+          'Sample size effect on Power: Doubling sample size n decreases standard error by sqrt(2) ~= 1.414, which shifts the critical boundary closer to mu_0 and increases test power 1 - beta.',
+        ],
+      ),
     ],
   ),
 
@@ -434,6 +475,55 @@ Optimal minimizer is x^* = [1, 2]^T.
           'Hessian of any linear function c^T x is identically 0 everywhere.',
         ],
       ),
+      ProNoteSection(
+        title: 'Moore-Penrose Pseudoinverse & 4 Fundamental Subspaces',
+        inDepthTheory: '''
+Gilbert Strang\'s Fundamental Theorem of Linear Algebra partitions vector spaces for an m x n matrix A of rank r:
+1. Column Space C(A) in R^m, Dimension = r.
+2. Left Nullspace N(A^T) in R^m, Dimension = m - r. C(A) and N(A^T) are orthogonal complements: C(A) perp N(A^T).
+3. Row Space C(A^T) in R^n, Dimension = r.
+4. Nullspace N(A) in R^n, Dimension = n - r. C(A^T) and N(A) are orthogonal complements: C(A^T) perp N(A).
+5. Moore-Penrose Pseudoinverse A^+:
+   For SVD A = U Sigma V^T, A^+ = V Sigma^+ U^T, where Sigma^+ inverts non-zero singular values 1/sigma_i and transposes shape.
+6. If A has full column rank (r = n), A^+ = (A^T A)^{-1} A^T (Left inverse, A^+ A = I_n).
+7. If A has full row rank (r = m), A^+ = A^T (A A^T)^{-1} (Right inverse, A A^+ = I_m).
+8. Minimum Norm Solution: For underdetermined system A x = b with infinitely many solutions, x^+ = A^+ b is the unique solution lying entirely in C(A^T) that minimizes Euclidean norm ||x||_2.
+''',
+        examTraps: [
+          'TRAP: Applying (A^T A)^{-1} A^T when rank(A) < n. If A is rank-deficient, A^T A is singular and cannot be inverted! Must use SVD-based pseudoinverse A^+ = V Sigma^+ U^T.',
+          'TRAP: Dimension mismatch. If A is m x n, A^+ is n x m. In general A A^+ != I and A^+ A != I; they are orthogonal projection matrices onto C(A) and C(A^T) respectively.',
+        ],
+        solvedExample: '''
+[Problem]
+Find the Moore-Penrose pseudoinverse A^+ of rank-1 matrix A = [[1, 2], [2, 4]].
+Then find the minimum-norm solution to A x = [5, 10]^T.
+
+[Step-by-Step Solution]
+1. Factorize A as outer product:
+   A = [1, 2]^T * [1, 2] = u v^T, where u = [1, 2]^T and v = [1, 2]^T.
+2. Norms:
+   ||u||^2 = 1^2 + 2^2 = 5, ||v||^2 = 1^2 + 2^2 = 5.
+3. For rank-1 matrix A = u v^T, pseudoinverse formula is:
+   A^+ = v u^T / (||u||^2 * ||v||^2)
+   A^+ = [[1], [2]] * [1, 2] / (5 * 5)
+   A^+ = [[1, 2], [2, 4]] / 25 = 1/25 * A.
+4. Compute minimum norm solution x^+ = A^+ b:
+   b = [5, 10]^T
+   x^+ = 1/25 * [[1, 2], [2, 4]] * [[5], [10]]
+   Row 1: (1*5 + 2*10)/25 = 25/25 = 1.
+   Row 2: (2*5 + 4*10)/25 = 50/25 = 2.
+   x^+ = [1, 2]^T.
+5. Check:
+   A * x^+ = [[1, 2], [2, 4]] * [[1], [2]] = [[5], [10]] = b. Verified!
+
+[Final Answer]
+A^+ = 1/25 * [[1, 2], [2, 4]], and minimum-norm solution x^+ = [1, 2]^T.
+''',
+        shortcutTips: [
+          'Rank-1 Pseudoinverse Shortcut: For any rank-1 matrix A = c r^T, A^+ = (r c^T) / (||c||^2 * ||r||^2). Saves 5 minutes of calculation on exam day!',
+          'Properties of A^+: (A^+)^+ = A, (A^T)^+ = (A^+)^T, and A A^+ A = A.',
+        ],
+      ),
     ],
   ),
 
@@ -636,6 +726,63 @@ Find: (i) Lipschitz constant L and strong convexity parameter mu, (ii) Maximum l
           'If condition number kappa = 1, Gradient Descent with optimal step size eta = 1/L converges in EXACTLY ONE STEP!',
         ],
       ),
+      ProNoteSection(
+        title: 'Constrained Optimization & Karush-Kuhn-Tucker (KKT) Conditions',
+        inDepthTheory: '''
+General constrained optimization problem:
+minimize f_0(x) subject to f_i(x) <= 0 (i = 1..m) and h_j(x) = 0 (j = 1..p).
+Lagrangian: L(x, lambda, nu) = f_0(x) + sum lambda_i f_i(x) + sum nu_j h_j(x).
+KKT Necessary Conditions for local optimality at x^*:
+1. Stationarity: grad f_0(x^*) + sum lambda_i grad f_i(x^*) + sum nu_j grad h_j(x^*) = 0.
+2. Primal Feasibility: f_i(x^*) <= 0 for all i, and h_j(x^*) = 0 for all j.
+3. Dual Feasibility: lambda_i >= 0 for all inequality multipliers.
+4. Complementary Slackness: lambda_i * f_i(x^*) = 0 for each i.
+   If constraint is inactive (f_i(x^*) < 0), then lambda_i = 0 (multiplier vanishes).
+   If multiplier is active (lambda_i > 0), the constraint must be tight (f_i(x^*) = 0).
+When the objective and inequality constraints are convex and equality constraints are affine, KKT conditions are both NECESSARY and SUFFICIENT for global optimality.
+''',
+        examTraps: [
+          'TRAP: Assuming dual multiplier lambda_i can be negative. For minimization with f_i(x) <= 0, lambda_i MUST be >= 0. If you solve equations and get lambda_i < 0, that constraint is not active!',
+          'TRAP: Forgetting to test the unconstrained interior point first. If unconstrained minimum grad f_0 = 0 is already feasible, all lambda_i = 0 and interior is optimal.',
+        ],
+        solvedExample: '''
+[Problem]
+Minimize f(x, y) = x^2 + y^2 subject to constraint x + 2y >= 5.
+Find optimal point (x^*, y^*) and the minimum value of f.
+
+[Step-by-Step Solution]
+1. Rewrite in standard form:
+   f_0(x, y) = x^2 + y^2.
+   f_1(x, y) = 5 - (x + 2y) <= 0.
+2. Form Lagrangian:
+   L(x, y, lambda) = x^2 + y^2 + lambda * (5 - x - 2y).
+3. KKT Stationarity:
+   dL/dx = 2x - lambda = 0 => x = lambda / 2.
+   dL/dy = 2y - 2*lambda = 0 => y = lambda.
+4. Check Case 1 (Inactive, lambda = 0):
+   x = 0, y = 0.
+   Feasibility: 5 - (0 + 0) = 5 <= 0 FALSE. Not feasible!
+5. Check Case 2 (Active, lambda > 0):
+   Constraint is tight: x + 2y = 5.
+   Substitute x = lambda/2 and y = lambda:
+   (lambda / 2) + 2*lambda = 5
+   (5/2) * lambda = 5 => lambda = 2.
+6. Verify Dual Feasibility:
+   lambda = 2 > 0 (Valid!).
+7. Compute coordinates:
+   x^* = 2 / 2 = 1.
+   y^* = 2.
+8. Minimum objective value:
+   f(1, 2) = 1^2 + 2^2 = 1 + 4 = 5.
+
+[Final Answer]
+Optimal point (x^*, y^*) = (1, 2) with minimum value f^* = 5 (Lagrange multiplier lambda^* = 2).
+''',
+        shortcutTips: [
+          'Cauchy-Schwarz Geometric Shortcut: Minimizing x^2 + y^2 subject to a x + b y = c gives minimum value c^2 / (a^2 + b^2) at x = a*c/(a^2+b^2), y = b*c/(a^2+b^2). For 1x + 2y = 5: Min = 25 / (1 + 4) = 5 instantly!',
+          'Slater\'s Condition for Strong Duality: If there exists a strictly feasible point (f_i(x) < 0 for all i), strong duality holds (Duality Gap = 0).',
+        ],
+      ),
     ],
   ),
 
@@ -813,6 +960,66 @@ Find: (i) Eigenvalues of Sigma, (ii) The percentage of total variance captured b
         shortcutTips: [
           'Total variance of all principal components is ALWAYS equal to the sum of the variances of original features: sum lambda_i = Trace(Sigma).',
           'In K-Means clustering, the objective function WCSS is strictly non-increasing at every single iteration.',
+        ],
+      ),
+      ProNoteSection(
+        title: 'Support Vector Machines: Primal, Dual, Kernels & Margins',
+        inDepthTheory: '''
+Hard and Soft-Margin Support Vector Machine mechanics for GATE DA:
+1. Maximum Margin Hyperplane: w^T x + b = 0.
+   Geometric margin = 2 / ||w||_2. Maximizing margin is equivalent to minimizing (1/2) ||w||^2.
+2. Soft-Margin SVM with Slack Variables xi_i >= 0:
+   minimize (1/2) ||w||^2 + C * sum_{i=1}^N xi_i
+   subject to y_i (w^T x_i + b) >= 1 - xi_i.
+3. Regularization Parameter C:
+   High C: Heavy penalty on violations. Narrower margin, fits training points tightly, prone to overfitting.
+   Low C: Soft tolerance on violations. Wider margin, smoother decision boundary, higher bias.
+4. Dual Formulation:
+   maximize sum alpha_i - (1/2) sum_{i,j} alpha_i alpha_j y_i y_j K(x_i, x_j)
+   subject to 0 <= alpha_i <= C and sum alpha_i y_i = 0.
+5. Three types of points based on Lagrange Multiplier alpha_i:
+   - alpha_i = 0: Non-support vector. Correctly classified, outside margin (xi_i = 0).
+   - 0 < alpha_i < C: Free Support Vector. Lies EXACTLY on margin boundary (xi_i = 0, y_i(w^T x_i + b) = 1). Used to compute threshold b!
+   - alpha_i = C: Bounded Support Vector. Violates margin or misclassified (xi_i > 0).
+6. Mercer\'s Condition: Kernel K(x, z) corresponds to inner product phi(x)^T phi(z) iff Gram matrix K is positive semi-definite (PSD).
+''',
+        examTraps: [
+          'TRAP: Confusing the role of C. Students often assume higher C allows more mistakes. It is the OPPOSITE: C -> inf recovers the strict Hard-Margin SVM with ZERO training misclassifications allowed!',
+          'TRAP: Normal vector w formula. w = sum_{i=1}^N alpha_i y_i x_i. Only Support Vectors (alpha_i > 0) contribute to w. If 95% of data has alpha_i = 0, they can be deleted without changing the decision boundary!',
+        ],
+        solvedExample: '''
+[Problem]
+In a 2D binary classification task, we have three support vectors:
+x_1 = [1, 1]^T, y_1 = +1, alpha_1 = 1.0
+x_2 = [2, 0]^T, y_2 = +1, alpha_2 = 0.5
+x_3 = [0, 0]^T, y_3 = -1, alpha_3 = 1.5
+(i) Verify the dual constraint sum alpha_i y_i = 0.
+(ii) Compute the weight vector w.
+(iii) Compute the bias b using free support vector x_1.
+(iv) Calculate the margin width.
+
+[Step-by-Step Solution]
+1. Check constraint:
+   alpha_1 y_1 + alpha_2 y_2 + alpha_3 y_3 = (1.0)(+1) + (0.5)(+1) + (1.5)(-1) = 1.5 - 1.5 = 0. Verified!
+2. Calculate w = sum alpha_i y_i x_i:
+   w = (1.0)(+1)[[1], [1]] + (0.5)(+1)[[2], [0]] + (1.5)(-1)[[0], [0]]
+   w = [[1], [1]] + [[1], [0]] - [[0], [0]]
+   w = [[2], [1]].
+3. Compute bias b using x_1 = [1, 1]^T (since y_1(w^T x_1 + b) = 1):
+   w^T x_1 = 2*1 + 1*1 = 3.
+   y_1 * (3 + b) = 1 => 1 * (3 + b) = 1 => b = 1 - 3 = -2.
+4. Decision boundary:
+   2 x_1 + x_2 - 2 = 0.
+5. Margin width:
+   ||w|| = sqrt(2^2 + 1^2) = sqrt(5).
+   Margin width = 2 / ||w|| = 2 / sqrt(5) ~= 0.894.
+
+[Final Answer]
+Weight vector w = [2, 1]^T, bias b = -2, and margin width = 2/sqrt(5) ~= 0.894.
+''',
+        shortcutTips: [
+          'Linear SVM decision function sign(w^T x + b) requires only dot products with support vectors. Time complexity depends on number of support vectors, NOT total dataset size N.',
+          'VC Dimension of linear halfspaces in d dimensions is d + 1. For RBF Kernel (infinite dimensional Hilbert space), VC dimension is infinite!',
         ],
       ),
     ],
@@ -1166,6 +1373,64 @@ sales_amount: Additive; account_balance: Semi-Additive; profit_margin_pct: Non-A
           'Slice fixes 1 dimension to a single value. Dice creates a subcube by selecting ranges across multiple dimensions.',
         ],
       ),
+      ProNoteSection(
+        title: 'Conflict Serializability, View Equivalence & 2PL Schedules',
+        inDepthTheory: '''
+Concurrency control hierarchy in GATE DBMS:
+1. Conflict Operations: Two operations conflict iff they belong to different transactions, access the SAME data item Q, and at least ONE of them is a WRITE operation.
+   - Read(Q) - Read(Q): NO conflict.
+   - Read(Q) - Write(Q), Write(Q) - Read(Q), Write(Q) - Write(Q): STRICT conflict!
+2. Conflict Serializability:
+   Construct precedence graph G = (V, E) where transactions are vertices.
+   Draw directed edge T_i -> T_j if T_i executes a conflicting operation before T_j.
+   Theorem: A schedule S is conflict serializable iff G has NO cycles!
+   Serializable order is given by Topological Sort of G.
+3. View Serializability:
+   Every conflict serializable schedule is view serializable. The reverse is NOT true (schedules with blind writes can be view serializable without being conflict serializable).
+4. Strict Two-Phase Locking (Strict 2PL):
+   - Growing phase: Acquire locks.
+   - Shrinking phase: Release Shared locks, but HOLD all Exclusive locks until transaction COMMITS or ABORTS.
+   - Theorem: Strict 2PL guarantees Conflict Serializability AND avoids cascading aborts!
+''',
+        examTraps: [
+          'TRAP: Confusing conflict serializability with recoverability. A conflict serializable schedule can still be unrecoverable if T_2 reads uncommitted data from T_1 and commits before T_1! Conflict equivalence does not inspect commit timestamps.',
+          'TRAP: Blind write in view equivalence. If a schedule has no blind writes (every write is preceded by a read of the same item), then View Serializability == Conflict Serializability.',
+        ],
+        solvedExample: '''
+[Problem]
+Analyze the concurrent schedule S with 3 transactions:
+S: R1(A); R2(B); W1(A); R2(A); W2(B); R3(B); W3(B); W2(A);
+Determine:
+(i) All conflicting pairs of operations.
+(ii) Precedence graph edges.
+(iii) Is S conflict serializable? If yes, find equivalent serial order.
+
+[Step-by-Step Solution]
+1. Find conflicting operations across transactions:
+   On item A:
+   - R1(A) before W2(A) => edge T1 -> T2
+   - W1(A) before R2(A) => edge T1 -> T2
+   - W1(A) before W2(A) => edge T1 -> T2
+   - R2(A) before W2(A) is same transaction (no edge).
+   On item B:
+   - R2(B) before W3(B) => edge T2 -> T3
+   - W2(B) before R3(B) => edge T2 -> T3
+   - W2(B) before W3(B) => edge T2 -> T3
+2. Build directed edges in precedence graph G:
+   Edges: { T1 -> T2, T2 -> T3 }
+3. Check for cycles:
+   Path is T1 -> T2 -> T3. There are NO cycles!
+4. Determine serial order:
+   Topological sort: T1, then T2, then T3.
+
+[Final Answer]
+(i) Conflicting operations generate edges T1 -> T2 and T2 -> T3; (ii) Precedence graph has no cycles; (iii) S is Conflict Serializable with serial order T1 -> T2 -> T3.
+''',
+        shortcutTips: [
+          'Quick Cycle Checker: If T1 writes X before T2 reads X (T1 -> T2), and later T2 writes Y before T1 reads Y (T2 -> T1), there is an immediate 2-node cycle! Schedule is non-serializable.',
+          'Rigorous 2PL holds BOTH shared and exclusive locks until commit. Produces strict, recoverable schedules, but decreases concurrency.',
+        ],
+      ),
     ],
   ),
 
@@ -1491,6 +1756,71 @@ Maximum file size is approximately 4.004 GB.
         shortcutTips: [
           'C-SCAN provides more uniform waiting time than SCAN because it does not reverse direction immediately.',
           'Counting semaphore value = S_0 + Signal_calls - Wait_calls.',
+        ],
+      ),
+      ProNoteSection(
+        title: 'Multi-Level Paging Architecture, TLB Calculus & Banker\'s Invariants',
+        inDepthTheory: '''
+Memory hierarchy and protection mechanics in GATE OS:
+1. Virtual Address in k-Level Paging:
+   Split into p_1, p_2, ..., p_k and offset d.
+   Page size = 2^d bytes.
+   Number of pages per level = Page Size / Page Table Entry (PTE) size.
+2. Effective Memory Access Time (EMAT) with TLB:
+   Let h = TLB hit ratio, t_tlb = TLB access latency, t_m = Main memory latency.
+   For k-level paging:
+   - On TLB Hit: 1 TLB lookup + 1 physical memory read = t_tlb + t_m.
+   - On TLB Miss: 1 TLB lookup + k memory accesses for page tables + 1 physical memory read = t_tlb + (k + 1) * t_m.
+   EMAT = h * (t_tlb + t_m) + (1 - h) * (t_tlb + (k + 1) * t_m) = t_tlb + t_m + (1 - h) * k * t_m.
+3. Inverted Page Table:
+   One entry per physical frame instead of virtual page.
+   Total table size = (Physical Memory Size / Frame Size) * Entry Size.
+   Independent of virtual address space size!
+4. Banker\'s Algorithm Safety Invariant:
+   Need Matrix = Max - Allocation.
+   Work vector initialized to Available.
+   Find process P_i such that Finish[i] == false and Need_i <= Work.
+   If found: Work = Work + Allocation_i, Finish[i] = true.
+   A state is SAFE iff all processes can finish (safe sequence exists).
+''',
+        examTraps: [
+          'TRAP: Forgetting the target data access in EMAT. With a 2-level page table, a TLB miss takes 3 memory accesses: 1 for outer page table, 1 for inner page table, and 1 to fetch the actual operand from memory!',
+          'TRAP: Byte vs Word addressability. If memory is word-addressable and 1 word = 4 bytes, 2^32 bytes is only 2^30 words, meaning the address requires 30 bits, NOT 32 bits!',
+        ],
+        solvedExample: '''
+[Problem]
+A 32-bit virtual memory system uses 2-level paging.
+Virtual address: Outer page (10 bits), Inner page (10 bits), Offset (12 bits).
+Main memory access time t_m = 100 ns.
+TLB access time t_tlb = 20 ns.
+If the TLB hit ratio is 85%, calculate:
+(i) Page size.
+(ii) Effective Memory Access Time (EMAT).
+
+[Step-by-Step Solution]
+1. Determine Page Size:
+   Offset field has 12 bits.
+   Page size = 2^12 bytes = 4096 bytes = 4 KB.
+2. Determine number of memory accesses:
+   On TLB Hit:
+   t_hit = t_tlb + t_m = 20 + 100 = 120 ns.
+   On TLB Miss:
+   Since it is 2-level paging, we must access:
+   - Level 1 page table in memory (100 ns)
+   - Level 2 page table in memory (100 ns)
+   - Actual data frame in memory (100 ns)
+   t_miss = t_tlb + 3 * t_m = 20 + 3 * 100 = 320 ns.
+3. Compute EMAT:
+   EMAT = h * t_hit + (1 - h) * t_miss
+   EMAT = 0.85 * 120 + 0.15 * 320
+   EMAT = 102 + 48 = 150 ns.
+
+[Final Answer]
+(i) Page size = 4 KB; (ii) EMAT = 150 ns.
+''',
+        shortcutTips: [
+          'EMAT Direct Formula: EMAT = t_tlb + t_m + (1 - h) * k * t_m. Plugging values directly: 20 + 100 + (0.15 * 2 * 100) = 120 + 30 = 150 ns. Eliminates arithmetic errors.',
+          'Page Fault EMAT: EMAT = (1 - p) * t_mem + p * t_page_fault, where p is page fault rate (must be kept below 10^-5 for acceptable performance).',
         ],
       ),
     ],
@@ -2207,6 +2537,57 @@ Leaf nodes: 10, 25, 35, 50 (Total 4 leaf nodes).
         shortcutTips: [
           'Number of distinct BSTs that can be formed with n distinct keys is the n-th Catalan number C_n.',
           'Inorder successor of a node with right child is the leftmost node in its right subtree.',
+        ],
+      ),
+      ProNoteSection(
+        title: 'Master Theorem Extended Cases, Akra-Bazzi & Potential Amortization',
+        inDepthTheory: '''
+Recurrence analysis and advanced amortized bounds for GATE CS:
+1. Master Theorem T(n) = a T(n/b) + f(n) where a >= 1, b > 1:
+   Compare f(n) with critical exponent c_crit = n^{log_b a}:
+   - Case 1: f(n) = O(n^{log_b a - epsilon}) for epsilon > 0 => T(n) = Theta(n^{log_b a}).
+   - Case 2: f(n) = Theta(n^{log_b a} * log^k n) for k >= 0 => T(n) = Theta(n^{log_b a} * log^{k+1} n).
+   - Case 2 Extended: If f(n) = Theta(n^{log_b a} / log n) (k = -1), T(n) = Theta(n^{log_b a} * log log n).
+   - Case 3: f(n) = Omega(n^{log_b a + epsilon}) AND regularity condition a f(n/b) <= c f(n) (c < 1) => T(n) = Theta(f(n)).
+2. Akra-Bazzi Method for asymmetric divide-and-conquer:
+   T(n) = sum_{i=1}^k a_i T(b_i n) + g(n).
+   Find unique real p such that sum a_i b_i^p = 1.
+   Then T(n) = Theta(n^p * (1 + integral_1^n (g(u) / u^{p+1}) du)).
+3. Potential Method for Amortized Analysis:
+   Define potential function Phi(D_i) mapping data structure state to real number, with Phi(D_0) = 0 and Phi(D_i) >= 0.
+   Amortized cost: c_hat_i = c_i + Phi(D_i) - Phi(D_{i-1}).
+   Total actual cost <= sum c_hat_i.
+''',
+        examTraps: [
+          'TRAP: Polynomial gap requirement. T(n) = 2 T(n/2) + n / log n cannot be solved by standard Case 1 or Case 3 because the ratio n / (n / log n) = log n is not polynomial (n^epsilon). It requires extended Case 2 with k = -1!',
+          'TRAP: Bellman-Ford negative cycle detection runs V - 1 relaxations. If a V-th relaxation still decreases any distance, a negative cycle exists. It must be V-1 relaxations, NOT V!',
+        ],
+        solvedExample: '''
+[Problem]
+Solve the recurrence relation:
+T(n) = 2 T(n/2) + n * log^2 n.
+Determine the tight asymptotic bound Theta.
+
+[Step-by-Step Solution]
+1. Identify Master Theorem parameters:
+   a = 2, b = 2, f(n) = n * log^2 n.
+2. Compute critical exponent:
+   log_b a = log_2 2 = 1.
+   n^{log_b a} = n^1 = n.
+3. Compare f(n) with n^{log_b a}:
+   f(n) = n * log^2 n = Theta(n^1 * log^2 n).
+4. Match with Master Theorem Case 2:
+   f(n) = Theta(n^{log_b a} * log^k n) with k = 2.
+5. Apply formula:
+   T(n) = Theta(n^{log_b a} * log^{k+1} n)
+   T(n) = Theta(n^1 * log^{2+1} n) = Theta(n * log^3 n).
+
+[Final Answer]
+T(n) = Theta(n * log^3 n).
+''',
+        shortcutTips: [
+          'Dynamic Array Doubling: When array capacity doubles from N to 2N, copying costs N. Choosing potential Phi = 2 * size - capacity makes amortized insertion cost exactly O(1)!',
+          'Akra-Bazzi Quick Check: For T(n) = T(n/3) + T(2n/3) + n: (1/3)^p + (2/3)^p = 1 has unique solution p = 1. Since g(n) = n = n^1, integral yields Theta(n log n).',
         ],
       ),
     ],

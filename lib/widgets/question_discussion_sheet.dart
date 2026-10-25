@@ -9,6 +9,7 @@ import '../theme/app_theme.dart';
 import '../providers/auth_provider.dart';
 import '../services/storage_service.dart';
 import '../widgets/neu_widgets.dart';
+import 'aspirant_avatar.dart';
 
 class DiscussionComment {
   final String id;
@@ -326,13 +327,9 @@ class _QuestionDiscussionSheetState extends State<QuestionDiscussionSheet> {
                                   children: [
                                     Row(
                                       children: [
-                                        CircleAvatar(
-                                          radius: 12,
-                                          backgroundColor: AppTheme.accentPurple.withValues(alpha: 0.2),
-                                          child: Text(
-                                            comment.authorName.isNotEmpty ? comment.authorName[0].toUpperCase() : 'N',
-                                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppTheme.accentPurple),
-                                          ),
+                                        AspirantAvatar(
+                                          size: 24,
+                                          seedName: comment.authorName,
                                         ),
                                         const SizedBox(width: 8),
                                         Text(

@@ -784,7 +784,8 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                   onTap: () => Navigator.pop(context),
                   borderRadius: BorderRadius.circular(32),
                   child: Container(
-                    height: 54,
+                    height: 52,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
                       color: const Color(0xFF1B1711),
                       borderRadius: BorderRadius.circular(32),
@@ -800,15 +801,20 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                           const Icon(
                             Icons.check_circle_rounded,
                             color: Color(0xFFFFB800),
-                            size: 20,
+                            size: 19,
                           ),
                           const SizedBox(width: 8),
-                          Text(
-                            'GateX Dual Pro Active — Back to Studies',
-                            style: GoogleFonts.outfit(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFFFFB800),
+                          Flexible(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                'Dual Pro Active • Back to Studies 🚀',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 14.5,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFFFFB800),
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -860,13 +866,19 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                                 color: Color(0xFF161005),
                               ),
                             )
-                          : Text(
-                              ctaText,
-                              style: GoogleFonts.outfit(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: const Color(0xFF161005),
-                                letterSpacing: 0.2,
+                          : Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 14),
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  ctaText,
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 15.5,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFF161005),
+                                    letterSpacing: 0.2,
+                                  ),
+                                ),
                               ),
                             ),
                     ),

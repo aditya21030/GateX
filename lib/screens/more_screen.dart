@@ -9,6 +9,7 @@ import '../providers/pomodoro_provider.dart';
 import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/neu_widgets.dart';
+import '../widgets/aspirant_avatar.dart';
 import 'error_log_screen.dart';
 import 'pomodoro_screen.dart';
 import 'score_estimator_screen.dart';
@@ -96,7 +97,7 @@ class MoreScreen extends StatelessWidget {
                 context: context,
                 icon: Icons.emoji_events_rounded,
                 iconColor: AppTheme.accentGold,
-                title: 'All-India Aspirant Leaderboard',
+                title: 'GateX Leaderboard',
                 onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RankingScreen())),
               ),
               const SizedBox(height: 22),
@@ -235,29 +236,12 @@ class MoreScreen extends StatelessWidget {
         borderRadius: 20,
         child: Row(
           children: [
-            Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [AppTheme.accentPurple, Color(0xFF8B5CF6)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(26),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppTheme.accentPurple.withValues(alpha: 0.35),
-                    blurRadius: 10,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                userName.isNotEmpty ? userName[0].toUpperCase() : 'G',
-                style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
-              ),
+            AspirantAvatar(
+              size: 52,
+              seedName: userName,
+              avatarId: provider.userAvatarId,
+              showProBadge: true,
+              isPro: provider.isPro,
             ),
             const SizedBox(width: 14),
             Expanded(

@@ -7,6 +7,7 @@ import '../providers/app_provider.dart';
 import '../services/storage_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/neu_widgets.dart';
+import '../widgets/aspirant_avatar.dart';
 import 'login_screen.dart';
 import 'pro_upgrade_screen.dart';
 
@@ -197,6 +198,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   targetExamLabel: targetExamLabel,
                   isPro: isPro,
                   streak: appProvider.streak,
+                  provider: appProvider,
                 ),
                 if (!authProvider.isLoggedIn) ...[
                   const SizedBox(height: 14),
@@ -563,33 +565,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required String targetExamLabel,
     required bool isPro,
     required int streak,
+    required AppProvider provider,
   }) {
     return NeuContainer(
       padding: const EdgeInsets.all(18),
       child: Row(
         children: [
-          // Tactile Avatar
-          Stack(
-            alignment: Alignment.bottomRight,
-            children: [
-              NeuContainer(
-                width: 68,
-                height: 68,
-                borderRadius: 34,
-                padding: EdgeInsets.zero,
-                alignment: Alignment.center,
-                child: Text(
-                  _nameController.text.isNotEmpty ? _nameController.text[0].toUpperCase() : 'G',
-                  style: AppTheme.poppinsBold(fontSize: 26, color: AppTheme.accentPurple),
-                ),
-              ),
-              if (isPro)
-                Container(
-                  padding: const EdgeInsets.all(3),
-                  decoration: const BoxDecoration(color: Color(0xFFFFB300), shape: BoxShape.circle),
-                  child: const Icon(Icons.workspace_premium_rounded, size: 13, color: Colors.black),
-                ),
-            ],
+          // Tactile Automatic Aspirant Avatar
+          AspirantAvatar(
+            size: 68,
+            seedName: _nameController.text,
+            avatarId: provider.userAvatarId,
+            showProBadge: true,
+            isPro: isPro,
+            showEditBadge: true,
+            onTap: () => showAspirantAvatarPicker(context),
           ),
           const SizedBox(width: 14),
 
