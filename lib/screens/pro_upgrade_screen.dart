@@ -21,6 +21,14 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
   bool _initializedSelection = false;
 
   @override
+  void initState() {
+    super.initState();
+    _purchaseService.refreshOfferings().then((_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_initializedSelection) {
@@ -402,7 +410,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  'UPGRADE: ₹200 ONLY',
+                  'UPGRADE: ${_purchaseService.getUpgradePriceString()} ONLY',
                   style: GoogleFonts.outfit(
                     color: const Color(0xFFFFB800),
                     fontSize: 10.5,
@@ -448,7 +456,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                   isSelected: !_isDualSelected,
                   title: 'Solo Pass',
                   subtitle: '$_selectedSoloBranch • 10 Mocks',
-                  price: '₹299',
+                  price: _purchaseService.getSoloPriceString(),
                   onTap: () {
                     HapticFeedback.selectionClick();
                     setState(() => _isDualSelected = false);
@@ -463,7 +471,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
                   isSelected: _isDualSelected,
                   title: 'Dual Prep',
                   subtitle: 'Both Papers • 20 Mocks',
-                  price: '₹499',
+                  price: _purchaseService.getDualPriceString(),
                   badgeText: 'BEST VALUE 🔥',
                   onTap: () {
                     HapticFeedback.selectionClick();
@@ -743,15 +751,19 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
     required bool isDualPro,
     required bool isSoloUpgradeCandidate,
   }) {
+    final String soloPrice = _purchaseService.getSoloPriceString();
+    final String dualPrice = _purchaseService.getDualPriceString();
+    final String upgradePrice = _purchaseService.getUpgradePriceString();
+
     final String ctaText;
     if (isDualPro) {
       ctaText = 'GateX Dual Pro Active — Back to Studies';
     } else if (isSoloUpgradeCandidate) {
-      ctaText = 'Upgrade to Dual Pass — ₹200 🔒';
+      ctaText = 'Upgrade to Dual Pass — $upgradePrice 🔒';
     } else if (_isDualSelected) {
-      ctaText = 'Upgrade Dual Pass — ₹499 🔒';
+      ctaText = 'Upgrade Dual Pass — $dualPrice 🔒';
     } else {
-      ctaText = 'Upgrade Solo Pass ($_selectedSoloBranch) — ₹299 🔒';
+      ctaText = 'Upgrade Solo Pass ($_selectedSoloBranch) — $soloPrice 🔒';
     }
 
     return Container(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
 import 'package:flutter/services.dart';
+import '../services/purchase_service.dart';
 
 class AuthProvider extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -20,6 +20,7 @@ class AuthProvider extends ChangeNotifier {
     // Listen to authentication state changes
     _auth.authStateChanges().listen((User? user) {
       _user = user;
+      PurchaseService().syncUser(user?.uid);
       notifyListeners();
     });
   }

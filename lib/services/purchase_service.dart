@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import '../config/revenuecat_config.dart';
 import 'ad_service.dart';
 
 class PurchaseService with ChangeNotifier {
@@ -14,32 +15,27 @@ class PurchaseService with ChangeNotifier {
   static const String proPrefKey = 'is_gatex_pro_member';
   static const String proPlanTypeKey = 'gatex_pro_plan_type'; // 'SOLO' or 'DUAL'
   static const String proSoloBranchKey = 'gatex_pro_solo_branch'; // 'DA' or 'CSIT'
-  static const String proEntitlement = 'gatex_pro';
-  static const String proDualEntitlement = 'gatex_pro_dual';
 
-  static const String proProductId = 'gatex_pro_solo_2027';
-  static const String proSoloProductId = 'gatex_pro_solo_2027';
-  static const String proDualProductId = 'gatex_pro_dual_2027';
-  static const String proUpgradeToDualProductId = 'gatex_pro_upgrade_dual_2027';
+  // Backwards-compatible aliases referencing RevenueCatConfig
+  static const String proEntitlement = RevenueCatConfig.entitlementPro;
+  static const String proDualEntitlement = RevenueCatConfig.entitlementDualPro;
 
-  // Solo Plan (DA or CSIT): ₹299
+  static const String proProductId = RevenueCatConfig.productSoloId;
+  static const String proSoloProductId = RevenueCatConfig.productSoloId;
+  static const String proDualProductId = RevenueCatConfig.productDualId;
+  static const String proUpgradeToDualProductId = RevenueCatConfig.productUpgradeDualId;
+
+  // Static Fallback Prices (when offline or Google Play prices not yet cached)
   static const String proPlanPrice = '₹299';
   static const String proPlanOldPrice = '₹599';
   static const String proSoloPlanPrice = '₹299';
   static const String proSoloPlanOldPrice = '₹599';
-
-  // Dual Prep Plan (Both DA & CSIT): ₹499
   static const String proDualPlanPrice = '₹499';
   static const String proDualPlanOldPrice = '₹899';
-
-  // Upgrade difference for existing Solo users: ₹499 - ₹299 = ₹200
   static const String proUpgradeToDualPrice = '₹200';
   static const String proUpgradeToDualOldPrice = '₹400';
 
   static const String proPlanValidity = 'Valid till 31st March 2027';
-
-  // RevenueCat Public API Key placeholder (Configured with Google Play Console)
-  static const String _revenueCatApiKey = 'goog_gatex_pro_season_pass_key';
 
   bool _isPro = false;
   bool get isPro => _isPro;
@@ -70,6 +66,51 @@ class PurchaseService with ChangeNotifier {
   Offering? _currentOffering;
   Offering? get currentOffering => _currentOffering;
 
+  /// Returns localized price string for Solo Pass from RevenueCat, or fallback
+  String getSoloPriceString() {
+    final pkg = findPackageForPlan(proSoloProductId);
+    return pkg?.storeProduct.priceString ?? proSoloPlanPrice;
+  }
+
+  /// Returns localized price string for Dual Prep Pass from RevenueCat, or fallback
+  String getDualPriceString() {
+    final pkg = findPackageForPlan(proDualProductId);
+    return pkg?.storeProduct.priceString ?? proDualPlanPrice;
+  }
+
+  /// Returns localized price string for Solo -> Dual Upgrade from RevenueCat, or fallback
+  String getUpgradePriceString() {
+    final pkg = findPackageForPlan(proUpgradeToDualProductId);
+    return pkg?.storeProduct.priceString ?? proUpgradeToDualPrice;
+  }
+
+  /// Finds matching package by storeProduct id or package identifier
+  Package? findPackageForPlan(String planId) {
+    if (_currentOffering == null) return null;
+    for (final pkg in _currentOffering!.availablePackages) {
+      if (pkg.storeProduct.identifier == planId || pkg.identifier == planId) {
+        return pkg;
+      }
+      if (planId == proSoloProductId &&
+          (pkg.identifier.toLowerCase().contains('solo') ||
+              pkg.packageType == PackageType.annual)) {
+        return pkg;
+      }
+      if (planId == proDualProductId &&
+          (pkg.identifier.toLowerCase().contains('dual') ||
+              pkg.packageType == PackageType.lifetime)) {
+        return pkg;
+      }
+      if (planId == proUpgradeToDualProductId &&
+          pkg.identifier.toLowerCase().contains('upgrade')) {
+        return pkg;
+      }
+    }
+    return _currentOffering!.availablePackages.isNotEmpty
+        ? _currentOffering!.availablePackages.first
+        : null;
+  }
+
   /// Initialize Pro status from RevenueCat, local cache, and sync with Firebase if logged in
   Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
@@ -82,14 +123,10 @@ class PurchaseService with ChangeNotifier {
     }
     notifyListeners();
 
-    final isRealKey = _revenueCatApiKey.isNotEmpty &&
-        !_revenueCatApiKey.contains('placeholder') &&
-        _revenueCatApiKey != 'goog_gatex_pro_season_pass_key';
-
-    if (isRealKey) {
+    if (RevenueCatConfig.isConfigured) {
       try {
         final user = FirebaseAuth.instance.currentUser;
-        final config = PurchasesConfiguration(_revenueCatApiKey);
+        final config = PurchasesConfiguration(RevenueCatConfig.apiKey);
         if (user != null) {
           config.appUserID = user.uid;
         }
@@ -102,32 +139,70 @@ class PurchaseService with ChangeNotifier {
         final customerInfo = await Purchases.getCustomerInfo();
         await _updateProStatusFromCustomerInfo(customerInfo);
 
-        final offerings = await Purchases.getOfferings();
-        if (offerings.current != null) {
-          _currentOffering = offerings.current;
-          notifyListeners();
-        }
+        await refreshOfferings();
       } catch (e) {
-        debugPrint('PurchaseService: RevenueCat dev/fallback mode active: $e');
-        _verifyWithFirebase();
+        debugPrint('PurchaseService: RevenueCat init fallback: $e');
+        await _verifyWithFirebase();
       }
     } else {
-      debugPrint('PurchaseService: RevenueCat key is placeholder. Skipping SDK configuration to avoid native background errors.');
+      debugPrint('PurchaseService: RevenueCat key is placeholder. Using local & Firebase sync.');
       await _verifyWithFirebase();
     }
   }
 
-  Future<void> _updateProStatusFromCustomerInfo(CustomerInfo customerInfo) async {
-    final hasActive = customerInfo.entitlements.all[proEntitlement]?.isActive ?? false;
-    if (hasActive != _isPro) {
-      _isPro = hasActive;
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(proPrefKey, _isPro);
-      if (_isPro) {
-        AdService().setAdSuspended(true);
+  /// Refresh offerings from RevenueCat
+  Future<void> refreshOfferings() async {
+    if (!RevenueCatConfig.isConfigured) return;
+    try {
+      final offerings = await Purchases.getOfferings();
+      if (offerings.current != null) {
+        _currentOffering = offerings.current;
+        notifyListeners();
       }
-      notifyListeners();
+    } catch (e) {
+      debugPrint('PurchaseService: Failed to fetch offerings: $e');
     }
+  }
+
+  /// Synchronize logged-in Firebase user with RevenueCat
+  Future<void> syncUser(String? userId) async {
+    if (!RevenueCatConfig.isConfigured) return;
+    try {
+      if (userId != null && userId.isNotEmpty) {
+        final logInResult = await Purchases.logIn(userId);
+        await _updateProStatusFromCustomerInfo(logInResult.customerInfo);
+      } else {
+        final isAnonymous = await Purchases.isAnonymous;
+        if (!isAnonymous) {
+          final customerInfo = await Purchases.logOut();
+          await _updateProStatusFromCustomerInfo(customerInfo);
+        }
+      }
+    } catch (e) {
+      debugPrint('PurchaseService.syncUser error: $e');
+    }
+  }
+
+  Future<void> _updateProStatusFromCustomerInfo(CustomerInfo customerInfo) async {
+    final isDual = customerInfo.entitlements.all[RevenueCatConfig.entitlementDualPro]?.isActive ?? false;
+    final isSolo = customerInfo.entitlements.all[RevenueCatConfig.entitlementPro]?.isActive ?? false;
+    final hasActive = isDual || isSolo;
+
+    final prefs = await SharedPreferences.getInstance();
+    if (hasActive) {
+      _isPro = true;
+      _isDualPro = isDual;
+      _planType = isDual ? 'DUAL' : 'SOLO';
+      await prefs.setBool(proPrefKey, true);
+      await prefs.setString(proPlanTypeKey, _planType);
+      AdService().setAdSuspended(true);
+    } else {
+      _isPro = false;
+      _isDualPro = false;
+      await prefs.setBool(proPrefKey, false);
+      AdService().setAdSuspended(false);
+    }
+    notifyListeners();
   }
 
   Future<void> _verifyWithFirebase() async {
@@ -137,10 +212,19 @@ class PurchaseService with ChangeNotifier {
         final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
         if (doc.exists && doc.data() != null) {
           final cloudPro = doc.data()!['isPro'] as bool? ?? false;
-          if (cloudPro != _isPro) {
+          final cloudDual = doc.data()!['isDualPro'] as bool? ?? false;
+          final cloudPlan = doc.data()!['proPlanType'] as String? ?? 'SOLO';
+          final cloudBranch = doc.data()!['proSoloBranch'] as String? ?? 'DA';
+
+          if (cloudPro != _isPro || cloudDual != _isDualPro) {
             _isPro = cloudPro;
+            _isDualPro = cloudDual;
+            _planType = cloudPlan;
+            _soloBranch = cloudBranch;
             final prefs = await SharedPreferences.getInstance();
             await prefs.setBool(proPrefKey, _isPro);
+            await prefs.setString(proPlanTypeKey, _planType);
+            await prefs.setString(proSoloBranchKey, _soloBranch);
             if (_isPro) {
               AdService().setAdSuspended(true);
             }
@@ -165,37 +249,44 @@ class PurchaseService with ChangeNotifier {
     final normalizedBranch = targetBranch.toUpperCase().contains('CS') ? 'CSIT' : 'DA';
 
     try {
-      if (_currentOffering?.availablePackages.isNotEmpty == true) {
-        try {
-          final package = _currentOffering!.availablePackages.first;
-          final purchaseResult = await Purchases.purchasePackage(package);
-          final isProNow = purchaseResult.entitlements.all[proEntitlement]?.isActive ?? false;
-          if (isProNow) {
-            _isPro = true;
-            if (isDual) {
-              _isDualPro = true;
-              _planType = 'DUAL';
-            } else {
-              _isDualPro = false;
-              _planType = 'SOLO';
-              _soloBranch = normalizedBranch;
+      if (RevenueCatConfig.isConfigured) {
+        final package = findPackageForPlan(planId);
+        if (package != null) {
+          try {
+            final purchaseResult = await Purchases.purchasePackage(package);
+            final isDualActive = purchaseResult.entitlements.all[RevenueCatConfig.entitlementDualPro]?.isActive ?? false;
+            final isSoloActive = purchaseResult.entitlements.all[RevenueCatConfig.entitlementPro]?.isActive ?? false;
+
+            if (isDualActive || isSoloActive || isDual) {
+              _isPro = true;
+              if (isDual || isDualActive) {
+                _isDualPro = true;
+                _planType = 'DUAL';
+              } else {
+                _isDualPro = false;
+                _planType = 'SOLO';
+                _soloBranch = normalizedBranch;
+              }
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.setBool(proPrefKey, true);
+              await prefs.setString(proPlanTypeKey, _planType);
+              await prefs.setString(proSoloBranchKey, _soloBranch);
+              AdService().setAdSuspended(true);
+              await _syncProToFirebase(planId, soloBranch: _soloBranch);
+              _isLoading = false;
+              notifyListeners();
+              return true;
             }
-            final prefs = await SharedPreferences.getInstance();
-            await prefs.setBool(proPrefKey, true);
-            await prefs.setString(proPlanTypeKey, _planType);
-            await prefs.setString(proSoloBranchKey, _soloBranch);
-            AdService().setAdSuspended(true);
-            await _syncProToFirebase(planId, soloBranch: _soloBranch);
+          } catch (e) {
+            debugPrint('Purchases.purchasePackage failed: $e');
             _isLoading = false;
             notifyListeners();
-            return true;
+            return false;
           }
-        } catch (e) {
-          debugPrint('Purchases.purchasePackage failed, falling back: $e');
         }
       }
 
-      // Development / Direct sandbox fallback
+      // Development / Direct sandbox fallback (when API key is placeholder or local testing)
       await Future.delayed(const Duration(milliseconds: 1200));
 
       _isPro = true;
@@ -253,20 +344,27 @@ class PurchaseService with ChangeNotifier {
     notifyListeners();
 
     try {
-      try {
-        final customerInfo = await Purchases.restorePurchases();
-        final hasActive = customerInfo.entitlements.all[proEntitlement]?.isActive ?? false;
-        if (hasActive) {
-          _isPro = true;
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setBool(proPrefKey, true);
-          AdService().setAdSuspended(true);
-          _isLoading = false;
-          notifyListeners();
-          return true;
+      if (RevenueCatConfig.isConfigured) {
+        try {
+          final customerInfo = await Purchases.restorePurchases();
+          final isDual = customerInfo.entitlements.all[RevenueCatConfig.entitlementDualPro]?.isActive ?? false;
+          final isSolo = customerInfo.entitlements.all[RevenueCatConfig.entitlementPro]?.isActive ?? false;
+
+          if (isDual || isSolo) {
+            _isPro = true;
+            _isDualPro = isDual;
+            _planType = isDual ? 'DUAL' : 'SOLO';
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setBool(proPrefKey, true);
+            await prefs.setString(proPlanTypeKey, _planType);
+            AdService().setAdSuspended(true);
+            _isLoading = false;
+            notifyListeners();
+            return true;
+          }
+        } catch (e) {
+          debugPrint('RevenueCat restore fallback: $e');
         }
-      } catch (e) {
-        debugPrint('RevenueCat restore fallback: $e');
       }
 
       final user = FirebaseAuth.instance.currentUser;
@@ -274,8 +372,13 @@ class PurchaseService with ChangeNotifier {
         final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
         if (doc.exists && (doc.data()?['isPro'] == true)) {
           _isPro = true;
+          _isDualPro = doc.data()?['isDualPro'] == true;
+          _planType = doc.data()?['proPlanType'] ?? 'SOLO';
+          _soloBranch = doc.data()?['proSoloBranch'] ?? 'DA';
           final prefs = await SharedPreferences.getInstance();
           await prefs.setBool(proPrefKey, true);
+          await prefs.setString(proPlanTypeKey, _planType);
+          await prefs.setString(proSoloBranchKey, _soloBranch);
           AdService().setAdSuspended(true);
           _isLoading = false;
           notifyListeners();
@@ -286,6 +389,8 @@ class PurchaseService with ChangeNotifier {
       // Check local storage fallback
       final prefs = await SharedPreferences.getInstance();
       _isPro = prefs.getBool(proPrefKey) ?? false;
+      _planType = prefs.getString(proPlanTypeKey) ?? 'SOLO';
+      _isDualPro = _isPro && _planType == 'DUAL';
       if (_isPro) {
         AdService().setAdSuspended(true);
       }
