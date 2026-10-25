@@ -16,18 +16,18 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   int _currentPage = 0;
 
-  final List<({String title, String subtitle})> _slides = const [
+    final List<({String title, String subtitle})> _slides = const [
     (
-      title: 'Master the Full\nSyllabus & PYQs',
-      subtitle: 'Structured topic checklist and 15+ years of verified GATE questions.',
+      title: 'Target Top IITs &\nPremier IISc Research',
+      subtitle: 'Aim for IIT Bombay, Delhi, Madras & IISc Bangalore with structured syllabus mastery.',
     ),
     (
-      title: 'Official TCS iON\nExam Simulation',
-      subtitle: 'Real exam interface with virtual calculator, timers, and AIR projection.',
+      title: 'Prestigious PSU\nCareers & Recruitment',
+      subtitle: 'Direct high-paying recruitment in ONGC, IOCL, NTPC, BHEL, ISRO & BARC with top percentile.',
     ),
     (
-      title: 'Targeted Mistake\nNotebook & Drills',
-      subtitle: 'Automatically convert missed questions into high-yield practice drills.',
+      title: 'Official TCS iON\nExam Simulation & Drills',
+      subtitle: 'Real exam interface with virtual scientific calculator, timer, and AI mistake notebook.',
     ),
   ];
 

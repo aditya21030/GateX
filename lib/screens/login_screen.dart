@@ -152,250 +152,305 @@ class _LoginScreenState extends State<LoginScreen> {
     final isDark = context.isDarkMode;
 
     return Scaffold(
-      backgroundColor: context.scaffoldBackground,
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 480),
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 24),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const SizedBox(height: 12),
-                    // GateX Brand Logo
-                    const Center(
-                      child: GateXBrandLogo(size: 60),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Welcome Back',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.outfit(
-                        fontSize: 27,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : const Color(0xFF121214),
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Sign in to continue your GATE preparation',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 14,
-                        color: isDark ? Colors.white60 : const Color(0xFF6E6E78),
-                      ),
-                    ),
-                    const SizedBox(height: 28),
+      body: Container(
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF09080F) : const Color(0xFF0E0B1A),
+          gradient: const LinearGradient(
+            colors: [
+              Color(0xFF0C0916),
+              Color(0xFF171128),
+              Color(0xFF221538),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Column(
+          children: [
+            // Top Sleek Executive Header with Group of Students Illustration
+            const AuthPurpleHeaderWithIIT(
+              targetIIT: 'GATEX ASPIRANTS',
+              airRank: 'AIR < 100 TARGET',
+            ),
 
-                    // Google Sign-In Pill Button
-                    GoogleAuthPillButton(
-                      onPressed: _isLoading ? null : _googleLogin,
-                      isLoading: _isLoading,
+            // Bottom Sheet with Sleek, Refined Top Curve
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF14151B) : Colors.white,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.08),
+                      blurRadius: 20,
+                      offset: const Offset(0, -4),
                     ),
-                    const SizedBox(height: 18),
-
-                    // Clean subtle divider
-                    Row(
+                  ],
+                ),
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(26, 26, 26, 20),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Expanded(
-                          child: Divider(
-                            color: isDark ? Colors.white12 : const Color(0xFFE5E5EA),
-                            thickness: 1,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 14),
-                          child: Text(
-                            'or continue with email',
-                            style: GoogleFonts.outfit(
-                              fontSize: 12,
-                              color: isDark ? Colors.white38 : const Color(0xFF8E8E98),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Divider(
-                            color: isDark ? Colors.white12 : const Color(0xFFE5E5EA),
-                            thickness: 1,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 18),
-
-                    // Error message if any
-                    if (_errorMessage != null) ...[
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: AppTheme.error.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: AppTheme.error.withValues(alpha: 0.25)),
-                        ),
-                        child: Row(
+                        // Header Badge + Title
+                        Row(
                           children: [
-                            const Icon(Icons.error_outline_rounded, color: AppTheme.error, size: 18),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                _errorMessage!,
-                                style: GoogleFonts.outfit(color: AppTheme.error, fontSize: 12.5),
+                            Container(
+                              padding: const EdgeInsets.all(7),
+                              decoration: BoxDecoration(
+                                color: (isDark ? const Color(0xFF9D65FF) : const Color(0xFF6B38FF)).withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Icon(
+                                Icons.auto_awesome_rounded,
+                                size: 19,
+                                color: isDark ? const Color(0xFF9D65FF) : const Color(0xFF6B38FF),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                    ],
-
-                    // Email input
-                    CleanAuthInputField(
-                      controller: _emailController,
-                      hintText: 'Enter your email',
-                      prefixIcon: Icon(
-                        Icons.mail_outline_rounded,
-                        size: 19,
-                        color: isDark ? Colors.white38 : const Color(0xFF888894),
-                      ),
-                      keyboardType: TextInputType.emailAddress,
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Password input
-                    CleanAuthInputField(
-                      controller: _passwordController,
-                      hintText: 'Password',
-                      obscureText: !_isPasswordVisible,
-                      prefixIcon: Icon(
-                        Icons.lock_outline_rounded,
-                        size: 19,
-                        color: isDark ? Colors.white38 : const Color(0xFF888894),
-                      ),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _isPasswordVisible ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-                          size: 19,
-                          color: isDark ? Colors.white38 : const Color(0xFF888894),
-                        ),
-                        onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-
-                    // Forgot Password Link
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
-                          );
-                        },
-                        child: Text(
-                          'Forgot password?',
-                          style: GoogleFonts.outfit(
-                            color: const Color(0xFFFF8522),
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 22),
-
-                    // Primary Button: [ Log In ]
-                    SolidBlackPillButton(
-                      label: 'Log In',
-                      isLoading: _isLoading,
-                      onPressed: _login,
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Explore as Guest Button
-                    InkWell(
-                      onTap: _continueAsGuest,
-                      borderRadius: BorderRadius.circular(22),
-                      child: Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(22),
-                          border: Border.all(
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.12)
-                                : const Color(0xFFE4E4E8),
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.explore_outlined,
-                              size: 18,
-                              color: isDark ? Colors.white70 : const Color(0xFF5A5A66),
-                            ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 10),
                             Text(
-                              'Explore as Guest',
+                              'Welcome Back',
                               style: GoogleFonts.outfit(
-                                color: isDark ? Colors.white70 : const Color(0xFF5A5A66),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white : const Color(0xFF121214),
+                                letterSpacing: -0.4,
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    ),
-                    const SizedBox(height: 18),
-
-                    // Footer: Don't have an account? Sign Up
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
+                        const SizedBox(height: 6),
                         Text(
-                          "Don't have an account? ",
+                          'Sign in to continue your GATE preparation',
                           style: GoogleFonts.outfit(
-                            fontSize: 13.5,
+                            fontSize: 13,
                             color: isDark ? Colors.white60 : const Color(0xFF6E6E78),
                           ),
                         ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (_) => const SignUpScreen()),
-                            );
+                        const SizedBox(height: 18),
+
+                        // Google Sign-In Pill Button
+                        GoogleAuthPillButton(
+                          onPressed: _isLoading ? null : _googleLogin,
+                          isLoading: _isLoading,
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Clean subtle divider
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Divider(
+                                color: isDark ? Colors.white12 : const Color(0xFFE5E5EA),
+                                thickness: 1,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 14),
+                              child: Text(
+                                'or continue with email',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 12,
+                                  color: isDark ? Colors.white38 : const Color(0xFF8E8E98),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Divider(
+                                color: isDark ? Colors.white12 : const Color(0xFFE5E5EA),
+                                thickness: 1,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Error message if any
+                        if (_errorMessage != null) ...[
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: AppTheme.error.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(color: AppTheme.error.withValues(alpha: 0.25)),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.error_outline_rounded, color: AppTheme.error, size: 18),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    _errorMessage!,
+                                    style: GoogleFonts.outfit(color: AppTheme.error, fontSize: 12),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                        ],
+
+                        // Email input
+                        CleanAuthInputField(
+                          controller: _emailController,
+                          hintText: 'name@domain.com',
+                          keyboardType: TextInputType.emailAddress,
+                          prefixIcon: Icon(
+                            Icons.alternate_email_rounded,
+                            size: 19,
+                            color: isDark ? Colors.white54 : const Color(0xFF7A7A85),
+                          ),
+                          validator: (val) {
+                            if (val == null || val.trim().isEmpty) return 'Email is required';
+                            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(val.trim())) {
+                              return 'Enter a valid email address';
+                            }
+                            return null;
                           },
-                          child: Text(
-                            'Sign Up',
-                            style: GoogleFonts.outfit(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFFFF8522),
+                        ),
+                        const SizedBox(height: 14),
+
+                        // Password input
+                        CleanAuthInputField(
+                          controller: _passwordController,
+                          hintText: '••••••••',
+                          obscureText: !_isPasswordVisible,
+                          prefixIcon: Icon(
+                            Icons.lock_outline_rounded,
+                            size: 19,
+                            color: isDark ? Colors.white54 : const Color(0xFF7A7A85),
+                          ),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isPasswordVisible ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                              size: 19,
+                              color: isDark ? Colors.white54 : const Color(0xFF7A7A85),
+                            ),
+                            onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+                          ),
+                          validator: (val) {
+                            if (val == null || val.isEmpty) return 'Password is required';
+                            if (val.length < 6) return 'Password must be at least 6 characters';
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Forgot Password Link
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
+                              );
+                            },
+                            child: Text(
+                              'Forgot password?',
+                              style: GoogleFonts.outfit(
+                                color: isDark ? const Color(0xFFB185FF) : const Color(0xFF6B38FF),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
+                        const SizedBox(height: 18),
+
+                        // Solid Black Pill Button: [ Log In ]
+                        SolidBlackPillButton(
+                          label: 'Log In',
+                          isLoading: _isLoading,
+                          onPressed: _login,
+                        ),
+                        const SizedBox(height: 12),
+
+                        // Explore as Guest Button
+                        InkWell(
+                          onTap: _continueAsGuest,
+                          borderRadius: BorderRadius.circular(22),
+                          child: Container(
+                            height: 48,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(22),
+                              border: Border.all(
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.12)
+                                    : const Color(0xFFE4E4E8),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.explore_outlined,
+                                  size: 18,
+                                  color: isDark ? Colors.white70 : const Color(0xFF5A5A66),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Explore as Guest',
+                                  style: GoogleFonts.outfit(
+                                    color: isDark ? Colors.white70 : const Color(0xFF5A5A66),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+
+                        // Footer: Don't have an account? Sign Up
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Don't have an account? ",
+                              style: GoogleFonts.outfit(
+                                fontSize: 13.5,
+                                color: isDark ? Colors.white60 : const Color(0xFF6E6E78),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const SignUpScreen()),
+                                );
+                              },
+                              child: Text(
+                                'Sign Up',
+                                style: GoogleFonts.outfit(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark ? const Color(0xFFB185FF) : const Color(0xFF6B38FF),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
         ),
       ),
     );

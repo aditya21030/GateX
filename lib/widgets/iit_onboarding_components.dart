@@ -751,6 +751,666 @@ class _IITBuildingPainter extends CustomPainter {
 }
 
 /// Curved, Minimal Floating IIT Cards (Matches User's Request: Heavily Curved & Clean)
+
+/// Clean Modern Vector Illustration of a Group of 3 Aspiring Students Studying Together
+class GroupOfStudentsIllustration extends StatelessWidget {
+  final double size;
+  final String targetBadge;
+
+  const GroupOfStudentsIllustration({
+    super.key,
+    this.size = 135.0,
+    this.targetBadge = 'AIR < 100 TARGET',
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final width = (size * 1.85).clamp(160.0, 320.0);
+    final height = size.clamp(75.0, 160.0);
+
+    return SizedBox(
+      width: width,
+      height: height,
+      child: Stack(
+        alignment: Alignment.center,
+        clipBehavior: Clip.none,
+        children: [
+          // Background soft radial spotlight
+          Container(
+            width: width * 0.92,
+            height: height * 0.95,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  const Color(0xFF8338EC).withValues(alpha: 0.30),
+                  const Color(0xFFFF8522).withValues(alpha: 0.15),
+                  Colors.transparent,
+                ],
+                stops: const [0.0, 0.65, 1.0],
+              ),
+            ),
+          ),
+
+          // Custom Vector Illustration of 3 Aspirants Studying Together
+          CustomPaint(
+            size: Size(width, height),
+            painter: _GroupOfStudentsPainter(),
+          ),
+
+          // Floating Target Pill Badge at bottom (only when size is sufficiently tall)
+          if (height > 90)
+            Positioned(
+              bottom: 0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3.5),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF10121A).withValues(alpha: 0.94),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: const Color(0xFFFF8522).withValues(alpha: 0.65),
+                    width: 1.1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFFF8522).withValues(alpha: 0.28),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.auto_awesome_rounded,
+                      color: Color(0xFFFF8522),
+                      size: 11,
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      targetBadge,
+                      style: GoogleFonts.outfit(
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GroupOfStudentsPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final centerX = w / 2;
+    final tableY = h * 0.82;
+    final tableH = 6.0;
+
+    // 1. Soft Backdrop Frame
+    final frameRRect = RRect.fromRectAndRadius(
+      Rect.fromCenter(center: Offset(centerX, h * 0.44), width: w * 0.94, height: h * 0.72),
+      const Radius.circular(16),
+    );
+    canvas.drawRRect(
+      frameRRect,
+      Paint()..color = Colors.white.withValues(alpha: 0.03),
+    );
+    canvas.drawRRect(
+      frameRRect,
+      Paint()
+        ..color = const Color(0xFF8338EC).withValues(alpha: 0.2)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0,
+    );
+
+    // Upward Progress Curve & Target Star in background
+    final curvePath = Path()
+      ..moveTo(w * 0.08, h * 0.65)
+      ..quadraticBezierTo(w * 0.50, h * 0.14, w * 0.92, h * 0.35);
+    canvas.drawPath(
+      curvePath,
+      Paint()
+        ..color = const Color(0xFFFF8522).withValues(alpha: 0.35)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.4,
+    );
+
+    // Target Spark at Apex
+    canvas.drawCircle(Offset(w * 0.50, h * 0.22), 3.5, Paint()..color = const Color(0xFFFFD54F));
+    canvas.drawCircle(
+      Offset(w * 0.50, h * 0.22),
+      7.0,
+      Paint()
+        ..color = const Color(0xFFFFD54F).withValues(alpha: 0.3)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+    );
+
+    // 2. Student 1 (Left - Focused Aspirant taking notes)
+    final s1X = w * 0.24;
+    final s1Body = Path()
+      ..moveTo(s1X - 22, tableY)
+      ..lineTo(s1X - 16, h * 0.54)
+      ..quadraticBezierTo(s1X, h * 0.46, s1X + 16, h * 0.54)
+      ..lineTo(s1X + 22, tableY)
+      ..close();
+    canvas.drawPath(s1Body, Paint()..color = const Color(0xFF1E3A5F));
+    // Collar
+    canvas.drawPath(
+      Path()
+        ..moveTo(s1X - 6, h * 0.51)
+        ..lineTo(s1X, h * 0.58)
+        ..lineTo(s1X + 6, h * 0.51),
+      Paint()
+        ..color = const Color(0xFF48CAE4)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5,
+    );
+
+    // Head
+    final s1HeadCenter = Offset(s1X, h * 0.42);
+    canvas.drawOval(
+      Rect.fromCenter(center: s1HeadCenter, width: 18, height: 22),
+      Paint()..color = const Color(0xFFFFD1A9),
+    );
+
+    // Hair: Neat ponytail in midnight slate
+    final s1Hair = Path()
+      ..addArc(Rect.fromCenter(center: Offset(s1X, h * 0.38), width: 22, height: 20), -math.pi, math.pi)
+      ..lineTo(s1X - 10, h * 0.44)
+      ..lineTo(s1X - 14, h * 0.38)
+      ..close();
+    canvas.drawPath(s1Hair, Paint()..color = const Color(0xFF141724));
+    canvas.drawCircle(Offset(s1X - 13, h * 0.37), 3.5, Paint()..color = const Color(0xFFFF8522));
+
+    // Glasses
+    canvas.drawCircle(
+      Offset(s1X + 2, h * 0.42),
+      3.2,
+      Paint()
+        ..color = const Color(0xFF48CAE4)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0,
+    );
+
+    // Spiral Notebook on Desk
+    final noteRect = Rect.fromLTWH(s1X - 8, tableY - 14, 26, 14);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(noteRect, const Radius.circular(2)),
+      Paint()..color = Colors.white,
+    );
+    canvas.drawLine(
+      Offset(noteRect.left + 4, noteRect.top + 4),
+      Offset(noteRect.right - 4, noteRect.top + 4),
+      Paint()..color = const Color(0xFF3A86FF)..strokeWidth = 1.0,
+    );
+    canvas.drawLine(
+      Offset(noteRect.left + 4, noteRect.top + 8),
+      Offset(noteRect.right - 4, noteRect.top + 8),
+      Paint()..color = const Color(0xFF3A86FF)..strokeWidth = 1.0,
+    );
+    // Stylus
+    canvas.drawCircle(Offset(s1X + 16, tableY - 8), 3.0, Paint()..color = const Color(0xFFFFD1A9));
+    canvas.drawLine(
+      Offset(s1X + 15, tableY - 12),
+      Offset(s1X + 12, tableY - 4),
+      Paint()..color = const Color(0xFFFF8522)..strokeWidth = 1.5,
+    );
+
+    // 3. Student 2 (Center - Tech Aspirant Coding on Laptop)
+    final s2X = w * 0.50;
+    final s2Body = Path()
+      ..moveTo(s2X - 25, tableY)
+      ..lineTo(s2X - 19, h * 0.49)
+      ..quadraticBezierTo(s2X, h * 0.40, s2X + 19, h * 0.49)
+      ..lineTo(s2X + 25, tableY)
+      ..close();
+    canvas.drawPath(s2Body, Paint()..color = const Color(0xFF5E35B1));
+    canvas.drawCircle(Offset(s2X, h * 0.47), 5, Paint()..color = Colors.white70);
+
+    // Head
+    final s2HeadCenter = Offset(s2X, h * 0.36);
+    canvas.drawOval(
+      Rect.fromCenter(center: s2HeadCenter, width: 20, height: 24),
+      Paint()..color = const Color(0xFFF7C59F),
+    );
+
+    // Hair: Textured modern crop
+    final s2Hair = Path()
+      ..addArc(Rect.fromCenter(center: Offset(s2X, h * 0.32), width: 22, height: 18), -math.pi, math.pi)
+      ..lineTo(s2X + 10, h * 0.36)
+      ..lineTo(s2X - 10, h * 0.36)
+      ..close();
+    canvas.drawPath(s2Hair, Paint()..color = const Color(0xFF1E1B18));
+
+    // Headphones around neck/ears (Cyber Flame Orange)
+    final hpPaint = Paint()
+      ..color = const Color(0xFFFF8522)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.2;
+    canvas.drawArc(
+      Rect.fromCenter(center: Offset(s2X, h * 0.34), width: 26, height: 22),
+      -math.pi * 0.9,
+      math.pi * 0.8,
+      false,
+      hpPaint,
+    );
+    canvas.drawCircle(Offset(s2X - 12, h * 0.37), 3.0, Paint()..color = const Color(0xFFFF8522));
+    canvas.drawCircle(Offset(s2X + 12, h * 0.37), 3.0, Paint()..color = const Color(0xFFFF8522));
+
+    // Modern Laptop on desk
+    final lapBase = Rect.fromCenter(center: Offset(s2X, tableY - 2), width: 48, height: 4);
+    canvas.drawRRect(RRect.fromRectAndRadius(lapBase, const Radius.circular(2)), Paint()..color = const Color(0xFF94A3B8));
+
+    final lapScreen = Rect.fromCenter(center: Offset(s2X, tableY - 14), width: 42, height: 20);
+    canvas.drawRRect(RRect.fromRectAndRadius(lapScreen, const Radius.circular(2)), Paint()..color = const Color(0xFF0F172A));
+
+    // Screen Code & Chart visualization
+    canvas.drawRect(Rect.fromLTWH(lapScreen.left + 4, lapScreen.top + 4, 14, 2), Paint()..color = const Color(0xFF00E676));
+    canvas.drawRect(Rect.fromLTWH(lapScreen.left + 4, lapScreen.top + 8, 20, 2), Paint()..color = const Color(0xFF38BDF8));
+    // Mini bar chart
+    canvas.drawRect(Rect.fromLTWH(lapScreen.right - 14, lapScreen.bottom - 8, 3, 5), Paint()..color = const Color(0xFFFF8522));
+    canvas.drawRect(Rect.fromLTWH(lapScreen.right - 10, lapScreen.bottom - 11, 3, 8), Paint()..color = const Color(0xFFFFD54F));
+    canvas.drawRect(Rect.fromLTWH(lapScreen.right - 6, lapScreen.bottom - 14, 3, 11), Paint()..color = const Color(0xFF00E676));
+
+    // Hands typing on keyboard
+    canvas.drawCircle(Offset(s2X - 10, tableY - 4), 3.0, Paint()..color = const Color(0xFFF7C59F));
+    canvas.drawCircle(Offset(s2X + 10, tableY - 4), 3.0, Paint()..color = const Color(0xFFF7C59F));
+
+    // 4. Student 3 (Right - Ambitious Aspirant pointing to target)
+    final s3X = w * 0.76;
+    final s3Body = Path()
+      ..moveTo(s3X - 22, tableY)
+      ..lineTo(s3X - 16, h * 0.54)
+      ..quadraticBezierTo(s3X, h * 0.46, s3X + 16, h * 0.54)
+      ..lineTo(s3X + 22, tableY)
+      ..close();
+    canvas.drawPath(s3Body, Paint()..color = const Color(0xFFE65100));
+
+    // Head
+    final s3HeadCenter = Offset(s3X, h * 0.42);
+    canvas.drawOval(
+      Rect.fromCenter(center: s3HeadCenter, width: 18, height: 22),
+      Paint()..color = const Color(0xFFE8B298),
+    );
+
+    // Hair: Stylized wavy crop
+    final s3Hair = Path()
+      ..addArc(Rect.fromCenter(center: Offset(s3X, h * 0.38), width: 22, height: 20), -math.pi, math.pi)
+      ..lineTo(s3X + 11, h * 0.42)
+      ..lineTo(s3X - 11, h * 0.42)
+      ..close();
+    canvas.drawPath(s3Hair, Paint()..color = const Color(0xFF2B201A));
+
+    // Vertical Tablet held upright
+    final tabRect = Rect.fromLTWH(s3X + 4, tableY - 22, 18, 22);
+    canvas.drawRRect(RRect.fromRectAndRadius(tabRect, const Radius.circular(2)), Paint()..color = const Color(0xFF1E293B));
+    canvas.drawCircle(
+      Offset(tabRect.center.dx, tabRect.center.dy),
+      5,
+      Paint()
+        ..color = const Color(0xFF00E676)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0,
+    );
+
+    // Hand gesturing enthusiastically towards goal
+    canvas.drawCircle(Offset(s3X - 10, tableY - 14), 3.5, Paint()..color = const Color(0xFFE8B298));
+    canvas.drawLine(
+      Offset(s3X - 10, tableY - 14),
+      Offset(s3X - 16, tableY - 22),
+      Paint()
+        ..color = const Color(0xFFE8B298)
+        ..strokeWidth = 2.5
+        ..strokeCap = StrokeCap.round,
+    );
+
+    // 5. The Desk Surface
+    final deskRect = Rect.fromLTWH(w * 0.05, tableY, w * 0.90, tableH);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(deskRect, const Radius.circular(2)),
+      Paint()
+        ..shader = const LinearGradient(
+          colors: [Color(0xFF282F44), Color(0xFF191D2B)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ).createShader(deskRect),
+    );
+    canvas.drawLine(
+      Offset(w * 0.05, tableY),
+      Offset(w * 0.95, tableY),
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.35)
+        ..strokeWidth = 1.0,
+    );
+
+    // Accessories: Coffee Mug on Left
+    final mugRect = Rect.fromLTWH(w * 0.09, tableY - 10, 8, 10);
+    canvas.drawRRect(RRect.fromRectAndRadius(mugRect, const Radius.circular(1.5)), Paint()..color = const Color(0xFFFFD54F));
+    canvas.drawPath(
+      Path()
+        ..moveTo(mugRect.center.dx, mugRect.top - 2)
+        ..quadraticBezierTo(mugRect.center.dx + 2, mugRect.top - 5, mugRect.center.dx - 1, mugRect.top - 8),
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.5)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.0,
+    );
+
+    // Stack of 2 GATE books on far right
+    canvas.drawRect(Rect.fromLTWH(w * 0.88, tableY - 5, 14, 5), Paint()..color = const Color(0xFF8338EC));
+    canvas.drawRect(Rect.fromLTWH(w * 0.89, tableY - 9, 12, 4), Paint()..color = const Color(0xFF00E676));
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+/// Clean Modern Vector Architectural Illustration of Prestigious PSU Engineering Infrastructure
+class _PSUEngineeringPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final centerX = w / 2;
+    final groundY = h * 0.82;
+
+    // 1. Soft Ambient Ground Glow & Occlusion
+    final groundShadow = Paint()
+      ..color = Colors.black.withValues(alpha: 0.5)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12);
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(centerX, groundY + 4),
+        width: w * 0.88,
+        height: 18,
+      ),
+      groundShadow,
+    );
+
+    // 2. High-Tech Cyan / Blue Radial Spotlight
+    final spotlightPaint = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          const Color(0xFF00B4D8).withValues(alpha: 0.22),
+          const Color(0xFF0077B6).withValues(alpha: 0.08),
+          Colors.transparent,
+        ],
+        stops: const [0.0, 0.65, 1.0],
+      ).createShader(Rect.fromLTWH(0, 0, w, groundY));
+    canvas.drawRect(Rect.fromLTWH(0, 0, w, groundY), spotlightPaint);
+
+    // 3. Subtle Technology Sparks / Satellite Telemetry Wave Stars
+    final sparkGlow = Paint()
+      ..color = const Color(0xFF00E5FF).withValues(alpha: 0.4)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
+    final sparkPaint = Paint()..color = const Color(0xFF00E5FF);
+
+    final sparks = [
+      Offset(w * 0.14, h * 0.28),
+      Offset(w * 0.86, h * 0.32),
+      Offset(w * 0.28, h * 0.16),
+      Offset(w * 0.72, h * 0.18),
+    ];
+    for (final sp in sparks) {
+      canvas.drawCircle(sp, 3.0, sparkGlow);
+      canvas.drawCircle(sp, 1.5, sparkPaint);
+    }
+
+    // 4. Ground Foundation: Heavy Engineering Platform
+    final platformRect = Rect.fromLTWH(w * 0.06, groundY, w * 0.88, 12);
+    final platformPaint = Paint()
+      ..shader = const LinearGradient(
+        colors: [Color(0xFF1E2838), Color(0xFF101724)],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+      ).createShader(platformRect);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(platformRect, const Radius.circular(3)),
+      platformPaint,
+    );
+
+    canvas.drawLine(
+      Offset(w * 0.06, groundY),
+      Offset(w * 0.94, groundY),
+      Paint()
+        ..color = const Color(0xFF00E5FF).withValues(alpha: 0.7)
+        ..strokeWidth = 1.2,
+    );
+
+    // 5. Left: Renewable Wind Turbine & Power Transmission
+    final turbineX = w * 0.22;
+    final turbineTopY = h * 0.26;
+
+    final mastPath = Path()
+      ..moveTo(turbineX - 3.5, groundY)
+      ..lineTo(turbineX - 1.5, turbineTopY)
+      ..lineTo(turbineX + 1.5, turbineTopY)
+      ..lineTo(turbineX + 3.5, groundY)
+      ..close();
+    canvas.drawPath(
+      mastPath,
+      Paint()
+        ..shader = const LinearGradient(
+          colors: [Color(0xFFCBD5E1), Color(0xFF64748B)],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ).createShader(Rect.fromLTWH(turbineX - 4, turbineTopY, 8, groundY - turbineTopY)),
+    );
+
+    canvas.drawCircle(Offset(turbineX, turbineTopY), 4.5, Paint()..color = const Color(0xFFE2E8F0));
+    canvas.drawCircle(Offset(turbineX, turbineTopY), 2.0, Paint()..color = const Color(0xFF00E5FF));
+
+    const bladeLen = 34.0;
+    final bladeAngles = [-math.pi / 2, math.pi / 6, 5 * math.pi / 6];
+    for (final angle in bladeAngles) {
+      final tipX = turbineX + math.cos(angle) * bladeLen;
+      final tipY = turbineTopY + math.sin(angle) * bladeLen;
+      final perpX = -math.sin(angle) * 2.2;
+      final perpY = math.cos(angle) * 2.2;
+
+      final bladePath = Path()
+        ..moveTo(turbineX, turbineTopY)
+        ..lineTo(turbineX + math.cos(angle) * 8 + perpX, turbineTopY + math.sin(angle) * 8 + perpY)
+        ..lineTo(tipX, tipY)
+        ..lineTo(turbineX + math.cos(angle) * 8 - perpX, turbineTopY + math.sin(angle) * 8 - perpY)
+        ..close();
+
+      canvas.drawPath(bladePath, Paint()..color = const Color(0xFFE2E8F0));
+      canvas.drawCircle(Offset(tipX, tipY), 1.4, Paint()..color = const Color(0xFF00E5FF));
+    }
+
+    // Power Transmission Pylon
+    final pylonX = w * 0.10;
+    final pylonTopY = h * 0.42;
+    final pylonPaint = Paint()
+      ..color = const Color(0xFF334155).withValues(alpha: 0.8)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+    canvas.drawLine(Offset(pylonX, groundY), Offset(pylonX, pylonTopY), pylonPaint);
+    canvas.drawLine(Offset(pylonX - 8, pylonTopY + 12), Offset(pylonX + 8, pylonTopY + 12), pylonPaint);
+    canvas.drawLine(Offset(pylonX - 12, pylonTopY + 22), Offset(pylonX + 12, pylonTopY + 22), pylonPaint);
+    canvas.drawLine(Offset(pylonX + 8, pylonTopY + 12), Offset(turbineX - 3, turbineTopY + 40), Paint()..color = const Color(0xFF00B4D8).withValues(alpha: 0.4)..strokeWidth = 0.8);
+
+    // 6. Center: Futuristic Space & Research Lab Tower (ISRO / BARC)
+    final labCenterX = w * 0.50;
+    final labW = w * 0.28;
+    final labBaseY = groundY;
+    final labH = h * 0.52;
+    final labTopY = labBaseY - labH;
+
+    final labRect = Rect.fromCenter(
+      center: Offset(labCenterX, labBaseY - labH / 2),
+      width: labW,
+      height: labH,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(labRect, const Radius.circular(4)),
+      Paint()
+        ..shader = const LinearGradient(
+          colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ).createShader(labRect),
+    );
+
+    // Cyan observation ring
+    final obsRect = Rect.fromCenter(
+      center: Offset(labCenterX, labTopY + labH * 0.35),
+      width: labW + 4,
+      height: 12,
+    );
+    canvas.drawRect(
+      obsRect,
+      Paint()
+        ..shader = const LinearGradient(
+          colors: [Color(0xFF00B4D8), Color(0xFF00E5FF), Color(0xFF0077B6)],
+          stops: [0.0, 0.5, 1.0],
+        ).createShader(obsRect),
+    );
+    for (int i = -3; i <= 3; i++) {
+      canvas.drawLine(
+        Offset(labCenterX + i * 8, obsRect.top),
+        Offset(labCenterX + i * 8, obsRect.bottom),
+        Paint()..color = const Color(0xFF0F172A)..strokeWidth = 1.0,
+      );
+    }
+
+    // Dome & Dish
+    final domeRect = Rect.fromCenter(
+      center: Offset(labCenterX, labTopY + 6),
+      width: labW * 0.65,
+      height: 20,
+    );
+    canvas.drawArc(
+      domeRect,
+      math.pi,
+      math.pi,
+      true,
+      Paint()..color = const Color(0xFF334155),
+    );
+
+    final dishX = labCenterX;
+    final dishY = labTopY - 14;
+    canvas.drawLine(
+      Offset(labCenterX, labTopY - 4),
+      Offset(dishX, dishY),
+      Paint()..color = const Color(0xFF94A3B8)..strokeWidth = 2.0,
+    );
+
+    final dishPath = Path()
+      ..moveTo(dishX - 16, dishY - 10)
+      ..quadraticBezierTo(dishX, dishY + 2, dishX + 16, dishY - 6);
+    canvas.drawPath(
+      dishPath,
+      Paint()
+        ..color = const Color(0xFFE2E8F0)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.8,
+    );
+
+    // Telemetry Wave Pulse Arcs
+    final pulsePaint = Paint()
+      ..color = const Color(0xFF00E5FF).withValues(alpha: 0.6)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.2;
+    canvas.drawArc(
+      Rect.fromCenter(center: Offset(dishX + 8, dishY - 18), width: 18, height: 18),
+      -math.pi * 0.8,
+      math.pi * 0.6,
+      false,
+      pulsePaint,
+    );
+    canvas.drawArc(
+      Rect.fromCenter(center: Offset(dishX + 14, dishY - 26), width: 28, height: 28),
+      -math.pi * 0.8,
+      math.pi * 0.6,
+      false,
+      pulsePaint..color = const Color(0xFF00E5FF).withValues(alpha: 0.35),
+    );
+
+    // 7. Right: Industrial Distillation Column & Petrochemical Engineering (ONGC / IOCL)
+    final colX = w * 0.80;
+    final colTopY = h * 0.28;
+    final colW = 18.0;
+    final colH = groundY - colTopY;
+
+    final colRect = Rect.fromCenter(
+      center: Offset(colX, colTopY + colH / 2),
+      width: colW,
+      height: colH,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(colRect, const Radius.circular(3)),
+      Paint()
+        ..shader = const LinearGradient(
+          colors: [Color(0xFF475569), Color(0xFF1E293B)],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ).createShader(colRect),
+    );
+
+    for (int p = 1; p <= 4; p++) {
+      final platY = colTopY + (colH / 5) * p;
+      canvas.drawRect(
+        Rect.fromCenter(center: Offset(colX, platY), width: colW + 8, height: 2),
+        Paint()..color = const Color(0xFF94A3B8),
+      );
+      canvas.drawLine(
+        Offset(colX - colW / 2 - 4, platY - 4),
+        Offset(colX + colW / 2 + 4, platY - 4),
+        Paint()..color = const Color(0xFF64748B)..strokeWidth = 0.8,
+      );
+    }
+
+    final sphereCenter = Offset(w * 0.68, groundY - 18);
+    const sphereR = 15.0;
+    canvas.drawLine(Offset(sphereCenter.dx - 12, groundY), Offset(sphereCenter.dx - 8, sphereCenter.dy + 8), Paint()..color = const Color(0xFF475569)..strokeWidth = 1.4);
+    canvas.drawLine(Offset(sphereCenter.dx + 12, groundY), Offset(sphereCenter.dx + 8, sphereCenter.dy + 8), Paint()..color = const Color(0xFF475569)..strokeWidth = 1.4);
+
+    canvas.drawCircle(
+      sphereCenter,
+      sphereR,
+      Paint()
+        ..shader = RadialGradient(
+          colors: const [Color(0xFFE2E8F0), Color(0xFF64748B), Color(0xFF1E293B)],
+          stops: const [0.1, 0.6, 1.0],
+          center: const Alignment(-0.3, -0.3),
+        ).createShader(Rect.fromCircle(center: sphereCenter, radius: sphereR)),
+    );
+
+    // Industrial Pipelines
+    final pipePaint = Paint()
+      ..color = const Color(0xFF38BDF8).withValues(alpha: 0.7)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    final pipePath = Path()
+      ..moveTo(colX - colW / 2, groundY - 14)
+      ..lineTo(sphereCenter.dx + sphereR, groundY - 14)
+      ..lineTo(sphereCenter.dx - sphereR, groundY - 14)
+      ..lineTo(labCenterX + labW / 2, groundY - 14);
+    canvas.drawPath(pipePath, pipePaint);
+
+    canvas.drawCircle(Offset(w * 0.73, groundY - 14), 2.5, Paint()..color = const Color(0xFF00E676));
+    canvas.drawCircle(Offset(w * 0.60, groundY - 14), 2.5, Paint()..color = const Color(0xFFFFB300));
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+
+/// Curved, Minimal Floating IIT Cards (Clean, Uncluttered Vector Visuals)
 class CurvedMinimalIITCardsStage extends StatefulWidget {
   final int slideIndex;
 
@@ -792,7 +1452,7 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
     return LayoutBuilder(
       builder: (context, constraints) {
         final stageW = constraints.maxWidth;
-        final cardW = (stageW * 0.88).clamp(310.0, 370.0);
+        final cardW = (stageW * 0.90).clamp(310.0, 380.0);
 
         return Center(
           child: AnimatedBuilder(
@@ -803,9 +1463,9 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
                 child: SizedBox(
                   width: cardW,
                   child: switch (widget.slideIndex) {
-                    0 => _buildSyllabusIllustration(context),
-                    1 => _buildCbtExamIllustration(context),
-                    _ => _buildMistakeNotebookIllustration(context),
+                    0 => _buildCleanIITIllustration(context),
+                    1 => _buildCleanPSUIllustration(context),
+                    _ => _buildCleanCbtExamIllustration(context),
                   },
                 ),
               );
@@ -816,19 +1476,20 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
     );
   }
 
-  Widget _buildSyllabusIllustration(BuildContext context) {
+  /// Slide 0: Clean, Dignified Architectural IIT Monument Illustration (Uncluttered)
+  Widget _buildCleanIITIllustration(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFF13111C),
+        color: const Color(0xFF111019),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: const Color(0xFFFF8522).withValues(alpha: 0.35),
+          color: const Color(0xFF8338EC).withValues(alpha: 0.35),
           width: 1.2,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFF8522).withValues(alpha: 0.15),
+            color: const Color(0xFF8338EC).withValues(alpha: 0.16),
             blurRadius: 28,
             offset: const Offset(0, 10),
           ),
@@ -836,77 +1497,37 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFF8522).withValues(alpha: 0.18),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(Icons.menu_book_rounded, color: Color(0xFFFF8522), size: 16),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'SYLLABUS & PYQs',
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: 0.6,
-                    ),
-                  ),
-                ],
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF00E676).withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFF00E676).withValues(alpha: 0.4)),
-                ),
-                child: Text(
-                  '100% Mapped',
-                  style: GoogleFonts.outfit(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF00E676),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildTopicRow('Linear Algebra & Calculus', '18 PYQs', true),
-          const SizedBox(height: 10),
-          _buildTopicRow('Probability & Statistics', '24 PYQs', true),
-          const SizedBox(height: 10),
-          _buildTopicRow('Machine Learning & AI', 'High Yield', true),
-          const SizedBox(height: 16),
-          Container(
+          SizedBox(
+            height: 195,
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: CustomPaint(
+              painter: _IITBuildingPainter(),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(12),
+              color: const Color(0xFF181524),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: const Color(0xFFFF8522).withValues(alpha: 0.5),
+                width: 1.0,
+              ),
             ),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.verified_rounded, color: Color(0xFFFFB300), size: 18),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '15+ Years Official GATE Questions & Solutions',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white.withValues(alpha: 0.9),
-                    ),
+                const Icon(Icons.school_rounded, color: Color(0xFFFF8522), size: 14),
+                const SizedBox(width: 6),
+                Text(
+                  'TARGET TOP IITs • BOMBAY • DELHI • MADRAS',
+                  style: GoogleFonts.outfit(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 0.5,
                   ),
                 ),
               ],
@@ -917,45 +1538,61 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
     );
   }
 
-  Widget _buildTopicRow(String title, String badge, bool isDone) {
+  /// Slide 1: Clean, Dignified PSU Engineering Infrastructure Illustration (Uncluttered)
+  Widget _buildCleanPSUIllustration(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.04),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+        color: const Color(0xFF0C1322),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: const Color(0xFF00B4D8).withValues(alpha: 0.35),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0077B6).withValues(alpha: 0.18),
+            blurRadius: 28,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            isDone ? Icons.check_circle_rounded : Icons.radio_button_unchecked,
-            color: isDone ? const Color(0xFF00E676) : Colors.white38,
-            size: 16,
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              title,
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-              ),
+          SizedBox(
+            height: 195,
+            width: double.infinity,
+            child: CustomPaint(
+              painter: _PSUEngineeringPainter(),
             ),
           ),
+          const SizedBox(height: 8),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFFFF8522).withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
-              badge,
-              style: GoogleFonts.outfit(
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFFFF8522),
+              color: const Color(0xFF101B2E),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: const Color(0xFF00E5FF).withValues(alpha: 0.5),
+                width: 1.0,
               ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.precision_manufacturing_rounded, color: Color(0xFF00E5FF), size: 14),
+                const SizedBox(width: 6),
+                Text(
+                  'TOP PSUs • ONGC • IOCL • NTPC • ISRO • BARC',
+                  style: GoogleFonts.outfit(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -963,7 +1600,8 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
     );
   }
 
-  Widget _buildCbtExamIllustration(BuildContext context) {
+  /// Slide 2: Official TCS iON CBT Exam Console & AI Mistake Notebook (Uncluttered)
+  Widget _buildCleanCbtExamIllustration(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -1091,6 +1729,32 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
               ),
             ],
           ),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF00E676).withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: const Color(0xFF00E676).withValues(alpha: 0.25)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.auto_fix_high_rounded, color: Color(0xFF00E676), size: 16),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'AI Mistake Notebook • Auto-Generates Drills',
+                    style: GoogleFonts.outfit(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF00E676),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -1120,139 +1784,9 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
       ),
     );
   }
-
-  Widget _buildMistakeNotebookIllustration(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF13151A),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: const Color(0xFF00E676).withValues(alpha: 0.35),
-          width: 1.2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF00E676).withValues(alpha: 0.15),
-            blurRadius: 28,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF00E676).withValues(alpha: 0.18),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(Icons.auto_fix_high_rounded, color: Color(0xFF00E676), size: 16),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'MISTAKE NOTEBOOK',
-                    style: GoogleFonts.outfit(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: 0.6,
-                    ),
-                  ),
-                ],
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFB300).withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFFFB300).withValues(alpha: 0.4)),
-                ),
-                child: Text(
-                  'AI Analysis',
-                  style: GoogleFonts.outfit(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFFFFB300),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFF5722).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFFF5722).withValues(alpha: 0.25)),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.warning_amber_rounded, color: Color(0xFFFF5722), size: 18),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Identified Weak Area',
-                        style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFFFF5722)),
-                      ),
-                      Text(
-                        'Bayes\' Theorem & Conditional Variance',
-                        style: GoogleFonts.plusJakartaSans(fontSize: 11.5, color: Colors.white70),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: const Color(0xFF00E676).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFF00E676).withValues(alpha: 0.25)),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.bolt_rounded, color: Color(0xFF00E676), size: 18),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'High-Yield Practice Drill Generated',
-                        style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF00E676)),
-                      ),
-                      Text(
-                        '5 Targeted questions • Accuracy 40% → 94%',
-                        style: GoogleFonts.plusJakartaSans(fontSize: 11.5, color: Colors.white70),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
-/// Bottom Sheet Container with Glowing Neon Rim (matches Onboarding screens)
+
 class NeonGlowSheet extends StatelessWidget {
   final Widget child;
   final bool hasGlow;
@@ -1371,6 +1905,8 @@ class SleekCapsuleButton extends StatelessWidget {
 }
 
 /// Top Electric Purple / Violet Stage with Prestigious 3D IIT Building Asset (No starburst)
+
+/// Top Electric Purple / Violet Stage with Clean Vector Group of Students Illustration
 class AuthPurpleHeaderWithIIT extends StatelessWidget {
   final Widget? action;
   final String targetIIT;
@@ -1387,14 +1923,61 @@ class AuthPurpleHeaderWithIIT extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox.shrink();
+    final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+    final headerHeight = isKeyboardOpen ? 100.0 : 215.0;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 220),
+      curve: Curves.easeInOut,
+      height: headerHeight,
+      width: double.infinity,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.center,
+        children: [
+          // Background ambient spotlight glow
+          if (!isKeyboardOpen)
+            Positioned(
+              top: 10,
+              child: Container(
+                width: 220,
+                height: 170,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      const Color(0xFFFF8522).withValues(alpha: 0.18),
+                      const Color(0xFF8338EC).withValues(alpha: 0.22),
+                      Colors.transparent,
+                    ],
+                    stops: const [0.1, 0.55, 1.0],
+                  ),
+                ),
+              ),
+            ),
+
+          // Central Group of Students Vector Illustration
+          Positioned(
+            bottom: isKeyboardOpen ? 4 : 10,
+            child: GroupOfStudentsIllustration(
+              size: isKeyboardOpen ? 72.0 : 132.0,
+              targetBadge: airRank,
+            ),
+          ),
+
+          // Top Left Action / Back Button
+          if (action != null)
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 8,
+              left: 20,
+              child: action!,
+            ),
+        ],
+      ),
+    );
   }
 }
 
-/// Backward compatibility alias
-typedef AuthPurpleHeader = AuthPurpleHeaderWithIIT;
-
-/// Clean Minimalist Input Field
 class CleanAuthInputField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
