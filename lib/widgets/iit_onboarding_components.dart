@@ -727,7 +727,7 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
       duration: const Duration(seconds: 4),
     )..repeat(reverse: true);
 
-    _floatAnim = Tween<double>(begin: -5.0, end: 5.0).animate(
+    _floatAnim = Tween<double>(begin: -6.0, end: 6.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
   }
@@ -740,27 +740,36 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.slideIndex >= 1) {
-      // Slides 2 & 3: Render the majestic 3D IIT Monument Asset as requested!
-      return Center(
-        child: IITMonument3DAsset(
-          targetIIT: widget.slideIndex == 1 ? 'IISC BANGALORE' : 'IIT BOMBAY',
-          airRank: widget.slideIndex == 1 ? 'AIR < 50' : 'AIR 1 TARGET',
-        ),
-      );
-    }
+    // Distinct 3D assets, badge metadata, and volumetric lighting for each slide
+    final (imageAsset, badgeTitle, badgeSubtitle, glowColor, badgeBorderColor) = switch (widget.slideIndex) {
+      0 => (
+        'assets/images/onboard_syllabus_3d.jpg',
+        'GATE SYLLABUS MATRIX',
+        '15+ YRS VERIFIED PYQS',
+        const Color(0xFF8338EC),
+        const Color(0xFFFF8522),
+      ),
+      1 => (
+        'assets/images/onboard_cbt_3d.jpg',
+        'OFFICIAL TCS iON SIMULATOR',
+        'SCIENTIFIC CALCULATOR HUD',
+        const Color(0xFFFF5722),
+        const Color(0xFF3A86FF),
+      ),
+      _ => (
+        'assets/images/onboard_radar_3d.jpg',
+        'AI MISTAKE NOTEBOOK',
+        'AIR < 100 MASTERY DRILLS',
+        const Color(0xFF00E676),
+        const Color(0xFFFFD54F),
+      ),
+    };
 
-    // Slide 1: Heavily curved, minimal floating cards with LESS components (Unconstrained & expansive)
     return LayoutBuilder(
       builder: (context, constraints) {
         final stageW = constraints.maxWidth;
         final stageH = constraints.maxHeight;
-        final cardW = (stageW * 0.88).clamp(310.0, 360.0);
-        const cardH = 68.0;
-
-        final availableH = stageH;
-        final spacing = (availableH * 0.23).clamp(78.0, 96.0);
-        final startY = ((availableH - (spacing * 2 + cardH)) / 2).clamp(10.0, 80.0);
+        final assetSize = (stageH * 0.74).clamp(200.0, 310.0);
 
         return AnimatedBuilder(
           animation: _floatAnim,
@@ -774,87 +783,128 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
                 clipBehavior: Clip.none,
                 alignment: Alignment.center,
                 children: [
-                  // Full stage ambient soft glow
-                  Positioned.fill(
-                    child: Center(
-                      child: Container(
-                        width: stageW * 0.95,
-                        height: stageH * 0.85,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: RadialGradient(
-                            colors: [
-                              const Color(0xFFFF5722).withValues(alpha: 0.16),
-                              const Color(0xFF673AB7).withValues(alpha: 0.10),
-                              Colors.transparent,
-                            ],
-                            radius: 0.85,
+                  // 1. Ambient Volumetric Spotlight
+                  Center(
+                    child: Container(
+                      width: assetSize * 1.25,
+                      height: assetSize * 1.25,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: RadialGradient(
+                          colors: [
+                            glowColor.withValues(alpha: 0.32),
+                            glowColor.withValues(alpha: 0.08),
+                            Colors.transparent,
+                          ],
+                          stops: const [0.15, 0.6, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // 2. High-Tech 3D Asset with Floating Levitation
+                  Transform.translate(
+                    offset: Offset(0, float),
+                    child: Container(
+                      width: assetSize,
+                      height: assetSize,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(28),
+                        boxShadow: [
+                          BoxShadow(
+                            color: glowColor.withValues(alpha: 0.28),
+                            blurRadius: 30,
+                            spreadRadius: -4,
+                            offset: const Offset(0, 12),
+                          ),
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.7),
+                            blurRadius: 24,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(28),
+                        child: Image.asset(
+                          imageAsset,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            color: const Color(0xFF13101E),
+                            child: Icon(
+                              Icons.auto_awesome_rounded,
+                              size: 48,
+                              color: glowColor,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
 
-                  // Card 1: IIT Bombay (Golden Coral Stadium Pill)
+                  // 3. Floating Glassmorphic Status Pill (Anchored at bottom)
                   Positioned(
-                    top: startY + float * 0.8,
-                    child: Transform.translate(
-                      offset: const Offset(-8, 0),
-                      child: Transform.rotate(
-                        angle: -0.024,
-                        child: _buildCurvedPill(
-                          width: cardW,
-                          height: cardH,
-                          title: 'IIT Bombay',
-                          subtitle: 'AIR < 100 • CSE & AI',
-                          tag: 'Dream IIT',
-                          gradient: const [Color(0xFFFF9800), Color(0xFFFF5722)],
-                          tagColor: const Color(0xFFFF1744),
-                          icon: Icons.account_balance_rounded,
+                    bottom: 12 + float * -0.4,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF12111A).withValues(alpha: 0.94),
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: badgeBorderColor.withValues(alpha: 0.55),
+                          width: 1.2,
                         ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: badgeBorderColor.withValues(alpha: 0.25),
+                            blurRadius: 14,
+                            offset: const Offset(0, 4),
+                          ),
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.6),
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-
-                  // Card 2: IISc Bangalore (Platinum Pearl Stadium Pill)
-                  Positioned(
-                    top: startY + spacing + float * -0.7,
-                    child: Transform.translate(
-                      offset: const Offset(8, 0),
-                      child: Transform.rotate(
-                        angle: 0.022,
-                        child: _buildCurvedPill(
-                          width: cardW,
-                          height: cardH,
-                          title: 'IISc Bangalore',
-                          subtitle: 'AIR < 50 • M.Tech CSA',
-                          tag: 'AIR 1',
-                          gradient: const [Color(0xFFECEFF1), Color(0xFFCFD8DC)],
-                          tagColor: const Color(0xFFD81B60),
-                          icon: Icons.school_rounded,
-                          isDarkText: true,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // Card 3: IIT Delhi (Azure Cyan Stadium Pill)
-                  Positioned(
-                    top: startY + spacing * 2 + float * 0.9,
-                    child: Transform.translate(
-                      offset: const Offset(-4, 0),
-                      child: Transform.rotate(
-                        angle: -0.014,
-                        child: _buildCurvedPill(
-                          width: cardW,
-                          height: cardH,
-                          title: 'IIT Delhi',
-                          subtitle: 'AIR < 250 • Data Science',
-                          tag: 'Target IIT',
-                          gradient: const [Color(0xFF29B6F6), Color(0xFF0288D1)],
-                          tagColor: const Color(0xFF7B1FA2),
-                          icon: Icons.psychology_rounded,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 7,
+                            height: 7,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color(0xFF00E676),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0xFF00E676),
+                                  blurRadius: 6,
+                                  spreadRadius: 1,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            badgeTitle,
+                            style: GoogleFonts.outfit(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.6,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '• $badgeSubtitle',
+                            style: GoogleFonts.outfit(
+                              color: const Color(0xFFFFB300),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -864,116 +914,6 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
           },
         );
       },
-    );
-  }
-
-  Widget _buildCurvedPill({
-    required double width,
-    required double height,
-    required String title,
-    required String subtitle,
-    required String tag,
-    required List<Color> gradient,
-    required Color tagColor,
-    required IconData icon,
-    bool isDarkText = false,
-  }) {
-    return Container(
-      width: width,
-      height: height,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(34), // Heavily curved stadium pill
-        gradient: LinearGradient(
-          colors: gradient,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.55),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-          BoxShadow(
-            color: gradient.first.withValues(alpha: 0.28),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.35),
-          width: 1.2,
-        ),
-      ),
-      child: Row(
-        children: [
-          // Icon emblem in circle
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: isDarkText ? const Color(0xFF37474F) : Colors.black.withValues(alpha: 0.25),
-            ),
-            child: Icon(icon, color: Colors.white, size: 24),
-          ),
-          const SizedBox(width: 14),
-
-          // Name and Rank
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: GoogleFonts.outfit(
-                    color: isDarkText ? const Color(0xFF1E2024) : Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15,
-                  ),
-                ),
-                const SizedBox(height: 1),
-                Text(
-                  subtitle,
-                  style: GoogleFonts.outfit(
-                    color: isDarkText
-                        ? const Color(0xFF455A64)
-                        : Colors.white.withValues(alpha: 0.85),
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Minimal Pill Tag
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: tagColor,
-              boxShadow: [
-                BoxShadow(
-                  color: tagColor.withValues(alpha: 0.45),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Text(
-              tag,
-              style: GoogleFonts.outfit(
-                color: Colors.white,
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -1101,19 +1041,21 @@ class AuthPurpleHeaderWithIIT extends StatelessWidget {
   final Widget? action;
   final String targetIIT;
   final String airRank;
+  final String imageAsset;
 
   const AuthPurpleHeaderWithIIT({
     super.key,
     this.action,
-    this.targetIIT = 'IIT BOMBAY',
-    this.airRank = 'AIR 1 TARGET',
+    this.targetIIT = 'GATEX AI',
+    this.airRank = 'AIR < 100 TARGET',
+    this.imageAsset = 'assets/images/auth_gatex_3d.jpg',
   });
 
   @override
   Widget build(BuildContext context) {
     final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
-    final headerHeight = isKeyboardOpen ? 110.0 : 220.0;
-    final assetSize = isKeyboardOpen ? 75.0 : 140.0;
+    final headerHeight = isKeyboardOpen ? 110.0 : 215.0;
+    final assetSize = isKeyboardOpen ? 68.0 : 124.0;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -1126,30 +1068,60 @@ class AuthPurpleHeaderWithIIT extends StatelessWidget {
           // Background ambient spotlight glow
           if (!isKeyboardOpen)
             Positioned(
-              top: 15,
+              top: 10,
               child: Container(
-                width: 170,
-                height: 170,
+                width: 180,
+                height: 180,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      Colors.white.withValues(alpha: 0.16),
-                      const Color(0xFF8338EC).withValues(alpha: 0.22),
+                      const Color(0xFFFF8522).withValues(alpha: 0.22),
+                      const Color(0xFF8338EC).withValues(alpha: 0.18),
                       Colors.transparent,
                     ],
+                    stops: const [0.1, 0.55, 1.0],
                   ),
                 ),
               ),
             ),
 
-          // Central 3D IIT Monument Asset
+          // Central 3D Asset
           Positioned(
-            bottom: 4,
-            child: IITMonument3DAsset(
-              size: assetSize,
-              targetIIT: targetIIT,
-              airRank: airRank,
+            bottom: isKeyboardOpen ? 6 : 14,
+            child: Container(
+              width: assetSize,
+              height: assetSize,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(22),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFFF8522).withValues(alpha: 0.25),
+                    blurRadius: 18,
+                    offset: const Offset(0, 6),
+                  ),
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.5),
+                    blurRadius: 14,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(22),
+                child: Image.asset(
+                  imageAsset,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: const Color(0xFF13101E),
+                    child: const Icon(
+                      Icons.auto_awesome_rounded,
+                      size: 38,
+                      color: Color(0xFFFF8522),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
 

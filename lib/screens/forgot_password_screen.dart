@@ -60,12 +60,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF09080F) : const Color(0xFF0E0B1A),
+          gradient: const LinearGradient(
             colors: [
-              Color(0xFF6B38FF),
-              Color(0xFF7B2CBF),
-              Color(0xFF5A189A),
+              Color(0xFF0C0916),
+              Color(0xFF171128),
+              Color(0xFF221538),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -73,7 +74,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ),
         child: Column(
           children: [
-            // Top Electric Purple Stage with 3D IIT Asset and Back Button
+            // Top Sleek Executive Header with 3D Security Shield and Back Button
             AuthPurpleHeaderWithIIT(
               action: Container(
                 decoration: BoxDecoration(
@@ -93,8 +94,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   onPressed: () => Navigator.pop(context),
                 ),
               ),
-              targetIIT: 'GATE ACCESS',
-              airRank: 'SECURE RECOVERY',
+              imageAsset: 'assets/images/auth_security_3d.jpg',
+              targetIIT: 'SECURE RECOVERY',
+              airRank: '256-BIT ENCRYPTION',
             ),
 
             // Bottom White Sheet (Matches Screen 4)

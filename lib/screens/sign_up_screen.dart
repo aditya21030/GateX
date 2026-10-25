@@ -170,12 +170,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF09080F) : const Color(0xFF0E0B1A),
+          gradient: const LinearGradient(
             colors: [
-              Color(0xFF6B38FF),
-              Color(0xFF7B2CBF),
-              Color(0xFF5A189A),
+              Color(0xFF0C0916),
+              Color(0xFF171128),
+              Color(0xFF221538),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -183,7 +184,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
         child: Column(
           children: [
-            // Top Electric Purple Stage with 3D IIT Asset and back button
+            // Top Sleek Executive Header with 3D GateX Crest and back button
             AuthPurpleHeaderWithIIT(
               action: Container(
                 decoration: BoxDecoration(
@@ -212,8 +213,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   },
                 ),
               ),
-              targetIIT: 'IIT BOMBAY',
-              airRank: 'AIR 1 TARGET',
+              imageAsset: 'assets/images/auth_gatex_3d.jpg',
+              targetIIT: 'NEW ASPIRANT',
+              airRank: 'GATE 2026/2027',
             ),
 
             // Bottom Sheet with Sleek, Refined Top Curve

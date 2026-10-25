@@ -153,12 +153,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF09080F) : const Color(0xFF0E0B1A),
+          gradient: const LinearGradient(
             colors: [
-              Color(0xFF6B38FF),
-              Color(0xFF7B2CBF),
-              Color(0xFF5A189A),
+              Color(0xFF0C0916),
+              Color(0xFF171128),
+              Color(0xFF221538),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -166,10 +167,11 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         child: Column(
           children: [
-            // Top Electric Purple Stage with 3D IIT Asset
+            // Top Sleek Executive Header with 3D GateX Crest
             const AuthPurpleHeaderWithIIT(
-              targetIIT: 'TARGET IIT',
-              airRank: 'GATE 2027',
+              imageAsset: 'assets/images/auth_gatex_3d.jpg',
+              targetIIT: 'GATEX AI',
+              airRank: 'AIR < 100 TARGET',
             ),
 
             // Bottom Sheet with Sleek, Refined Top Curve
