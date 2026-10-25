@@ -16,7 +16,7 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   int _currentPage = 0;
 
-    final List<({String title, String subtitle})> _slides = const [
+  final List<({String title, String subtitle})> _slides = const [
     (
       title: 'Target Top IITs &\nPremier IISc Research',
       subtitle: 'Aim for IIT Bombay, Delhi, Madras & IISc Bangalore with structured syllabus mastery.',
@@ -24,10 +24,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     (
       title: 'Prestigious PSU\nCareers & Recruitment',
       subtitle: 'Direct high-paying recruitment in ONGC, IOCL, NTPC, BHEL, ISRO & BARC with top percentile.',
-    ),
-    (
-      title: 'Official TCS iON\nExam Simulation & Drills',
-      subtitle: 'Real exam interface with virtual scientific calculator, timer, and AI mistake notebook.',
     ),
   ];
 

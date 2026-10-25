@@ -753,6 +753,7 @@ class _IITBuildingPainter extends CustomPainter {
 /// Curved, Minimal Floating IIT Cards (Matches User's Request: Heavily Curved & Clean)
 
 /// Clean Modern Vector Illustration of a Group of 3 Aspiring Students Studying Together
+/// Clean, Uncluttered Modern Vector Illustration of a Group of Confident GATE Aspirants
 class GroupOfStudentsIllustration extends StatelessWidget {
   final double size;
   final String targetBadge;
@@ -765,8 +766,8 @@ class GroupOfStudentsIllustration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = (size * 1.85).clamp(160.0, 320.0);
-    final height = size.clamp(75.0, 160.0);
+    final width = (size * 1.85).clamp(160.0, 300.0);
+    final height = size.clamp(75.0, 155.0);
 
     return SizedBox(
       width: width,
@@ -775,16 +776,16 @@ class GroupOfStudentsIllustration extends StatelessWidget {
         alignment: Alignment.center,
         clipBehavior: Clip.none,
         children: [
-          // Background soft radial spotlight
+          // Ambient soft radial illumination (Electric Violet & Warm Amber)
           Container(
-            width: width * 0.92,
+            width: width * 0.90,
             height: height * 0.95,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  const Color(0xFF8338EC).withValues(alpha: 0.30),
-                  const Color(0xFFFF8522).withValues(alpha: 0.15),
+                  const Color(0xFF8338EC).withValues(alpha: 0.28),
+                  const Color(0xFFFF8522).withValues(alpha: 0.14),
                   Colors.transparent,
                 ],
                 stops: const [0.0, 0.65, 1.0],
@@ -792,20 +793,20 @@ class GroupOfStudentsIllustration extends StatelessWidget {
             ),
           ),
 
-          // Custom Vector Illustration of 3 Aspirants Studying Together
+          // Clean, uncluttered vector illustration of 3 confident aspirants
           CustomPaint(
             size: Size(width, height),
-            painter: _GroupOfStudentsPainter(),
+            painter: _CleanGroupPainter(),
           ),
 
-          // Floating Target Pill Badge at bottom (only when size is sufficiently tall)
+          // Elegant, minimalist floating target badge
           if (height > 90)
             Positioned(
               bottom: 0,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3.5),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10121A).withValues(alpha: 0.94),
+                  color: const Color(0xFF10121A).withValues(alpha: 0.95),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: const Color(0xFFFF8522).withValues(alpha: 0.65),
@@ -813,7 +814,7 @@ class GroupOfStudentsIllustration extends StatelessWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFFFF8522).withValues(alpha: 0.28),
+                      color: const Color(0xFFFF8522).withValues(alpha: 0.25),
                       blurRadius: 10,
                       offset: const Offset(0, 3),
                     ),
@@ -827,14 +828,14 @@ class GroupOfStudentsIllustration extends StatelessWidget {
                       color: Color(0xFFFF8522),
                       size: 11,
                     ),
-                    const SizedBox(width: 5),
+                    const SizedBox(width: 6),
                     Text(
                       targetBadge,
                       style: GoogleFonts.outfit(
-                        fontSize: 9.5,
+                        fontSize: 10,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        letterSpacing: 0.5,
+                        letterSpacing: 0.6,
                       ),
                     ),
                   ],
@@ -847,197 +848,120 @@ class GroupOfStudentsIllustration extends StatelessWidget {
   }
 }
 
-class _GroupOfStudentsPainter extends CustomPainter {
+class _CleanGroupPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final w = size.width;
     final h = size.height;
-    final centerX = w / 2;
-    final tableY = h * 0.82;
-    final tableH = 6.0;
+    final baseY = h * 0.84;
 
-    // 1. Soft Backdrop Frame
-    final frameRRect = RRect.fromRectAndRadius(
-      Rect.fromCenter(center: Offset(centerX, h * 0.44), width: w * 0.94, height: h * 0.72),
-      const Radius.circular(16),
+    // 1. Soft Ground Shadow underneath the figures
+    final shadowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.45)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(w * 0.50, baseY + 4), width: w * 0.85, height: 12),
+      shadowPaint,
     );
-    canvas.drawRRect(
-      frameRRect,
-      Paint()..color = Colors.white.withValues(alpha: 0.03),
-    );
-    canvas.drawRRect(
-      frameRRect,
+
+    // Subtle Ground Glow Line
+    canvas.drawLine(
+      Offset(w * 0.12, baseY),
+      Offset(w * 0.88, baseY),
       Paint()
-        ..color = const Color(0xFF8338EC).withValues(alpha: 0.2)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.0,
+        ..shader = const LinearGradient(
+          colors: [Colors.transparent, Color(0xFF8338EC), Color(0xFFFF8522), Colors.transparent],
+          stops: [0.0, 0.35, 0.65, 1.0],
+        ).createShader(Rect.fromLTWH(w * 0.12, baseY, w * 0.76, 1.2))
+        ..strokeWidth = 1.2,
     );
 
-    // Upward Progress Curve & Target Star in background
-    final curvePath = Path()
-      ..moveTo(w * 0.08, h * 0.65)
-      ..quadraticBezierTo(w * 0.50, h * 0.14, w * 0.92, h * 0.35);
-    canvas.drawPath(
-      curvePath,
-      Paint()
-        ..color = const Color(0xFFFF8522).withValues(alpha: 0.35)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.4,
-    );
+    // 2. Left Aspirant (Focused Female Engineer - holding notebook)
+    final s1X = w * 0.26;
+    final s1Y = baseY;
 
-    // Target Spark at Apex
-    canvas.drawCircle(Offset(w * 0.50, h * 0.22), 3.5, Paint()..color = const Color(0xFFFFD54F));
-    canvas.drawCircle(
-      Offset(w * 0.50, h * 0.22),
-      7.0,
-      Paint()
-        ..color = const Color(0xFFFFD54F).withValues(alpha: 0.3)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
-    );
-
-    // 2. Student 1 (Left - Focused Aspirant taking notes)
-    final s1X = w * 0.24;
+    // Torso (Slate Navy with Cyan inner collar)
     final s1Body = Path()
-      ..moveTo(s1X - 22, tableY)
-      ..lineTo(s1X - 16, h * 0.54)
-      ..quadraticBezierTo(s1X, h * 0.46, s1X + 16, h * 0.54)
-      ..lineTo(s1X + 22, tableY)
+      ..moveTo(s1X - 22, s1Y)
+      ..lineTo(s1X - 16, h * 0.52)
+      ..quadraticBezierTo(s1X, h * 0.44, s1X + 16, h * 0.52)
+      ..lineTo(s1X + 22, s1Y)
       ..close();
-    canvas.drawPath(s1Body, Paint()..color = const Color(0xFF1E3A5F));
-    // Collar
+    canvas.drawPath(
+      s1Body,
+      Paint()
+        ..shader = const LinearGradient(
+          colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ).createShader(Rect.fromLTWH(s1X - 22, h * 0.44, 44, s1Y - h * 0.44)),
+    );
+
+    // Clean Cyan Collar Accent
     canvas.drawPath(
       Path()
-        ..moveTo(s1X - 6, h * 0.51)
-        ..lineTo(s1X, h * 0.58)
-        ..lineTo(s1X + 6, h * 0.51),
+        ..moveTo(s1X - 6, h * 0.49)
+        ..lineTo(s1X, h * 0.56)
+        ..lineTo(s1X + 6, h * 0.49),
       Paint()
-        ..color = const Color(0xFF48CAE4)
+        ..color = const Color(0xFF38BDF8)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5,
+        ..strokeWidth = 1.6,
     );
 
     // Head
-    final s1HeadCenter = Offset(s1X, h * 0.42);
+    final s1HeadCenter = Offset(s1X, h * 0.38);
     canvas.drawOval(
       Rect.fromCenter(center: s1HeadCenter, width: 18, height: 22),
       Paint()..color = const Color(0xFFFFD1A9),
     );
 
-    // Hair: Neat ponytail in midnight slate
+    // Hair: Clean stylish ponytail
     final s1Hair = Path()
-      ..addArc(Rect.fromCenter(center: Offset(s1X, h * 0.38), width: 22, height: 20), -math.pi, math.pi)
-      ..lineTo(s1X - 10, h * 0.44)
-      ..lineTo(s1X - 14, h * 0.38)
+      ..addArc(Rect.fromCenter(center: Offset(s1X, h * 0.34), width: 22, height: 20), -math.pi, math.pi)
+      ..lineTo(s1X - 10, h * 0.40)
+      ..lineTo(s1X - 14, h * 0.34)
       ..close();
-    canvas.drawPath(s1Hair, Paint()..color = const Color(0xFF141724));
-    canvas.drawCircle(Offset(s1X - 13, h * 0.37), 3.5, Paint()..color = const Color(0xFFFF8522));
+    canvas.drawPath(s1Hair, Paint()..color = const Color(0xFF0F121C));
+    canvas.drawCircle(Offset(s1X - 13, h * 0.33), 3.0, Paint()..color = const Color(0xFFFF8522));
 
-    // Glasses
-    canvas.drawCircle(
-      Offset(s1X + 2, h * 0.42),
-      3.2,
-      Paint()
-        ..color = const Color(0xFF48CAE4)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.0,
-    );
-
-    // Spiral Notebook on Desk
-    final noteRect = Rect.fromLTWH(s1X - 8, tableY - 14, 26, 14);
+    // Clean Study Binder held gracefully
+    final binderRect = Rect.fromLTWH(s1X + 2, s1Y - 26, 14, 22);
     canvas.drawRRect(
-      RRect.fromRectAndRadius(noteRect, const Radius.circular(2)),
-      Paint()..color = Colors.white,
+      RRect.fromRectAndRadius(binderRect, const Radius.circular(2.5)),
+      Paint()..color = const Color(0xFF00E676),
     );
     canvas.drawLine(
-      Offset(noteRect.left + 4, noteRect.top + 4),
-      Offset(noteRect.right - 4, noteRect.top + 4),
-      Paint()..color = const Color(0xFF3A86FF)..strokeWidth = 1.0,
+      Offset(binderRect.left + 3, binderRect.top),
+      Offset(binderRect.left + 3, binderRect.bottom),
+      Paint()..color = Colors.white.withValues(alpha: 0.6)..strokeWidth = 1.0,
     );
-    canvas.drawLine(
-      Offset(noteRect.left + 4, noteRect.top + 8),
-      Offset(noteRect.right - 4, noteRect.top + 8),
-      Paint()..color = const Color(0xFF3A86FF)..strokeWidth = 1.0,
-    );
-    // Stylus
-    canvas.drawCircle(Offset(s1X + 16, tableY - 8), 3.0, Paint()..color = const Color(0xFFFFD1A9));
-    canvas.drawLine(
-      Offset(s1X + 15, tableY - 12),
-      Offset(s1X + 12, tableY - 4),
-      Paint()..color = const Color(0xFFFF8522)..strokeWidth = 1.5,
-    );
+    canvas.drawCircle(Offset(s1X + 8, s1Y - 14), 3.0, Paint()..color = const Color(0xFFFFD1A9));
 
-    // 3. Student 2 (Center - Tech Aspirant Coding on Laptop)
-    final s2X = w * 0.50;
-    final s2Body = Path()
-      ..moveTo(s2X - 25, tableY)
-      ..lineTo(s2X - 19, h * 0.49)
-      ..quadraticBezierTo(s2X, h * 0.40, s2X + 19, h * 0.49)
-      ..lineTo(s2X + 25, tableY)
-      ..close();
-    canvas.drawPath(s2Body, Paint()..color = const Color(0xFF5E35B1));
-    canvas.drawCircle(Offset(s2X, h * 0.47), 5, Paint()..color = Colors.white70);
+    // 3. Right Aspirant (Confident Aspirant - Cyber Flame Orange Jacket)
+    final s3X = w * 0.74;
+    final s3Y = baseY;
 
-    // Head
-    final s2HeadCenter = Offset(s2X, h * 0.36);
-    canvas.drawOval(
-      Rect.fromCenter(center: s2HeadCenter, width: 20, height: 24),
-      Paint()..color = const Color(0xFFF7C59F),
-    );
-
-    // Hair: Textured modern crop
-    final s2Hair = Path()
-      ..addArc(Rect.fromCenter(center: Offset(s2X, h * 0.32), width: 22, height: 18), -math.pi, math.pi)
-      ..lineTo(s2X + 10, h * 0.36)
-      ..lineTo(s2X - 10, h * 0.36)
-      ..close();
-    canvas.drawPath(s2Hair, Paint()..color = const Color(0xFF1E1B18));
-
-    // Headphones around neck/ears (Cyber Flame Orange)
-    final hpPaint = Paint()
-      ..color = const Color(0xFFFF8522)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.2;
-    canvas.drawArc(
-      Rect.fromCenter(center: Offset(s2X, h * 0.34), width: 26, height: 22),
-      -math.pi * 0.9,
-      math.pi * 0.8,
-      false,
-      hpPaint,
-    );
-    canvas.drawCircle(Offset(s2X - 12, h * 0.37), 3.0, Paint()..color = const Color(0xFFFF8522));
-    canvas.drawCircle(Offset(s2X + 12, h * 0.37), 3.0, Paint()..color = const Color(0xFFFF8522));
-
-    // Modern Laptop on desk
-    final lapBase = Rect.fromCenter(center: Offset(s2X, tableY - 2), width: 48, height: 4);
-    canvas.drawRRect(RRect.fromRectAndRadius(lapBase, const Radius.circular(2)), Paint()..color = const Color(0xFF94A3B8));
-
-    final lapScreen = Rect.fromCenter(center: Offset(s2X, tableY - 14), width: 42, height: 20);
-    canvas.drawRRect(RRect.fromRectAndRadius(lapScreen, const Radius.circular(2)), Paint()..color = const Color(0xFF0F172A));
-
-    // Screen Code & Chart visualization
-    canvas.drawRect(Rect.fromLTWH(lapScreen.left + 4, lapScreen.top + 4, 14, 2), Paint()..color = const Color(0xFF00E676));
-    canvas.drawRect(Rect.fromLTWH(lapScreen.left + 4, lapScreen.top + 8, 20, 2), Paint()..color = const Color(0xFF38BDF8));
-    // Mini bar chart
-    canvas.drawRect(Rect.fromLTWH(lapScreen.right - 14, lapScreen.bottom - 8, 3, 5), Paint()..color = const Color(0xFFFF8522));
-    canvas.drawRect(Rect.fromLTWH(lapScreen.right - 10, lapScreen.bottom - 11, 3, 8), Paint()..color = const Color(0xFFFFD54F));
-    canvas.drawRect(Rect.fromLTWH(lapScreen.right - 6, lapScreen.bottom - 14, 3, 11), Paint()..color = const Color(0xFF00E676));
-
-    // Hands typing on keyboard
-    canvas.drawCircle(Offset(s2X - 10, tableY - 4), 3.0, Paint()..color = const Color(0xFFF7C59F));
-    canvas.drawCircle(Offset(s2X + 10, tableY - 4), 3.0, Paint()..color = const Color(0xFFF7C59F));
-
-    // 4. Student 3 (Right - Ambitious Aspirant pointing to target)
-    final s3X = w * 0.76;
     final s3Body = Path()
-      ..moveTo(s3X - 22, tableY)
-      ..lineTo(s3X - 16, h * 0.54)
-      ..quadraticBezierTo(s3X, h * 0.46, s3X + 16, h * 0.54)
-      ..lineTo(s3X + 22, tableY)
+      ..moveTo(s3X - 22, s3Y)
+      ..lineTo(s3X - 16, h * 0.52)
+      ..quadraticBezierTo(s3X, h * 0.44, s3X + 16, h * 0.52)
+      ..lineTo(s3X + 22, s3Y)
       ..close();
-    canvas.drawPath(s3Body, Paint()..color = const Color(0xFFE65100));
+    canvas.drawPath(
+      s3Body,
+      Paint()
+        ..shader = const LinearGradient(
+          colors: [Color(0xFFFF8522), Color(0xFFE65100)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ).createShader(Rect.fromLTWH(s3X - 22, h * 0.44, 44, s3Y - h * 0.44)),
+    );
+
+    canvas.drawCircle(Offset(s3X, h * 0.49), 4.5, Paint()..color = Colors.white);
 
     // Head
-    final s3HeadCenter = Offset(s3X, h * 0.42);
+    final s3HeadCenter = Offset(s3X, h * 0.38);
     canvas.drawOval(
       Rect.fromCenter(center: s3HeadCenter, width: 18, height: 22),
       Paint()..color = const Color(0xFFE8B298),
@@ -1045,77 +969,92 @@ class _GroupOfStudentsPainter extends CustomPainter {
 
     // Hair: Stylized wavy crop
     final s3Hair = Path()
-      ..addArc(Rect.fromCenter(center: Offset(s3X, h * 0.38), width: 22, height: 20), -math.pi, math.pi)
-      ..lineTo(s3X + 11, h * 0.42)
-      ..lineTo(s3X - 11, h * 0.42)
+      ..addArc(Rect.fromCenter(center: Offset(s3X, h * 0.34), width: 22, height: 20), -math.pi, math.pi)
+      ..lineTo(s3X + 11, h * 0.38)
+      ..lineTo(s3X - 11, h * 0.38)
       ..close();
-    canvas.drawPath(s3Hair, Paint()..color = const Color(0xFF2B201A));
+    canvas.drawPath(s3Hair, Paint()..color = const Color(0xFF261D19));
 
-    // Vertical Tablet held upright
-    final tabRect = Rect.fromLTWH(s3X + 4, tableY - 22, 18, 22);
-    canvas.drawRRect(RRect.fromRectAndRadius(tabRect, const Radius.circular(2)), Paint()..color = const Color(0xFF1E293B));
+    // Clean Tablet held in hand
+    final tabRect = Rect.fromLTWH(s3X - 16, s3Y - 26, 14, 22);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(tabRect, const Radius.circular(2.5)),
+      Paint()..color = const Color(0xFF1E293B),
+    );
     canvas.drawCircle(
       Offset(tabRect.center.dx, tabRect.center.dy),
-      5,
-      Paint()
-        ..color = const Color(0xFF00E676)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.0,
+      3.5,
+      Paint()..color = const Color(0xFFFFD54F),
     );
+    canvas.drawCircle(Offset(s3X - 8, s3Y - 14), 3.0, Paint()..color = const Color(0xFFE8B298));
 
-    // Hand gesturing enthusiastically towards goal
-    canvas.drawCircle(Offset(s3X - 10, tableY - 14), 3.5, Paint()..color = const Color(0xFFE8B298));
-    canvas.drawLine(
-      Offset(s3X - 10, tableY - 14),
-      Offset(s3X - 16, tableY - 22),
-      Paint()
-        ..color = const Color(0xFFE8B298)
-        ..strokeWidth = 2.5
-        ..strokeCap = StrokeCap.round,
-    );
+    // 4. Center Aspirant (Topper / Leader - Electric Violet Hoodie)
+    final s2X = w * 0.50;
+    final s2Y = baseY;
 
-    // 5. The Desk Surface
-    final deskRect = Rect.fromLTWH(w * 0.05, tableY, w * 0.90, tableH);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(deskRect, const Radius.circular(2)),
+    final s2Body = Path()
+      ..moveTo(s2X - 26, s2Y)
+      ..lineTo(s2X - 20, h * 0.46)
+      ..quadraticBezierTo(s2X, h * 0.36, s2X + 20, h * 0.46)
+      ..lineTo(s2X + 26, s2Y)
+      ..close();
+    canvas.drawPath(
+      s2Body,
       Paint()
         ..shader = const LinearGradient(
-          colors: [Color(0xFF282F44), Color(0xFF191D2B)],
+          colors: [Color(0xFF8338EC), Color(0xFF5E35B1)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-        ).createShader(deskRect),
-    );
-    canvas.drawLine(
-      Offset(w * 0.05, tableY),
-      Offset(w * 0.95, tableY),
-      Paint()
-        ..color = Colors.white.withValues(alpha: 0.35)
-        ..strokeWidth = 1.0,
+        ).createShader(Rect.fromLTWH(s2X - 26, h * 0.36, 52, s2Y - h * 0.36)),
     );
 
-    // Accessories: Coffee Mug on Left
-    final mugRect = Rect.fromLTWH(w * 0.09, tableY - 10, 8, 10);
-    canvas.drawRRect(RRect.fromRectAndRadius(mugRect, const Radius.circular(1.5)), Paint()..color = const Color(0xFFFFD54F));
-    canvas.drawPath(
-      Path()
-        ..moveTo(mugRect.center.dx, mugRect.top - 2)
-        ..quadraticBezierTo(mugRect.center.dx + 2, mugRect.top - 5, mugRect.center.dx - 1, mugRect.top - 8),
-      Paint()
-        ..color = Colors.white.withValues(alpha: 0.5)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.0,
+    canvas.drawCircle(Offset(s2X, h * 0.43), 6, Paint()..color = Colors.white.withValues(alpha: 0.9));
+
+    // Head
+    final s2HeadCenter = Offset(s2X, h * 0.32);
+    canvas.drawOval(
+      Rect.fromCenter(center: s2HeadCenter, width: 20, height: 24),
+      Paint()..color = const Color(0xFFF7C59F),
     );
 
-    // Stack of 2 GATE books on far right
-    canvas.drawRect(Rect.fromLTWH(w * 0.88, tableY - 5, 14, 5), Paint()..color = const Color(0xFF8338EC));
-    canvas.drawRect(Rect.fromLTWH(w * 0.89, tableY - 9, 12, 4), Paint()..color = const Color(0xFF00E676));
+    // Modern Textured Hair Crop
+    final s2Hair = Path()
+      ..addArc(Rect.fromCenter(center: Offset(s2X, h * 0.28), width: 24, height: 20), -math.pi, math.pi)
+      ..lineTo(s2X + 11, h * 0.32)
+      ..lineTo(s2X - 11, h * 0.32)
+      ..close();
+    canvas.drawPath(s2Hair, Paint()..color = const Color(0xFF181A20));
+
+    // Wireless Over-Ear Headphones around neck (Cyber Orange)
+    final hpPaint = Paint()
+      ..color = const Color(0xFFFF8522)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.4;
+    canvas.drawArc(
+      Rect.fromCenter(center: Offset(s2X, h * 0.31), width: 28, height: 24),
+      -math.pi * 0.9,
+      math.pi * 0.8,
+      false,
+      hpPaint,
+    );
+    canvas.drawCircle(Offset(s2X - 13, h * 0.34), 3.5, Paint()..color = const Color(0xFFFF8522));
+    canvas.drawCircle(Offset(s2X + 13, h * 0.34), 3.5, Paint()..color = const Color(0xFFFF8522));
+
+    // 5. Single Subtle Golden Academic Star above Center Head
+    canvas.drawCircle(
+      Offset(s2X, h * 0.16),
+      4.0,
+      Paint()
+        ..color = const Color(0xFFFFD54F)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2),
+    );
+    canvas.drawCircle(Offset(s2X, h * 0.16), 2.0, Paint()..color = Colors.white);
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-/// Clean Modern Vector Architectural Illustration of Prestigious PSU Engineering Infrastructure
 class _PSUEngineeringPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -1464,8 +1403,7 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
                   width: cardW,
                   child: switch (widget.slideIndex) {
                     0 => _buildCleanIITIllustration(context),
-                    1 => _buildCleanPSUIllustration(context),
-                    _ => _buildCleanCbtExamIllustration(context),
+                    _ => _buildCleanPSUIllustration(context),
                   },
                 ),
               );
