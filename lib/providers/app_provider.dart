@@ -209,6 +209,7 @@ class AppProvider with ChangeNotifier {
     
     // Fetch global data in background (do not await)
     syncGlobalData();
+    CloudSyncService().syncDynamicMocks(_storage);
   }
 
   Future<void> _loadData() async {

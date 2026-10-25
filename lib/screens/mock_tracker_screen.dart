@@ -6,13 +6,13 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../providers/app_provider.dart';
+import '../services/storage_service.dart';
 import '../theme/app_theme.dart';
 import '../models/models.dart';
 import '../data/da_full_mock_pyqs.dart';
 import '../data/cs_full_mock_pyqs.dart';
 import '../data/da_subjectwise_mock_data.dart';
 import '../data/csit_subjectwise_mock_data.dart';
-import '../data/minimock_data.dart';
 import 'mock_test_runner_screen.dart';
 import 'pro_upgrade_screen.dart';
 import '../services/ad_service.dart';
@@ -66,40 +66,31 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
   }
 
   List<PYQ> _generateRapidFire(AppProvider provider) {
-    List<PYQ> pool = [];
-    if (provider.activeExam == 'DA') {
-      if (daMiniMockQuestions.isNotEmpty) {
-        pool = List.from(daMiniMockQuestions);
-      } else {
-        pool = List.from(provider.pyqs);
-      }
-    } else {
-      if (csitMiniMockQuestions.isNotEmpty) {
-        pool = List.from(csitMiniMockQuestions);
-      } else {
-        pool = List.from(provider.pyqs);
-      }
-    }
+    final pool = List<PYQ>.from(provider.pyqs);
     pool.shuffle();
     return pool.take(min(5, pool.length)).toList();
   }
 
-  List<PYQ> _generateMiniMock(AppProvider provider) {
-    if (provider.activeExam == 'DA') {
-      final List<PYQ> pool = List.from(daMiniMockQuestions);
-      pool.shuffle();
-      return pool;
-    } else {
-      final List<PYQ> pool = List.from(csitMiniMockQuestions);
-      pool.shuffle();
-      return pool;
-    }
-  }
-
   List<PYQ> _generateFullMock(AppProvider provider, {int mockNumber = 1, String difficulty = 'Standard'}) {
-    final List<PYQ> base = provider.activeExam == 'DA'
+    final storage = StorageService();
+    final activeExam = (provider.activeExam ?? 'DA').toUpperCase();
+
+    // 1. Check for complete OTA Dynamic Mock in Hive cache
+    final dynamicMock = storage.getDynamicMock(activeExam, mockNumber);
+    if (dynamicMock != null && dynamicMock.isNotEmpty) {
+      return dynamicMock;
+    }
+
+    // 2. Load bundled fallback base
+    final List<PYQ> rawBase = activeExam == 'DA'
         ? List.from(daFullMockQuestionsEasy)
         : List.from(csFullMockQuestionsEasy);
+
+    // 3. Apply any live question hotfixes by ID from Hive cache
+    final List<PYQ> base = rawBase.map((q) {
+      final patch = storage.getDynamicQuestionPatch(q.id);
+      return patch ?? q;
+    }).toList();
 
     if (base.length != 65) return base;
 
@@ -567,22 +558,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
         ),
         const SizedBox(height: 14),
 
-        // 1. MINI MOCK TEST
-        _buildTestOptionCard(
-          title: 'Mini Mock Test',
-          duration: '30 Mins',
-          questionsCount: '15 Questions',
-          icon: Icons.checklist_rtl_rounded,
-          iconColor: const Color(0xFFFF8522),
-          isPrimary: true,
-          gradient: AppTheme.flameGradient,
-          buttonText: 'Start 30m Test 🎯',
-          onTap: () {
-            final questions = _generateMiniMock(provider);
-            _startTest(questions, const Duration(minutes: 30), 'App Mini Mock');
-          },
-        ),
-        const SizedBox(height: 14),
+
 
         // 2. SUBJECT-WISE PRACTICE TEST
         NeuContainer(

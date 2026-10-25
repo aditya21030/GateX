@@ -20,6 +20,7 @@ class StorageService {
   late Box _mockTestBox;
   late Box _revisionQueueBox;
   late Box _studyPlanBox;
+  late Box _dynamicMockBox;
 
                   // Syllabus mapping
   static final Map<String, List<String>> syllabusData = {
@@ -269,6 +270,7 @@ class StorageService {
   Box get mockTestBox => _mockTestBox;
   Box get revisionQueueBox => _revisionQueueBox;
   Box get studyPlanBox => _studyPlanBox;
+  Box get dynamicMockBox => _dynamicMockBox;
   SharedPreferences get prefs => _prefs;
 
   Future<void> init() async {
@@ -282,6 +284,7 @@ class StorageService {
     _mockTestBox = await Hive.openBox('mock_test_box');
     _revisionQueueBox = await Hive.openBox('revision_queue_box');
     _studyPlanBox = await Hive.openBox('study_plan_box');
+    _dynamicMockBox = await Hive.openBox('dynamic_mock_box');
 
     // SharedPreferences
     _prefs = await SharedPreferences.getInstance();
@@ -526,6 +529,54 @@ class StorageService {
     }
   }
 
+  /// Retrieve an OTA dynamic mock test cached from Firestore
+  List<PYQ>? getDynamicMock(String exam, int mockNumber) {
+    try {
+      final key = '${exam.toLowerCase()}_full_mock_$mockNumber';
+      if (_dynamicMockBox.containsKey(key)) {
+        final raw = _dynamicMockBox.get(key);
+        if (raw is Map && raw.containsKey('questions')) {
+          final list = raw['questions'] as List;
+          return list
+              .map((m) => PYQ.fromMap(Map<String, dynamic>.from(m as Map)))
+              .toList();
+        }
+      }
+    } catch (e) {
+      print('getDynamicMock error: $e');
+    }
+    return null;
+  }
+
+  /// Retrieve a hotfixed question patch by question ID
+  PYQ? getDynamicQuestionPatch(String questionId) {
+    try {
+      final patchKey = 'patch_$questionId';
+      if (_dynamicMockBox.containsKey(patchKey)) {
+        final raw = _dynamicMockBox.get(patchKey);
+        if (raw is Map) {
+          return PYQ.fromMap(Map<String, dynamic>.from(raw));
+        }
+      }
+    } catch (e) {
+      print('getDynamicQuestionPatch error: $e');
+    }
+    return null;
+  }
+
+  /// Save an OTA mock test to local Hive cache
+  Future<void> saveDynamicMock(String key, List<PYQ> questions) async {
+    try {
+      await _dynamicMockBox.put(key, {
+        'id': key,
+        'updated_at': DateTime.now().toIso8601String(),
+        'questions': questions.map((q) => q.toMap()).toList(),
+      });
+    } catch (e) {
+      print('saveDynamicMock error: $e');
+    }
+  }
+
   Future<void> resetAllData() async {
     await _topicStatusBox.clear();
     await _pyqBox.clear();
@@ -533,6 +584,7 @@ class StorageService {
     await _mockTestBox.clear();
     await _revisionQueueBox.clear();
     await _studyPlanBox.clear();
+    await _dynamicMockBox.clear();
     await _prefs.clear();
     await _seedInitialData();
     await updateStreak();

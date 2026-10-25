@@ -1281,7 +1281,40 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                                   ? Image.network(
                                       q.imagePath!,
                                       fit: BoxFit.contain,
-                                      errorBuilder: (context, err, stack) => const SizedBox(),
+                                      loadingBuilder: (context, child, progress) {
+                                        if (progress == null) return child;
+                                        return Container(
+                                          height: 120,
+                                          alignment: Alignment.center,
+                                          child: CircularProgressIndicator(
+                                            value: progress.expectedTotalBytes != null
+                                                ? progress.cumulativeBytesLoaded / progress.expectedTotalBytes!
+                                                : null,
+                                            strokeWidth: 2,
+                                            color: const Color(0xFFFF8522),
+                                          ),
+                                        );
+                                      },
+                                      errorBuilder: (context, err, stack) => Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                        decoration: BoxDecoration(
+                                          color: AppTheme.accentCoral.withValues(alpha: 0.08),
+                                          borderRadius: BorderRadius.circular(10),
+                                          border: Border.all(color: AppTheme.accentCoral.withValues(alpha: 0.3)),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            const Icon(Icons.broken_image_rounded, size: 20, color: AppTheme.accentCoral),
+                                            const SizedBox(width: 10),
+                                            Expanded(
+                                              child: Text(
+                                                'Diagram could not be loaded. Please check your internet connection.',
+                                                style: GoogleFonts.outfit(fontSize: 12, color: AppTheme.accentCoral),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     )
                                   : Image.asset(
                                       q.imagePath!,

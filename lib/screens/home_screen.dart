@@ -11,7 +11,6 @@ import 'score_estimator_screen.dart';
 import 'psu_predictor_screen.dart';
 import 'mock_test_runner_screen.dart';
 import '../models/models.dart';
-import '../data/minimock_data.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,20 +21,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<PYQ> _generateRapidFireQuestions(AppProvider provider) {
-    List<PYQ> pool = [];
-    if (provider.activeExam == 'DA') {
-      if (daMiniMockQuestions.isNotEmpty) {
-        pool = List.from(daMiniMockQuestions);
-      } else {
-        pool = List.from(provider.pyqs);
-      }
-    } else {
-      if (csitMiniMockQuestions.isNotEmpty) {
-        pool = List.from(csitMiniMockQuestions);
-      } else {
-        pool = List.from(provider.pyqs);
-      }
-    }
+    final pool = List<PYQ>.from(provider.pyqs);
     pool.shuffle();
     return pool.take(min(5, pool.length)).toList();
   }

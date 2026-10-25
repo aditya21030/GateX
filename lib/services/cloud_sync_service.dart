@@ -111,6 +111,51 @@ class CloudSyncService {
     return result;
   }
 
+  /// Syncs dynamic mock tests and live question patches from Firestore (OTA)
+  Future<void> syncDynamicMocks(StorageService storage) async {
+    try {
+      // 1. Check version metadata document (Only 1 document read!)
+      final metaSnap = await _firestore.collection('metadata').doc('mock_version').get();
+      if (!metaSnap.exists || metaSnap.data() == null) return;
+
+      final data = metaSnap.data()!;
+      final int remoteVersion = data['version'] is int
+          ? data['version']
+          : int.tryParse(data['version'].toString()) ?? 0;
+      final int localVersion = storage.prefs.getInt('local_mock_version') ?? 0;
+
+      // Only download if remote version is strictly newer
+      if (remoteVersion <= localVersion) {
+        return;
+      }
+
+      print('CloudSyncService: Found new mock questions version (remote: $remoteVersion, local: $localVersion). Syncing OTA mocks...');
+
+      // 2. Fetch all dynamic mocks from /mocks collection
+      final mocksSnap = await _firestore.collection('mocks').get();
+      for (var doc in mocksSnap.docs) {
+        final docData = doc.data();
+        if (docData.containsKey('questions') && docData['questions'] is List) {
+          await storage.dynamicMockBox.put(doc.id, docData);
+        }
+      }
+
+      // 3. Fetch any live question hotfixes/patches from /mock_patches collection
+      final patchesSnap = await _firestore.collection('mock_patches').get();
+      for (var doc in patchesSnap.docs) {
+        final patchData = doc.data();
+        await storage.dynamicMockBox.put('patch_${doc.id}', patchData);
+      }
+
+      // 4. Atomically update local version in SharedPreferences
+      await storage.prefs.setInt('local_mock_version', remoteVersion);
+      print('CloudSyncService: Successfully synced dynamic mock questions to version $remoteVersion.');
+    } catch (e) {
+      // Offline safe - never crash or surface errors to user
+      print('CloudSyncService syncDynamicMocks offline/error: $e');
+    }
+  }
+
   /// Fetch all global PYQs and Mock Tests from Firestore
   Future<Map<String, List<Map<String, dynamic>>>> fetchGlobalData() async {
     final Map<String, List<Map<String, dynamic>>> result = {

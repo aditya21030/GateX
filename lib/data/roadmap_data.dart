@@ -546,7 +546,7 @@ class RoadmapData {
             "Thu": "CLT, LLN, sampling distributions \u2013 lecture + problems",
             "Fri": "Revision + error log",
             "Sat": "Full P&S PYQ set 2024+2025",
-            "Sun": "Phase 1 full revision + mini mock"
+            "Sun": "Phase 1 full revision + mock test"
           }
         }
       ],
