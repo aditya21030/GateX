@@ -260,8 +260,9 @@ class PurchaseService with ChangeNotifier {
 
         try {
           final purchaseResult = await Purchases.purchasePackage(package);
-          final isDualActive = purchaseResult.entitlements.all[RevenueCatConfig.entitlementDualPro]?.isActive ?? false;
-          final isSoloActive = purchaseResult.entitlements.all[RevenueCatConfig.entitlementPro]?.isActive ?? false;
+          final customerInfo = purchaseResult.customerInfo;
+          final isDualActive = customerInfo.entitlements.all[RevenueCatConfig.entitlementDualPro]?.isActive ?? false;
+          final isSoloActive = customerInfo.entitlements.all[RevenueCatConfig.entitlementPro]?.isActive ?? false;
 
           // STRICT CHECK: Entitlement MUST be active in RevenueCat
           if (isDualActive || isSoloActive) {
