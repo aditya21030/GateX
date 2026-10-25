@@ -7,7 +7,7 @@
 /// 4. Paste it into [apiKey] below.
 class RevenueCatConfig {
   /// Public API Key for Google Play Android (starts with goog_...)
-  static const String apiKey = 'goog_gatex_pro_season_pass_key';
+  static const String apiKey = 'goog_OScQjlQeXVYGUoraxRvCsFbChzk';
 
   /// RevenueCat Entitlement Identifiers
   /// Create these under Project -> Entitlements in RevenueCat dashboard:
