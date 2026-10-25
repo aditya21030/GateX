@@ -30,7 +30,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   String? _errorMessage;
-  String _selectedBranch = 'DA'; // 'DA', 'CSIT', 'BOTH'
+  final String _selectedBranch = 'DA'; // 'DA', 'CSIT', 'BOTH'
 
   @override
   void dispose() {
@@ -169,371 +169,237 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final isDark = context.isDarkMode;
 
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF09080F) : const Color(0xFF0E0B1A),
-          gradient: const LinearGradient(
-            colors: [
-              Color(0xFF0C0916),
-              Color(0xFF171128),
-              Color(0xFF221538),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: Column(
-          children: [
-            // Top Sleek Executive Header with 3D GateX Crest and back button
-            AuthPurpleHeaderWithIIT(
-              action: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.18),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.25),
-                    width: 1,
-                  ),
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                  onPressed: () {
-                    if (Navigator.canPop(context)) {
-                      Navigator.pop(context);
-                    } else {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => const LoginScreen()),
-                      );
-                    }
-                  },
-                ),
-              ),
-              imageAsset: 'assets/images/auth_gatex_3d.jpg',
-              targetIIT: 'NEW ASPIRANT',
-              airRank: 'GATE 2026/2027',
-            ),
-
-            // Bottom Sheet with Sleek, Refined Top Curve
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF14151B) : Colors.white,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.08),
-                      blurRadius: 20,
-                      offset: const Offset(0, -4),
+      backgroundColor: context.scaffoldBackground,
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 16),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Top Back Button
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                        color: isDark ? Colors.white : const Color(0xFF121214),
+                        onPressed: () {
+                          if (Navigator.canPop(context)) {
+                            Navigator.pop(context);
+                          } else {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (_) => const LoginScreen()),
+                            );
+                          }
+                        },
+                      ),
                     ),
+                    const SizedBox(height: 4),
+
+                    // GateX Brand Logo
+                    const Center(
+                      child: GateXBrandLogo(size: 56),
+                    ),
+                    const SizedBox(height: 18),
+                    Text(
+                      'Create Account',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.outfit(
+                        fontSize: 27,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : const Color(0xFF121214),
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Start your journey to top IITs & IISc',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        color: isDark ? Colors.white60 : const Color(0xFF6E6E78),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Google Sign-Up Pill Button
+                    GoogleAuthPillButton(
+                      onPressed: _isLoading ? null : _googleLogin,
+                      isLoading: _isLoading,
+                      label: 'Sign up with Google',
+                    ),
+                    const SizedBox(height: 18),
+
+                    // Clean subtle divider
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Divider(
+                            color: isDark ? Colors.white12 : const Color(0xFFE5E5EA),
+                            thickness: 1,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          child: Text(
+                            'or register with email',
+                            style: GoogleFonts.outfit(
+                              fontSize: 12,
+                              color: isDark ? Colors.white38 : const Color(0xFF8E8E98),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Divider(
+                            color: isDark ? Colors.white12 : const Color(0xFFE5E5EA),
+                            thickness: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 18),
+
+                    // Error message if any
+                    if (_errorMessage != null) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: AppTheme.error.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: AppTheme.error.withValues(alpha: 0.25)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.error_outline_rounded, color: AppTheme.error, size: 18),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                _errorMessage!,
+                                style: GoogleFonts.outfit(color: AppTheme.error, fontSize: 12.5),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                    ],
+
+                    // Full Name input
+                    CleanAuthInputField(
+                      controller: _nameController,
+                      hintText: 'Full Name',
+                      prefixIcon: Icon(
+                        Icons.person_outline_rounded,
+                        size: 19,
+                        color: isDark ? Colors.white38 : const Color(0xFF888894),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Email input
+                    CleanAuthInputField(
+                      controller: _emailController,
+                      hintText: 'Email Address',
+                      prefixIcon: Icon(
+                        Icons.mail_outline_rounded,
+                        size: 19,
+                        color: isDark ? Colors.white38 : const Color(0xFF888894),
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Password input
+                    CleanAuthInputField(
+                      controller: _passwordController,
+                      hintText: 'Password (min. 6 characters)',
+                      obscureText: !_isPasswordVisible,
+                      prefixIcon: Icon(
+                        Icons.lock_outline_rounded,
+                        size: 19,
+                        color: isDark ? Colors.white38 : const Color(0xFF888894),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+                          size: 19,
+                          color: isDark ? Colors.white38 : const Color(0xFF888894),
+                        ),
+                        onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Confirm Password input
+                    CleanAuthInputField(
+                      controller: _confirmPasswordController,
+                      hintText: 'Confirm Password',
+                      obscureText: !_isConfirmPasswordVisible,
+                      prefixIcon: Icon(
+                        Icons.lock_outline_rounded,
+                        size: 19,
+                        color: isDark ? Colors.white38 : const Color(0xFF888894),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isConfirmPasswordVisible ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+                          size: 19,
+                          color: isDark ? Colors.white38 : const Color(0xFF888894),
+                        ),
+                        onPressed: () => setState(() => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+                      ),
+                    ),
+                    const SizedBox(height: 22),
+
+                    // Primary Button: [ Create Account ]
+                    SolidBlackPillButton(
+                      label: 'Create Account',
+                      isLoading: _isLoading,
+                      onPressed: _signUp,
+                    ),
+                    const SizedBox(height: 18),
+
+                    // Footer: Already have an account? Log In
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Already have an account? ',
+                          style: GoogleFonts.outfit(
+                            fontSize: 13.5,
+                            color: isDark ? Colors.white60 : const Color(0xFF6E6E78),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (_) => const LoginScreen()),
+                            );
+                          },
+                          child: Text(
+                            'Log In',
+                            style: GoogleFonts.outfit(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFFFF8522),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
                   ],
                 ),
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(26, 26, 26, 24),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Header Badge + Title
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(7),
-                            decoration: BoxDecoration(
-                              color: (isDark ? const Color(0xFF9D65FF) : const Color(0xFF6B38FF)).withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Icon(
-                              Icons.auto_awesome_rounded,
-                              size: 19,
-                              color: isDark ? const Color(0xFF9D65FF) : const Color(0xFF6B38FF),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            'Get Started',
-                            style: GoogleFonts.outfit(
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold,
-                              color: isDark ? Colors.white : const Color(0xFF121214),
-                              letterSpacing: -0.4,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'Create an account to start your structured GATE journey',
-                        style: GoogleFonts.outfit(
-                          fontSize: 13,
-                          color: isDark ? Colors.white60 : const Color(0xFF6E6E78),
-                        ),
-                      ),
-                      const SizedBox(height: 18),
-
-                      // Google Sign Up Pill Button
-                      GoogleAuthPillButton(
-                        onPressed: _isLoading ? null : _googleLogin,
-                        isLoading: _isLoading,
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Clean subtle divider
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Divider(
-                              color: isDark ? Colors.white12 : const Color(0xFFE5E5EA),
-                              thickness: 1,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 14),
-                            child: Text(
-                              'or sign up with email',
-                              style: GoogleFonts.outfit(
-                                fontSize: 12,
-                                color: isDark ? Colors.white38 : const Color(0xFF8E8E98),
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              color: isDark ? Colors.white12 : const Color(0xFFE5E5EA),
-                              thickness: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Error message if any
-                      if (_errorMessage != null) ...[
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: AppTheme.error.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: AppTheme.error.withValues(alpha: 0.25)),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.error_outline_rounded, color: AppTheme.error, size: 18),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  _errorMessage!,
-                                  style: GoogleFonts.outfit(color: AppTheme.error, fontSize: 12),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 14),
-                      ],
-
-                      // Username / Full Name
-                      CleanAuthInputField(
-                        controller: _nameController,
-                        hintText: 'Full Name',
-                        prefixIcon: Icon(
-                          Icons.person_outline_rounded,
-                          size: 19,
-                          color: isDark ? Colors.white38 : const Color(0xFF888894),
-                        ),
-                        keyboardType: TextInputType.name,
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Enter your email
-                      CleanAuthInputField(
-                        controller: _emailController,
-                        hintText: 'Enter your email',
-                        prefixIcon: Icon(
-                          Icons.mail_outline_rounded,
-                          size: 19,
-                          color: isDark ? Colors.white38 : const Color(0xFF888894),
-                        ),
-                        keyboardType: TextInputType.emailAddress,
-                      ),
-                      const SizedBox(height: 14),
-
-                      // Target Branch Section
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4, bottom: 8),
-                        child: Text(
-                          'TARGET EXAM STREAM',
-                          style: GoogleFonts.outfit(
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white54 : const Color(0xFF6E6E78),
-                            letterSpacing: 0.8,
-                          ),
-                        ),
-                      ),
-
-                      // Target Branch Selector Pills (No overflow, clean 2-line cards)
-                      Row(
-                        children: [
-                          _buildBranchPill('GATE DA', 'Data & AI', 'DA', isDark),
-                          const SizedBox(width: 8),
-                          _buildBranchPill('GATE CS', 'Comp Sci', 'CSIT', isDark),
-                          const SizedBox(width: 8),
-                          _buildBranchPill('DA + CS', 'Dual Target', 'BOTH', isDark),
-                        ],
-                      ),
-                      const SizedBox(height: 14),
-
-                      // Password
-                      CleanAuthInputField(
-                        controller: _passwordController,
-                        hintText: 'Password (min 6 chars)',
-                        obscureText: !_isPasswordVisible,
-                        prefixIcon: Icon(
-                          Icons.lock_outline_rounded,
-                          size: 19,
-                          color: isDark ? Colors.white38 : const Color(0xFF888894),
-                        ),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _isPasswordVisible ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-                            size: 19,
-                            color: isDark ? Colors.white38 : const Color(0xFF888894),
-                          ),
-                          onPressed: () => setState(() => _isPasswordVisible = !_isPasswordVisible),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Confirm Password
-                      CleanAuthInputField(
-                        controller: _confirmPasswordController,
-                        hintText: 'Confirm password',
-                        obscureText: !_isConfirmPasswordVisible,
-                        prefixIcon: Icon(
-                          Icons.lock_outline_rounded,
-                          size: 19,
-                          color: isDark ? Colors.white38 : const Color(0xFF888894),
-                        ),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _isConfirmPasswordVisible ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-                            size: 19,
-                            color: isDark ? Colors.white38 : const Color(0xFF888894),
-                          ),
-                          onPressed: () => setState(() => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
-                        ),
-                      ),
-                      const SizedBox(height: 22),
-
-                      // Solid Black Pill Button: [ Get Started ]
-                      SolidBlackPillButton(
-                        label: 'Get Started',
-                        isLoading: _isLoading,
-                        onPressed: _signUp,
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Footer: Already have an account? Log In
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Already have an account? ',
-                            style: GoogleFonts.outfit(
-                              fontSize: 13.5,
-                              color: isDark ? Colors.white60 : const Color(0xFF6E6E78),
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(builder: (_) => const LoginScreen()),
-                              );
-                            },
-                            child: Text(
-                              'Log In',
-                              style: GoogleFonts.outfit(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: isDark ? const Color(0xFFB185FF) : const Color(0xFF6B38FF),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                  ),
-                ),
               ),
             ),
-          ),
-        ],
-      ),
-    ),
-  );
-  }
-
-  Widget _buildBranchPill(String title, String subtitle, String value, bool isDark) {
-    final isSelected = _selectedBranch == value;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => setState(() => _selectedBranch = value),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            color: isSelected
-                ? (isDark ? Colors.white : const Color(0xFF0F1015))
-                : (isDark ? const Color(0xFF1E2028) : const Color(0xFFF3F3F6)),
-            border: Border.all(
-              color: isSelected
-                  ? Colors.transparent
-                  : (isDark ? Colors.white.withValues(alpha: 0.08) : const Color(0xFFE8E8EE)),
-              width: 1,
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.outfit(
-                  fontSize: 12.5,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                  color: isSelected
-                      ? (isDark ? const Color(0xFF0F1015) : Colors.white)
-                      : (isDark ? Colors.white : const Color(0xFF202028)),
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                subtitle,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.outfit(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  color: isSelected
-                      ? (isDark ? const Color(0xFF5A5A66) : const Color(0xFFB0B0C0))
-                      : (isDark ? Colors.white38 : const Color(0xFF888894)),
-                ),
-              ),
-            ],
           ),
         ),
       ),

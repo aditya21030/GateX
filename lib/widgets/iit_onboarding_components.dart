@@ -5,6 +5,55 @@ import '../theme/app_theme.dart';
 
 /// 100% Pure Flutter 3D Architectural IIT Monument & Campus Asset
 /// Renders an authentic, grand neoclassical IIT facade (columns, pediment, dome, steps, and ambient lighting)
+
+/// Modern, sleek GateX Brand Logo
+class GateXBrandLogo extends StatelessWidget {
+  final double size;
+  final bool showGlow;
+
+  const GateXBrandLogo({
+    super.key,
+    this.size = 54,
+    this.showGlow = true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFFF8522), Color(0xFFFF5722), Color(0xFF8338EC)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(size * 0.32),
+        boxShadow: showGlow
+            ? [
+                BoxShadow(
+                  color: const Color(0xFFFF8522).withValues(alpha: 0.38),
+                  blurRadius: size * 0.45,
+                  offset: Offset(0, size * 0.12),
+                ),
+              ]
+            : null,
+      ),
+      child: Center(
+        child: Text(
+          'X',
+          style: GoogleFonts.outfit(
+            fontSize: size * 0.62,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
+            letterSpacing: -1,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class IITMonument3DAsset extends StatefulWidget {
   final double size;
   final String targetIIT;
@@ -727,7 +776,7 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
       duration: const Duration(seconds: 4),
     )..repeat(reverse: true);
 
-    _floatAnim = Tween<double>(begin: -6.0, end: 6.0).animate(
+    _floatAnim = Tween<double>(begin: -5.0, end: 5.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
   }
@@ -740,180 +789,465 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
 
   @override
   Widget build(BuildContext context) {
-    // Distinct 3D assets, badge metadata, and volumetric lighting for each slide
-    final (imageAsset, badgeTitle, badgeSubtitle, glowColor, badgeBorderColor) = switch (widget.slideIndex) {
-      0 => (
-        'assets/images/onboard_syllabus_3d.jpg',
-        'GATE SYLLABUS MATRIX',
-        '15+ YRS VERIFIED PYQS',
-        const Color(0xFF8338EC),
-        const Color(0xFFFF8522),
-      ),
-      1 => (
-        'assets/images/onboard_cbt_3d.jpg',
-        'OFFICIAL TCS iON SIMULATOR',
-        'SCIENTIFIC CALCULATOR HUD',
-        const Color(0xFFFF5722),
-        const Color(0xFF3A86FF),
-      ),
-      _ => (
-        'assets/images/onboard_radar_3d.jpg',
-        'AI MISTAKE NOTEBOOK',
-        'AIR < 100 MASTERY DRILLS',
-        const Color(0xFF00E676),
-        const Color(0xFFFFD54F),
-      ),
-    };
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final stageW = constraints.maxWidth;
-        final stageH = constraints.maxHeight;
-        final assetSize = (stageH * 0.74).clamp(200.0, 310.0);
+        final cardW = (stageW * 0.88).clamp(310.0, 370.0);
 
-        return AnimatedBuilder(
-          animation: _floatAnim,
-          builder: (context, child) {
-            final float = _floatAnim.value;
+        return Center(
+          child: AnimatedBuilder(
+            animation: _floatAnim,
+            builder: (context, child) {
+              return Transform.translate(
+                offset: Offset(0, _floatAnim.value),
+                child: SizedBox(
+                  width: cardW,
+                  child: switch (widget.slideIndex) {
+                    0 => _buildSyllabusIllustration(context),
+                    1 => _buildCbtExamIllustration(context),
+                    _ => _buildMistakeNotebookIllustration(context),
+                  },
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
 
-            return SizedBox(
-              width: stageW,
-              height: stageH,
-              child: Stack(
-                clipBehavior: Clip.none,
-                alignment: Alignment.center,
+  Widget _buildSyllabusIllustration(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF13111C),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: const Color(0xFFFF8522).withValues(alpha: 0.35),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFF8522).withValues(alpha: 0.15),
+            blurRadius: 28,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
                 children: [
-                  // 1. Ambient Volumetric Spotlight
-                  Center(
-                    child: Container(
-                      width: assetSize * 1.25,
-                      height: assetSize * 1.25,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: RadialGradient(
-                          colors: [
-                            glowColor.withValues(alpha: 0.32),
-                            glowColor.withValues(alpha: 0.08),
-                            Colors.transparent,
-                          ],
-                          stops: const [0.15, 0.6, 1.0],
-                        ),
-                      ),
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF8522).withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(8),
                     ),
+                    child: const Icon(Icons.menu_book_rounded, color: Color(0xFFFF8522), size: 16),
                   ),
-
-                  // 2. High-Tech 3D Asset with Floating Levitation
-                  Transform.translate(
-                    offset: Offset(0, float),
-                    child: Container(
-                      width: assetSize,
-                      height: assetSize,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(28),
-                        boxShadow: [
-                          BoxShadow(
-                            color: glowColor.withValues(alpha: 0.28),
-                            blurRadius: 30,
-                            spreadRadius: -4,
-                            offset: const Offset(0, 12),
-                          ),
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.7),
-                            blurRadius: 24,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(28),
-                        child: Image.asset(
-                          imageAsset,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(
-                            color: const Color(0xFF13101E),
-                            child: Icon(
-                              Icons.auto_awesome_rounded,
-                              size: 48,
-                              color: glowColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // 3. Floating Glassmorphic Status Pill (Anchored at bottom)
-                  Positioned(
-                    bottom: 12 + float * -0.4,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF12111A).withValues(alpha: 0.94),
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(
-                          color: badgeBorderColor.withValues(alpha: 0.55),
-                          width: 1.2,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: badgeBorderColor.withValues(alpha: 0.25),
-                            blurRadius: 14,
-                            offset: const Offset(0, 4),
-                          ),
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.6),
-                            blurRadius: 10,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 7,
-                            height: 7,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Color(0xFF00E676),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color(0xFF00E676),
-                                  blurRadius: 6,
-                                  spreadRadius: 1,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            badgeTitle,
-                            style: GoogleFonts.outfit(
-                              color: Colors.white,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.6,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            '• $badgeSubtitle',
-                            style: GoogleFonts.outfit(
-                              color: const Color(0xFFFFB300),
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'SYLLABUS & PYQs',
+                    style: GoogleFonts.outfit(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 0.6,
                     ),
                   ),
                 ],
               ),
-            );
-          },
-        );
-      },
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF00E676).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFF00E676).withValues(alpha: 0.4)),
+                ),
+                child: Text(
+                  '100% Mapped',
+                  style: GoogleFonts.outfit(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF00E676),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildTopicRow('Linear Algebra & Calculus', '18 PYQs', true),
+          const SizedBox(height: 10),
+          _buildTopicRow('Probability & Statistics', '24 PYQs', true),
+          const SizedBox(height: 10),
+          _buildTopicRow('Machine Learning & AI', 'High Yield', true),
+          const SizedBox(height: 16),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.verified_rounded, color: Color(0xFFFFB300), size: 18),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    '15+ Years Official GATE Questions & Solutions',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white.withValues(alpha: 0.9),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTopicRow(String title, String badge, bool isDone) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.04),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            isDone ? Icons.check_circle_rounded : Icons.radio_button_unchecked,
+            color: isDone ? const Color(0xFF00E676) : Colors.white38,
+            size: 16,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              title,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFF8522).withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              badge,
+              style: GoogleFonts.outfit(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFFFF8522),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCbtExamIllustration(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF10131E),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: const Color(0xFF3A86FF).withValues(alpha: 0.35),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF3A86FF).withValues(alpha: 0.16),
+            blurRadius: 28,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF3A86FF).withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.desktop_windows_rounded, color: Color(0xFF3A86FF), size: 16),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'TCS iON CBT SIMULATOR',
+                    style: GoogleFonts.outfit(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 0.6,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF5722).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: const Color(0xFFFF5722).withValues(alpha: 0.4)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.timer_outlined, color: Color(0xFFFF5722), size: 12),
+                    const SizedBox(width: 4),
+                    Text(
+                      '02:59:45',
+                      style: GoogleFonts.jetBrainsMono(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFFFF5722),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          Row(
+            children: [
+              _buildPaletteChip('42', 'Answered', const Color(0xFF00E676)),
+              const SizedBox(width: 8),
+              _buildPaletteChip('5', 'Review', const Color(0xFF8338EC)),
+              const SizedBox(width: 8),
+              _buildPaletteChip('18', 'Left', Colors.white38),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.white10),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.calculate_rounded, color: Color(0xFFFFB300), size: 16),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Virtual Calculator',
+                        style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.white10),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.insights_rounded, color: Color(0xFF00E676), size: 16),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Live AIR Projector',
+                        style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaletteChip(String count, String label, Color color) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: color.withValues(alpha: 0.35)),
+        ),
+        child: Column(
+          children: [
+            Text(
+              count,
+              style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold, color: color),
+            ),
+            Text(
+              label,
+              style: GoogleFonts.plusJakartaSans(fontSize: 9.5, color: Colors.white60),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMistakeNotebookIllustration(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF13151A),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: const Color(0xFF00E676).withValues(alpha: 0.35),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF00E676).withValues(alpha: 0.15),
+            blurRadius: 28,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF00E676).withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.auto_fix_high_rounded, color: Color(0xFF00E676), size: 16),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'MISTAKE NOTEBOOK',
+                    style: GoogleFonts.outfit(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 0.6,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFB300).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFFFB300).withValues(alpha: 0.4)),
+                ),
+                child: Text(
+                  'AI Analysis',
+                  style: GoogleFonts.outfit(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFFFFB300),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFF5722).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFFF5722).withValues(alpha: 0.25)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.warning_amber_rounded, color: Color(0xFFFF5722), size: 18),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Identified Weak Area',
+                        style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFFFF5722)),
+                      ),
+                      Text(
+                        'Bayes\' Theorem & Conditional Variance',
+                        style: GoogleFonts.plusJakartaSans(fontSize: 11.5, color: Colors.white70),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF00E676).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFF00E676).withValues(alpha: 0.25)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.bolt_rounded, color: Color(0xFF00E676), size: 18),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'High-Yield Practice Drill Generated',
+                        style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF00E676)),
+                      ),
+                      Text(
+                        '5 Targeted questions • Accuracy 40% → 94%',
+                        style: GoogleFonts.plusJakartaSans(fontSize: 11.5, color: Colors.white70),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1041,100 +1375,19 @@ class AuthPurpleHeaderWithIIT extends StatelessWidget {
   final Widget? action;
   final String targetIIT;
   final String airRank;
-  final String imageAsset;
+  final String? imageAsset;
 
   const AuthPurpleHeaderWithIIT({
     super.key,
     this.action,
     this.targetIIT = 'GATEX AI',
     this.airRank = 'AIR < 100 TARGET',
-    this.imageAsset = 'assets/images/auth_gatex_3d.jpg',
+    this.imageAsset,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
-    final headerHeight = isKeyboardOpen ? 110.0 : 215.0;
-    final assetSize = isKeyboardOpen ? 68.0 : 124.0;
-
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      height: headerHeight,
-      width: double.infinity,
-      child: Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.center,
-        children: [
-          // Background ambient spotlight glow
-          if (!isKeyboardOpen)
-            Positioned(
-              top: 10,
-              child: Container(
-                width: 180,
-                height: 180,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      const Color(0xFFFF8522).withValues(alpha: 0.22),
-                      const Color(0xFF8338EC).withValues(alpha: 0.18),
-                      Colors.transparent,
-                    ],
-                    stops: const [0.1, 0.55, 1.0],
-                  ),
-                ),
-              ),
-            ),
-
-          // Central 3D Asset
-          Positioned(
-            bottom: isKeyboardOpen ? 6 : 14,
-            child: Container(
-              width: assetSize,
-              height: assetSize,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(22),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFFFF8522).withValues(alpha: 0.25),
-                    blurRadius: 18,
-                    offset: const Offset(0, 6),
-                  ),
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.5),
-                    blurRadius: 14,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(22),
-                child: Image.asset(
-                  imageAsset,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    color: const Color(0xFF13101E),
-                    child: const Icon(
-                      Icons.auto_awesome_rounded,
-                      size: 38,
-                      color: Color(0xFFFF8522),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-
-          // Optional Top Action (e.g. Back button)
-          if (action != null)
-            Positioned(
-              left: 16,
-              top: 42,
-              child: action!,
-            ),
-        ],
-      ),
-    );
+    return const SizedBox.shrink();
   }
 }
 

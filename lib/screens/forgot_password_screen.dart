@@ -59,138 +59,143 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     final isDark = context.isDarkMode;
 
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF09080F) : const Color(0xFF0E0B1A),
-          gradient: const LinearGradient(
-            colors: [
-              Color(0xFF0C0916),
-              Color(0xFF171128),
-              Color(0xFF221538),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: Column(
-          children: [
-            // Top Sleek Executive Header with 3D Security Shield and Back Button
-            AuthPurpleHeaderWithIIT(
-              action: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.18),
-                  border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.25),
-                    width: 1,
-                  ),
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
-              imageAsset: 'assets/images/auth_security_3d.jpg',
-              targetIIT: 'SECURE RECOVERY',
-              airRank: '256-BIT ENCRYPTION',
-            ),
-
-            // Bottom White Sheet (Matches Screen 4)
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF14151B) : Colors.white,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
-                      blurRadius: 26,
-                      offset: const Offset(0, -6),
-                    ),
-                  ],
-                ),
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(26, 26, 26, 24),
-                child: Column(
+      backgroundColor: context.scaffoldBackground,
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 16),
+              child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Header Badge + Title
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(7),
-                          decoration: BoxDecoration(
-                            color: (isDark ? const Color(0xFF9D65FF) : const Color(0xFF6B38FF)).withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Icon(
-                            _isSent ? Icons.mark_email_read_rounded : Icons.lock_reset_rounded,
-                            size: 19,
-                            color: isDark ? const Color(0xFF9D65FF) : const Color(0xFF6B38FF),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          _isSent ? 'Check Email' : 'Reset Password',
-                          style: GoogleFonts.outfit(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white : const Color(0xFF121214),
-                            letterSpacing: -0.4,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-
-                    Text(
-                      _isSent
-                          ? 'Instructions to reset your password have been sent to ${_emailController.text.trim()}.'
-                          : 'Enter your registered email and we\'ll send you a password recovery link.',
-                      style: GoogleFonts.outfit(
-                        fontSize: 13,
-                        color: isDark ? Colors.white60 : const Color(0xFF757480),
-                        height: 1.4,
+                    // Top Back Button
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                        color: isDark ? Colors.white : const Color(0xFF121214),
+                        onPressed: () => Navigator.pop(context),
                       ),
                     ),
-                    const SizedBox(height: 22),
+                    const SizedBox(height: 12),
 
-                    // Error message if any
-                    if (_errorMessage != null) ...[
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    // Clean Security Lock Badge
+                    Center(
+                      child: Container(
+                        width: 68,
+                        height: 68,
                         decoration: BoxDecoration(
-                          color: AppTheme.error.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: AppTheme.error.withValues(alpha: 0.25)),
+                          color: const Color(0xFFFF8522).withValues(alpha: 0.12),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: const Color(0xFFFF8522).withValues(alpha: 0.35),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.lock_reset_rounded,
+                          size: 34,
+                          color: Color(0xFFFF8522),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Reset Password',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.outfit(
+                        fontSize: 27,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : const Color(0xFF121214),
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Enter your registered email address and we\'ll send you a secure link to reset your password.',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        color: isDark ? Colors.white60 : const Color(0xFF6E6E78),
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+
+                    // Success banner if sent
+                    if (_isSent) ...[
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF00E676).withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFF00E676).withValues(alpha: 0.35)),
                         ),
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(Icons.error_outline_rounded, color: AppTheme.error, size: 18),
-                            const SizedBox(width: 8),
+                            const Icon(Icons.mark_email_read_rounded, color: Color(0xFF00E676), size: 22),
+                            const SizedBox(width: 12),
                             Expanded(
-                              child: Text(
-                                _errorMessage!,
-                                style: GoogleFonts.outfit(color: AppTheme.error, fontSize: 12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Check your inbox',
+                                    style: GoogleFonts.outfit(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                      color: const Color(0xFF00E676),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Password reset instructions have been sent to ${_emailController.text}. Please check your spam folder if not received within 2 minutes.',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 12.5,
+                                      color: isDark ? Colors.white70 : const Color(0xFF455A64),
+                                      height: 1.45,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 16),
-                    ],
+                      const SizedBox(height: 24),
+                    ] else ...[
+                      // Error message if any
+                      if (_errorMessage != null) ...[
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: AppTheme.error.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: AppTheme.error.withValues(alpha: 0.25)),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.error_outline_rounded, color: AppTheme.error, size: 18),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  _errorMessage!,
+                                  style: GoogleFonts.outfit(color: AppTheme.error, fontSize: 12.5),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                      ],
 
-                    if (!_isSent) ...[
-                      // Enter your email
+                      // Email input
                       CleanAuthInputField(
                         controller: _emailController,
-                        hintText: 'Enter your email',
+                        hintText: 'Enter your email address',
                         prefixIcon: Icon(
                           Icons.mail_outline_rounded,
                           size: 19,
@@ -200,72 +205,26 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ),
                       const SizedBox(height: 22),
 
-                      // Solid Black Pill Button: [ Send Reset Link ]
+                      // Primary Button: [ Send Reset Link ]
                       SolidBlackPillButton(
                         label: 'Send Reset Link',
                         isLoading: _isLoading,
                         onPressed: _sendResetLink,
                       ),
-                    ] else ...[
-                      // Success confirmation banner
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF00E676).withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(
-                            color: const Color(0xFF00E676).withValues(alpha: 0.3),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Color(0xFF00E676),
-                              ),
-                              child: const Icon(Icons.check_rounded, color: Colors.white, size: 18),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                'Reset instructions dispatched successfully. Check your spam folder if not visible.',
-                                style: GoogleFonts.outfit(
-                                  color: isDark ? Colors.white : const Color(0xFF1B5E20),
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 22),
-
-                      // Resend Link Button
-                      SolidBlackPillButton(
-                        label: 'Resend Link',
-                        isLoading: _isLoading,
-                        onPressed: _sendResetLink,
-                      ),
+                      const SizedBox(height: 20),
                     ],
-                    const SizedBox(height: 18),
 
-                    // Back to Log In
+                    // Footer: Back to Login
                     Center(
-                      child: InkWell(
-                        onTap: () => Navigator.pop(context),
-                        borderRadius: BorderRadius.circular(20),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          child: Text(
-                            'Back to Log In',
-                            style: GoogleFonts.outfit(
-                              color: isDark ? const Color(0xFFB185FF) : const Color(0xFF6B38FF),
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
+                      child: TextButton.icon(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.arrow_back_rounded, size: 16, color: Color(0xFFFF8522)),
+                        label: Text(
+                          'Back to Login',
+                          style: GoogleFonts.outfit(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFFFF8522),
                           ),
                         ),
                       ),
@@ -275,9 +234,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ),
             ),
           ),
-        ],
-      ),
-    ),
-  );
+        ),
+    );
   }
 }
