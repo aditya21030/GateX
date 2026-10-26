@@ -10,6 +10,8 @@ import '../services/storage_service.dart';
 import '../theme/app_theme.dart';
 import '../models/models.dart';
 import '../data/da_full_mock_pyqs.dart';
+import '../data/da_full_mock_2_pyqs.dart';
+import '../data/da_full_mock_3_pyqs.dart';
 import '../data/cs_full_mock_pyqs.dart';
 import '../data/da_subjectwise_mock_data.dart';
 import '../data/csit_subjectwise_mock_data.dart';
@@ -82,9 +84,18 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     }
 
     // 2. Load bundled fallback base
-    final List<PYQ> rawBase = activeExam == 'DA'
-        ? List.from(daFullMockQuestionsEasy)
-        : List.from(csFullMockQuestionsEasy);
+    final List<PYQ> rawBase;
+    if (activeExam == 'DA') {
+      if (mockNumber == 2) {
+        rawBase = List.from(daFullMock2Questions);
+      } else if (mockNumber == 3) {
+        rawBase = List.from(daFullMock3Questions);
+      } else {
+        rawBase = List.from(daFullMockQuestionsEasy);
+      }
+    } else {
+      rawBase = List.from(csFullMockQuestionsEasy);
+    }
 
     // 3. Apply any live question hotfixes by ID from Hive cache
     final List<PYQ> base = rawBase.map((q) {
@@ -93,6 +104,11 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     }).toList();
 
     if (base.length != 65) return base;
+
+    // For custom crafted full-length mocks (Mock 2 & Mock 3), maintain the exact curated question sequence
+    if (activeExam == 'DA' && (mockNumber == 2 || mockNumber == 3)) {
+      return base;
+    }
 
     // Preserve GATE Section structure:
     // Q1-5: GA 1-mark (indices 0..4)
