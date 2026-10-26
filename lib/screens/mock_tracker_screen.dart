@@ -16,6 +16,7 @@ import '../data/da_full_mock_4_pyqs.dart';
 import '../data/da_full_mock_5_pyqs.dart';
 import '../data/da_full_mock_6_pyqs.dart';
 import '../data/da_full_mock_7_pyqs.dart';
+import '../data/da_full_mock_8_pyqs.dart';
 import '../data/cs_full_mock_pyqs.dart';
 import '../data/da_subjectwise_mock_data.dart';
 import '../data/csit_subjectwise_mock_data.dart';
@@ -102,6 +103,8 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
         rawBase = List.from(daFullMock6Questions);
       } else if (mockNumber == 7) {
         rawBase = List.from(daFullMock7Questions);
+      } else if (mockNumber == 8) {
+        rawBase = List.from(daFullMock8Questions);
       } else {
         rawBase = List.from(daFullMockQuestionsEasy);
       }
@@ -118,7 +121,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     if (base.length != 65) return base;
 
     // For custom crafted full-length mocks (Mock 2 & Mock 3), maintain the exact curated question sequence
-    if (activeExam == 'DA' && (mockNumber >= 2 && mockNumber <= 7)) {
+    if (activeExam == 'DA' && (mockNumber >= 2 && mockNumber <= 8)) {
       return base;
     }
 
