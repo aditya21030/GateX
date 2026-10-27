@@ -23,6 +23,7 @@ import '../data/cs_full_mock_pyqs.dart';
 import '../data/cs_full_mock_2_pyqs.dart';
 import '../data/cs_full_mock_3_pyqs.dart';
 import '../data/cs_full_mock_4_pyqs.dart';
+import '../data/cs_full_mock_5_pyqs.dart';
 import '../data/da_subjectwise_mock_data.dart';
 import '../data/csit_subjectwise_mock_data.dart';
 import 'mock_test_runner_screen.dart';
@@ -124,6 +125,8 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
         rawBase = List.from(csFullMock3Questions);
       } else if (mockNumber == 4) {
         rawBase = List.from(csFullMock4Questions);
+      } else if (mockNumber == 5) {
+        rawBase = List.from(csFullMock5Questions);
       } else {
         rawBase = List.from(csFullMockQuestionsEasy);
       }
