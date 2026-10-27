@@ -87,28 +87,35 @@ class PurchaseService with ChangeNotifier {
   /// Finds matching package by storeProduct id or package identifier
   Package? findPackageForPlan(String planId) {
     if (_currentOffering == null) return null;
+
+    // 1. Exact match by product identifier or package identifier
     for (final pkg in _currentOffering!.availablePackages) {
       if (pkg.storeProduct.identifier == planId || pkg.identifier == planId) {
         return pkg;
       }
-      if (planId == proSoloProductId &&
-          (pkg.identifier.toLowerCase().contains('solo') ||
-              pkg.packageType == PackageType.annual)) {
-        return pkg;
-      }
-      if (planId == proDualProductId &&
-          (pkg.identifier.toLowerCase().contains('dual') ||
-              pkg.packageType == PackageType.lifetime)) {
-        return pkg;
-      }
-      if (planId == proUpgradeToDualProductId &&
-          pkg.identifier.toLowerCase().contains('upgrade')) {
-        return pkg;
+    }
+
+    // 2. Strict type/keyword match - ensure upgrade packages NEVER match full dual or solo
+    for (final pkg in _currentOffering!.availablePackages) {
+      final id = pkg.identifier.toLowerCase();
+      final prodId = pkg.storeProduct.identifier.toLowerCase();
+      final isUpgrade = id.contains('upgrade') || prodId.contains('upgrade');
+
+      if (planId == proUpgradeToDualProductId) {
+        if (isUpgrade) return pkg;
+      } else if (planId == proDualProductId) {
+        if (!isUpgrade && (id.contains('dual') || prodId.contains('dual') || pkg.packageType == PackageType.lifetime)) {
+          return pkg;
+        }
+      } else if (planId == proSoloProductId) {
+        final isDual = id.contains('dual') || prodId.contains('dual');
+        if (!isUpgrade && !isDual && (id.contains('solo') || prodId.contains('solo') || pkg.packageType == PackageType.annual)) {
+          return pkg;
+        }
       }
     }
-    return _currentOffering!.availablePackages.isNotEmpty
-        ? _currentOffering!.availablePackages.first
-        : null;
+
+    return null;
   }
 
   /// Initialize Pro status from RevenueCat, local cache, and sync with Firebase if logged in

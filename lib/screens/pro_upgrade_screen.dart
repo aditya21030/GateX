@@ -7,7 +7,8 @@ import '../services/purchase_service.dart';
 import '../theme/app_theme.dart';
 
 class ProUpgradeScreen extends StatefulWidget {
-  const ProUpgradeScreen({super.key});
+  final bool? initialIsDual;
+  const ProUpgradeScreen({super.key, this.initialIsDual});
 
   @override
   State<ProUpgradeScreen> createState() => _ProUpgradeScreenState();
@@ -33,7 +34,7 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
     super.didChangeDependencies();
     if (!_initializedSelection) {
       final provider = Provider.of<AppProvider>(context, listen: false);
-      _isDualSelected = provider.selectedExam == 'BOTH';
+      _isDualSelected = widget.initialIsDual ?? false;
       _selectedSoloBranch = (provider.activeExam ?? 'DA').toUpperCase().contains('CS') ? 'CSIT' : 'DA';
       _initializedSelection = true;
     }
@@ -761,9 +762,9 @@ class _ProUpgradeScreenState extends State<ProUpgradeScreen> {
     } else if (isSoloUpgradeCandidate) {
       ctaText = 'Upgrade to Dual Pass — $upgradePrice 🔒';
     } else if (_isDualSelected) {
-      ctaText = 'Upgrade Dual Pass — $dualPrice 🔒';
+      ctaText = 'Get Dual Prep Pass — $dualPrice 🔒';
     } else {
-      ctaText = 'Upgrade Solo Pass ($_selectedSoloBranch) — $soloPrice 🔒';
+      ctaText = 'Get Solo Pass ($_selectedSoloBranch) — $soloPrice 🔒';
     }
 
     return Container(

@@ -2,6 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:gateda/theme/app_theme.dart';
 import 'package:gateda/models/models.dart';
+import 'package:gateda/data/da_full_mock_pyqs.dart';
+import 'package:gateda/data/cs_full_mock_pyqs.dart';
 import 'package:gateda/data/cs_full_mock_2_pyqs.dart';
 import 'package:gateda/data/cs_full_mock_3_pyqs.dart';
 import 'package:gateda/data/cs_full_mock_4_pyqs.dart';
@@ -1453,6 +1455,64 @@ void main() {
       double totalMarks = 0.0;
       for (int i = 0; i < csFullMock10Questions.length; i++) {
         final q = csFullMock10Questions[i];
+        expect(ids.contains(q.id), isFalse, reason: 'Duplicate ID: ${q.id}');
+        ids.add(q.id);
+
+        final double marks = (i < 5 || (i >= 10 && i < 35)) ? 1.0 : 2.0;
+        totalMarks += marks;
+
+        if (q.type == 'NAT') {
+          expect(q.isMCQ, isFalse);
+          expect(q.options.isEmpty, isTrue);
+          expect(q.questionText.toLowerCase().contains('which of the following'), isFalse);
+          expect(q.correctAnswer.isNotEmpty, isTrue);
+        } else if (q.type == 'MSQ') {
+          expect(q.isMCQ, isTrue);
+          expect(q.options.length, 4);
+        } else {
+          expect(q.type, 'MCQ');
+          expect(q.isMCQ, isTrue);
+          expect(q.options.length, 4);
+        }
+      }
+      expect(totalMarks, 100.0);
+    });
+
+    test('GATE CS Mock 1 contains exactly 65 questions and 100 marks', () {
+      expect(csFullMockQuestionsEasy.length, 65);
+      final ids = <String>{};
+      double totalMarks = 0.0;
+      for (int i = 0; i < csFullMockQuestionsEasy.length; i++) {
+        final q = csFullMockQuestionsEasy[i];
+        expect(ids.contains(q.id), isFalse, reason: 'Duplicate ID: ${q.id}');
+        ids.add(q.id);
+
+        final double marks = (i < 5 || (i >= 10 && i < 35)) ? 1.0 : 2.0;
+        totalMarks += marks;
+
+        if (q.type == 'NAT') {
+          expect(q.isMCQ, isFalse);
+          expect(q.options.isEmpty, isTrue);
+          expect(q.questionText.toLowerCase().contains('which of the following'), isFalse);
+          expect(q.correctAnswer.isNotEmpty, isTrue);
+        } else if (q.type == 'MSQ') {
+          expect(q.isMCQ, isTrue);
+          expect(q.options.length, 4);
+        } else {
+          expect(q.type, 'MCQ');
+          expect(q.isMCQ, isTrue);
+          expect(q.options.length, 4);
+        }
+      }
+      expect(totalMarks, 100.0);
+    });
+
+    test('GATE DA Mock 1 contains exactly 65 questions and 100 marks', () {
+      expect(daFullMockQuestionsEasy.length, 65);
+      final ids = <String>{};
+      double totalMarks = 0.0;
+      for (int i = 0; i < daFullMockQuestionsEasy.length; i++) {
+        final q = daFullMockQuestionsEasy[i];
         expect(ids.contains(q.id), isFalse, reason: 'Duplicate ID: ${q.id}');
         ids.add(q.id);
 
