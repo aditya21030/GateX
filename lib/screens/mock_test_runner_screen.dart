@@ -89,7 +89,7 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
 
     // Initialize NAT controllers
     for (var q in widget.questions) {
-      if (!q.isMCQ) {
+      if (q.type == 'NAT' || (!q.isMCQ && q.type != 'MSQ' && q.options.isEmpty)) {
         _natControllers[q.id] = TextEditingController();
       }
     }
@@ -210,18 +210,19 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
   void _syncCurrentInput() {
     if (_currentIndex < 0 || _currentIndex >= widget.questions.length) return;
     final q = widget.questions[_currentIndex];
-    if (!q.isMCQ) {
-      final text = _natControllers[q.id]?.text.trim() ?? '';
-      if (text.isNotEmpty) {
-        _userAnswers[q.id] = text;
-      } else {
-        _userAnswers.remove(q.id);
-      }
-    } else if (q.type == 'MSQ') {
+    final isNAT = q.type == 'NAT' || (!q.isMCQ && q.type != 'MSQ' && q.options.isEmpty);
+    if (q.type == 'MSQ') {
       final selections = _msqSelections[q.id];
       if (selections != null && selections.isNotEmpty) {
         final sorted = selections.toList()..sort();
         _userAnswers[q.id] = sorted.join(';');
+      } else {
+        _userAnswers.remove(q.id);
+      }
+    } else if (isNAT) {
+      final text = _natControllers[q.id]?.text.trim() ?? '';
+      if (text.isNotEmpty) {
+        _userAnswers[q.id] = text;
       } else {
         _userAnswers.remove(q.id);
       }
@@ -233,9 +234,10 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
     HapticFeedback.lightImpact();
     setState(() {
       _userAnswers.remove(q.id);
+      final isNAT = q.type == 'NAT' || (!q.isMCQ && q.type != 'MSQ' && q.options.isEmpty);
       if (q.type == 'MSQ') {
         _msqSelections[q.id]?.clear();
-      } else if (!q.isMCQ) {
+      } else if (isNAT) {
         _natControllers[q.id]?.clear();
       }
     });
@@ -1327,7 +1329,7 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                         const SizedBox(height: 24),
 
                         // Answer Options (MCQ, MSQ, or NAT)
-                        if (q.isMCQ) _buildMockMCQOptions(q) else _buildMockNATInput(q),
+                        if (q.type != 'NAT' && (q.isMCQ || q.type == 'MSQ' || q.options.isNotEmpty)) _buildMockMCQOptions(q) else _buildMockNATInput(q),
                       ],
                     ),
                   ),

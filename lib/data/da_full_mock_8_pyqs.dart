@@ -320,7 +320,7 @@ det(C) = -6 * (1*1 - 0*0) = -6 * 1 = -6.''',
 Which of the following statements is/are ALWAYS TRUE?''',
     options: ['''All eigenvalues of A are non-negative real numbers.''', '''All diagonal entries of A are non-negative (a_ii >= 0 for all i).''', '''Every principal submatrix of A is positive semidefinite.''', '''det(A) must be strictly greater than 0.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. By definition, x^T A x >= 0 for all x. For eigenvector v with A v = lambda v, v^T A v = lambda ||v||^2 >= 0 => lambda >= 0. (TRUE)
@@ -440,7 +440,7 @@ f*(8) = 8^2 / (2 * 4) = 64 / 8 = 8.''',
 Which of the following statements is/are ALWAYS TRUE?''',
     options: ['''If a local minimizer of f on C exists, it is the unique global minimizer of f on C.''', '''Any local minimizer of f on C is a global minimizer.''', '''The sublevel sets {x in C : f(x) <= alpha} are convex sets for every alpha in R.''', '''f must achieve a minimum on C even if C is unbounded.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. Strict convexity ensures that if a minimizer exists, it is strictly unique. (TRUE)
@@ -566,7 +566,7 @@ P(X > 3) = 0.80^3 = 0.512.''',
     questionText: '''Under standard Fisher regularity conditions, which of the following asymptotic properties is/are ALWAYS satisfied by Maximum Likelihood Estimators (MLEs)?''',
     options: ['''Asymptotic Normality: sqrt(n) * (theta_hat_MLE - theta) -> N(0, I_1^(-1)(theta)) in distribution.''', '''Functional Invariance (Equivariance): If theta_hat is the MLE of theta, then g(theta_hat) is the MLE of g(theta).''', '''Asymptotic Efficiency: The asymptotic variance of the MLE attains the Cramer-Rao Lower Bound.''', '''The MLE is guaranteed to be strictly unbiased for all finite sample sizes n.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. By asymptotic normality of MLEs, the distribution converges to a Gaussian centered at true theta with variance equal to inverse Fisher information. (TRUE)
@@ -661,7 +661,7 @@ Sum a + b = 2 + 6 = 8.''',
     questionText: '''Which of the following statements regarding Topological Sorting on a Directed Graph G = (V, E) is/are TRUE?''',
     options: ['''A valid topological sort exists if and only if G contains no directed cycles (G is a DAG).''', '''If a directed graph G has a unique topological ordering, then G contains a directed Hamiltonian path.''', '''Topological sort can be computed in O(|V| + |E|) time using Depth-First Search or Kahn's in-degree algorithm.''', '''Every directed acyclic graph has exactly one valid topological sort.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. The presence of any directed cycle creates a circular precedence dependency u -> ... -> v -> u, making topological order impossible. (TRUE)
@@ -720,7 +720,7 @@ Thus there are exactly 8 superkeys.''',
     questionText: '''Which of the following statements regarding Multi-Version Concurrency Control (MVCC) in database systems is/are TRUE?''',
     options: ['''In MVCC, read transactions view a timestamped snapshot of data and do not acquire shared locks on data items.''', '''Writers in MVCC do not block concurrent readers.''', '''Old tuple versions must eventually be cleaned up by a garbage collection (vacuum) mechanism.''', '''MVCC completely prevents all serializability anomalies without any additional conflict checks or locks.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. MVCC allows transactions to read historical versions corresponding to their read timestamp, eliminating shared read locks. (TRUE)
@@ -805,7 +805,7 @@ Option A is correct.''',
     questionText: '''In a Bayesian Network (directed acyclic graphical model), the Markov Blanket of a target variable node X consists of which set of nodes?''',
     options: ['''The parents of X.''', '''The children of X.''', '''The other parents of the children of X (spouses of X).''', '''All ancestors and descendants of X.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''By definition of a Markov Blanket in a Bayesian Network:
 Conditioned on its Markov Blanket, node X is conditionally independent of all other nodes in the network.
@@ -879,7 +879,7 @@ kappa_2(A) = lambda_max(A) / lambda_min(A) = 18 / 2 = 9.''',
 Which of the following statements is/are TRUE for all normal matrices?''',
     options: ['''A is unitarily diagonalizable (there exists a unitary matrix U such that U* A U is diagonal).''', '''Eigenvectors corresponding to distinct eigenvalues of A are mutually orthogonal.''', '''||A x||_2 = ||A* x||_2 for all vectors x in C^n.''', '''All eigenvalues of A must be purely real.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. The Spectral Theorem for Normal Matrices guarantees that A is unitarily diagonalizable iff A is normal. (TRUE)
@@ -1140,7 +1140,7 @@ Rate = 1 / 4 = 0.25 renewals per hour.''',
     questionText: '''Which of the following statements regarding multiple hypothesis testing corrections is/are TRUE?''',
     options: ['''The Bonferroni correction controls the Family-Wise Error Rate (FWER) at level alpha by rejecting individual hypotheses with p-values <= alpha / m.''', '''The Benjamini-Hochberg (BH) procedure controls the False Discovery Rate (FDR), defined as E[V / max(R, 1)], where V is false positives and R is total rejections.''', '''The Benjamini-Hochberg procedure is generally less conservative (has higher statistical power) than the Bonferroni correction when many true effects exist.''', '''The Bonferroni correction guarantees that the False Discovery Proportion is identically zero.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. Bonferroni tests each of m hypotheses at alpha / m to ensure FWER = P(V >= 1) <= alpha. (TRUE)
@@ -1210,7 +1210,7 @@ Clean integer: 10!''',
     questionText: '''An initially empty AVL tree has the following keys inserted in order:
 30, 10, 20.
 To restore the AVL balance property at the root node 30, a Left-Right (LR) double rotation is performed.
-Which key becomes the new root of the tree after this rebalancing? (Answer as an integer).''',
+The key that becomes the new root of the tree after this rebalancing is ________. (Answer as an integer).''',
     options: [],
     correctAnswer: '''20''',
     isMCQ: false,
@@ -1376,7 +1376,7 @@ Option A is correct.''',
     questionText: '''Which of the following statements regarding View Serializability and Conflict Serializability is/are TRUE?''',
     options: ['''Every conflict-serializable schedule is view-serializable.''', '''A view-serializable schedule that is not conflict-serializable must contain at least one blind write (a write without a preceding read on the same item).''', '''Testing whether an arbitrary schedule is conflict-serializable can be done in polynomial time O(V + E) using a precedence graph.''', '''Testing whether an arbitrary schedule is view-serializable is an NP-complete problem.'''],
     correctAnswer: '''A;B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. Conflict serializability is a strict subset of view serializability. (TRUE)
@@ -1477,7 +1477,7 @@ The first component is 1, and the second component is k = 4.''',
     questionText: '''Which of the following statements regarding Dropout regularization in deep neural networks is/are TRUE?''',
     options: ['''Applying dropout with keep probability p to a network with N hidden units implicitly trains an ensemble of 2^N thinned sub-networks that share weights.''', '''During inference (test time), dropout is disabled and the weights of outgoing connections are multiplied by p (or inverted dropout divides activations by p during training) to match expected activations.''', '''Dropout prevents co-adaptation of feature detectors by forcing neurons to learn robust features in the presence of random missing inputs.''', '''Dropout is strictly equivalent to L1 Lasso weight regularization.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. Each of the N hidden units has 2 states (active or dropped), defining 2^N possible architectural configurations that share underlying parameters. (TRUE)

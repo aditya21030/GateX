@@ -279,7 +279,7 @@ The maximum value of the Rayleigh quotient is 3 (achieved when x is an eigenvect
     questionText: '''Let Q be an n x n real orthogonal matrix (Q^T Q = I_n). Which of the following statements is/are TRUE? (Select all that apply)''',
     options: ['''For any vector x in R^n, ||Q x||_2 = ||x||_2 (Q preserves Euclidean vector norms).''', '''For any vectors x, y in R^n, (Q x)^T (Q y) = x^T y (Q preserves inner products and angles).''', '''All eigenvalues of Q (whether real or complex) have absolute value |lambda| = 1.''', '''The determinant of Q is always equal to +1.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: ||Q x||_2^2 = (Q x)^T (Q x) = x^T Q^T Q x = x^T I x = ||x||_2^2.
@@ -353,7 +353,7 @@ det(H(1, 0)) = 6 * 2 - 0 = 12.''',
     questionText: '''Which of the following statements regarding convex and quasiconvex functions is/are TRUE? (Select all that apply)''',
     options: ['''A function f: R^n -> R is quasiconvex if and only if its sublevel set S_alpha = {x in R^n : f(x) <= alpha} is convex for every alpha in R.''', '''Every convex function is necessarily quasiconvex.''', '''A strictly quasiconvex function can have multiple distinct local minima with different function values.''', '''The sum of any two quasiconvex functions is always quasiconvex.'''],
     correctAnswer: '''A;B''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: This is the formal definition of quasiconvexity.
@@ -412,7 +412,7 @@ The correlation is exactly -1.''',
     questionText: '''Which of the following statements regarding sufficient statistics in estimation theory is/are TRUE? (Select all that apply)''',
     options: ['''By the Neyman-Fisher Factorization Theorem, a statistic T(X) is sufficient for parameter theta if and only if the joint density can be factored as f(x; theta) = g(T(x), theta) * h(x).''', '''If T(X) is a sufficient statistic for theta, then any one-to-one function of T(X) is also a sufficient statistic for theta.''', '''The sample mean X_bar is a sufficient statistic for the parameter lambda of a Poisson distribution.''', '''A sufficient statistic always throws away informative variability to achieve minimum sample size.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: This is the precise statement of the Neyman-Fisher Factorization Theorem.
@@ -492,7 +492,7 @@ The minimum number of nodes is 12.''',
     questionText: '''Which of the following statements regarding Strongly Connected Components (SCCs) in directed graphs is/are TRUE? (Select all that apply)''',
     options: ['''The component graph (condensation graph) obtained by contracting each SCC into a single super-vertex is always a Directed Acyclic Graph (DAG).''', '''Kosaraju's algorithm computes all SCCs of a directed graph G = (V, E) in O(V + E) time using two Depth-First Search (DFS) traversals.''', '''Tarjan's SCC algorithm requires two separate passes of DFS and an explicit graph transposition G^T.''', '''Adding a single directed edge to a directed graph can never decrease the total number of SCCs.'''],
     correctAnswer: '''A;B''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: If the condensation graph had a cycle, all SCCs on that cycle would mutually reach each other, merging into a single larger SCC.
@@ -583,7 +583,7 @@ The highest normal form satisfied by R is BCNF. Option C is correct.''',
     questionText: '''Which of the following statements regarding concurrency control protocols is/are TRUE? (Select all that apply)''',
     options: ['''The Basic Timestamp Ordering protocol generates schedules that are conflict serializable and free from deadlocks.''', '''Thomas' Write Rule relaxes the basic timestamp ordering protocol by ignoring outdated write operations (W_i(Q) where TS(T_i) < W-timestamp(Q)), allowing non-conflict serializable schedules that are nevertheless view serializable.''', '''In Multi-Version Timestamp Ordering (MVTO), a read operation R_i(Q) is never rejected (aborted).''', '''Strict 2PL produces schedules that are view serializable but never conflict serializable.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: In Basic Timestamp Ordering, transactions are ordered strictly by their arrival timestamp. Older transactions take precedence; aborting and restarting violators prevents waiting, ensuring deadlock freedom.
@@ -637,7 +637,7 @@ H(X) = - [ 0.5 * (-1) + 0.25 * (-2) + 0.25 * (-2) ]
     questionText: '''Which of the following statements regarding the discrete AdaBoost algorithm is/are TRUE? (Select all that apply)''',
     options: ['''At each boosting round t, the weight of base classifier h_t is given by alpha_t = (1/2) * ln((1 - epsilon_t) / epsilon_t), where epsilon_t is the weighted training error.''', '''Data points misclassified by weak learner h_t have their sample weights increased for round t + 1 by a factor of exp(alpha_t).''', '''Data points correctly classified by weak learner h_t have their sample weights decreased for round t + 1 by a factor of exp(-alpha_t).''', '''AdaBoost requires the weak learner to achieve training accuracy strictly greater than 90% at every iteration.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: alpha_t = 0.5 * ln((1 - epsilon_t) / epsilon_t) is the standard AdaBoost estimator weight.
@@ -691,7 +691,7 @@ Given beam width k = 3, exactly 3 nodes are retained in memory at depth 4.''',
     questionText: '''Which of the following statements regarding Horn clauses and logical inference is/are TRUE? (Select all that apply)''',
     options: ['''A Horn clause is a disjunction of literals containing at most one positive (unnegated) literal.''', '''Forward chaining on a knowledge base of propositional Horn clauses runs in linear time O(n) with respect to the size of the knowledge base.''', '''Forward chaining and backward chaining are both sound and complete for Horn clause knowledge bases.''', '''Every arbitrary propositional logic formula can be represented as an equivalent single Horn clause.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Definition of a Horn clause: at most one positive literal (~P or ~Q or R, equivalent to (P and Q) -> R).
@@ -781,7 +781,7 @@ The trace of L is l_11 + l_22 = 2 + 4 = 6.''',
     questionText: '''Let A be an m x n real matrix with rank r = min(m, n), and let sigma_1 >= sigma_2 >= ... >= sigma_r > 0 be its non-zero singular values. Which of the following statements is/are TRUE? (Select all that apply)''',
     options: ['''The 2-norm (spectral norm) of matrix A is ||A||_2 = sigma_1.''', '''The condition number of matrix A with respect to the 2-norm is kappa_2(A) = sigma_1 / sigma_r.''', '''If m < n and A has full row rank m, the minimum Euclidean norm solution to the underdetermined linear system A x = b is given by x* = A^T (A A^T)^(-1) b.''', '''The Frobenius norm of A satisfies ||A||_F = sum_{j=1}^r sigma_j.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: ||A||_2 = max_{x != 0} ||Ax||_2 / ||x||_2 = sigma_max = sigma_1.
@@ -879,7 +879,7 @@ By Strong Duality, the optimal objective value of the dual program is also exact
 Which of the following statements regarding Proximal Gradient Descent (Iterative Soft-Thresholding Algorithm, ISTA) is/are TRUE? (Select all that apply)''',
     options: ['''The proximal operator of the L1 norm regularization term is the elementwise Soft-Thresholding operator S_t(v)_i = sign(v_i) * max(|v_i| - t, 0).''', '''Each iteration of ISTA updates x as x_{k+1} = S_{eta*lambda}(x_k - eta * grad g(x_k)), where eta is the step size.''', '''If step size eta <= 1 / L (where L is the Lipschitz constant of grad g), ISTA achieves an O(1/k) convergence rate on the objective function.''', '''Fast Iterative Soft-Thresholding Algorithm (FISTA) employs Nesterov momentum acceleration to improve the convergence rate to O(1/k^2).'''],
     correctAnswer: '''A;B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: The proximal operator prox_{t ||.||_1}(v) = argmin_x { 0.5 ||x - v||_2^2 + t ||x||_1 } has closed-form solution given by soft-thresholding S_t(v).
@@ -974,7 +974,7 @@ Var(X) = 1 + 1 = 2.''',
     questionText: '''Which of the following statements regarding the Fisher Information I(theta) and the Cramer-Rao Lower Bound (CRLB) is/are TRUE? (Select all that apply)''',
     options: ['''Under standard regularity conditions, Fisher Information can be computed as I(theta) = - E[ d^2/dtheta^2 ln f(X; theta) ].''', '''For a sample of n independent and identically distributed observations, the total Fisher Information is additive: I_n(theta) = n * I_1(theta).''', '''An unbiased estimator whose variance achieves the CRLB is termed an efficient estimator.''', '''The CRLB provides a valid lower bound for estimating parameter theta of the Uniform U[0, theta] distribution.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Under regularity conditions allowing interchange of differentiation and integration, E[(d/dtheta ln f)^2] = -E[d^2/dtheta^2 ln f].
@@ -1059,7 +1059,7 @@ Capacity = 6 + 5 + 3 = 14.''',
     questionText: '''Which of the following statements comparing AVL Trees and Red-Black Trees is/are TRUE? (Select all that apply)''',
     options: ['''AVL trees are more strictly balanced than Red-Black trees, providing faster lookup times in read-heavy workloads.''', '''Inserting a key into a Red-Black tree requires at most 2 tree rotations in the worst case.''', '''Deleting a node from a Red-Black tree requires at most 3 tree rotations in the worst case.''', '''The maximum possible height of a Red-Black tree with n internal nodes is strictly bounded by 2 * log_2(n + 1).'''],
     correctAnswer: '''A;B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: AVL balance factor is strictly within {-1, 0, 1}, limiting height to approx 1.44 log_2 n, compared to 2 log_2 n for Red-Black, making search faster.
@@ -1128,7 +1128,7 @@ Total I/O = B(R) + (Number of chunks of R) * B(S)
     questionText: '''Which of the following statements regarding ANSI SQL Isolation Levels and Snapshot Isolation is/are TRUE? (Select all that apply)''',
     options: ['''Under Snapshot Isolation, each transaction reads from a private snapshot of the database taken at transaction start time, guaranteeing freedom from Dirty Reads, Non-Repeatable Reads, and Phantoms.''', '''Snapshot Isolation is susceptible to the Write Skew anomaly, meaning it is not strictly equivalent to Serializable isolation.''', '''Predicate locking (or Serializable Snapshot Isolation / SSI) can prevent Write Skew and ensure true serializability.''', '''Under Read Committed isolation, repeated executions of the exact same SELECT query within a single transaction are guaranteed to return identical results.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Snapshot Isolation uses Multi-Version Concurrency Control (MVCC) where reads see consistent committed snapshots, preventing dirty reads, non-repeatable reads, and phantom rows.
@@ -1211,7 +1211,7 @@ K(x, z) = (x^T z + 1)^2 = (4 + 1)^2 = 5^2 = 25.''',
     questionText: '''Which of the following statements regarding the Vapnik-Chervonenkis (VC) Dimension of hypothesis classes is/are TRUE? (Select all that apply)''',
     options: ['''The VC dimension of the hypothesis class of closed intervals [a, b] on the real line R is equal to 2.''', '''The VC dimension of linear halfspaces (hyperplanes) in R^d is equal to d + 1.''', '''The VC dimension of axis-aligned rectangles in R^2 is equal to 4.''', '''A hypothesis class with infinite VC dimension (VCdim = infinity) can never shatter any finite set of points.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Closed intervals [a, b] can shatter any 2 points (+ -, - +, ++, --). For 3 points in a line, the alternating pattern (+ - +) cannot be captured by a single interval, so VCdim = 2.
@@ -1282,7 +1282,7 @@ Option A is correct.''',
     questionText: '''Which of the following statements regarding Convolutional Neural Network (CNN) architectures is/are TRUE? (Select all that apply)''',
     options: ['''Applying two consecutive 3 x 3 convolutional layers with stride 1 (and no pooling) results in an effective receptive field of 5 x 5.''', '''A 1D dilated convolution with kernel size k = 3 and dilation rate d = 2 has an effective receptive field size of 5.''', '''A 1 x 1 convolution (Network-in-Network) can alter the number of feature channels while preserving spatial height and width.''', '''Depthwise separable convolution reduces computational multiply-accumulate operations compared to standard 2D convolution.'''],
     correctAnswer: '''A;B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Layer 1 has RF = 3. Layer 2 adds (3 - 1) * 1 = 2 to RF, giving 3 + 2 = 5 x 5.
@@ -1333,7 +1333,7 @@ Total leaf nodes pruned = 2.''',
     questionText: '''Which of the following statements regarding Partially Observable Markov Decision Processes (POMDPs) is/are TRUE? (Select all that apply)''',
     options: ['''A belief state b in a POMDP is a probability distribution over the physical states S of the environment.''', '''A POMDP can be formally reformulated as a continuous-state fully observable MDP over the continuous belief simplex.''', '''Sondik (1971) proved that the optimal value function V_t(b) for a finite-horizon POMDP is piecewise linear and convex (PWLC) in the belief space.''', '''In a POMDP, optimal policy actions depend only on the most recently received single observation o_t, completely independent of prior history.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: The belief state b(s) = P(S_t = s | history) is a sufficient statistic representing the probability distribution over all states.
@@ -1394,7 +1394,7 @@ chi^2 = 0 + 4 + 1 + 1 = 6.''',
 Which of the following statements is/are TRUE? (Select all that apply)''',
     options: ['''The dual coefficients vector alpha in R^N is given by alpha = (K + lambda * I_N)^(-1) * y.''', '''The prediction for a new test input x_* is computed as f(x_*) = sum_{i=1}^N alpha_i * k(x_i, x_*).''', '''Computing the dual solution requires inverting an N x N matrix, which has time complexity O(N^3).''', '''Kernel Ridge Regression produces sparse solutions where most alpha_i are exactly zero.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Setting the gradient of the dual regularized objective to zero yields alpha = (K + lambda * I_N)^(-1) y.

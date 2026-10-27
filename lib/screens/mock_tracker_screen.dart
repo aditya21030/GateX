@@ -1945,7 +1945,7 @@ PYQ transformToMockQuestion(PYQ q) {
 
   String newCorrectAnswer = q.correctAnswer;
 
-  if (q.isMCQ && q.options.isNotEmpty) {
+  if ((q.isMCQ || q.type == 'MSQ') && q.options.isNotEmpty) {
     final List<String> originalCorrectOptionsText = [];
     if (q.type == 'MSQ') {
       final correctLetters = q.correctAnswer.split(';');
@@ -1983,7 +1983,7 @@ PYQ transformToMockQuestion(PYQ q) {
     questionText: newText,
     options: newOptions,
     correctAnswer: newCorrectAnswer,
-    isMCQ: q.isMCQ,
+    isMCQ: q.type != 'NAT',
     type: q.type,
     explanation: 'This is a mock concept-variation of past question ${q.id}. $newExplanation',
     year: q.year,

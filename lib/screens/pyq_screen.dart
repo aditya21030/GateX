@@ -1240,8 +1240,8 @@ class _PYQCardState extends State<_PYQCard> {
             ],
             const SizedBox(height: 16),
 
-            // Options (MCQ) or input field (NAT)
-            if (pyq.isMCQ)
+            // Options (MCQ/MSQ) or input field (NAT)
+            if (pyq.type != 'NAT' && (pyq.isMCQ || pyq.type == 'MSQ' || pyq.options.isNotEmpty))
               _buildMCQOptions(pyq, provider)
             else
               _buildNATInput(pyq, provider),

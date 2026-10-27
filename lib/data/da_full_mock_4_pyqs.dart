@@ -267,7 +267,7 @@ Trace(A) = lambda_1 + lambda_2 + lambda_3 = 1 + 4 + 16 = 21.''',
     questionText: '''Let P be an n x n real matrix satisfying P^2 = P (i.e., P is idempotent). Which of the following statements is/are TRUE? (Select all that apply)''',
     options: ['''The only possible eigenvalues of P are 0 and 1.''', '''The matrix (I_n - P) is also an idempotent matrix.''', '''The rank of matrix P is strictly equal to the trace of P (i.e., rank(P) = Trace(P)).''', '''P is always diagonalizable over R.'''],
     correctAnswer: '''A;B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: If P v = lambda v, then P^2 v = lambda^2 v = lambda v => lambda(lambda - 1) = 0 => lambda in {0, 1}.
@@ -329,7 +329,7 @@ The minimum value is f(2, 1) = 0 + 0 + 2 = 2.''',
 Which of the following statements regarding Duality and KKT conditions is/are TRUE? (Select all that apply)''',
     options: ['''Weak duality (optimal dual value d* <= optimal primal value p*) always holds for any optimization problem, whether convex or non-convex.''', '''If Slater's condition holds (there exists an x in the relative interior such that f_i(x) < 0 for all strictly convex constraints), then strong duality holds (d* = p*).''', '''When strong duality holds, any primal-dual optimal pair (x*, lambda*, nu*) must satisfy the Karush-Kuhn-Tucker (KKT) conditions.''', '''For non-convex problems, satisfying KKT conditions is both necessary and sufficient for global optimality.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Weak duality holds universally without any convexity assumptions.
@@ -389,7 +389,7 @@ Var(X) = E[X^2] - (E[X])^2 = 8 - 2^2 = 4.''',
     questionText: '''Which of the following statements regarding Student's t-distribution with nu degrees of freedom is/are TRUE? (Select all that apply)''',
     options: ['''The probability density function is symmetric and bell-shaped around zero.''', '''The t-distribution has heavier (fatter) tails than the standard normal distribution N(0, 1).''', '''As the degrees of freedom nu -> infinity, the t-distribution converges in distribution to the standard normal distribution N(0, 1).''', '''The variance of the t-distribution is defined and finite for all degrees of freedom nu >= 1.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: The t-distribution pdf is strictly symmetric around mean 0.
@@ -450,7 +450,7 @@ Using Stirling's approximation, log_2(n!) = Omega(n * log n). Option B is correc
     year: 2026,
     subject: '''Data Structures & Algorithms''',
     topic: '''Strictly Binary Tree Leaves and Internal Nodes''',
-    questionText: '''A strictly binary tree (full binary tree) is a tree in which every node has either exactly 0 or exactly 2 children.
+    questionText: '''A strictly binary tree (full binary tree) is a tree where every node has either exactly 0 or exactly 2 children.
 If a strictly binary tree has exactly 15 leaf nodes, how many INTERNAL (non-leaf) nodes does it contain?''',
     options: [],
     correctAnswer: '''14''',
@@ -478,7 +478,7 @@ I = 15 - 1 = 14 internal nodes.''',
     questionText: '''Which of the following statements regarding bipartite graphs is/are TRUE? (Select all that apply)''',
     options: ['''A graph is bipartite if and only if it contains no simple cycle of odd length.''', '''A graph is bipartite if and only if its vertices can be partitioned into two sets such that its chromatic number is at most 2.''', '''Every tree is a bipartite graph.''', '''Finding the maximum cardinality matching in a bipartite graph is an NP-complete problem.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: König's characterization theorem: G is bipartite iff G has no odd cycles.
@@ -515,7 +515,7 @@ Since 256 is within the interning range, `a` and `b` reference the identical mem
     year: 2026,
     subject: '''Database Management Systems''',
     topic: '''Superkeys Counting''',
-    questionText: '''Consider a relational schema R(A, B, C, D) with 4 attributes. If relation R has EXACTLY ONE candidate key, which is the composite key {A, B}, how many SUPERKEYS does relation R possess in total?''',
+    questionText: '''Consider a relational schema R(A, B, C, D) with 4 attributes. If relation R has EXACTLY ONE candidate key, namely the composite key {A, B}, what is the total number of SUPERKEYS that relation R possesses? (Answer as an integer).''',
     options: [],
     correctAnswer: '''4''',
     isMCQ: false,
@@ -555,7 +555,7 @@ Total superkeys = 4.''',
     questionText: '''Which of the following statements regarding the Write-Ahead Logging (WAL) protocol and database recovery (ARIES) is/are TRUE? (Select all that apply)''',
     options: ['''Before a dirty data page in the buffer pool is written to non-volatile disk storage, all log records pertaining to that page up to its pageLSN must be written to stable storage.''', '''A transaction is not considered committed until its commit log record has been safely flushed to stable storage.''', '''The Analysis pass of ARIES scans the log forward from the most recent checkpoint to reconstruct the Dirty Page Table (DPT) and Transaction Table.''', '''WAL allows uncommitted modifications to be written to disk (Steal policy) only if Undo logging is supported.'''],
     correctAnswer: '''A;B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: The fundamental WAL rule states: pageLSN <= flushedLSN before writing a page to disk.
@@ -608,7 +608,7 @@ Factor = 8 / (8 + 2) = 8 / 10 = 0.80.''',
     questionText: '''Which of the following statements regarding the DBSCAN density-based clustering algorithm is/are TRUE? (Select all that apply)''',
     options: ['''A point p is a Core Point if its epsilon-neighborhood contains at least MinPts points (including p itself).''', '''A Border Point has fewer than MinPts points in its epsilon-neighborhood, but is density-reachable from a core point.''', '''DBSCAN does not require specifying the number of clusters k in advance.''', '''DBSCAN can find clusters of arbitrary non-spherical shapes and is robust to noise.'''],
     correctAnswer: '''A;B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Standard DBSCAN definition of a core point: |N_eps(p)| >= MinPts.
@@ -665,7 +665,7 @@ f(A) = g(A) + h(A) = 5 + 7 = 12.''',
     questionText: '''Which of the following statements regarding depth-limited Minimax search and evaluation functions is/are TRUE? (Select all that apply)''',
     options: ['''The Horizon Effect occurs when a search algorithm pushes an unavoidable catastrophic loss beyond the search depth limit by executing delaying moves.''', '''Quiescence search mitigates the horizon effect by continuing to search non-quiet (tactical) positions beyond the cutoff depth.''', '''Iterative Deepening Search with Alpha-Beta pruning enables optimal move-ordering based on the previous shallower search iterations.''', '''Alpha-Beta pruning can alter the final minimax value returned at the root if nodes are visited in worst-case order.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Definition of the Horizon Effect in game playing.
@@ -753,7 +753,7 @@ The entry (A^+)_{1,1} = 2 / 25 = 0.08.''',
 Which of the following statements is/are TRUE? (Select all that apply)''',
     options: ['''A can be factored as A = sum_{i=1}^n lambda_i * u_i * u_i^T (Spectral Decomposition).''', '''The rank of matrix A is strictly equal to the number of non-zero eigenvalues.''', '''If all eigenvalues lambda_i != 0, the inverse matrix is A^(-1) = sum_{i=1}^n (1 / lambda_i) * u_i * u_i^T.''', '''Every real symmetric matrix is similar to an upper triangular matrix with non-zero sub-diagonal entries.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: By the Spectral Theorem, any real symmetric matrix has an orthonormal basis of eigenvectors and can be expanded as sum lambda_i u_i u_i^T.
@@ -845,7 +845,7 @@ Given m = 3 distinct eigenvalues, CG requires at most 3 iterations.''',
     questionText: '''Which of the following statements comparing the Frank-Wolfe (Conditional Gradient) algorithm and Projected Gradient Descent (PGD) over a compact convex set C is/are TRUE? (Select all that apply)''',
     options: ['''At each step, Frank-Wolfe minimizes a linear approximation of the objective over C, solving a linear programming subproblem rather than a quadratic projection.''', '''Unlike PGD, Frank-Wolfe is projection-free, making it computationally advantageous when linear optimization over C is substantially cheaper than Euclidean projection onto C (e.g., over nuclear norm ball).''', '''Frank-Wolfe iterates are always convex combinations of extreme points (atoms) of C, producing inherently sparse representations.''', '''Frank-Wolfe achieves a linear convergence rate O(1/2^k) on all smooth convex functions over any compact polytope without modifications.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Frank-Wolfe solves s_t = argmin_{s in C} <grad f(x_t), s>, which is a linear program over C.
@@ -933,7 +933,7 @@ E[X_(3)] = 3 / (3 + 1) = 3 / 4 = 0.75.''',
     questionText: '''Which of the following statements regarding the Karlin-Rubin Theorem and Uniformly Most Powerful (UMP) tests is/are TRUE? (Select all that apply)''',
     options: ['''If a family of distributions has a Monotone Likelihood Ratio (MLR) in statistic T(X), then the threshold test that rejects H_0 for large values of T(X) is UMP for testing H_0: theta <= theta_0 versus H_1: theta > theta_0.''', '''The one-parameter Exponential family f(x; theta) = h(x) * exp(eta(theta) * T(x) - A(theta)) with strictly increasing eta(theta) possesses the MLR property in T(X).''', '''A UMP test always exists for two-sided alternative hypotheses (H_0: theta = theta_0 versus H_1: theta != theta_0) in all one-parameter families.''', '''The p-value of a statistical test under a true null hypothesis follows a continuous Uniform U[0, 1] distribution.'''],
     correctAnswer: '''A;B;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: This is the exact statement of the Karlin-Rubin Theorem.
@@ -1030,7 +1030,7 @@ Total bits = (40 * 1) + (25 * 2) + (20 * 3) + (10 * 4) + (5 * 4)
     questionText: '''Let G = (V, E) be an undirected graph with n vertices. Which of the following statements is/are TRUE? (Select all that apply)''',
     options: ['''A subset S subseteq V is a Vertex Cover of G if and only if its complement V \ S is an Independent Set of G.''', '''If alpha(G) is the size of the maximum independent set and beta(G) is the size of the minimum vertex cover, then alpha(G) + beta(G) = |V| (Gallai's Theorem).''', '''On bipartite graphs, the size of the minimum vertex cover equals the size of the maximum matching (König's Theorem).''', '''Finding the minimum vertex cover can be solved in O(|V| + |E|) time on general non-bipartite graphs.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: If S covers every edge, no edge can have both endpoints in V \ S, so V \ S is an independent set.
@@ -1114,7 +1114,7 @@ S: R1(A); R2(B); W1(A); R3(B); W2(A); W3(B); Commit1; Commit2; Commit3;
 Which of the following statements is/are TRUE? (Select all that apply)''',
     options: ['''The precedence graph for schedule S contains a directed edge from T1 to T2 due to conflict on item A.''', '''The precedence graph for schedule S contains a directed edge from T2 to T1.''', '''Schedule S is conflict serializable.''', '''The topological sorting of the precedence graph yields an equivalent serial schedule T1 -> T2 -> T3.'''],
     correctAnswer: '''A;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of conflicting operations (same item, different transactions, at least one write):
 1. On item A:
@@ -1226,7 +1226,7 @@ x* = (2 + 6) / 2 = 8 / 2 = 4.''',
     questionText: '''Which of the following statements regarding Random Forest and Out-of-Bag (OOB) error estimation is/are TRUE? (Select all that apply)''',
     options: ['''In bootstrap sampling of size N drawn with replacement from a dataset of size N, the probability that a specific observation is omitted from a bootstrap sample approaches 1/e approx 36.8% as N -> infinity.''', '''The Out-of-Bag (OOB) error provides an unbiased estimate of the test generalization error without requiring a separate held-out validation set.''', '''Random Forest uses random feature subset selection of size m approx sqrt(p) at each split to decorrelate individual trees, reducing ensemble variance.''', '''Increasing the number of decision trees in a Random Forest beyond 500 causes the ensemble to severely overfit the training data.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: P(omitted in N draws) = (1 - 1/N)^N -> e^(-1) approx 0.368.
@@ -1286,7 +1286,7 @@ van der Maaten and Hinton (2008) introduced the heavy-tailed Cauchy (t-distribut
     questionText: '''Which of the following statements regarding the Scaled Dot-Product Attention mechanism in Transformer models is/are TRUE? (Select all that apply)''',
     options: ['''Attention(Q, K, V) = softmax((Q * K^T) / sqrt(d_k)) * V, where d_k is the key dimension.''', '''The scaling factor 1 / sqrt(d_k) prevents the dot products from growing excessively large for large d_k, which would push the softmax into regions with vanishingly small gradients.''', '''For an input sequence of length N, standard full self-attention has time and memory complexity of O(N^2) with respect to sequence length.''', '''Multi-Head Attention projects Queries, Keys, and Values h times with independent linear projections, allowing the model to jointly attend to information from different representation subspaces.'''],
     correctAnswer: '''A;B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Vaswani et al. (2017) defined Scaled Dot-Product Attention as softmax(Q K^T / sqrt(d_k)) V.
@@ -1340,7 +1340,7 @@ Total leaf nodes evaluated = 3 (under M1) + 1 (under M2) = 4.''',
     questionText: '''Which of the following statements regarding Markov Decision Processes (MDPs) is/are TRUE? (Select all that apply)''',
     options: ['''The Bellman Optimality operator T* is a gamma-contraction mapping under the infinity norm (max-norm), guaranteeing a unique optimal value function V* by the Banach Fixed-Point Theorem.''', '''Value Iteration converges to the exact optimal value function V* in a finite number of iterations for any continuous state space.''', '''Policy Iteration alternates between Policy Evaluation (solving linear equations) and Policy Improvement (greedy action selection).''', '''In a finite MDP, Policy Iteration terminates in a finite number of iterations with the strictly optimal policy.'''],
     correctAnswer: '''A;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: ||T* U - T* V||_inf <= gamma ||U - V||_inf. By Banach Fixed Point Theorem, repeated application converges to unique fixed point V*.
@@ -1399,7 +1399,7 @@ Rounding to 2 decimal places gives 10.67.
     questionText: '''Which of the following statements comparing Singular Value Decomposition (SVD) and Eigendecomposition is/are TRUE? (Select all that apply)''',
     options: ['''Eigendecomposition exists only for square matrices, whereas SVD exists for any arbitrary m x n real or complex matrix.''', '''The singular values of matrix A are always non-negative real numbers, whereas the eigenvalues of a real matrix can be complex or negative.''', '''For a real symmetric positive semi-definite matrix, its singular values are identical to its eigenvalues.''', '''Left and right singular vectors of matrix A are orthonormal bases for R^m and R^n respectively.'''],
     correctAnswer: '''A;B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Eigendecomposition requires an n x n square matrix (and full set of eigenvectors), while SVD A = U Sigma V^T exists unconditionally for any m x n matrix.

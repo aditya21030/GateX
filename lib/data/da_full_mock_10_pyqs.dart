@@ -294,7 +294,7 @@ det(3 * A) = 3^4 * det(A) = 81 * 2 = 162.''',
 Which of the following statements regarding its Cholesky factorization A = L L^T is/are TRUE?''',
     options: ['''L is a lower-triangular matrix with strictly positive real diagonal entries.''', '''The Cholesky factorization is strictly unique.''', '''det(A) = (prod_{i=1}^n l_ii)^2, where l_ii are the diagonal entries of L.''', '''L is an orthogonal matrix.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. The Cholesky theorem guarantees that any symmetric positive definite matrix has a lower-triangular factor L with strictly positive diagonal entries l_ii > 0. (TRUE)
@@ -406,7 +406,7 @@ S_2(5) = (+1) * 3.0 = 3.''',
 Which of the following statements is/are TRUE?''',
     options: ['''f is a convex function.''', '''f is a concave function.''', '''The Hessian matrix of f is identically the zero matrix everywhere.''', '''f is strictly convex.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. For any theta in [0, 1], f(theta x + (1 - theta) y) = theta f(x) + (1 - theta) f(y) <= ... (holds with exact equality), so f is convex. (TRUE)
@@ -525,7 +525,7 @@ m = ln(2) / ln(2) = 1.''',
 If g: R -> R is an invertible (one-to-one) function, which of the following is/are TRUE?''',
     options: ['''U(X) = g(T(X)) is also a sufficient statistic for theta.''', '''The partition of the sample space induced by U(X) is identical to the partition induced by T(X).''', '''T(X) contains all the information about theta that is present in the data sample.''', '''T(X) must be an unbiased estimator of theta.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. Any one-to-one transformation of a sufficient statistic preserves the factorization g(T(x), theta) = g_1(U(x), theta), so U(X) is sufficient. (TRUE)
@@ -808,7 +808,7 @@ tr(A^T A) = 4^2 + 3^2 = 16 + 9 = 25.''',
 Which of the following statements is/are ALWAYS TRUE?''',
     options: ['''All eigenvalues of A are real.''', '''Eigenvectors corresponding to distinct eigenvalues of A are mutually orthogonal.''', '''A is orthogonally diagonalizable (there exists an orthogonal matrix Q such that Q^T A Q is diagonal).''', '''A must be invertible.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. The Spectral Theorem for real symmetric matrices proves that all eigenvalues are real. (TRUE)
@@ -941,7 +941,7 @@ prox_h(x) = argmin_{z} { h(z) + (1/2) ||z - x||_2^2 }.
 Which of the following statements is/are TRUE?''',
     options: ['''The minimizer defining prox_h(x) is unique for every x in R^n.''', '''prox_h is a non-expansive operator: ||prox_h(x) - prox_h(y)||_2 <= ||x - y||_2 for all x, y.''', '''If h is the indicator function of a closed convex set C, then prox_h(x) = Pi_C(x) (the Euclidean projection onto C).''', '''prox_h(x) is always an affine function of x.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. The objective z -> h(z) + (1/2)||z - x||^2 is strongly convex, guaranteeing existence and uniqueness of the minimizer. (TRUE)
@@ -1120,7 +1120,7 @@ Var(S(2)) = 6 * 9 = 54.''',
 Which of the following statements is/are TRUE?''',
     options: ['''The Generalized Least Squares (GLS) estimator beta_hat_GLS = (X^T Sigma^(-1) X)^(-1) X^T Sigma^(-1) Y is the Best Linear Unbiased Estimator (BLUE) of beta.''', '''The Ordinary Least Squares (OLS) estimator beta_hat_OLS = (X^T X)^(-1) X^T Y remains unbiased, but is generally less efficient than beta_hat_GLS.''', '''If Sigma = c * I for some scalar c > 0, the GLS estimator is identical to the OLS estimator.''', '''The OLS estimator achieves minimum variance under any arbitrary error covariance matrix Sigma.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. By the Aitken Theorem (generalized Gauss-Markov theorem), the GLS estimator attains the minimum variance covariance matrix among all linear unbiased estimators when errors are correlated or heteroscedastic. (TRUE)
@@ -1327,7 +1327,7 @@ Suppose R is decomposed into D = { R_1(A, B), R_2(B, C) }.
 Which of the following statements is/are TRUE?''',
     options: ['''The decomposition D is a lossless-join decomposition.''', '''Both R_1 and R_2 are in Boyce-Codd Normal Form (BCNF).''', '''The dependency C -> A is not preserved directly in D without computing a join.''', '''The decomposition D is in 4NF.'''],
     correctAnswer: '''A;B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of decomposition:
 1. Lossless Join: R_1 cap R_2 = {B}. Since B -> C and C -> A, B is a candidate key for R. Thus R_1 cap R_2 -> R_2, guaranteeing lossless join. (A is TRUE).
@@ -1407,7 +1407,7 @@ The bias correction denominator is:
     questionText: '''Which of the following statements regarding Self-Supervised Contrastive Learning (such as SimCLR and MoCo) is/are TRUE?''',
     options: ['''Positive pairs are constructed by applying different stochastic data augmentations (e.g. random cropping, color jitter) to the same underlying input instance.''', '''Negative pairs are formed using representations of other distinct images within the batch or memory bank.''', '''The InfoNCE loss acts as a lower bound on the mutual information I(X; Y) between the two augmented views.''', '''Contrastive learning requires massive human-annotated class labels for pre-training.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. The core self-supervised signal comes from semantic invariance: two stochastic augmentations of the same image form a positive pair. (TRUE)

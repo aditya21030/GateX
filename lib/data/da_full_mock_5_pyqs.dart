@@ -275,7 +275,7 @@ where A is an n x n symmetric matrix, C is an m x m symmetric matrix, and B is a
 Which of the following conditions is/are NECESSARY AND SUFFICIENT for M to be strictly positive definite (M > 0)? (Select all that apply)''',
     options: ['''A is positive definite (A > 0), and the Schur complement S_A = C - B^T * A^(-1) * B is positive definite (S_A > 0).''', '''C is positive definite (C > 0), and the Schur complement S_C = A - B * C^(-1) * B^T is positive definite (S_C > 0).''', '''Both A > 0 and C > 0 are necessary, but not sufficient on their own without the Schur complement condition.''', '''M is positive definite if and only if B = 0.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A and B are TRUE: By Haynsworth's inertia addition formula and block Gaussian elimination, M > 0 iff (A > 0 and C - B^T A^(-1) B > 0) OR equivalently (C > 0 and A - B C^(-1) B^T > 0).
@@ -331,7 +331,7 @@ f*(4) = 4^2 / 8 = 16 / 8 = 2.''',
 Which of the following statements regarding the subdifferential partial f(x) is/are TRUE? (Select all that apply)''',
     options: ['''A vector g in R^n is a subgradient of f at x if and only if f(z) >= f(x) + g^T (z - x) for all z in R^n.''', '''The subdifferential partial f(x) is always a non-empty, closed, and convex set for any point in the relative interior of dom(f).''', '''A point x* is a global minimum of f if and only if the zero vector is in the subdifferential: 0 in partial f(x*) (Fermat's Rule).''', '''If f is differentiable at x, the subdifferential contains infinitely many distinct subgradient vectors.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Standard definition of a subgradient.
@@ -387,7 +387,7 @@ Expected number of high-energy particles = lambda_high * t = 3 * 2 = 6.''',
 Which of the following statements is/are TRUE by Slutsky's Theorem? (Select all that apply)''',
     options: ['''X_n + Y_n converges in distribution to X + c.''', '''X_n * Y_n converges in distribution to c * X.''', '''X_n / Y_n converges in distribution to X / c, provided c != 0.''', '''X_n converges in probability to X.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A, B, and C are TRUE: These are the exact three core components of Slutsky's Theorem.
@@ -440,7 +440,7 @@ alpha_hat_MLE = 4 / 2.0 = 2.0.''',
     year: 2026,
     subject: '''Data Structures & Algorithms''',
     topic: '''Complete Ternary Tree Leaves''',
-    questionText: '''A complete ternary tree is a tree in which every internal node has EXACTLY 3 children, and all leaves are at the exact same depth h = 3 (where the root node is at depth 0).
+    questionText: '''A complete ternary tree is a tree where every internal node has EXACTLY 3 children, and all leaves are at the exact same depth h = 3 (where the root node is at depth 0).
 How many LEAF NODES does this tree contain?''',
     options: [],
     correctAnswer: '''27''',
@@ -463,7 +463,7 @@ Since all leaves are at depth 3, the number of leaf nodes is 3^3 = 27.''',
     questionText: '''Which of the following statements regarding Directed Acyclic Graphs (DAGs) is/are TRUE? (Select all that apply)''',
     options: ['''A DAG possesses a UNIQUE topological ordering if and only if it contains a directed Hamiltonian path.''', '''Every finite DAG contains at least one vertex with in-degree zero (source) and at least one vertex with out-degree zero (sink).''', '''Single-source shortest paths on a DAG with arbitrary (positive or negative) edge weights can be found in O(V + E) time using topological sorting.''', '''If a directed graph contains a cycle of length 2, it can still admit a topological ordering.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: A unique topological sort requires that for every adjacent pair (u, v) in the order, there is a directed edge (u, v), which forms a Hamiltonian path.
@@ -535,7 +535,7 @@ When `inner()` finishes, `outer` returns `x`, which now has the updated value 20
     questionText: '''Which of the following statements comparing B-Trees and B+ Trees is/are TRUE? (Select all that apply)''',
     options: ['''In a B-Tree, search keys and actual data record pointers are stored in both internal nodes and leaf nodes.''', '''In a B+ Tree, internal nodes store only search keys and child block pointers, while all data record pointers are stored strictly in the leaf nodes.''', '''B+ Trees link leaf nodes sequentially via sibling pointers, making range queries (e.g., BETWEEN 10 AND 100) significantly more efficient than in standard B-Trees.''', '''Because internal nodes in a B+ Tree do not store record pointers, their fan-out is higher, resulting in a shallower tree height.'''],
     correctAnswer: '''A;B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: In standard B-Trees, data pointers can reside at any level, enabling early termination if a key is found near the root.
@@ -589,7 +589,7 @@ Cosine Similarity = (u . v) / (||u||_2 * ||v||_2) = 24 / (5 * 5) = 24 / 25 = 0.9
     questionText: '''Which of the following statements establishing the Bayesian interpretation of regularization in linear/logistic regression is/are TRUE? (Select all that apply)''',
     options: ['''Maximum A Posteriori (MAP) estimation with a zero-mean Gaussian prior p(w) proportional to exp(- (lambda / 2) * ||w||_2^2) is mathematically equivalent to L2 (Ridge) regularization.''', '''Maximum A Posteriori (MAP) estimation with an independent Laplace (double exponential) prior p(w) proportional to exp(- lambda * ||w||_1) is mathematically equivalent to L1 (Lasso) regularization.''', '''Maximum Likelihood Estimation (MLE) corresponds to MAP estimation under a uniform (uninformative flat) prior.''', '''L1 regularization induces sparsity because the Gaussian prior density has infinite variance at the origin.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: -ln p(w | D) = -ln p(D | w) - ln p(w). For Gaussian prior, -ln p(w) = (lambda / 2) ||w||_2^2 + const (L2 penalty).
@@ -645,7 +645,7 @@ Converting binary 111100 to decimal:
     questionText: '''Which of the following statements regarding First-Order Logic theorem proving and Herbrand's Theorem is/are TRUE? (Select all that apply)''',
     options: ['''Herbrand's Theorem states that an unsatisfiable set of first-order clauses has a finite unsatisfiable set of ground instances.''', '''Robinson's Resolution Principle eliminates the need to exhaustively generate ground instances by unifying literals dynamically with the Most General Unifier (MGU).''', '''First-Order Logic is semi-decidable: if a formula is valid (or unsatisfiable in refutation), resolution is guaranteed to terminate in finite steps with a contradiction; but if it is invalid, resolution may run indefinitely.''', '''Monadic first-order logic (predicates with only one argument) is strictly undecidable.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Herbrand's fundamental theorem links first-order unsatisfiability to propositional unsatisfiability of finite ground instances.
@@ -742,7 +742,7 @@ where U is an orthogonal matrix and P is a symmetric positive definite matrix.
 Which of the following statements is/are TRUE? (Select all that apply)''',
     options: ['''The symmetric positive definite factor P is uniquely given by the matrix square root P = sqrt(A^T * A).''', '''The orthogonal factor U is given by U = A * P^(-1).''', '''The eigenvalues of P are the singular values of matrix A.''', '''If A is symmetric, then U is always the identity matrix I_n.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: P^2 = (U P)^T (U P) = P^T U^T U P = P I P = P^2 = A^T A, so P is the unique positive definite square root of A^T A.
@@ -850,7 +850,7 @@ Thus (x_1)_1 = 0.''',
     questionText: '''Which of the following statements regarding the Barzilai-Borwein (BB) gradient descent method is/are TRUE? (Select all that apply)''',
     options: ['''The BB step size is derived by approximating the inverse Hessian through a secant equation s_k approx alpha_k * y_k, where s_k = x_k - x_{k-1} and y_k = grad f(x_k) - grad f(x_{k-1}).''', '''BB gradient descent is a non-monotonic method (the objective function value f(x_k) can temporarily increase at certain iterations).''', '''Despite being non-monotonic, BB gradient descent converges R-linearly on strictly convex quadratic functions.''', '''The BB method requires computing and inverting the full n x n Hessian matrix at every step.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Barzilai and Borwein (1988) derived two step sizes: alpha_1 = (s^T s)/(s^T y) and alpha_2 = (s^T y)/(y^T y) by least-squares fitting of the quasi-Newton secant equation.
@@ -938,7 +938,7 @@ Rounding to 2 decimal places yields 0.44.''',
     questionText: '''Which of the following statements regarding the Generalized Likelihood Ratio Test and Wilks' Theorem is/are TRUE? (Select all that apply)''',
     options: ['''Under standard regularity conditions, if null model M_0 with p parameters is nested within alternative model M_1 with q parameters (q > p), the test statistic Lambda = - 2 * ln(L_0 / L_1) converges in distribution to a Chi-Square distribution chi^2_r as sample size n -> infinity.''', '''The asymptotic degrees of freedom r of the Chi-Square distribution in Wilks' theorem is r = q - p (the difference in the number of freely estimated parameters).''', '''Wilks' Theorem holds even when the true parameter lies strictly on the boundary of the parameter space.''', '''The Likelihood Ratio statistic Lambda is invariant to smooth, one-to-one reparameterizations of the models.'''],
     correctAnswer: '''A;B;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Wilks' Theorem (1938) proves that -2 ln(L_0 / L_1) ->^d chi^2_{q - p}.
@@ -1021,7 +1021,7 @@ Maximum matching size = 2.''',
     questionText: '''Which of the following statements regarding Disjoint Set Union (Union-Find) data structures is/are TRUE? (Select all that apply)''',
     options: ['''Using ONLY Path Compression without Union-by-Rank achieves worst-case time complexity O(m * log n) for m operations on n elements.''', '''Using BOTH Union-by-Rank and Path Compression achieves amortized time complexity O(m * alpha(n)), where alpha is the extremely slow-growing inverse Ackermann function.''', '''For all practical purposes on Earth (n < 10^80), alpha(n) <= 4.''', '''Using ONLY Union-by-Rank without Path Compression yields a tree whose maximum height is strictly bounded by O(log n).'''],
     correctAnswer: '''A;B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Tarjan and van Leeuwen (1984) proved path compression alone yields O(m log_{1 + m/n} n).
@@ -1095,7 +1095,7 @@ When more than 2% of the records match, the unclustered random I/O overhead exce
 Which of the following statements is/are TRUE? (Select all that apply)''',
     options: ['''Two concurrent transactions can simultaneously hold Intent Shared (IS) locks on the same database node.''', '''An Intent Exclusive (IX) lock is compatible with another Intent Exclusive (IX) lock on the same node.''', '''An Exclusive (X) lock is compatible with an Intent Shared (IS) lock.''', '''To lock a node in Exclusive (X) mode, a transaction must traverse down from the root, holding Intent Exclusive (IX) locks on all ancestor nodes.'''],
     correctAnswer: '''A;B;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: IS is compatible with IS (both intend to read children).
@@ -1172,7 +1172,7 @@ L_eps = max( 0, 2.5 - 1.0 ) = max( 0, 1.5 ) = 1.5.''',
 Which of the following functions is/are also VALID Mercer kernels? (Select all that apply)''',
     options: ['''K_3(x, z) = c * K_1(x, z), for any scalar constant c > 0.''', '''K_4(x, z) = K_1(x, z) + K_2(x, z).''', '''K_5(x, z) = K_1(x, z) * K_2(x, z) (Schur product).''', '''K_6(x, z) = exp( K_1(x, z) ).'''],
     correctAnswer: '''A;B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Scaling by positive scalar c preserves positive semi-definiteness (c G >= 0).
@@ -1275,7 +1275,7 @@ Total leaves evaluated = 3 (under M1) + 1 (under M2) = 4.''',
     questionText: '''Which of the following statements regarding two-player zero-sum games in Game Theory is/are TRUE? (Select all that apply)''',
     options: ['''By von Neumann's Minimax Theorem, in every finite two-player zero-sum game, there exists a unique game value V and a Nash equilibrium in mixed strategies.''', '''At a Nash equilibrium in a zero-sum game, neither player can improve their expected payoff by unilaterally deviating from their strategy.''', '''In the Prisoner's Dilemma game, Mutual Cooperation is the strictly dominant strategy for both players.''', '''A pure strategy Nash equilibrium exists in every zero-sum matrix game.'''],
     correctAnswer: '''A;B''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: John von Neumann's 1928 Minimax Theorem guarantees max_p min_q p^T A q = min_q max_p p^T A q = V in mixed strategies.
@@ -1305,9 +1305,9 @@ Thus only A and B are correct.''',
     year: 2026,
     subject: '''Probability & Statistics''',
     topic: '''Hypergeometric Distribution Mean''',
-    questionText: '''A quality assurance engineer inspects a shipment of N = 20 server motherboards, of which K = 8 are defective.
+    questionText: '''A quality assurance engineer inspects a shipment of N = 20 server motherboards, containing K = 8 defective boards.
 A random sample of n = 5 boards is drawn without replacement.
-Let X be the number of defective boards found in the sample (following a Hypergeometric distribution).
+Let X be the number of defective boards found in the sample (Hypergeometric distribution).
 What is the EXPECTED value E[X]? (Answer as an integer).''',
     options: [],
     correctAnswer: '''2''',

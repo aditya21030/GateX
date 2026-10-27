@@ -256,7 +256,7 @@ Trace((A + 2I)^(-1)) = 1/3 + 1/4 + 1/6 = (4 + 3 + 2) / 12 = 9 / 12 = 0.75.''',
     questionText: '''Let A be an n x n symmetric real matrix. Which of the following conditions is/are NECESSARY AND SUFFICIENT for A to be positive definite? (Select all that apply)''',
     options: ['''All eigenvalues of A are strictly positive.''', '''All leading principal minors of A are strictly positive (Sylvester's Criterion).''', '''x^T A x > 0 for all non-zero vectors x in R^n.''', '''All diagonal entries of A are strictly positive.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''For a symmetric real matrix A:
 A is positive definite if and only if:
@@ -329,7 +329,7 @@ Let's set the question value cleanly: 2.''',
     questionText: '''Which of the following statements regarding convex sets and convex functions is/are TRUE? (Select all that apply)''',
     options: ['''The intersection of any arbitrary (finite or infinite) collection of convex sets is convex.''', '''If f: R^n -> R is twice continuously differentiable, then f is convex if and only if its Hessian matrix nabla^2 f(x) is positive semi-definite for all x in R^n.''', '''For any convex function f and any random variable X, E[f(X)] >= f(E[X]) (Jensen's Inequality).''', '''The union of two convex sets is always a convex set.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: The intersection of any family of convex sets is always convex.
@@ -391,7 +391,7 @@ Total variance Var(Y) = 56 + 2 = 58.''',
     questionText: '''Which of the following statements concerning point estimation in mathematical statistics is/are TRUE? (Select all that apply)''',
     options: ['''If an estimator is unbiased, its mean squared error (MSE) is strictly equal to its variance.''', '''An estimator can be consistent even if it is biased in finite samples.''', '''By the functional invariance property of Maximum Likelihood Estimators (MLE), if theta_hat is the MLE of theta, then g(theta_hat) is the MLE of g(theta) for any function g.''', '''The Cramer-Rao Lower Bound (CRLB) applies to all estimators, whether biased or unbiased, without requiring any regularity conditions.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: MSE(theta_hat) = Var(theta_hat) + [Bias(theta_hat)]^2. When Bias = 0, MSE = Var.
@@ -469,7 +469,7 @@ Total inversions = 5 + 2 + 2 + 1 + 2 + 0 + 0 = 12.''',
     questionText: '''Which of the following statements about graph algorithms is/are TRUE? (Select all that apply)''',
     options: ['''In a connected undirected graph with unique edge weights, the Minimum Spanning Tree (MST) is always unique.''', '''Dijkstra's algorithm may fail to compute correct shortest paths if the graph contains even a single directed edge with a negative weight, even in the absence of negative-weight cycles.''', '''Bellman-Ford algorithm can detect the presence of negative-weight cycles reachable from the source vertex in O(V * E) time.''', '''Prim's algorithm and Kruskal's algorithm always produce the exact same sequence of edge insertions regardless of tie-breaking.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: By the Cut Property, when all edge weights are strictly distinct, every cut has a unique minimum weight edge, ensuring a unique MST.
@@ -573,7 +573,7 @@ Highest normal form is 3NF. Option C is correct.''',
     questionText: '''Which of the following statements regarding concurrency control and locking protocols in DBMS is/are TRUE? (Select all that apply)''',
     options: ['''Every schedule produced under the Two-Phase Locking (2PL) protocol is guaranteed to be conflict serializable.''', '''Basic Two-Phase Locking (2PL) protocol is completely free from deadlocks.''', '''Strict Two-Phase Locking (Strict 2PL) guarantees that schedules are recoverable and avoid cascading aborts.''', '''Rigorous Two-Phase Locking requires all exclusive and shared locks to be held until the transaction commits or aborts.'''],
     correctAnswer: '''A;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: 2PL guarantees conflict serializability because the lock points induce a topological ordering of transactions.
@@ -642,7 +642,7 @@ Gini Gain = Gini(Parent) - Weighted Gini = 0.500 - 0.375 = 0.125.''',
     questionText: '''Which of the following statements regarding the standard K-Means (Lloyd's) clustering algorithm is/are TRUE? (Select all that apply)''',
     options: ['''The objective function (Within-Cluster Sum of Squares, WCSS) is monotonically non-increasing at every iteration.''', '''The algorithm is guaranteed to converge to the global minimum of the WCSS objective function.''', '''The decision boundaries between adjacent clusters form a Voronoi diagram of convex polygonal/polyhedral cells.''', '''K-Means is sensitive to feature scaling and the initial choice of cluster centroids.'''],
     correctAnswer: '''A;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: In each step (assignment step and centroid update step), WCSS either decreases or remains constant.
@@ -697,7 +697,7 @@ f(B) = g(B) + h(B) = 7 + 4 = 11.''',
     questionText: '''Let h(n) be a heuristic function for A* search on a graph where all step costs are strictly positive. Which of the following statements is/are TRUE? (Select all that apply)''',
     options: ['''If h(n) is consistent (monotonic), then h(n) is guaranteed to be admissible.''', '''If h(n) is consistent, A* graph search is guaranteed to find an optimal solution without ever needing to re-open any expanded node.''', '''If h(n) is admissible, A* tree search is guaranteed to return an optimal goal.''', '''Every admissible heuristic is guaranteed to be consistent.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Consistency (h(n) <= c(n, a, n') + h(n')) implies admissibility (h(n) <= h*(n)) by induction along the path to the goal.
@@ -794,7 +794,7 @@ For rank k = 1:
     questionText: '''Let A be an m x n real matrix with m > n having full column rank n. Let A^+ = (A^T A)^(-1) A^T be the Moore-Penrose pseudoinverse of A. Which of the following statements is/are TRUE? (Select all that apply)''',
     options: ['''A^+ A = I_n (where I_n is the n x n identity matrix).''', '''P = A A^+ is an orthogonal projection matrix onto the column space Col(A) in R^m.''', '''For any vector b in R^m, the vector x_hat = A^+ b uniquely minimizes the Euclidean residual ||A x - b||_2.''', '''The rank of matrix P = A A^+ is equal to m.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: A^+ A = (A^T A)^(-1) A^T A = (A^T A)^(-1) (A^T A) = I_n.
@@ -910,7 +910,7 @@ f(1.8, 1.6) = (1.8 - 3)^2 + (1.6 - 4)^2 = (-1.2)^2 + (-2.4)^2 = 1.44 + 5.76 = 7.
     questionText: '''Let f: R^n -> R be an L-smooth and mu-strongly convex quadratic function with Hessian matrix H having minimum eigenvalue mu > 0 and maximum eigenvalue L >= mu. Let kappa = L / mu be the condition number. Which of the following statements regarding Gradient Descent with constant step size eta is/are TRUE? (Select all that apply)''',
     options: ['''With step size eta = 2 / (L + mu), the error ||x_k - x*|| decreases at the optimal linear convergence rate (kappa - 1) / (kappa + 1).''', '''As the condition number kappa approaches 1, gradient descent achieves near-instantaneous convergence.''', '''If the step size eta > 2 / L, the gradient descent sequence can oscillate and diverge even on strongly convex functions.''', '''Gradient descent on an ill-conditioned problem (kappa >> 1) exhibits zig-zagging behavior across orthogonal directions.'''],
     correctAnswer: '''A;B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: The optimal constant step size for quadratic objective is eta* = 2 / (L + mu), giving contraction factor (L - mu)/(L + mu) = (kappa - 1)/(kappa + 1).
@@ -1016,7 +1016,7 @@ The multiplying constant k is 20.25.''',
     questionText: '''Which of the following statements regarding statistical hypothesis testing is/are TRUE? (Select all that apply)''',
     options: ['''The significance level alpha is the maximum probability of committing a Type I error (rejecting H_0 when H_0 is true).''', '''The power of a statistical test is 1 - beta, where beta is the probability of committing a Type II error (failing to reject H_0 when H_1 is true).''', '''By the Neyman-Pearson Lemma, for testing a simple null hypothesis against a simple alternative hypothesis, the Likelihood Ratio Test achieves the highest power among all tests of size alpha.''', '''Decreasing the significance level alpha for a fixed sample size always increases the power (1 - beta) of the test.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: alpha = P(Reject H_0 | H_0 is true) is the Type I error probability.
@@ -1099,7 +1099,7 @@ Optimal parenthesization is ((A1 * A2) * (A3 * A4)). Option B is correct.''',
 h(k, i) = (h(k) + i^2) mod 11, for i = 0, 1, 2, ...
 The following keys are inserted in sequence into an initially empty hash table:
 22, 33, 44, 55, 15
-At which slot index in the hash table will the key 15 be stored?''',
+The slot index where key 15 is stored in the hash table is ________. (Answer as an integer).''',
     options: [],
     correctAnswer: '''5''',
     isMCQ: false,
@@ -1129,7 +1129,7 @@ Key 15 is stored at index 5.''',
     questionText: '''Which of the following statements regarding Minimum Spanning Trees (MST) and Disjoint Set Union (DSU) data structures is/are TRUE? (Select all that apply)''',
     options: ['''In a connected weighted undirected graph, the edge with the strictly minimum weight in the entire graph is always part of every MST.''', '''If an edge e is the unique strictly heaviest edge on some simple cycle in the graph, e cannot belong to any MST (Cycle Property).''', '''A Disjoint Set Union (DSU) structure implementing both union-by-rank and path compression executes any sequence of m operations on n elements in O(m * alpha(n)) time, where alpha is the inverse Ackermann function.''', '''Adding a positive constant c > 0 to every edge weight in a graph can alter which tree is the MST.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: By the Cut Property, consider a cut separating the two endpoints of the minimum edge. Since it has strictly minimal weight across the whole graph, it is the unique light edge for this cut, so it must belong to every MST.
@@ -1207,7 +1207,7 @@ S: R1(X); W2(X); W1(X); W3(X); Commit1; Commit2; Commit3;
 Which of the following statements is/are TRUE? (Select all that apply)''',
     options: ['''Schedule S is conflict serializable.''', '''The precedence (serialization) graph for schedule S contains a directed cycle.''', '''Schedule S contains blind writes.''', '''Schedule S is view serializable.'''],
     correctAnswer: '''B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 1. Conflict operations on X:
@@ -1311,7 +1311,7 @@ subject to: 0 <= alpha_i <= C and sum_{i=1}^N alpha_i * y_i = 0.
 Let xi_i denote the slack variable for data point (x_i, y_i). Which of the following statements is/are TRUE? (Select all that apply)''',
     options: ['''If alpha_i = 0, the data point lies outside the margin on the correct side with xi_i = 0.''', '''If 0 < alpha_i < C, the data point must lie strictly on the margin boundary y_i*(w^T x_i + b) = 1 with xi_i = 0.''', '''If alpha_i = C and 0 < xi_i < 1, the data point is inside the margin but correctly classified.''', '''If alpha_i = C, the data point is guaranteed to be misclassified by the hyperplane.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''By the KKT complementary slackness conditions:
 alpha_i * [ y_i(w^T x_i + b) - 1 + xi_i ] = 0
@@ -1384,7 +1384,7 @@ Thus S is strictly positive definite, making X^T S X positive semi-definite (and
     questionText: '''Which of the following statements regarding deep neural network training dynamics is/are TRUE? (Select all that apply)''',
     options: ['''Sigmoid activation functions suffer from vanishing gradients in deep feedforward networks because their derivative is bounded in the interval (0, 0.25].''', '''The Rectified Linear Unit (ReLU) activation function avoids gradient saturation for all positive inputs, but can suffer from the 'Dying ReLU' problem where neurons become permanently inactive.''', '''Batch Normalization accelerates training and provides mild regularization by re-centering and re-scaling mini-batch activations.''', '''He (Kaiming) weight initialization is designed specifically for networks with ReLU activations by drawing weights from N(0, 2/n_{in}).'''],
     correctAnswer: '''A;B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: d/dz sigma(z) = sigma(z)(1 - sigma(z)) <= 0.25. Multiplying many factors <= 0.25 across layers exponentially attenuates gradients backpropagated to earlier layers.
@@ -1448,7 +1448,7 @@ Then total leaves evaluated = 4.''',
     questionText: '''Which of the following statements regarding First-Order Logic (FOL) resolution and unification is/are TRUE? (Select all that apply)''',
     options: ['''Converting an FOL formula to Conjunctive Normal Form (CNF) requires eliminating existential quantifiers via Skolemization.''', '''If an existential quantifier is in the scope of universal quantifiers, it must be replaced by a Skolem function of all the universally quantified variables.''', '''Unification of P(x, f(x)) with P(y, y) fails due to the Occurs Check.''', '''Resolution refutation is both sound and complete for First-Order Logic.'''],
     correctAnswer: '''A;B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: In CNF conversion, existential quantifiers are eliminated using Skolem constants or functions.
@@ -1520,7 +1520,7 @@ The z-score is 2.''',
     questionText: '''Let K: X x X -> R be a valid Mercer kernel corresponding to a feature mapping phi: X -> H into a Hilbert space H, such that K(x, z) = <phi(x), phi(z)>_H. Which of the following statements is/are TRUE? (Select all that apply)''',
     options: ['''For any finite collection of points {x_1, ..., x_N}, the Gram matrix G defined by G_{ij} = K(x_i, x_j) is always symmetric and positive semi-definite.''', '''If K_1 and K_2 are valid Mercer kernels, then K_3(x, z) = K_1(x, z) * K_2(x, z) is also a valid Mercer kernel (Schur product theorem).''', '''By the Representer Theorem, the optimal solution to regularized empirical risk minimization over a Reproducing Kernel Hilbert Space (RKHS) can be expressed as a linear combination of kernel evaluations at the training points: f*(x) = sum_{i=1}^N alpha_i * K(x_i, x).''', '''The Radial Basis Function (Gaussian) kernel K(x, z) = exp(-gamma * ||x - z||^2) corresponds to an infinite-dimensional feature space.'''],
     correctAnswer: '''A;B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: By Mercer's theorem, the kernel Gram matrix is always symmetric positive semi-definite.

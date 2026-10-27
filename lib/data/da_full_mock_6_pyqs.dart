@@ -265,7 +265,7 @@ Compute Euclidean norms:
 Which of the following statements is/are TRUE? (Select all that apply)''',
     options: ['''Every real symmetric matrix is a normal matrix.''', '''Every orthogonal matrix is a normal matrix.''', '''Every skew-symmetric matrix (A^T = -A) is a normal matrix.''', '''A normal matrix can never have complex eigenvalues.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: If A^T = A, then A A^T = A^2 = A^T A.
@@ -317,7 +317,7 @@ To ensure that search steps satisfy sufficient progress, the parameter c_2 must 
     questionText: '''Which of the following statements regarding strictly convex functions is/are TRUE? (Select all that apply)''',
     options: ['''If a strictly convex function f: R^n -> R has a global minimum, that global minimum is UNIQUE.''', '''Every strictly convex function is convex, but not every convex function is strictly convex.''', '''If a twice-differentiable function has a strictly positive definite Hessian (nabla^2 f(x) > 0) for all x in R^n, then f is strictly convex.''', '''A strictly convex function can have a local minimum that is distinct from its global minimum.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: If x1* != x2* were two distinct minimizers with f(x1*) = f(x2*) = f*, then strict convexity requires f(0.5 x1* + 0.5 x2*) < 0.5 f* + 0.5 f* = f*, contradicting that f* is the minimum.
@@ -372,7 +372,7 @@ E[X] = 3 / 2 = 1.5.''',
     questionText: '''Which of the following statements regarding the Receiver Operating Characteristic (ROC) curve is/are TRUE? (Select all that apply)''',
     options: ['''The ROC curve plots the True Positive Rate (Sensitivity) on the y-axis against the False Positive Rate (1 - Specificity) on the x-axis across all decision thresholds.''', '''The Area Under the ROC Curve (ROC-AUC) equals the probability that the classifier will rank a randomly chosen positive instance higher than a randomly chosen negative instance.''', '''A completely random guessing classifier corresponds to the diagonal line connecting (0, 0) and (1, 1), with ROC-AUC = 0.5.''', '''The ROC curve shifts dramatically whenever the prior class prevalence in the test set changes.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Standard definition of ROC curve axes: TPR vs FPR.
@@ -454,7 +454,7 @@ h = floor(log_2(1000)) = 9.''',
     questionText: '''Which of the following statements regarding the Trie (Prefix Tree) data structure is/are TRUE? (Select all that apply)''',
     options: ['''Searching for a key of length L in a Trie takes O(L) time, completely independent of the total number of keys stored in the Trie.''', '''All descendants of a node in a Trie share a common string prefix associated with that node.''', '''A Compressed Trie (Radix Tree or Patricia Trie) compresses chains of nodes with single children into a single edge, reducing node overhead.''', '''A Trie can only store binary strings and cannot support the English alphabet.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Lookup requires following L character edges, taking O(L) time regardless of total keys N.
@@ -520,7 +520,7 @@ This sequential scan is valid ONLY IF the underlying records on disk are physica
     questionText: '''Which of the following statements regarding transactional schedules is/are TRUE? (Select all that apply)''',
     options: ['''A schedule is Recoverable if whenever transaction T_j reads a value written by T_i, T_i commits before T_j commits.''', '''A schedule Avoids Cascading Aborts (ACA) if transactions are permitted to read only values written by already committed transactions.''', '''Every schedule that Avoids Cascading Aborts (ACA) is strictly a Recoverable schedule.''', '''Every Recoverable schedule is guaranteed to Avoid Cascading Aborts.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Definition of a Recoverable schedule.
@@ -578,7 +578,7 @@ Rounding to 2 decimal places gives 0.73.''',
     questionText: '''Which of the following statements regarding Support Vector Machines (SVMs) is/are TRUE? (Select all that apply)''',
     options: ['''In a hard-margin SVM, removing any training data point that is NOT a support vector leaves the optimal separating hyperplane completely unchanged.''', '''The decision boundary depends only on the inner products between support vectors and the input vector.''', '''The Radial Basis Function (RBF) kernel K(x, z) = exp(- gamma * ||x - z||^2) maps inputs into an infinite-dimensional feature space.''', '''Increasing the RBF kernel parameter gamma causes the SVM decision boundary to become smoother and linear.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis:
 A is TRUE: Points with dual multipliers alpha_i = 0 do not enter the Karush-Kuhn-Tucker expansion w = sum alpha_i y_i x_i; removing them changes nothing.
@@ -715,7 +715,7 @@ The maximum value of the Rayleigh quotient is max(lambda) = 5.''',
     questionText: '''Consider the matrix:
 M = [[3, 2, 2],
      [2, 3, -2]].
-Find the nuclear norm (trace norm) ||M||_* = sum(sigma_i), which is the sum of the singular values of M. (Answer as an integer).''',
+The nuclear norm (trace norm) ||M||_* is defined as the sum of singular values: ||M||_* = sum(sigma_i). For matrix M = [[3, 2, 2], [2, 3, -2]], the value of ||M||_* is ________. (Answer as an integer).''',
     options: [],
     correctAnswer: '''8''',
     isMCQ: false,
@@ -818,7 +818,7 @@ Option A is correct.''',
 Which of the following statements is/are TRUE?''',
     options: ['''A is diagonalizable over R.''', '''The geometric multiplicity of eigenvalue lambda = 2 is 2.''', '''rank(A - 2I) = 2.''', '''det(A) = 40.'''],
     correctAnswer: '''B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 1. Diagonalizability: A matrix is diagonalizable iff its minimal polynomial splits into distinct linear factors. Here m(lambda) has a repeated factor (lambda - 2)^2, so A is not diagonalizable. (A is FALSE).
@@ -1171,7 +1171,7 @@ Let beta_hat = (X^T X)^(-1) X^T Y and e = Y - X beta_hat.
 Which of the following statements is/are TRUE?''',
     options: ['''beta_hat is the Best Linear Unbiased Estimator (BLUE) of beta.''', '''The residual vector e is orthogonal to the column space of X, i.e., X^T e = 0.''', '''s^2 = (e^T e) / (n - p) is an unbiased estimator of sigma^2.''', '''If the error covariance is heteroscedastic (Var(epsilon) = sigma^2 Sigma, Sigma != I), beta_hat remains unbiased, but is generally no longer BLUE.'''],
     correctAnswer: '''A;B;C;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. By the Gauss-Markov Theorem, under homoscedasticity and zero-mean uncorrelated errors, the OLS estimator beta_hat has minimum variance among all linear unbiased estimators (BLUE). (TRUE)
@@ -1404,7 +1404,7 @@ Where r_i(X), w_i(X), and c_i denote read, write, and commit operations on item 
 Which of the following statements is/are TRUE?''',
     options: ['''Schedule S is conflict serializable.''', '''Schedule S is recoverable.''', '''Schedule S avoids cascading aborts.''', '''Schedule S cannot be produced under the Strict Two-Phase Locking (Strict 2PL) protocol.'''],
     correctAnswer: '''A;D''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of properties:
 1. Conflict Serializability:

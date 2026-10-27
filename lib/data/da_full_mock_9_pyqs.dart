@@ -323,7 +323,7 @@ tr(I_6 - P) = 6 - 2 = 4.''',
 Which of the following statements is/are ALWAYS TRUE?''',
     options: ['''The non-zero singular values sigma_i are uniquely determined by matrix A.''', '''rank(A) = r (the number of strictly positive singular values).''', '''||A||_2 = sigma_1 (the spectral norm equals the largest singular value).''', '''The matrices U and V are always uniquely determined for any matrix A.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. The singular values are the unique positive square roots of the eigenvalues of A^T A. (TRUE)
@@ -433,7 +433,7 @@ alpha < 2 / 5 = 0.40 (or 0.4).''',
     questionText: '''Which of the following operations on convex sets ALWAYS yields a convex set?''',
     options: ['''The intersection of an arbitrary collection of convex sets: bigcap_{i in I} S_i.''', '''The image of a convex set under an affine mapping: f(S) = {A x + b : x in S}.''', '''The Minkowski sum of two convex sets: S_1 + S_2 = {x_1 + x_2 : x_1 in S_1, x_2 in S_2}.''', '''The union of two disjoint convex sets: S_1 cup S_2.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of operations:
 A. The intersection of any family of convex sets is always convex. (TRUE)
@@ -699,7 +699,7 @@ Option A is correct.''',
     questionText: '''In decision tree induction algorithms (such as CART and ID3/C4.5), which metrics are commonly used to measure node impurity?''',
     options: ['''Gini Impurity''', '''Information Gain (based on Shannon Entropy)''', '''Misclassification Error''', '''Mahalanobis Distance'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of splitting criteria:
 A. Gini Impurity = 1 - sum p_i^2 is the standard metric in CART. (TRUE)
@@ -756,7 +756,7 @@ Option A is correct.''',
     questionText: '''Which of the following statements regarding heuristics in informed search algorithms is/are TRUE?''',
     options: ['''In A* Tree Search, admissibility (h(n) <= h*(n)) is sufficient to guarantee finding an optimal solution.''', '''In A* Graph Search, consistency (monotonicity) of h(n) guarantees finding an optimal solution without re-opening closed nodes.''', '''If h_1 and h_2 are admissible heuristics, then h(n) = max(h_1(n), h_2(n)) is also an admissible heuristic.''', '''Every admissible heuristic is guaranteed to be consistent.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. For Tree Search, admissibility alone guarantees optimality because nodes are never prematurely discarded by a closed set. (TRUE)
@@ -843,7 +843,7 @@ Rounded to two decimal places: 0.78.''',
 Which of the following statements is/are TRUE?''',
     options: ['''P is uniquely determined by P = sqrt(A^T A).''', '''If A is invertible, the orthogonal factor U is uniquely determined as U = A P^(-1).''', '''The eigenvalues of P are the singular values of A.''', '''P is always an orthogonal matrix.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of Polar Decomposition:
 A. P^2 = P^T P = (U^T A)^T (U^T A) = A^T U U^T A = A^T A. Since P is symmetric positive semidefinite, P is the unique positive square root sqrt(A^T A). (TRUE)
@@ -970,7 +970,7 @@ alpha* = (d^T d) / (d^T A d) = 72 / 144 = 0.50 (or 0.5).''',
     questionText: '''Which of the following conditions guarantees Strong Duality (zero duality gap, p* = d*) in convex optimization?''',
     options: ['''Slater's condition: The primal problem is convex and there exists a strictly feasible point x in the relative interior of the constraint set.''', '''The objective function and inequality constraints are affine, and the feasible set is non-empty.''', '''The objective function is strictly convex and unconstrained.''', '''Slater's condition guarantees strong duality for non-convex integer programming.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of strong duality conditions:
 A. Slater's Condition is the standard constraint qualification guaranteeing strong duality for convex programs. (TRUE)
@@ -1335,7 +1335,7 @@ Option A is correct.''',
     questionText: '''Which of the following statements regarding the safety of queries in Tuple Relational Calculus (TRC) is/are TRUE?''',
     options: ['''A TRC expression is called "safe" if all of its results are composed exclusively of domain values appearing in the database relations or in the query constant set.''', '''The query { t | NOT (t in R) } is unsafe because it can evaluate to an infinite relation depending on the underlying domain.''', '''Every safe TRC query can be translated into an equivalent relational algebra expression.''', '''Unsafe queries can be executed in finite time on any relational database engine.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. Codd's definition of a safe query guarantees domain independence: the result depends solely on values appearing in the database relations or explicitly in the query constants. (TRUE)
@@ -1433,7 +1433,7 @@ A Multi-Head Attention layer uses h = 8 heads, each with key and query projectio
 Which of the following statements regarding the attention matrices is/are TRUE?''',
     options: ['''Each individual attention head produces an attention score matrix Q_i K_i^T of rank at most d_k = 64, regardless of the sequence length n.''', '''Multi-Head Attention allows the model to jointly attend to information from different representation subspaces at different positions.''', '''The output projection matrix W_O has dimensions (h * d_v) x d_model = 512 x 512.''', '''Increasing the number of heads h without changing d_model increases the total number of floating point operations quadratically.'''],
     correctAnswer: '''A;B;C''',
-    isMCQ: false,
+    isMCQ: true,
     type: 'MSQ',
     explanation: '''Analysis of statements:
 A. Q_i and K_i have dimensions n x d_k. Since the rank of a matrix product is bounded by the inner dimension, rank(Q_i K_i^T) <= min(n, d_k) = min(n, 64) <= 64. (TRUE)
