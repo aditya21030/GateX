@@ -21,6 +21,7 @@ import '../data/da_full_mock_9_pyqs.dart';
 import '../data/da_full_mock_10_pyqs.dart';
 import '../data/cs_full_mock_pyqs.dart';
 import '../data/cs_full_mock_2_pyqs.dart';
+import '../data/cs_full_mock_3_pyqs.dart';
 import '../data/da_subjectwise_mock_data.dart';
 import '../data/csit_subjectwise_mock_data.dart';
 import 'mock_test_runner_screen.dart';
@@ -118,6 +119,8 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     } else {
       if (mockNumber == 2) {
         rawBase = List.from(csFullMock2Questions);
+      } else if (mockNumber == 3) {
+        rawBase = List.from(csFullMock3Questions);
       } else {
         rawBase = List.from(csFullMockQuestionsEasy);
       }
@@ -133,7 +136,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
 
     // For custom crafted full-length mocks, maintain the exact curated question sequence
     if ((activeExam == 'DA' && (mockNumber >= 2 && mockNumber <= 10)) ||
-        ((activeExam == 'CS' || activeExam == 'CSIT') && mockNumber == 2)) {
+        ((activeExam == 'CS' || activeExam == 'CSIT') && (mockNumber == 2 || mockNumber == 3))) {
       return base;
     }
 
