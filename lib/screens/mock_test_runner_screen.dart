@@ -381,15 +381,68 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
 
     final double percentageScore = maxPossibleMarks > 0 ? (totalScore / maxPossibleMarks) * 100.0 : 0.0;
 
-    // Identify weak subjects (< 50% accuracy)
+    // Identify specific weak topics where questions were missed
     final List<String> weakSubjects = [];
-    subjectPerformance.forEach((subject, counts) {
-      final corr = counts[0];
-      final tot = counts[1];
-      if (tot > 0 && (corr / tot) < 0.5) {
-        weakSubjects.add(subject);
+    final Set<String> recordedTopics = {};
+
+    // First collect specific topics of questions answered incorrectly
+    for (int i = 0; i < widget.questions.length; i++) {
+      final q = widget.questions[i];
+      final uAns = _userAnswers[q.id];
+      if (uAns != null && uAns.trim().isNotEmpty && !q.isAnswerCorrect(uAns)) {
+        final cleanTopic = q.topic.trim();
+        if (cleanTopic.isNotEmpty && recordedTopics.add(cleanTopic)) {
+          weakSubjects.add(cleanTopic);
+        }
       }
-    });
+    }
+
+    // Next add topics of unattempted questions if fewer than 5
+    if (weakSubjects.length < 5) {
+      for (int i = 0; i < widget.questions.length; i++) {
+        if (weakSubjects.length >= 6) break;
+        final q = widget.questions[i];
+        final uAns = _userAnswers[q.id];
+        if (uAns == null || uAns.trim().isEmpty) {
+          final cleanTopic = q.topic.trim();
+          if (cleanTopic.isNotEmpty && recordedTopics.add(cleanTopic)) {
+            weakSubjects.add(cleanTopic);
+          }
+        }
+      }
+    }
+
+    // Fallback: If still empty, add canonical subjects
+    if (weakSubjects.isEmpty) {
+      final Set<String> canonSubjects = {};
+      subjectPerformance.forEach((subject, counts) {
+        final corr = counts[0];
+        final tot = counts[1];
+        if (tot > 0 && (corr / tot) < 0.5) {
+          String s = subject.trim();
+          final l = s.toLowerCase();
+          if (l.contains('calculus') || l.contains('optimization')) {
+            s = 'Calculus & Optimization';
+          } else if (l.contains('probability') || l.contains('statistic')) {
+            s = 'Probability & Statistics';
+          } else if (l.contains('python') || l.contains('programming')) {
+            s = 'Programming & Python';
+          } else if (l.contains('data struct') || l.contains('algo')) {
+            s = 'Data Structures & Algorithms';
+          } else if (l.contains('database') || l.contains('dbms')) {
+            s = 'Database Management Systems';
+          } else if (l.contains('linear algebra')) {
+            s = 'Linear Algebra';
+          } else if (l.contains('machine learning')) {
+            s = 'Machine Learning';
+          } else if (l.contains('artificial intelligence') || l == 'ai') {
+            s = 'Artificial Intelligence';
+          }
+          canonSubjects.add(s);
+        }
+      });
+      weakSubjects.addAll(canonSubjects);
+    }
 
     final timeTakenMinutes = DateTime.now().difference(_startTime).inMinutes;
 
@@ -1633,34 +1686,9 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Numerical Answer (NAT):',
-              style: GoogleFonts.outfit(fontSize: 13, color: context.textSecondaryColor, fontWeight: FontWeight.bold),
-            ),
-            InkWell(
-              onTap: () {
-                HapticFeedback.selectionClick();
-                VirtualCalculator.show(context);
-              },
-              borderRadius: BorderRadius.circular(8),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                child: Row(
-                  children: [
-                    const Icon(Icons.calculate_outlined, size: 14, color: AppTheme.accentPurple),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Calculator',
-                      style: GoogleFonts.outfit(color: AppTheme.accentPurple, fontSize: 11, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+        Text(
+          'Numerical Answer (NAT):',
+          style: GoogleFonts.outfit(fontSize: 13, color: context.textSecondaryColor, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
         NeuContainer(
@@ -1802,21 +1830,33 @@ https://github.com/aditya21030/GateX''';
         ? (correctCount / (correctCount + incorrectCount)) * 100.0
         : 0.0;
 
-    // Predicted AIR Range & IIT Call Estimator
-    String predictedAir = 'N/A';
-    String iitChance = 'N/A';
-    if (totalScore >= 75) {
-      predictedAir = 'Top 100';
+    // Predicted AIR Range according to marks obtained
+    String predictedAir;
+    String iitChance;
+    if (totalScore >= 80) {
+      predictedAir = '1 – 25';
       iitChance = 'Guaranteed Old IIT (Bombay, Delhi, Madras)';
+    } else if (totalScore >= 70) {
+      predictedAir = '25 – 100';
+      iitChance = 'Guaranteed Top IIT / IISc Call';
     } else if (totalScore >= 60) {
-      predictedAir = '150 – 500';
-      iitChance = 'Top IIT Direct Call';
-    } else if (totalScore >= 45) {
-      predictedAir = '800 – 2500';
-      iitChance = 'New IIT / Top NIT Qualified';
+      predictedAir = '100 – 350';
+      iitChance = 'Top IIT Direct Interview / Admission Call';
+    } else if (totalScore >= 50) {
+      predictedAir = '350 – 900';
+      iitChance = 'Established IIT / Top NIT Qualified';
+    } else if (totalScore >= 40) {
+      predictedAir = '900 – 2,200';
+      iitChance = 'Newer IIT / Top NIT Admission Qualified';
+    } else if (totalScore >= 30) {
+      predictedAir = '2,200 – 5,000';
+      iitChance = 'GATE Cutoff Cleared • NITs / State Institutes';
+    } else if (totalScore >= 20) {
+      predictedAir = '5,000 – 9,000';
+      iitChance = 'Near Cutoff Threshold • Focused Revision Needed';
     } else {
-      predictedAir = '3000+';
-      iitChance = 'Revision & Drill Needed';
+      predictedAir = '10,000+';
+      iitChance = 'Revision & Intensive Drill Needed';
     }
 
     final filteredQuestions = widget.questions.where((q) {
@@ -1859,170 +1899,222 @@ https://github.com/aditya21030/GateX''';
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
-          child: Column(
-            children: [
-              // Scorecard Hero Banner
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: RepaintBoundary(
-                  key: _scorecardBoundaryKey,
-                  child: NeuContainer(
-                  borderRadius: 20,
-                  padding: const EdgeInsets.all(18.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              // 1. Scorecard Hero Banner
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 12.0),
+                  child: RepaintBoundary(
+                    key: _scorecardBoundaryKey,
+                    child: NeuContainer(
+                      borderRadius: 20,
+                      padding: const EdgeInsets.all(18.0),
+                      child: Column(
                         children: [
-                          Text(
-                            widget.testName.toUpperCase(),
-                            style: GoogleFonts.outfit(
-                              color: AppTheme.accentPurple,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.1,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                widget.testName.toUpperCase(),
+                                style: GoogleFonts.outfit(
+                                  color: AppTheme.accentPurple,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.1,
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.5),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFF8522).withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: const Color(0xFFFF8522).withValues(alpha: 0.4),
+                                    width: 1.2,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.workspace_premium_rounded, size: 14, color: Color(0xFFFF8522)),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      'AIR: $predictedAir',
+                                      style: GoogleFonts.outfit(
+                                        color: const Color(0xFFFF8522),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: AppTheme.accentPurple.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.25)),
-                            ),
-                            child: Text(
-                              'AIR: $predictedAir',
-                              style: GoogleFonts.outfit(color: AppTheme.accentPurple, fontSize: 11.5, fontWeight: FontWeight.bold),
-                            ),
+                          const SizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Text(
+                                totalScore.toStringAsFixed(2),
+                                style: GoogleFonts.outfit(fontSize: 48, fontWeight: FontWeight.bold, color: AppTheme.accentPurple),
+                              ),
+                              Text(
+                                ' / ${maxPossibleMarks.toStringAsFixed(0)}',
+                                style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 18, fontWeight: FontWeight.w600),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            totalScore.toStringAsFixed(2),
-                            style: GoogleFonts.outfit(fontSize: 48, fontWeight: FontWeight.bold, color: AppTheme.accentPurple),
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.school_rounded, size: 16, color: AppTheme.accentMint),
+                              const SizedBox(width: 6),
+                              Flexible(
+                                child: Text(
+                                  iitChance,
+                                  style: GoogleFonts.outfit(color: context.textColor, fontSize: 13, fontWeight: FontWeight.w600),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            ' / ${maxPossibleMarks.toStringAsFixed(0)}',
-                            style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 18, fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.school_rounded, size: 16, color: AppTheme.accentMint),
-                          const SizedBox(width: 6),
-                          Text(
-                            iitChance,
-                            style: GoogleFonts.outfit(color: context.textColor, fontSize: 13, fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 14),
-                      Divider(color: context.isDarkMode ? Colors.white12 : Colors.black12),
-                      const SizedBox(height: 10),
+                          const SizedBox(height: 14),
+                          Divider(color: context.isDarkMode ? Colors.white12 : Colors.black12),
+                          const SizedBox(height: 10),
 
-                      // Metric Grid Strip
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          _buildResultMiniStat('Accuracy', '${accuracy.toStringAsFixed(0)}%', AppTheme.accentPurple, Icons.pie_chart_outline_rounded),
-                          _buildResultMiniStat('Correct', '$correctCount', AppTheme.accentMint, Icons.check_circle_outline_rounded),
-                          _buildResultMiniStat('Incorrect', '$incorrectCount', AppTheme.accentCoral, Icons.cancel_outlined),
-                          _buildResultMiniStat('Skipped', '$unattemptedCount', context.textSecondaryColor, Icons.remove_circle_outline_rounded),
-                        ],
-                      ),
+                          // Metric Grid Strip
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              _buildResultMiniStat('Accuracy', '${accuracy.toStringAsFixed(0)}%', AppTheme.accentPurple, Icons.pie_chart_outline_rounded),
+                              _buildResultMiniStat('Correct', '$correctCount', AppTheme.accentMint, Icons.check_circle_outline_rounded),
+                              _buildResultMiniStat('Incorrect', '$incorrectCount', AppTheme.accentCoral, Icons.cancel_outlined),
+                              _buildResultMiniStat('Skipped', '$unattemptedCount', context.textSecondaryColor, Icons.remove_circle_outline_rounded),
+                            ],
+                          ),
 
-                      if (_isFullMock) ...[
-                        const SizedBox(height: 12),
-                        Divider(color: context.isDarkMode ? Colors.white12 : Colors.black12),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: context.isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                'General Aptitude: ${gaScore.toStringAsFixed(2)} / 15.00',
-                                style: GoogleFonts.outfit(fontSize: 11.5, color: context.textColor, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: context.isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                'Subject Core: ${coreScore.toStringAsFixed(2)} / 85.00',
-                                style: GoogleFonts.outfit(fontSize: 11.5, color: context.textColor, fontWeight: FontWeight.bold),
-                              ),
+                          if (_isFullMock) ...[
+                            const SizedBox(height: 14),
+                            Divider(color: context.isDarkMode ? Colors.white12 : Colors.black12),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: context.isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: context.isDarkMode ? Colors.white12 : Colors.black12),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'General Aptitude',
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 11,
+                                            color: context.textSecondaryColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 3),
+                                        Text(
+                                          '${gaScore.toStringAsFixed(2)} / 15.00',
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: context.textColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: context.isDarkMode ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: context.isDarkMode ? Colors.white12 : Colors.black12),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Subject Core',
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 11,
+                                            color: context.textSecondaryColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 3),
+                                        Text(
+                                          '${coreScore.toStringAsFixed(2)} / 85.00',
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: context.textColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
-                        ),
-                      ],
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.workspace_premium_rounded, size: 13, color: AppTheme.accentPurple.withValues(alpha: 0.8)),
-                          const SizedBox(width: 4),
-                          Text(
-                            'GateX • 100% Student-Centric GATE Preparation',
-                            style: GoogleFonts.outfit(fontSize: 10, color: context.textSecondaryColor, fontWeight: FontWeight.w600),
-                          ),
                         ],
                       ),
+                    ),
+                  ),
+                ),
+              ),
+
+              // 2. Filter Tabs for Questions Review
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 12.0),
+                  child: Row(
+                    children: [
+                      _buildReviewFilterChip('All (${widget.questions.length})', 'All'),
+                      const SizedBox(width: 8),
+                      _buildReviewFilterChip('Incorrect ($incorrectCount)', 'Incorrect'),
+                      const SizedBox(width: 8),
+                      _buildReviewFilterChip('Correct ($correctCount)', 'Correct'),
+                      const SizedBox(width: 8),
+                      _buildReviewFilterChip('Skipped ($unattemptedCount)', 'Unattempted'),
                     ],
                   ),
                 ),
-                ),
               ),
 
-              // Filter Tabs for Questions Review
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  children: [
-                    _buildReviewFilterChip('All (${widget.questions.length})', 'All'),
-                    const SizedBox(width: 8),
-                    _buildReviewFilterChip('Incorrect ($incorrectCount)', 'Incorrect'),
-                    const SizedBox(width: 8),
-                    _buildReviewFilterChip('Correct ($correctCount)', 'Correct'),
-                    const SizedBox(width: 8),
-                    _buildReviewFilterChip('Skipped ($unattemptedCount)', 'Unattempted'),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-
-              // Question-by-Question Review List
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: filteredQuestions.length,
-                  itemBuilder: (context, index) {
-                    final q = filteredQuestions[index];
-                    final originalIndex = widget.questions.indexOf(q);
-                    return _MockQuestionReviewCard(
-                      index: originalIndex,
-                      pyq: q,
-                      userAnswer: _userAnswers[q.id],
-                      buildTextHelper: _buildQuestionText,
-                    );
-                  },
+              // 3. Question-by-Question Review List (full screen scrolling!)
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 60),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final q = filteredQuestions[index];
+                      final originalIndex = widget.questions.indexOf(q);
+                      return _MockQuestionReviewCard(
+                        index: originalIndex,
+                        pyq: q,
+                        userAnswer: _userAnswers[q.id],
+                        buildTextHelper: _buildQuestionText,
+                      );
+                    },
+                    childCount: filteredQuestions.length,
+                  ),
                 ),
               ),
             ],

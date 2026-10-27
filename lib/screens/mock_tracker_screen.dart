@@ -1624,26 +1624,33 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                 Divider(height: 1, color: context.colorBorder),
                 const SizedBox(height: 10),
 
-                // Weak subjects
+                // Weak topics & areas
                 if (mock.weakSubjects.isNotEmpty) ...[
-                  const Text(
-                    'WEAK AREAS IDENTIFIED:',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: AppTheme.accentCoral),
+                  Row(
+                    children: [
+                      const Icon(Icons.bolt_rounded, size: 14, color: AppTheme.accentCoral),
+                      const SizedBox(width: 4),
+                      Text(
+                        'WEAK TOPICS IDENTIFIED (${mock.weakSubjects.toSet().length}):',
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 10.5, color: AppTheme.accentCoral, letterSpacing: 0.5),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 6),
                   Wrap(
                     spacing: 6,
-                    runSpacing: 4,
-                    children: mock.weakSubjects.map((sub) {
+                    runSpacing: 5,
+                    children: mock.weakSubjects.toSet().map((topic) {
                       return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3.5),
                         decoration: BoxDecoration(
                           color: AppTheme.accentCoral.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: AppTheme.accentCoral.withValues(alpha: 0.25), width: 0.8),
                         ),
                         child: Text(
-                          sub,
-                          style: const TextStyle(color: AppTheme.accentCoral, fontSize: 9.5, fontWeight: FontWeight.bold),
+                          topic,
+                          style: const TextStyle(color: AppTheme.accentCoral, fontSize: 10.5, fontWeight: FontWeight.w600),
                         ),
                       );
                     }).toList(),
@@ -1699,7 +1706,34 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     final notesController = TextEditingController();
     final formKey = GlobalKey<FormState>();
 
-    final List<String> subjects = provider.currentSubjects;
+    final List<String> subjects = provider.currentSubjects.map((s) {
+      final l = s.toLowerCase();
+      if (l.contains('calculus') || l.contains('optimization')) {
+        return 'Calculus & Optimization';
+      }
+      if (l.contains('probability') || l.contains('statistic')) {
+        return 'Probability & Statistics';
+      }
+      if (l.contains('python') || l.contains('programming')) {
+        return 'Programming & Python';
+      }
+      if (l.contains('data struct') || l.contains('algo')) {
+        return 'Data Structures & Algorithms';
+      }
+      if (l.contains('database') || l.contains('dbms')) {
+        return 'Database Management Systems';
+      }
+      if (l.contains('linear algebra')) {
+        return 'Linear Algebra';
+      }
+      if (l.contains('machine learning')) {
+        return 'Machine Learning';
+      }
+      if (l.contains('artificial intelligence') || l == 'ai') {
+        return 'Artificial Intelligence';
+      }
+      return s;
+    }).toSet().toList();
     final List<String> selectedWeakSubjects = [];
 
     showModalBottomSheet(
