@@ -20,6 +20,7 @@ import '../data/da_full_mock_8_pyqs.dart';
 import '../data/da_full_mock_9_pyqs.dart';
 import '../data/da_full_mock_10_pyqs.dart';
 import '../data/cs_full_mock_pyqs.dart';
+import '../data/cs_full_mock_2_pyqs.dart';
 import '../data/da_subjectwise_mock_data.dart';
 import '../data/csit_subjectwise_mock_data.dart';
 import 'mock_test_runner_screen.dart';
@@ -115,7 +116,11 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
         rawBase = List.from(daFullMockQuestionsEasy);
       }
     } else {
-      rawBase = List.from(csFullMockQuestionsEasy);
+      if (mockNumber == 2) {
+        rawBase = List.from(csFullMock2Questions);
+      } else {
+        rawBase = List.from(csFullMockQuestionsEasy);
+      }
     }
 
     // 3. Apply any live question hotfixes by ID from Hive cache
@@ -126,8 +131,9 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
 
     if (base.length != 65) return base;
 
-    // For custom crafted full-length mocks (Mock 2 & Mock 3), maintain the exact curated question sequence
-    if (activeExam == 'DA' && (mockNumber >= 2 && mockNumber <= 10)) {
+    // For custom crafted full-length mocks, maintain the exact curated question sequence
+    if ((activeExam == 'DA' && (mockNumber >= 2 && mockNumber <= 10)) ||
+        ((activeExam == 'CS' || activeExam == 'CSIT') && mockNumber == 2)) {
       return base;
     }
 
