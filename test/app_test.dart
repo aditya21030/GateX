@@ -6,6 +6,7 @@ import 'package:gateda/data/cs_full_mock_2_pyqs.dart';
 import 'package:gateda/data/cs_full_mock_3_pyqs.dart';
 import 'package:gateda/data/cs_full_mock_4_pyqs.dart';
 import 'package:gateda/data/cs_full_mock_5_pyqs.dart';
+import 'package:gateda/data/cs_full_mock_6_pyqs.dart';
 import 'package:gateda/models/branch_model.dart';
 import 'package:gateda/data/study_plan.dart';
 import 'package:gateda/data/da_subjectwise_mock_data.dart';
@@ -1303,6 +1304,35 @@ void main() {
       double totalMarks = 0.0;
       for (int i = 0; i < csFullMock5Questions.length; i++) {
         final q = csFullMock5Questions[i];
+        expect(ids.contains(q.id), isFalse, reason: 'Duplicate ID: ${q.id}');
+        ids.add(q.id);
+
+        final double marks = (i < 5 || (i >= 10 && i < 35)) ? 1.0 : 2.0;
+        totalMarks += marks;
+
+        if (q.type == 'NAT') {
+          expect(q.isMCQ, isFalse);
+          expect(q.options.isEmpty, isTrue);
+          expect(q.questionText.toLowerCase().contains('which of the following'), isFalse);
+          expect(q.correctAnswer.isNotEmpty, isTrue);
+        } else if (q.type == 'MSQ') {
+          expect(q.isMCQ, isTrue);
+          expect(q.options.length, 4);
+        } else {
+          expect(q.type, 'MCQ');
+          expect(q.isMCQ, isTrue);
+          expect(q.options.length, 4);
+        }
+      }
+      expect(totalMarks, 100.0);
+    });
+
+    test('GATE CS Mock 6 contains exactly 65 questions and 100 marks', () {
+      expect(csFullMock6Questions.length, 65);
+      final ids = <String>{};
+      double totalMarks = 0.0;
+      for (int i = 0; i < csFullMock6Questions.length; i++) {
+        final q = csFullMock6Questions[i];
         expect(ids.contains(q.id), isFalse, reason: 'Duplicate ID: ${q.id}');
         ids.add(q.id);
 
