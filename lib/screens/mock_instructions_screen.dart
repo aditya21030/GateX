@@ -104,7 +104,7 @@ class _MockInstructionsScreenState extends State<MockInstructionsScreen> {
               Expanded(
                 child: ListView(
                   physics: const BouncingScrollPhysics(),
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
                   children: [
                     // 1. Hero Test Header Card
                     _buildHeroHeader(context),
@@ -264,7 +264,7 @@ class _MockInstructionsScreenState extends State<MockInstructionsScreen> {
   }) {
     final isDark = context.isDarkMode;
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(12),
@@ -277,16 +277,19 @@ class _MockInstructionsScreenState extends State<MockInstructionsScreen> {
         children: [
           Icon(icon, size: 18, color: color),
           const SizedBox(height: 4),
-          Text(
-            title,
-            style: GoogleFonts.outfit(
-              fontSize: 12.5,
-              fontWeight: FontWeight.bold,
-              color: context.textColor,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              title,
+              style: GoogleFonts.outfit(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: context.textColor,
+              ),
+              maxLines: 1,
             ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
           ),
+          const SizedBox(height: 2),
           Text(
             label,
             style: TextStyle(
@@ -328,7 +331,7 @@ class _MockInstructionsScreenState extends State<MockInstructionsScreen> {
             title: 'General Aptitude (GA)',
             range: 'Q. 1 to 10',
             marks: '15 Marks',
-            breakdown: '5 Qs × 1 Mark + 5 Qs × 2 Marks',
+            breakdown: '5 Qs × 1 Mark  •  5 Qs × 2 Marks',
             color: const Color(0xFF3B82F6),
           ),
           const SizedBox(height: 10),
@@ -338,7 +341,7 @@ class _MockInstructionsScreenState extends State<MockInstructionsScreen> {
             title: 'Core Discipline / Technical',
             range: 'Q. 11 to 65',
             marks: '85 Marks',
-            breakdown: '25 Qs × 1 Mark + 30 Qs × 2 Marks',
+            breakdown: '25 Qs × 1 Mark  •  30 Qs × 2 Marks',
             color: const Color(0xFF10B981),
           ),
         ],
@@ -360,75 +363,90 @@ class _MockInstructionsScreenState extends State<MockInstructionsScreen> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.02),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: color.withValues(alpha: 0.25)),
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              'Sec $sectionNum',
-              style: GoogleFonts.outfit(
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-                color: color,
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  'Sec $sectionNum',
+                  style: GoogleFonts.outfit(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title,
+                  style: GoogleFonts.outfit(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: context.textColor,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: color.withValues(alpha: 0.3)),
+                ),
+                child: Text(
+                  marks,
+                  style: GoogleFonts.outfit(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      title,
-                      style: GoogleFonts.outfit(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: context.textColor,
-                      ),
-                    ),
-                    Text(
-                      marks,
-                      style: GoogleFonts.outfit(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.bold,
-                        color: color,
-                      ),
-                    ),
-                  ],
+          const SizedBox(height: 8),
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 4,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.04),
+                  borderRadius: BorderRadius.circular(5),
                 ),
-                const SizedBox(height: 2),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      range,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: context.textSecondaryColor,
-                      ),
-                    ),
-                    Text(
-                      breakdown,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: context.textSecondaryColor,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  range,
+                  style: GoogleFonts.outfit(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: context.textColor,
+                  ),
                 ),
-              ],
-            ),
+              ),
+              Text(
+                breakdown,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: context.textSecondaryColor,
+                ),
+              ),
+            ],
           ),
         ],
       ),
