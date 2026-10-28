@@ -238,7 +238,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 _buildToolsGrid(context, provider),
                 const SizedBox(height: 16),
 
-                // 7. PEER DOUBT COMMUNITY BANNER
                 const SizedBox(height: 24),
               ],
             ),

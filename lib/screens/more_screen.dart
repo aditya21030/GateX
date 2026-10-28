@@ -8,7 +8,6 @@ import '../providers/app_provider.dart';
 import '../providers/pomodoro_provider.dart';
 import '../providers/auth_provider.dart';
 import '../services/storage_service.dart';
-import 'community_screen.dart';
 import '../theme/app_theme.dart';
 import '../widgets/neu_widgets.dart';
 import '../widgets/aspirant_avatar.dart';
@@ -84,9 +83,9 @@ class MoreScreen extends StatelessWidget {
               _buildToolsGrid(context),
               const SizedBox(height: 22),
 
-              // 4. COMMUNITY & STANDINGS
+              // 4. LEADERBOARD & STANDINGS
               Text(
-                'COMMUNITY & STANDINGS',
+                'LEADERBOARD & STANDINGS',
                 style: GoogleFonts.outfit(
                   color: context.textSecondaryColor,
                   fontSize: 11,
@@ -95,28 +94,12 @@ class MoreScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildActionTile(
-                      context: context,
-                      icon: Icons.emoji_events_rounded,
-                      iconColor: AppTheme.accentGold,
-                      title: 'Leaderboard',
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RankingScreen())),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _buildActionTile(
-                      context: context,
-                      icon: Icons.groups_rounded,
-                      iconColor: const Color(0xFF8B5CF6),
-                      title: 'Community',
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CommunityScreen())),
-                    ),
-                  ),
-                ],
+              _buildActionTile(
+                context: context,
+                icon: Icons.emoji_events_rounded,
+                iconColor: AppTheme.accentGold,
+                title: 'GateX Leaderboard',
+                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RankingScreen())),
               ),
               const SizedBox(height: 22),
 

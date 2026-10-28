@@ -117,12 +117,69 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final localActive = appProvider.activeExam;
     final hasLocalExam = localExam != null && localExam.isNotEmpty;
 
-    if (user != null) {
+    // Instantly unset guest mode
+    await StorageService().prefs.setBool('is_guest_mode', false);
+
+    // Fast check if user has no local exam selection
+    if (!hasLocalExam && user != null) {
       try {
-        await StorageService().restoreFromCloud(user.uid);
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get()
+            .timeout(const Duration(milliseconds: 1200));
+        if (doc.exists && doc.data() != null && doc.data()!.containsKey('selectedExam')) {
+          String savedExam = doc.data()!['selectedExam'];
+          String activeExam = doc.data()!['activeExam'] ?? (savedExam == 'BOTH' ? 'DA' : savedExam);
+          await appProvider.setExams(savedExam, activeExam);
+        }
+      } catch (_) {}
+    }
+
+    // Launch heavy cloud data synchronization asynchronously in the background
+    if (user != null) {
+      final name = _nameController.text.trim();
+      final email = _emailController.text.trim();
+      _syncUserDataInBackground(
+        user: user,
+        appProvider: appProvider,
+        localExam: localExam,
+        localActive: localActive,
+        hasLocalExam: hasLocalExam,
+        isNewUser: isNewUser,
+        name: name,
+        email: email,
+      );
+    }
+
+    if (!mounted) return;
+    final finalExam = appProvider.selectedExam;
+    final hasExam = finalExam != null && finalExam.isNotEmpty;
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (_) => hasExam ? const MainNavigationScaffold() : const ExamSelectionScreen(),
+      ),
+      (route) => false,
+    );
+  }
+
+  void _syncUserDataInBackground({
+    required User user,
+    required AppProvider appProvider,
+    required String? localExam,
+    required String? localActive,
+    required bool hasLocalExam,
+    required bool isNewUser,
+    required String name,
+    required String email,
+  }) {
+    Future.microtask(() async {
+      try {
+        await StorageService().restoreFromCloud(user.uid).timeout(const Duration(seconds: 10));
         await appProvider.init();
 
-        final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get().timeout(const Duration(seconds: 5));
         if (doc.exists && doc.data() != null && doc.data()!.containsKey('selectedExam')) {
           String savedExam = doc.data()!['selectedExam'];
           String activeExam = doc.data()!['activeExam'] ?? (savedExam == 'BOTH' ? 'DA' : savedExam);
@@ -137,34 +194,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
         if (isNewUser) {
           await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-            'name': _nameController.text.trim(),
-            'email': _emailController.text.trim(),
+            if (name.isNotEmpty) 'name': name,
+            if (email.isNotEmpty) 'email': email,
             'createdAt': FieldValue.serverTimestamp(),
-          }, SetOptions(merge: true));
+          }, SetOptions(merge: true)).timeout(const Duration(seconds: 5));
         }
 
         // Push any guest progress to the user's new cloud account
-        await StorageService().backupToCloud(user.uid);
+        await StorageService().backupToCloud(user.uid).timeout(const Duration(seconds: 10));
       } catch (e) {
-        debugPrint('Post-signup cloud sync error: $e');
+        debugPrint('Post-signup background cloud sync error: $e');
       }
-    }
-
-    await StorageService().prefs.setBool('is_guest_mode', false);
-
-    if (!mounted) return;
-    final finalExam = appProvider.selectedExam;
-    final hasExam = finalExam != null && finalExam.isNotEmpty;
-
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (_) => hasExam ? const MainNavigationScaffold() : const ExamSelectionScreen(),
-      ),
-      (route) => false,
-    );
+    });
   }
 
-  @override
+    @override
   Widget build(BuildContext context) {
     final isDark = context.isDarkMode;
 

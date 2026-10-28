@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -47,8 +48,8 @@ void main() async {
   final appProvider = AppProvider();
   await appProvider.init();
 
-  // Initialize Ads in the background
-  await AdService().init();
+  // Initialize Ads in the background without blocking initial app frame
+  unawaited(AdService().init());
 
   runApp(
     MultiProvider(
@@ -95,7 +96,6 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   late Animation<double> _fadeAnimation;
   late Animation<double> _textFadeAnimation;
   late Animation<Offset> _textSlideAnimation;
-  late Animation<double> _progressAnimation;
 
   @override
   void initState() {
@@ -103,7 +103,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final appProvider = Provider.of<AppProvider>(context, listen: false);
     final bool isReturningUser = authProvider.isLoggedIn && appProvider.selectedExam != null;
-    final int delayMs = isReturningUser ? 600 : 1200;
+    final int delayMs = isReturningUser ? 500 : 850;
 
     _controller = AnimationController(
       vsync: this,
@@ -138,13 +138,6 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       ),
     );
 
-    _progressAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.2, 0.95, curve: Curves.easeInOutSine),
-      ),
-    );
-
     _controller.forward();
 
     // Navigate smoothly after animation completes
@@ -171,7 +164,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               return FadeTransition(opacity: animation, child: child);
             },
-            transitionDuration: const Duration(milliseconds: 600),
+            transitionDuration: const Duration(milliseconds: 300),
           ),
         );
       }
@@ -268,52 +261,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
             ),
           ),
           
-          // Thin premium loading indicator at bottom
-          Positioned(
-            bottom: 60,
-            left: 60,
-            right: 60,
-            child: AnimatedBuilder(
-              animation: _controller,
-              builder: (context, child) {
-                return Opacity(
-                  opacity: _textFadeAnimation.value,
-                  child: Container(
-                    height: 2,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: FractionallySizedBox(
-                        widthFactor: _progressAnimation.value,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            gradient: const LinearGradient(
-                              colors: [
-                                Color(0xFF8B5CF6),
-                                Color(0xFF06B6D4),
-                              ],
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF8B5CF6).withOpacity(0.3),
-                                blurRadius: 6,
-                                spreadRadius: 1,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+
         ],
       ),
     );
@@ -407,14 +355,14 @@ class MainNavigationScaffold extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(32),
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+              filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
               child: Container(
                 height: 64,
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
                 decoration: BoxDecoration(
                   color: context.isDarkMode
-                      ? const Color(0xFF13141C).withValues(alpha: 0.90)
-                      : Colors.white.withValues(alpha: 0.92),
+                      ? const Color(0xFF13141C).withValues(alpha: 0.94)
+                      : Colors.white.withValues(alpha: 0.95),
                   borderRadius: BorderRadius.circular(32),
                   border: Border.all(
                     color: context.isDarkMode

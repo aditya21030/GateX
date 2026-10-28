@@ -164,7 +164,7 @@ class _QuestionDiscussionSheetState extends State<QuestionDiscussionSheet> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Question copied! Paste into Telegram/Discord community groups.'),
+        content: const Text('Question copied to clipboard!'),
         backgroundColor: AppTheme.accentPurple,
         behavior: SnackBarBehavior.floating,
         action: SnackBarAction(
@@ -233,7 +233,7 @@ class _QuestionDiscussionSheetState extends State<QuestionDiscussionSheet> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.share_outlined, size: 20, color: AppTheme.accentPurple),
-                    tooltip: 'Copy Question for Community',
+                    tooltip: 'Share Question',
                     onPressed: _shareQuestion,
                   ),
                   IconButton(
@@ -301,7 +301,7 @@ class _QuestionDiscussionSheetState extends State<QuestionDiscussionSheet> {
                                 ),
                                 icon: const Icon(Icons.share_rounded, size: 16),
                                 label: Text(
-                                  'Ask in Community Groups',
+                                  'Share Question',
                                   style: GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600),
                                 ),
                                 onPressed: _shareQuestion,

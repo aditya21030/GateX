@@ -117,32 +117,35 @@ class _LoginScreenState extends State<LoginScreen> {
     final localActive = appProvider.activeExam;
     final hasLocalExam = localExam != null && localExam.isNotEmpty;
 
-    if (user != null) {
-      try {
-        await StorageService().restoreFromCloud(user.uid);
-        await appProvider.init();
+    // Instantly unset guest mode
+    await StorageService().prefs.setBool('is_guest_mode', false);
 
-        final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+    // If user has no local exam selection, attempt a single fast fetch of their saved exam
+    if (!hasLocalExam && user != null) {
+      try {
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get()
+            .timeout(const Duration(milliseconds: 1200));
         if (doc.exists && doc.data() != null && doc.data()!.containsKey('selectedExam')) {
           String savedExam = doc.data()!['selectedExam'];
           String activeExam = doc.data()!['activeExam'] ?? (savedExam == 'BOTH' ? 'DA' : savedExam);
           await appProvider.setExams(savedExam, activeExam);
-        } else if (hasLocalExam) {
-          // Promote guest's selected exam track to cloud account
-          await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-            'selectedExam': localExam,
-            'activeExam': localActive ?? (localExam == 'BOTH' ? 'DA' : localExam),
-          }, SetOptions(merge: true));
         }
-
-        // Push any guest progress to the user's cloud account
-        await StorageService().backupToCloud(user.uid);
-      } catch (e) {
-        debugPrint('Post-login cloud sync error: $e');
-      }
+      } catch (_) {}
     }
 
-    await StorageService().prefs.setBool('is_guest_mode', false);
+    // Launch heavy cloud data synchronization asynchronously in the background
+    if (user != null) {
+      _syncUserDataInBackground(
+        user: user,
+        appProvider: appProvider,
+        localExam: localExam,
+        localActive: localActive,
+        hasLocalExam: hasLocalExam,
+      );
+    }
 
     if (!mounted) return;
     final finalExam = appProvider.selectedExam;
@@ -156,7 +159,40 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  @override
+  void _syncUserDataInBackground({
+    required User user,
+    required AppProvider appProvider,
+    required String? localExam,
+    required String? localActive,
+    required bool hasLocalExam,
+  }) {
+    Future.microtask(() async {
+      try {
+        await StorageService().restoreFromCloud(user.uid).timeout(const Duration(seconds: 10));
+        await appProvider.init();
+
+        final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get().timeout(const Duration(seconds: 5));
+        if (doc.exists && doc.data() != null && doc.data()!.containsKey('selectedExam')) {
+          String savedExam = doc.data()!['selectedExam'];
+          String activeExam = doc.data()!['activeExam'] ?? (savedExam == 'BOTH' ? 'DA' : savedExam);
+          await appProvider.setExams(savedExam, activeExam);
+        } else if (hasLocalExam) {
+          // Promote guest's selected exam track to cloud account
+          await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+            'selectedExam': localExam,
+            'activeExam': localActive ?? (localExam == 'BOTH' ? 'DA' : localExam),
+          }, SetOptions(merge: true));
+        }
+
+        // Push any guest progress to the user's cloud account
+        await StorageService().backupToCloud(user.uid).timeout(const Duration(seconds: 10));
+      } catch (e) {
+        debugPrint('Post-login background cloud sync error: $e');
+      }
+    });
+  }
+
+    @override
   Widget build(BuildContext context) {
     final isDark = context.isDarkMode;
 
