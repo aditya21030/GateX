@@ -7,6 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../providers/app_provider.dart';
 import '../providers/pomodoro_provider.dart';
 import '../providers/auth_provider.dart';
+import '../services/storage_service.dart';
+import 'community_screen.dart';
 import '../theme/app_theme.dart';
 import '../widgets/neu_widgets.dart';
 import '../widgets/aspirant_avatar.dart';
@@ -82,9 +84,9 @@ class MoreScreen extends StatelessWidget {
               _buildToolsGrid(context),
               const SizedBox(height: 22),
 
-              // 4. LEADERBOARD & RANKINGS
+              // 4. COMMUNITY & STANDINGS
               Text(
-                'LEADERBOARD & STANDINGS',
+                'COMMUNITY & STANDINGS',
                 style: GoogleFonts.outfit(
                   color: context.textSecondaryColor,
                   fontSize: 11,
@@ -93,12 +95,28 @@ class MoreScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 12),
-              _buildActionTile(
-                context: context,
-                icon: Icons.emoji_events_rounded,
-                iconColor: AppTheme.accentGold,
-                title: 'GateX Leaderboard',
-                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RankingScreen())),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildActionTile(
+                      context: context,
+                      icon: Icons.emoji_events_rounded,
+                      iconColor: AppTheme.accentGold,
+                      title: 'Leaderboard',
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const RankingScreen())),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _buildActionTile(
+                      context: context,
+                      icon: Icons.groups_rounded,
+                      iconColor: const Color(0xFF8B5CF6),
+                      title: 'Community',
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CommunityScreen())),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 22),
 
@@ -221,9 +239,12 @@ class MoreScreen extends StatelessWidget {
   // Neumorphic Profile Header Card
   Widget _buildProfileCard(BuildContext context, AppProvider provider) {
     final authProvider = Provider.of<AuthProvider>(context);
+    final savedGuestName = StorageService().prefs.getString('guest_user_name');
     final userName = authProvider.isLoggedIn && authProvider.userName.isNotEmpty
         ? authProvider.userName
-        : 'Guest Aspirant';
+        : (savedGuestName != null && savedGuestName.trim().isNotEmpty
+            ? savedGuestName.trim()
+            : 'Guest Aspirant');
     final userEmail = authProvider.isLoggedIn ? authProvider.userEmail : 'Login to sync your preparation data';
 
     return GestureDetector(
@@ -550,10 +571,10 @@ class MoreScreen extends StatelessWidget {
     if (picked != null) {
       final hourStr = picked.hour.toString().padLeft(2, '0');
       final minStr = picked.minute.toString().padLeft(2, '0');
-      provider.updateNotificationSettings(provider.notificationsEnabled, '$hourStr:$minStr');
+      provider.updateNotificationSettings(true, '$hourStr:$minStr');
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Study reminder set for $hourStr:$minStr!'), backgroundColor: AppTheme.success),
+          SnackBar(content: Text('Study reminder enabled for $hourStr:$minStr!'), backgroundColor: AppTheme.success),
         );
       }
     }
@@ -562,7 +583,9 @@ class MoreScreen extends StatelessWidget {
   void _shareApp(BuildContext context) {
     const String shareMessage =
         'Prepare for GATE DA and CSIT with GateX! Syllabus, PYQs, TCS iON CBT mocks, and formula sheets.\n\nDownload: https://play.google.com/store/apps/details?id=com.yousful.gatex';
-    Share.share(shareMessage);
+    final box = context.findRenderObject() as RenderBox?;
+    final rect = box != null ? (box.localToGlobal(Offset.zero) & box.size) : null;
+    Share.share(shareMessage, sharePositionOrigin: rect);
   }
 
   Future<void> _rateApp(BuildContext context) async {
@@ -662,6 +685,14 @@ class MoreScreen extends StatelessWidget {
                   onTap: () {
                     HapticFeedback.selectionClick();
                     provider.setExams('DA', 'DA');
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Switched to GATE DA track'),
+                        duration: Duration(seconds: 1),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
                   },
                 ),
               ),
@@ -674,6 +705,14 @@ class MoreScreen extends StatelessWidget {
                   onTap: () {
                     HapticFeedback.selectionClick();
                     provider.setExams('CSIT', 'CSIT');
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Switched to GATE CS/IT track'),
+                        duration: Duration(seconds: 1),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
                   },
                 ),
               ),
@@ -686,6 +725,14 @@ class MoreScreen extends StatelessWidget {
                   onTap: () {
                     HapticFeedback.selectionClick();
                     provider.setExams('BOTH', activeExam);
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Switched to Dual Prep track'),
+                        duration: Duration(seconds: 1),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
                   },
                 ),
               ),
@@ -720,6 +767,14 @@ class MoreScreen extends StatelessWidget {
                     onTap: () {
                       HapticFeedback.selectionClick();
                       provider.setExams('BOTH', 'DA');
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Active View: GATE DA'),
+                          duration: Duration(seconds: 1),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
                     },
                   ),
                   const SizedBox(width: 6),
@@ -730,6 +785,14 @@ class MoreScreen extends StatelessWidget {
                     onTap: () {
                       HapticFeedback.selectionClick();
                       provider.setExams('BOTH', 'CSIT');
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Active View: GATE CS/IT'),
+                          duration: Duration(seconds: 1),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
                     },
                   ),
                 ],

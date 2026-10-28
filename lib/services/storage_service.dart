@@ -657,6 +657,17 @@ class StorageService {
   }
 
   Future<void> resetAllData() async {
+    final isPro = _prefs.getBool('is_gatex_pro_member') ?? false;
+    final planType = _prefs.getString('gatex_pro_plan_type');
+    final soloBranch = _prefs.getString('gatex_pro_solo_branch');
+    final selectedExam = _prefs.getString('selected_exam');
+    final activeExam = _prefs.getString('active_exam');
+    final guestName = _prefs.getString('guest_user_name');
+    final themeMode = _prefs.getString('theme_mode');
+    final notificationsEnabled = _prefs.getBool('notifications_enabled');
+    final notificationTime = _prefs.getString('notification_time');
+    final avatarId = _prefs.getString('user_avatar_id');
+
     await _topicStatusBox.clear();
     await _pyqBox.clear();
     await _errorLogBox.clear();
@@ -666,8 +677,24 @@ class StorageService {
     await _dynamicMockBox.clear();
     await _dynamicNotesBox.clear();
     await _prefs.clear();
+
     await _prefs.setBool('has_seen_onboarding', true);
     await _seedInitialData();
+
+    // Preserve critical user entitlements & preferences across study data wipe
+    if (isPro) {
+      await _prefs.setBool('is_gatex_pro_member', true);
+      if (planType != null) await _prefs.setString('gatex_pro_plan_type', planType);
+      if (soloBranch != null) await _prefs.setString('gatex_pro_solo_branch', soloBranch);
+    }
+    if (selectedExam != null) await _prefs.setString('selected_exam', selectedExam);
+    if (activeExam != null) await _prefs.setString('active_exam', activeExam);
+    if (guestName != null) await _prefs.setString('guest_user_name', guestName);
+    if (themeMode != null) await _prefs.setString('theme_mode', themeMode);
+    if (notificationsEnabled != null) await _prefs.setBool('notifications_enabled', notificationsEnabled);
+    if (notificationTime != null) await _prefs.setString('notification_time', notificationTime);
+    if (avatarId != null) await _prefs.setString('user_avatar_id', avatarId);
+
     await updateStreak();
   }
 }

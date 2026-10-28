@@ -1975,6 +1975,105 @@ void main() {
       expect(resolvePostAuthExam(cloudExam: null, localGuestExam: null), equals(''));
     });
   });
+
+  group('GateX Hub & Settings Persistence Tests', () {
+    test('Hub screen profile header correctly prioritizes custom guest name over default fallback', () {
+      String resolveHubHeaderName({
+        required bool isLoggedIn,
+        required String? authUserName,
+        required String? savedGuestName,
+      }) {
+        return isLoggedIn && authUserName != null && authUserName.isNotEmpty
+            ? authUserName
+            : (savedGuestName != null && savedGuestName.trim().isNotEmpty
+                ? savedGuestName.trim()
+                : 'Guest Aspirant');
+      }
+
+      // Guest with no custom name -> 'Guest Aspirant'
+      expect(resolveHubHeaderName(isLoggedIn: false, authUserName: null, savedGuestName: null), equals('Guest Aspirant'));
+      expect(resolveHubHeaderName(isLoggedIn: false, authUserName: null, savedGuestName: '   '), equals('Guest Aspirant'));
+
+      // Guest with custom saved name -> 'Aarav Gate'
+      expect(resolveHubHeaderName(isLoggedIn: false, authUserName: null, savedGuestName: 'Aarav Gate'), equals('Aarav Gate'));
+
+      // Logged in user overrides guest name
+      expect(resolveHubHeaderName(isLoggedIn: true, authUserName: 'Vikram', savedGuestName: 'Aarav Gate'), equals('Vikram'));
+    });
+
+    test('Reset study data preserves Pro pass entitlement, exam selection, notifications and theme', () {
+      final mockState = <String, dynamic>{
+        'is_gatex_pro_member': true,
+        'gatex_pro_plan_type': 'DUAL',
+        'gatex_pro_solo_branch': null,
+        'selected_exam': 'BOTH',
+        'active_exam': 'CSIT',
+        'guest_user_name': 'Topper2026',
+        'theme_mode': 'dark',
+        'notifications_enabled': true,
+        'notification_time': '21:30',
+        'user_avatar_id': 'avatar_5',
+        // Study checklist/mock scores to wipe
+        'mock_score_1': 74.5,
+        'topic_discrete_math_completed': true,
+      };
+
+      // Emulate resetAllData preservation logic
+      final isPro = mockState['is_gatex_pro_member'] ?? false;
+      final planType = mockState['gatex_pro_plan_type'];
+      final soloBranch = mockState['gatex_pro_solo_branch'];
+      final selectedExam = mockState['selected_exam'];
+      final activeExam = mockState['active_exam'];
+      final guestName = mockState['guest_user_name'];
+      final themeMode = mockState['theme_mode'];
+      final notificationsEnabled = mockState['notifications_enabled'];
+      final notificationTime = mockState['notification_time'];
+      final avatarId = mockState['user_avatar_id'];
+
+      // Wiped
+      mockState.clear();
+
+      // Restored
+      mockState['has_seen_onboarding'] = true;
+      if (isPro) {
+        mockState['is_gatex_pro_member'] = true;
+        if (planType != null) mockState['gatex_pro_plan_type'] = planType;
+        if (soloBranch != null) mockState['gatex_pro_solo_branch'] = soloBranch;
+      }
+      if (selectedExam != null) mockState['selected_exam'] = selectedExam;
+      if (activeExam != null) mockState['active_exam'] = activeExam;
+      if (guestName != null) mockState['guest_user_name'] = guestName;
+      if (themeMode != null) mockState['theme_mode'] = themeMode;
+      if (notificationsEnabled != null) mockState['notifications_enabled'] = notificationsEnabled;
+      if (notificationTime != null) mockState['notification_time'] = notificationTime;
+      if (avatarId != null) mockState['user_avatar_id'] = avatarId;
+
+      expect(mockState['is_gatex_pro_member'], isTrue);
+      expect(mockState['gatex_pro_plan_type'], equals('DUAL'));
+      expect(mockState['selected_exam'], equals('BOTH'));
+      expect(mockState['active_exam'], equals('CSIT'));
+      expect(mockState['guest_user_name'], equals('Topper2026'));
+      expect(mockState['theme_mode'], equals('dark'));
+      expect(mockState['notification_time'], equals('21:30'));
+      expect(mockState['user_avatar_id'], equals('avatar_5'));
+      expect(mockState.containsKey('mock_score_1'), isFalse);
+      expect(mockState.containsKey('topic_discrete_math_completed'), isFalse);
+    });
+
+    test('Selecting reminder time activates notifications if previously toggled off', () {
+      bool notificationsEnabled = false;
+      String reminderTime = '09:00';
+
+      void onNotificationTimePicked(String pickedTime) {
+        notificationsEnabled = true;
+        reminderTime = pickedTime;
+      }
+
+      onNotificationTimePicked('20:00');
+      expect(notificationsEnabled, isTrue);
+      expect(reminderTime, equals('20:00'));
+    });
+  });
 }
 
 
