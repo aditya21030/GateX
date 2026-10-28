@@ -414,10 +414,17 @@ class StorageService {
       return;
     }
 
-    // Truncate to midnight for accurate day difference
-    final today = DateTime.parse(todayStr);
-    final lastOpen = DateTime.parse(lastOpenStr);
-    final diff = today.difference(lastOpen).inDays;
+    // Truncate to midnight in UTC for daylight-saving and timezone-immune calendar day difference
+    int diff = 0;
+    try {
+      final today = DateTime.parse(todayStr);
+      final lastOpen = DateTime.parse(lastOpenStr);
+      final todayUtc = DateTime.utc(today.year, today.month, today.day);
+      final lastOpenUtc = DateTime.utc(lastOpen.year, lastOpen.month, lastOpen.day);
+      diff = todayUtc.difference(lastOpenUtc).inDays;
+    } catch (_) {
+      diff = 1;
+    }
 
     if (diff == 1) {
       // Opened consecutive day

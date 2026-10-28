@@ -14,6 +14,7 @@ import 'mock_tracker_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'mock_test_runner_screen.dart';
 import '../models/models.dart';
+import '../services/ad_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -136,25 +137,31 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
-          // Tactile Streak Flame Pill
-          NeuContainer(
-            borderRadius: 16,
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            margin: const EdgeInsets.symmetric(vertical: 10.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon3D(Icons.local_fire_department_rounded, size: 16, color: AppTheme.accentFlame),
-                const SizedBox(width: 4),
-                Text(
-                  '${provider.streak}d',
-                  style: const TextStyle(
-                    color: AppTheme.accentFlame,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
+          // Tactile Streak Flame Pill (Interactive)
+          GestureDetector(
+            onTap: () {
+              HapticFeedback.selectionClick();
+              _showStreakDetailsSheet(context, provider);
+            },
+            child: NeuContainer(
+              borderRadius: 16,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              margin: const EdgeInsets.symmetric(vertical: 10.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon3D(Icons.local_fire_department_rounded, size: 16, color: AppTheme.accentFlame),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${provider.streak}d',
+                    style: const TextStyle(
+                      color: AppTheme.accentFlame,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           const SizedBox(width: 8),
@@ -500,16 +507,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     alignment: Alignment.center,
                     child: isCompleted
                         ? const Icon(Icons.check_rounded, color: streakOrangeEnd, size: 20)
-                        : Text(
-                            weekDays[index],
-                            style: GoogleFonts.outfit(
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.bold,
-                              color: isToday
-                                  ? Colors.white
-                                  : Colors.white.withValues(alpha: 0.85),
-                            ),
-                          ),
+                        : (isToday
+                            ? const Icon(Icons.local_fire_department_rounded, color: Colors.white, size: 18)
+                            : Container(
+                                width: 5,
+                                height: 5,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.45),
+                                  shape: BoxShape.circle,
+                                ),
+                              )),
                   ),
                   const SizedBox(height: 6),
                   Text(
@@ -524,6 +531,55 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             }),
           ),
+          if (provider.previousStreak > 1) ...[
+            const SizedBox(height: 14),
+            InkWell(
+              onTap: () => _handleStreakRecovery(context, provider),
+              borderRadius: BorderRadius.circular(14),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.45),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.history_toggle_off_rounded, color: Colors.white, size: 18),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Streak broken? Restore your ${provider.previousStreak}-day streak!',
+                        style: GoogleFonts.outfit(
+                          color: Colors.white,
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        provider.isPro ? 'RESTORE ⚡' : 'RESTORE 🎁',
+                        style: GoogleFonts.outfit(
+                          color: streakOrangeEnd,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -1156,6 +1212,154 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+
+  Future<void> _handleStreakRecovery(BuildContext context, AppProvider provider) async {
+    HapticFeedback.mediumImpact();
+    final messenger = ScaffoldMessenger.of(context);
+    final prev = provider.previousStreak;
+    if (prev <= 1) return;
+
+    if (provider.isPro) {
+      await provider.restoreStreak();
+      messenger.clearSnackBars();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('🎉 GateX Pro Perk: Your $prev-day study streak has been restored!'),
+          backgroundColor: AppTheme.success,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    final shouldRestore = await AdService().promptWatchRewardedAd(
+      context: context,
+      perkTitle: 'Restore $prev-Day Streak',
+      perkDescription:
+          'Watch a short video to recover your $prev-day study flame! Or get GateX Pro for instant unlimited streak protection.',
+    );
+
+    if (shouldRestore) {
+      await provider.restoreStreak();
+      messenger.clearSnackBars();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text('🎉 Your $prev-day study streak has been restored! Keep the flame burning.'),
+          backgroundColor: AppTheme.success,
+          duration: const Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
+  void _showStreakDetailsSheet(BuildContext context, AppProvider provider) {
+    final streak = provider.streak;
+    final prev = provider.previousStreak;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: context.scaffoldBackground,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return Container(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.white24,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const NeuIconTile(
+                icon: Icons.local_fire_department_rounded,
+                iconColor: AppTheme.accentFlame,
+                size: 64,
+                iconSize: 36,
+                gradient: AppTheme.flameGradient,
+              ),
+              const SizedBox(height: 14),
+              Text(
+                '$streak Day Streak 🔥',
+                style: GoogleFonts.poppins(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: context.textColor,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Open GateX and solve at least 1 PYQ or mock daily before midnight to maintain your flame.',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.outfit(
+                  fontSize: 13,
+                  color: context.textSecondaryColor,
+                  height: 1.4,
+                ),
+              ),
+              if (prev > 1) ...[
+                const SizedBox(height: 18),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _handleStreakRecovery(context, provider);
+                  },
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: AppTheme.accentFlame.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppTheme.accentFlame.withValues(alpha: 0.4),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.history_toggle_off_rounded, color: AppTheme.accentFlame),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Recover $prev-Day Streak',
+                                style: GoogleFonts.outfit(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: AppTheme.accentFlame,
+                                ),
+                              ),
+                              Text(
+                                provider.isPro ? 'Tap to restore for free with Pro' : 'Tap to restore with a short ad',
+                                style: TextStyle(fontSize: 11, color: context.textSecondaryColor),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.chevron_right_rounded, color: AppTheme.accentFlame),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+              const SizedBox(height: 20),
+              NeuButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('Keep Crushing Goals 🚀', style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   void _showBranchSwitcherSheet(BuildContext context, AppProvider provider) {
     showModalBottomSheet(

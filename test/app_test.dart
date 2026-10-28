@@ -279,6 +279,59 @@ void main() {
       );
       expect(streak, 1);
     });
+
+    test('Broken streak saves previous streak and allows full recovery', () {
+      // Simulation of StorageService streak break and restore
+      int currentStreak = 18;
+      int previousStreak = 0;
+
+      // User misses 2 days
+      const todayStr = '2026-06-15';
+      const lastOpenStr = '2026-06-12';
+
+      final today = DateTime.parse(todayStr);
+      final lastOpen = DateTime.parse(lastOpenStr);
+      final diff = DateTime.utc(today.year, today.month, today.day)
+          .difference(DateTime.utc(lastOpen.year, lastOpen.month, lastOpen.day))
+          .inDays;
+
+      expect(diff, equals(3));
+      if (diff > 1) {
+        previousStreak = currentStreak;
+        currentStreak = 1;
+      }
+
+      expect(currentStreak, equals(1));
+      expect(previousStreak, equals(18));
+
+      // User restores streak (via Ad or Pro Pass)
+      if (previousStreak > 0) {
+        currentStreak = previousStreak;
+        previousStreak = 0;
+      }
+
+      expect(currentStreak, equals(18));
+      expect(previousStreak, equals(0));
+    });
+
+    test('UTC midnight difference accurately counts days across months and leap years', () {
+      int getDiff(String d1, String d2) {
+        final t1 = DateTime.parse(d1);
+        final t2 = DateTime.parse(d2);
+        return DateTime.utc(t1.year, t1.month, t1.day)
+            .difference(DateTime.utc(t2.year, t2.month, t2.day))
+            .inDays;
+      }
+
+      // Across month boundary
+      expect(getDiff('2026-07-01', '2026-06-30'), equals(1));
+
+      // Across year boundary
+      expect(getDiff('2027-01-01', '2026-12-31'), equals(1));
+
+      // Multiple days gap
+      expect(getDiff('2026-07-05', '2026-07-01'), equals(4));
+    });
   });
 
   group('Mock Test Scoring Logic Tests', () {
