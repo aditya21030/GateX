@@ -154,16 +154,15 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
         final appProvider = Provider.of<AppProvider>(context, listen: false);
         
         final bool isLoggedIn = authProvider.isLoggedIn;
-        final bool hasSelectedExam = appProvider.selectedExam != null;
+        final bool hasSelectedExam = appProvider.selectedExam != null && appProvider.selectedExam!.isNotEmpty;
+        final bool isGuestMode = StorageService().prefs.getBool('is_guest_mode') ?? false;
 
         Widget nextScreen;
-        if (!isLoggedIn) {
+        if (isLoggedIn || (isGuestMode && hasSelectedExam)) {
+          nextScreen = hasSelectedExam ? const MainNavigationScaffold() : const ExamSelectionScreen();
+        } else {
           final hasSeenOnboarding = StorageService().prefs.getBool('has_seen_onboarding') ?? false;
           nextScreen = hasSeenOnboarding ? const AuthScreen() : const OnboardingScreen();
-        } else if (hasSelectedExam) {
-          nextScreen = const MainNavigationScaffold();
-        } else {
-          nextScreen = const ExamSelectionScreen();
         }
 
         Navigator.of(context).pushReplacement(

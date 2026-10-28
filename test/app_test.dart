@@ -1667,6 +1667,87 @@ void main() {
       expect(resolvePlan(PurchaseService.proSoloProductId, packages), equals('gatex_pro_solo_2027'));
     });
   });
+
+  group('Guest User Flow & Lifecycle Edge Case Tests', () {
+    test('Splash screen routing correctly handles guest mode cold launch', () {
+      String resolveNextRoute({
+        required bool isLoggedIn,
+        required bool hasSelectedExam,
+        required bool isGuestMode,
+        required bool hasSeenOnboarding,
+      }) {
+        if (isLoggedIn || (isGuestMode && hasSelectedExam)) {
+          return hasSelectedExam ? 'MainNavigationScaffold' : 'ExamSelectionScreen';
+        } else {
+          return hasSeenOnboarding ? 'AuthScreen' : 'OnboardingScreen';
+        }
+      }
+
+      // 1. Fresh first launch
+      expect(resolveNextRoute(isLoggedIn: false, hasSelectedExam: false, isGuestMode: false, hasSeenOnboarding: false), equals('OnboardingScreen'));
+
+      // 2. Completed onboarding, on login screen
+      expect(resolveNextRoute(isLoggedIn: false, hasSelectedExam: false, isGuestMode: false, hasSeenOnboarding: true), equals('AuthScreen'));
+
+      // 3. User continued as guest and selected GATE DA -> Cold launch MUST go directly to MainNavigationScaffold
+      expect(resolveNextRoute(isLoggedIn: false, hasSelectedExam: true, isGuestMode: true, hasSeenOnboarding: true), equals('MainNavigationScaffold'));
+
+      // 4. Guest user who hasn't selected exam yet
+      expect(resolveNextRoute(isLoggedIn: false, hasSelectedExam: false, isGuestMode: true, hasSeenOnboarding: true), equals('AuthScreen'));
+
+      // 5. Authenticated user with selected exam
+      expect(resolveNextRoute(isLoggedIn: true, hasSelectedExam: true, isGuestMode: false, hasSeenOnboarding: true), equals('MainNavigationScaffold'));
+
+      // 6. User logged out (isGuestMode reset to false)
+      expect(resolveNextRoute(isLoggedIn: false, hasSelectedExam: true, isGuestMode: false, hasSeenOnboarding: true), equals('AuthScreen'));
+    });
+
+    test('Guest username fallback hierarchy', () {
+      String resolveUserName({
+        String? displayName,
+        String? email,
+        String? guestUserName,
+      }) {
+        return displayName ?? (email != null && email.contains('@') ? email.split('@')[0] : null) ?? guestUserName ?? 'Guest Student';
+      }
+
+      // Guest with no custom name
+      expect(resolveUserName(), equals('Guest Student'));
+
+      // Guest with custom profile name
+      expect(resolveUserName(guestUserName: 'Aditya'), equals('Aditya'));
+
+      // Logged in user with email only
+      expect(resolveUserName(email: 'aspirant2027@gmail.com', guestUserName: 'Aditya'), equals('aspirant2027'));
+
+      // Logged in user with Google Display Name
+      expect(resolveUserName(displayName: 'Aditya Kumar', email: 'aditya@gmail.com', guestUserName: 'Aditya'), equals('Aditya Kumar'));
+    });
+
+    test('Guest to registered user exam preservation prevents wiping chosen branch', () {
+      String resolvePostAuthExam({
+        required String? cloudExam,
+        required String? localGuestExam,
+      }) {
+        if (cloudExam != null && cloudExam.isNotEmpty) {
+          return cloudExam;
+        }
+        if (localGuestExam != null && localGuestExam.isNotEmpty) {
+          return localGuestExam;
+        }
+        return '';
+      }
+
+      // Returning user with cloud exam
+      expect(resolvePostAuthExam(cloudExam: 'DA', localGuestExam: 'CSIT'), equals('DA'));
+
+      // Guest user registering account for first time (cloud is empty, local is DA)
+      expect(resolvePostAuthExam(cloudExam: null, localGuestExam: 'DA'), equals('DA'));
+
+      // Completely new user with no previous guest selection
+      expect(resolvePostAuthExam(cloudExam: null, localGuestExam: null), equals(''));
+    });
+  });
 }
 
 

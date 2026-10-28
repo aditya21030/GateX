@@ -29,7 +29,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    _nameController.text = authProvider.isLoggedIn ? authProvider.userName : 'Guest Aspirant';
+    _nameController.text = authProvider.isLoggedIn
+        ? authProvider.userName
+        : (StorageService().prefs.getString('guest_user_name') ?? 'Guest Aspirant');
     _emailController.text = authProvider.isLoggedIn ? authProvider.userEmail : 'Offline Mode (Local Storage)';
   }
 
@@ -45,7 +47,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() => _isLoading = true);
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      await authProvider.updateProfile(name: _nameController.text.trim());
+      if (authProvider.isLoggedIn) {
+        await authProvider.updateProfile(name: _nameController.text.trim());
+      } else {
+        await StorageService().prefs.setString('guest_user_name', _nameController.text.trim());
+      }
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -805,6 +811,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Navigator.pop(ctx);
               await authProvider.logout();
               await StorageService().resetAllData();
+              await StorageService().prefs.setBool('is_guest_mode', false);
               await appProvider.init();
               if (context.mounted) {
                 Navigator.of(context).pushAndRemoveUntil(

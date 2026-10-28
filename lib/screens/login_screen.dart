@@ -94,7 +94,9 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _continueAsGuest() {
+  void _continueAsGuest() async {
+    await StorageService().prefs.setBool('is_guest_mode', true);
+    if (!mounted) return;
     final appProvider = Provider.of<AppProvider>(context, listen: false);
     final hasSelectedExam = appProvider.selectedExam != null && appProvider.selectedExam!.isNotEmpty;
 
@@ -111,40 +113,47 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!mounted) return;
     final appProvider = Provider.of<AppProvider>(context, listen: false);
     final user = FirebaseAuth.instance.currentUser;
+    final localExam = appProvider.selectedExam;
+    final localActive = appProvider.activeExam;
+    final hasLocalExam = localExam != null && localExam.isNotEmpty;
 
-    if (isNewUser) {
-      appProvider.setExams('', '');
-      if (!mounted) return;
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const ExamSelectionScreen()),
-      );
-    } else {
-      if (user != null) {
-        try {
-          await StorageService().restoreFromCloud(user.uid);
-          await appProvider.init();
+    if (user != null) {
+      try {
+        await StorageService().restoreFromCloud(user.uid);
+        await appProvider.init();
 
-          final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-          if (doc.exists && doc.data() != null && doc.data()!.containsKey('selectedExam')) {
-            String savedExam = doc.data()!['selectedExam'];
-            String activeExam = doc.data()!['activeExam'] ?? (savedExam == 'BOTH' ? 'DA' : savedExam);
+        final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        if (doc.exists && doc.data() != null && doc.data()!.containsKey('selectedExam')) {
+          String savedExam = doc.data()!['selectedExam'];
+          String activeExam = doc.data()!['activeExam'] ?? (savedExam == 'BOTH' ? 'DA' : savedExam);
+          await appProvider.setExams(savedExam, activeExam);
+        } else if (hasLocalExam) {
+          // Promote guest's selected exam track to cloud account
+          await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+            'selectedExam': localExam,
+            'activeExam': localActive ?? (localExam == 'BOTH' ? 'DA' : localExam),
+          }, SetOptions(merge: true));
+        }
 
-            await appProvider.setExams(savedExam, activeExam);
-
-            if (!mounted) return;
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const MainNavigationScaffold()),
-            );
-            return;
-          }
-        } catch (_) {}
+        // Push any guest progress to the user's cloud account
+        await StorageService().backupToCloud(user.uid);
+      } catch (e) {
+        debugPrint('Post-login cloud sync error: $e');
       }
-
-      if (!mounted) return;
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const ExamSelectionScreen()),
-      );
     }
+
+    await StorageService().prefs.setBool('is_guest_mode', false);
+
+    if (!mounted) return;
+    final finalExam = appProvider.selectedExam;
+    final hasExam = finalExam != null && finalExam.isNotEmpty;
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (_) => hasExam ? const MainNavigationScaffold() : const ExamSelectionScreen(),
+      ),
+      (route) => false,
+    );
   }
 
   @override

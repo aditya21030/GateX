@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/models.dart';
@@ -533,6 +534,47 @@ class StorageService {
     }
   }
 
+  /// Push all local Hive progress and settings to the user's Firestore cloud account
+  Future<void> backupToCloud(String uid) async {
+    try {
+      final cloudSync = CloudSyncService();
+
+      // 1. Settings & Streaks
+      await cloudSync.pushSettings({
+        'current_streak': _prefs.getInt('current_streak') ?? 1,
+        'previous_streak': _prefs.getInt('previous_streak') ?? 0,
+        'last_open_date': _prefs.getString('last_open_date'),
+        'notifications_enabled': _prefs.getBool('notifications_enabled') ?? true,
+        'notification_time': _prefs.getString('notification_time') ?? '09:00',
+        'selected_exam': _prefs.getString('selected_exam'),
+        'active_exam': _prefs.getString('active_exam'),
+      });
+
+      // 2. Local Boxes (Progress, Solved PYQs, Error Logs, etc.)
+      final boxesToBackup = {
+        'topicStatus': _topicStatusBox,
+        'pyqs': _pyqBox,
+        'errorLog': _errorLogBox,
+        'mockTests': _mockTestBox,
+        'revisionQueue': _revisionQueueBox,
+        'studyPlan': _studyPlanBox,
+      };
+
+      for (var entry in boxesToBackup.entries) {
+        final colName = entry.key;
+        final box = entry.value;
+        for (var key in box.keys) {
+          final val = box.get(key);
+          if (val is Map) {
+            await cloudSync.pushToCloud(colName, key.toString(), Map<String, dynamic>.from(val));
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('StorageService.backupToCloud error: $e');
+    }
+  }
+
   /// Retrieve an OTA dynamic mock test cached from Firestore
   List<PYQ>? getDynamicMock(String exam, int mockNumber) {
     try {
@@ -615,6 +657,7 @@ class StorageService {
     await _dynamicMockBox.clear();
     await _dynamicNotesBox.clear();
     await _prefs.clear();
+    await _prefs.setBool('has_seen_onboarding', true);
     await _seedInitialData();
     await updateStreak();
   }

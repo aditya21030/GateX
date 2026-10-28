@@ -94,54 +94,74 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
+  void _continueAsGuest() async {
+    await StorageService().prefs.setBool('is_guest_mode', true);
+    if (!mounted) return;
+    final appProvider = Provider.of<AppProvider>(context, listen: false);
+    final hasSelectedExam = appProvider.selectedExam != null && appProvider.selectedExam!.isNotEmpty;
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => hasSelectedExam
+            ? const MainNavigationScaffold()
+            : const ExamSelectionScreen(),
+      ),
+    );
+  }
+
   Future<void> _navigateAfterAuth(bool isNewUser) async {
     if (!mounted) return;
     final appProvider = Provider.of<AppProvider>(context, listen: false);
     final user = FirebaseAuth.instance.currentUser;
+    final localExam = appProvider.selectedExam;
+    final localActive = appProvider.activeExam;
+    final hasLocalExam = localExam != null && localExam.isNotEmpty;
 
-    if (isNewUser) {
-      appProvider.setExams('', '');
-      if (user != null) {
-        try {
+    if (user != null) {
+      try {
+        await StorageService().restoreFromCloud(user.uid);
+        await appProvider.init();
+
+        final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        if (doc.exists && doc.data() != null && doc.data()!.containsKey('selectedExam')) {
+          String savedExam = doc.data()!['selectedExam'];
+          String activeExam = doc.data()!['activeExam'] ?? (savedExam == 'BOTH' ? 'DA' : savedExam);
+          await appProvider.setExams(savedExam, activeExam);
+        } else if (hasLocalExam) {
+          // Promote guest's chosen exam to cloud
+          await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+            'selectedExam': localExam,
+            'activeExam': localActive ?? (localExam == 'BOTH' ? 'DA' : localExam),
+          }, SetOptions(merge: true));
+        }
+
+        if (isNewUser) {
           await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
             'name': _nameController.text.trim(),
             'email': _emailController.text.trim(),
             'createdAt': FieldValue.serverTimestamp(),
           }, SetOptions(merge: true));
-        } catch (_) {}
+        }
+
+        // Push any guest progress to the user's new cloud account
+        await StorageService().backupToCloud(user.uid);
+      } catch (e) {
+        debugPrint('Post-signup cloud sync error: $e');
       }
-
-      if (!mounted) return;
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const MainNavigationScaffold()),
-      );
-    } else {
-      if (user != null) {
-        try {
-          await StorageService().restoreFromCloud(user.uid);
-          await appProvider.init();
-
-          final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-          if (doc.exists && doc.data() != null && doc.data()!.containsKey('selectedExam')) {
-            String savedExam = doc.data()!['selectedExam'];
-            String activeExam = doc.data()!['activeExam'] ?? (savedExam == 'BOTH' ? 'DA' : savedExam);
-
-            await appProvider.setExams(savedExam, activeExam);
-
-            if (!mounted) return;
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const MainNavigationScaffold()),
-            );
-            return;
-          }
-        } catch (_) {}
-      }
-
-      if (!mounted) return;
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const ExamSelectionScreen()),
-      );
     }
+
+    await StorageService().prefs.setBool('is_guest_mode', false);
+
+    if (!mounted) return;
+    final finalExam = appProvider.selectedExam;
+    final hasExam = finalExam != null && finalExam.isNotEmpty;
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (_) => hasExam ? const MainNavigationScaffold() : const ExamSelectionScreen(),
+      ),
+      (route) => false,
+    );
   }
 
   @override
@@ -413,7 +433,45 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           isLoading: _isLoading,
                           onPressed: _signUp,
                         ),
-                        const SizedBox(height: 18),
+                        const SizedBox(height: 12),
+
+                        // Explore as Guest Button
+                        InkWell(
+                          onTap: _continueAsGuest,
+                          borderRadius: BorderRadius.circular(22),
+                          child: Container(
+                            height: 48,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(22),
+                              border: Border.all(
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.12)
+                                    : const Color(0xFFE4E4E8),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.explore_outlined,
+                                  size: 18,
+                                  color: isDark ? Colors.white70 : const Color(0xFF5A5A66),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Explore as Guest',
+                                  style: GoogleFonts.outfit(
+                                    color: isDark ? Colors.white70 : const Color(0xFF5A5A66),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 14),
 
                         // Footer: Already have an account? Log In
                         Row(

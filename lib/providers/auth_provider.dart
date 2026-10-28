@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/services.dart';
 import '../services/purchase_service.dart';
+import '../services/storage_service.dart';
+
 
 class AuthProvider extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -11,7 +13,7 @@ class AuthProvider extends ChangeNotifier {
   User? _user;
 
   bool get isLoggedIn => _user != null;
-  String get userName => _user?.displayName ?? _user?.email?.split('@')[0] ?? 'Guest Student';
+  String get userName => _user?.displayName ?? _user?.email?.split('@')[0] ?? (StorageService().prefs.getString('guest_user_name') ?? 'Guest Student');
   String get userEmail => _user?.email ?? '';
 
   Future<void> init() async {
