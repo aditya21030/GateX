@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -136,6 +137,28 @@ class AuthProvider extends ChangeNotifier {
         _user = _auth.currentUser;
         notifyListeners();
       }
+    } catch (e) {
+      throw _getFriendlyErrorMessage(e);
+    }
+  }
+
+  Future<void> deleteAccount() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) throw 'User not logged in';
+
+      // 1. Delete Firestore user document if present
+      try {
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).delete();
+      } catch (e) {
+        debugPrint('Firestore delete error: $e');
+      }
+
+      // 2. Delete Firebase Auth account
+      await user.delete();
+      await GoogleSignIn.instance.signOut();
+      _user = null;
+      notifyListeners();
     } catch (e) {
       throw _getFriendlyErrorMessage(e);
     }

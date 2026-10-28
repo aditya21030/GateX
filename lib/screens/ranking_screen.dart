@@ -1,3 +1,4 @@
+import '../services/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +14,12 @@ class RankingScreen extends StatefulWidget {
 
 class _RankingScreenState extends State<RankingScreen> {
   bool _isNotified = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isNotified = StorageService().prefs.getBool('ranking_leaderboard_notified') ?? false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +153,7 @@ class _RankingScreenState extends State<RankingScreen> {
                       isPrimary: !_isNotified,
                       onPressed: () {
                         HapticFeedback.heavyImpact();
+                        StorageService().prefs.setBool('ranking_leaderboard_notified', true);
                         setState(() {
                           _isNotified = true;
                         });

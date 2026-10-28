@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/storage_service.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
@@ -16,6 +17,12 @@ class CommunityScreen extends StatefulWidget {
 class _CommunityScreenState extends State<CommunityScreen> {
   bool _isWaitlistJoined = false;
   final TextEditingController _doubtController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _isWaitlistJoined = StorageService().prefs.getBool('community_waitlist_joined') ?? false;
+  }
 
   @override
   void dispose() {
@@ -81,6 +88,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
   void _joinWaitlist() {
     HapticFeedback.heavyImpact();
+    StorageService().prefs.setBool('community_waitlist_joined', true);
     setState(() => _isWaitlistJoined = true);
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(

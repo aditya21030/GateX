@@ -483,7 +483,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: EdgeInsets.zero,
                   child: Column(
                     children: [
-                      if (authProvider.isLoggedIn)
+                      if (authProvider.isLoggedIn) ...[
                         ListTile(
                           leading: const NeuIconTile(
                             icon: Icons.lock_outline_rounded,
@@ -494,7 +494,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           title: Text('Change Password', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor)),
                           trailing: Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor, size: 18),
                           onTap: () => _showPasswordSheet(context),
-                        )
+                        ),
+                        Divider(height: 1, color: context.colorBorder.withValues(alpha: 0.5)),
+                        ListTile(
+                          leading: const NeuIconTile(
+                            icon: Icons.delete_forever_rounded,
+                            iconColor: AppTheme.accentCoral,
+                            size: 36,
+                            iconSize: 18,
+                          ),
+                          title: const Text('Delete Account', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppTheme.accentCoral)),
+                          subtitle: Text('Permanently erase account and cloud data', style: TextStyle(color: context.textSecondaryColor, fontSize: 11)),
+                          trailing: Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor, size: 18),
+                          onTap: () => _handleDeleteAccount(context, authProvider, appProvider),
+                        ),
+                      ]
                       else
                         ListTile(
                           leading: const NeuIconTile(
@@ -780,8 +794,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         title: Text('Log Out?', style: TextStyle(color: context.textColor, fontWeight: FontWeight.bold)),
         content: const Text(
-          'Your local progress is saved on your device.',
-          style: TextStyle(fontSize: 13),
+          'Are you sure you want to log out? Make sure your progress is synced to the cloud so you can restore it anytime.',
+          style: TextStyle(fontSize: 13, height: 1.35),
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
@@ -800,6 +814,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
               }
             },
             child: const Text('Log Out', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleDeleteAccount(BuildContext context, AuthProvider authProvider, AppProvider appProvider) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: context.colorSurface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        title: const Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: AppTheme.accentCoral, size: 22),
+            SizedBox(width: 8),
+            Text('Delete Account?', style: TextStyle(color: AppTheme.accentCoral, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        content: const Text(
+          'This will permanently delete your GateX account, cloud progress, and profile data. This action cannot be undone.',
+          style: TextStyle(fontSize: 13, height: 1.4),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.accentCoral),
+            onPressed: () async {
+              Navigator.pop(ctx);
+              try {
+                await authProvider.deleteAccount();
+                await StorageService().resetAllData();
+                await appProvider.init();
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Account permanently deleted.')),
+                  );
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    (route) => false,
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.accentCoral),
+                  );
+                }
+              }
+            },
+            child: const Text('Delete Permanently', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
