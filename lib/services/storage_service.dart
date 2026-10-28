@@ -325,17 +325,18 @@ class StorageService {
 
       // Seeding and Pruning
       final Set<String> validKeys = {};
-      final allSyllabusData = {...syllabusData, ...csitSyllabusData};
-      allSyllabusData.forEach((subject, topics) {
-        for (var topic in topics) {
-          final key = '${subject}_$topic';
-          validKeys.add(key);
-          if (!_topicStatusBox.containsKey(key)) {
-            final status = TopicStatus(topicName: topic, subjectName: subject);
-            _topicStatusBox.put(key, status.toMap());
+      for (final data in [syllabusData, csitSyllabusData]) {
+        data.forEach((subject, topics) {
+          for (var topic in topics) {
+            final key = '${subject}_$topic';
+            validKeys.add(key);
+            if (!_topicStatusBox.containsKey(key)) {
+              final status = TopicStatus(topicName: topic, subjectName: subject);
+              _topicStatusBox.put(key, status.toMap());
+            }
           }
-        }
-      });
+        });
+      }
 
       // Clean up obsolete keys
       final keysToDelete = _topicStatusBox.keys
@@ -371,14 +372,15 @@ class StorageService {
 
   Future<void> _seedInitialData() async {
     // 1. Seed Topic Statuses
-    final allSyllabusData = {...syllabusData, ...csitSyllabusData};
-    allSyllabusData.forEach((subject, topics) {
-      for (var topic in topics) {
-        final key = '${subject}_$topic';
-        final status = TopicStatus(topicName: topic, subjectName: subject);
-        _topicStatusBox.put(key, status.toMap());
-      }
-    });
+    for (final data in [syllabusData, csitSyllabusData]) {
+      data.forEach((subject, topics) {
+        for (var topic in topics) {
+          final key = '${subject}_$topic';
+          final status = TopicStatus(topicName: topic, subjectName: subject);
+          _topicStatusBox.put(key, status.toMap());
+        }
+      });
+    }
 
     // 2. Seed PYQs
     for (var pyq in allSamplePYQs) {

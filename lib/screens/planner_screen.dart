@@ -24,6 +24,7 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
   final TextEditingController _searchController = TextEditingController();
 
   // Agile Checklist state
+  String? _lastExamBranch;
   String _checklistSearchQuery = '';
   String _checklistFilter = 'All'; // 'All', 'Unfinished', 'Concept Left', 'PYQ Left', 'Needs Revision'
   final Set<String> _expandedSubjects = {};
@@ -334,25 +335,25 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
     if (!isCSIT) {
       if (s.contains('prob') || s.contains('stat')) return 'Probability and Statistics';
       if (s.contains('linear') || s.contains('algebra')) return 'Linear Algebra';
-      if (s.contains('calculus') || s.contains('optimization')) return 'Calculus and Optimization';
-      if (s.contains('machine learning') || s == 'ml') return 'Machine Learning';
+      if (s.contains('calculus') || s.contains('optimi')) return 'Calculus and Optimization';
+      if (s.contains('machine') || RegExp(r'\bml\b').hasMatch(s)) return 'Machine Learning';
       if (s.contains('python')) return 'Python (Main Topics Only)';
       if (s.contains('dsa') || s.contains('data struct') || s.contains('algorithm')) return 'DSA (Data Structures and Algorithms)';
       if (s.contains('database') || s.contains('dbms') || s.contains('warehousing')) return 'Database Management and Warehousing';
-      if (s.contains('ai') || s.contains('artificial')) return 'AI';
+      if (RegExp(r'\bai\b').hasMatch(s) || s.contains('artificial') || s.contains('logic')) return 'AI';
       if (s.contains('aptitude')) return 'General Aptitude';
     } else {
+      if (s.contains('aptitude')) return 'General Aptitude';
       if (s.contains('math')) return 'Engineering Mathematics';
       if (s.contains('digital') || s.contains('logic')) return 'Digital Logic';
-      if (s.contains('co') || s.contains('organization') || s.contains('architecture')) return 'Computer Organization';
-      if (s.contains('program') || s.contains('data struct')) return 'Programming & Data Structures';
-      if (s.contains('algorithm')) return 'Algorithms';
-      if (s.contains('toc') || s.contains('computation')) return 'Theory of Computation';
       if (s.contains('compiler')) return 'Compiler Design';
-      if (s.contains('operating') || s.contains('os')) return 'Operating System';
+      if (s.contains('computation') || s.contains('toc') || s.contains('automata')) return 'Theory of Computation';
+      if (s.contains('network') || RegExp(r'\bcn\b').hasMatch(s)) return 'Computer Networks';
+      if (s.contains('operating') || RegExp(r'\bos\b').hasMatch(s)) return 'Operating System';
       if (s.contains('database') || s.contains('dbms')) return 'Databases';
-      if (s.contains('network') || s.contains('cn')) return 'Computer Networks';
-      if (s.contains('aptitude')) return 'General Aptitude';
+      if (s.contains('algorithm')) return 'Algorithms';
+      if (s.contains('program') || s.contains('data struct')) return 'Programming & Data Structures';
+      if (s.contains('organization') || s.contains('organisation') || s.contains('architecture') || RegExp(r'\bcoa?\b').hasMatch(s)) return 'Computer Organization';
     }
 
     // 3. Fallback search
@@ -390,6 +391,15 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<AppProvider>(context);
+
+    // Reset checklist query & expand state when user switches active exam branch
+    if (_lastExamBranch != null && _lastExamBranch != provider.activeExam) {
+      _expandedSubjects.clear();
+      _checklistSearchQuery = '';
+      _searchController.clear();
+      _checklistFilter = 'All';
+    }
+    _lastExamBranch = provider.activeExam;
 
     return Scaffold(
         backgroundColor: context.colorBackground,
@@ -480,6 +490,25 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
     });
 
     final overallProgress = totalTopics > 0 ? (masteredTopics / totalTopics) : 0.0;
+
+    final totalMatchingTopics = syllabus.entries.fold<int>(0, (sum, entry) {
+      return sum + entry.value.where((topic) {
+        if (_checklistSearchQuery.isNotEmpty) {
+          final q = _checklistSearchQuery.toLowerCase();
+          if (!topic.toLowerCase().contains(q) && !entry.key.toLowerCase().contains(q)) {
+            return false;
+          }
+        }
+        final st = provider.getTopicStatus(entry.key, topic);
+        if (_checklistFilter == 'Unfinished' && st.isCompleted) return false;
+        if (_checklistFilter == 'Concept Left' && st.conceptWatched) return false;
+        if (_checklistFilter == 'PYQ Left' && st.pyqSolved) return false;
+        if (_checklistFilter == 'Needs Revision' && st.revisedOnce) return false;
+        return true;
+      }).length;
+    });
+
+    final bool allExpanded = syllabus.keys.every((k) => _expandedSubjects.contains(k));
 
     return Column(
       children: [
@@ -651,63 +680,182 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
                   ],
                 ),
               ),
+
+              // Expand/Collapse All and Results Count bar
+              Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '$totalMatchingTopics topics visible',
+                      style: GoogleFonts.outfit(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: context.textSecondaryColor,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        setState(() {
+                          if (allExpanded) {
+                            _expandedSubjects.clear();
+                          } else {
+                            _expandedSubjects.addAll(syllabus.keys);
+                          }
+                        });
+                      },
+                      borderRadius: BorderRadius.circular(8),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              allExpanded ? Icons.unfold_less_rounded : Icons.unfold_more_rounded,
+                              size: 14,
+                              color: AppTheme.accentPurple,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              allExpanded ? 'Collapse All' : 'Expand All',
+                              style: GoogleFonts.outfit(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.accentPurple,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
 
-        // Subject Accordions
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.fromLTRB(14, 10, 14, 100),
-            physics: const BouncingScrollPhysics(),
-            itemCount: syllabus.keys.length,
-            itemBuilder: (context, index) {
-              final subject = syllabus.keys.elementAt(index);
-              final allTopics = syllabus[subject]!;
+        // Subject Accordions or Empty State
+        if (totalMatchingTopics == 0)
+          Expanded(
+            child: Center(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      _checklistFilter == 'Unfinished' && masteredTopics == totalTopics
+                          ? Icons.military_tech_rounded
+                          : Icons.search_off_rounded,
+                      size: 52,
+                      color: _checklistFilter == 'Unfinished' && masteredTopics == totalTopics
+                          ? AppTheme.accentGold
+                          : context.textSecondaryColor.withValues(alpha: 0.5),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      _checklistFilter == 'Unfinished' && masteredTopics == totalTopics
+                          ? 'All Topics Mastered!'
+                          : 'No matching topics found',
+                      style: GoogleFonts.outfit(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: context.textColor,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      _checklistFilter == 'Unfinished' && masteredTopics == totalTopics
+                          ? 'Outstanding work! You have completed 100% of the syllabus.'
+                          : 'Try modifying your search or changing the filter chip.',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.outfit(
+                        fontSize: 13,
+                        color: context.textSecondaryColor,
+                      ),
+                    ),
+                    if (_checklistFilter != 'All' || _checklistSearchQuery.isNotEmpty) ...[
+                      const SizedBox(height: 14),
+                      NeuButton(
+                        isPrimary: true,
+                        borderRadius: 12,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        onPressed: () {
+                          setState(() {
+                            _checklistSearchQuery = '';
+                            _searchController.clear();
+                            _checklistFilter = 'All';
+                          });
+                        },
+                        child: Text(
+                          'Reset Filters',
+                          style: GoogleFonts.outfit(fontSize: 12.5, fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          )
+        else
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.fromLTRB(14, 10, 14, 100),
+              physics: const BouncingScrollPhysics(),
+              itemCount: syllabus.keys.length,
+              itemBuilder: (context, index) {
+                final subject = syllabus.keys.elementAt(index);
+                final allTopics = syllabus[subject]!;
 
-              // Filter topics according to search & filter chip
-              final filteredTopics = allTopics.where((topic) {
-                // Search filter
-                if (_checklistSearchQuery.isNotEmpty) {
-                  final q = _checklistSearchQuery.toLowerCase();
-                  if (!topic.toLowerCase().contains(q) && !subject.toLowerCase().contains(q)) {
-                    return false;
+                // Filter topics according to search & filter chip
+                final filteredTopics = allTopics.where((topic) {
+                  // Search filter
+                  if (_checklistSearchQuery.isNotEmpty) {
+                    final q = _checklistSearchQuery.toLowerCase();
+                    if (!topic.toLowerCase().contains(q) && !subject.toLowerCase().contains(q)) {
+                      return false;
+                    }
                   }
+
+                  // Status filter
+                  final st = provider.getTopicStatus(subject, topic);
+                  if (_checklistFilter == 'Unfinished' && st.isCompleted) return false;
+                  if (_checklistFilter == 'Concept Left' && st.conceptWatched) return false;
+                  if (_checklistFilter == 'PYQ Left' && st.pyqSolved) return false;
+                  if (_checklistFilter == 'Needs Revision' && st.revisedOnce) return false;
+
+                  return true;
+                }).toList();
+
+                if (filteredTopics.isEmpty) {
+                  return const SizedBox.shrink();
                 }
 
-                // Status filter
-                final st = provider.getTopicStatus(subject, topic);
-                if (_checklistFilter == 'Unfinished' && st.isCompleted) return false;
-                if (_checklistFilter == 'Concept Left' && st.conceptWatched) return false;
-                if (_checklistFilter == 'PYQ Left' && st.pyqSolved) return false;
-                if (_checklistFilter == 'Needs Revision' && st.revisedOnce) return false;
+                final progress = provider.getSubjectProgress(subject, allTopics);
+                final masteredInSubject = allTopics.where((t) => provider.getTopicStatus(subject, t).isCompleted).length;
+                final isExpanded = _expandedSubjects.contains(subject) || (_checklistSearchQuery.isNotEmpty && filteredTopics.isNotEmpty);
 
-                return true;
-              }).toList();
+                final weightageInfo = _getSubjectWeightageBadge(subject, isCSIT);
+                final phaseInfo = _getSubjectPhaseInfo(subject, isCSIT);
+                final activePhaseNum = _getActivePhaseNumber().toString();
+                final isCurrentPhase = phaseInfo != null && phaseInfo['num'].toString() == activePhaseNum;
+                final weightageLabel = (phaseInfo?['weightage'] as String?) ?? (weightageInfo['label'] as String);
+                final weightageColor = weightageInfo['color'] as Color;
 
-              if (_checklistSearchQuery.isNotEmpty && filteredTopics.isEmpty) {
-                return const SizedBox.shrink();
-              }
-
-              final progress = provider.getSubjectProgress(subject, allTopics);
-              final masteredInSubject = allTopics.where((t) => provider.getTopicStatus(subject, t).isCompleted).length;
-              final isExpanded = _expandedSubjects.contains(subject) || (_checklistSearchQuery.isNotEmpty && filteredTopics.isNotEmpty);
-
-              final weightageInfo = _getSubjectWeightageBadge(subject, isCSIT);
-              final phaseInfo = _getSubjectPhaseInfo(subject, isCSIT);
-              final activePhaseNum = _getActivePhaseNumber().toString();
-              final isCurrentPhase = phaseInfo != null && phaseInfo['num'].toString() == activePhaseNum;
-              final weightageLabel = (phaseInfo?['weightage'] as String?) ?? (weightageInfo['label'] as String);
-              final weightageColor = weightageInfo['color'] as Color;
-
-              return NeuContainer(
-                borderRadius: 18,
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: EdgeInsets.zero,
-                child: Theme(
-                  data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-                  child: ExpansionTile(
-                    initiallyExpanded: isExpanded,
+                return NeuContainer(
+                  borderRadius: 18,
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: EdgeInsets.zero,
+                  child: Theme(
+                    data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                    child: ExpansionTile(
+                      key: ValueKey('${subject}_$isExpanded'),
+                      initiallyExpanded: isExpanded,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                     collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                     onExpansionChanged: (expanded) {
@@ -932,10 +1080,10 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
       if (s.contains('prob') || s.contains('stat')) return daPhasesData[0];
       if (s.contains('linear') || s.contains('algebra')) return daPhasesData[1];
       if (s.contains('calculus') || s.contains('optimi')) return daPhasesData[2];
-      if (s.contains('machine') || s.contains('ml')) return daPhasesData[3];
+      if (s.contains('machine') || RegExp(r'\bml\b').hasMatch(s)) return daPhasesData[3];
       if (s.contains('python') || s.contains('dsa') || s.contains('data struct') || s.contains('programming')) return daPhasesData[4];
       if (s.contains('database') || s.contains('warehousing') || s.contains('dbms')) return daPhasesData[5];
-      if (s.contains('ai') || s.contains('artificial') || s.contains('logic')) return daPhasesData[6];
+      if (RegExp(r'\bai\b').hasMatch(s) || s.contains('artificial') || s.contains('logic')) return daPhasesData[6];
       if (s.contains('aptitude')) {
         return {
           'num': 'GA',
@@ -946,17 +1094,17 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
         };
       }
     } else {
+      if (s.contains('aptitude')) return csitPhasesData[10];
       if (s.contains('math')) return csitPhasesData[0];
       if (s.contains('digital') || s.contains('logic')) return csitPhasesData[1];
-      if (s.contains('organization') || s.contains('architecture') || s.contains('co')) return csitPhasesData[2];
-      if (s.contains('program') && s.contains('struct')) return csitPhasesData[3];
-      if (s.contains('algorithm')) return csitPhasesData[4];
-      if (s.contains('computation') || s.contains('toc')) return csitPhasesData[5];
       if (s.contains('compiler')) return csitPhasesData[6];
-      if (s.contains('operating') || s.contains('os')) return csitPhasesData[7];
+      if (s.contains('computation') || s.contains('toc') || s.contains('automata')) return csitPhasesData[5];
+      if (s.contains('network') || RegExp(r'\bcn\b').hasMatch(s)) return csitPhasesData[9];
+      if (s.contains('operating') || RegExp(r'\bos\b').hasMatch(s)) return csitPhasesData[7];
       if (s.contains('database') || s.contains('dbms')) return csitPhasesData[8];
-      if (s.contains('network') || s.contains('cn')) return csitPhasesData[9];
-      if (s.contains('aptitude')) return csitPhasesData[10];
+      if (s.contains('algorithm')) return csitPhasesData[4];
+      if (s.contains('program') || s.contains('struct')) return csitPhasesData[3];
+      if (s.contains('organization') || s.contains('organisation') || s.contains('architecture') || RegExp(r'\bcoa?\b').hasMatch(s)) return csitPhasesData[2];
     }
     return null;
   }
@@ -1000,7 +1148,7 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
                       ),
                     ),
                   ),
-                  if (isFullyMastered)
+                  if (isFullyMastered) ...[
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
                       decoration: BoxDecoration(
@@ -1024,10 +1172,73 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
                         ],
                       ),
                     ),
+                    const SizedBox(width: 6),
+                  ],
+                  // Topic Note Action Button
+                  InkWell(
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      _showTopicNoteDialog(context, provider, subject, topic, status.note);
+                    },
+                    borderRadius: BorderRadius.circular(6),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Icon(
+                        status.note.isNotEmpty ? Icons.sticky_note_2_rounded : Icons.note_add_outlined,
+                        size: 16,
+                        color: status.note.isNotEmpty ? AppTheme.accentPurple : context.textSecondaryColor.withValues(alpha: 0.45),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
+          if (status.note.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            InkWell(
+              onTap: () {
+                HapticFeedback.selectionClick();
+                _showTopicNoteDialog(context, provider, subject, topic, status.note);
+              },
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                decoration: BoxDecoration(
+                  color: AppTheme.accentPurple.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: AppTheme.accentPurple.withValues(alpha: 0.22),
+                    width: 0.8,
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 1.5, right: 6),
+                      child: Icon(Icons.sticky_note_2_rounded, size: 12, color: AppTheme.accentPurple),
+                    ),
+                    Expanded(
+                      child: Text(
+                        status.note,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.outfit(
+                          fontSize: 11.5,
+                          color: context.textColor.withValues(alpha: 0.85),
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Icon(Icons.edit_rounded, size: 11, color: context.textSecondaryColor.withValues(alpha: 0.7)),
+                  ],
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: 9),
           // 3 Checkbox Action Pills
           Row(
@@ -1690,6 +1901,83 @@ class _PlannerScreenState extends State<PlannerScreen> with SingleTickerProvider
           style: AppTheme.monospaceStyle(fontSize: 13, color: context.textColor).copyWith(fontWeight: FontWeight.w500),
         ),
       ],
+    );
+  }
+
+  void _showTopicNoteDialog(BuildContext context, AppProvider provider, String subject, String topic, String currentNote) {
+    final controller = TextEditingController(text: currentNote);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: context.colorSurface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Topic Notes',
+                style: GoogleFonts.outfit(fontSize: 17, fontWeight: FontWeight.bold, color: context.textColor),
+              ),
+              const SizedBox(height: 3),
+              Text(
+                topic,
+                style: GoogleFonts.outfit(fontSize: 13, fontWeight: FontWeight.w600, color: AppTheme.accentPurple),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+          content: TextField(
+            controller: controller,
+            maxLines: 5,
+            autofocus: true,
+            style: GoogleFonts.outfit(color: context.textColor, fontSize: 13.5),
+            decoration: InputDecoration(
+              hintText: 'Add formulas, definitions, key points, or shortcuts...',
+              hintStyle: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 13),
+              filled: true,
+              fillColor: context.colorBackground,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: context.colorBorder),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: AppTheme.accentPurple),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('Cancel', style: GoogleFonts.outfit(color: context.textSecondaryColor, fontWeight: FontWeight.w500)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.accentPurple,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              onPressed: () async {
+                final note = controller.text.trim();
+                await provider.updateTopicNote(subject, topic, note);
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(note.isEmpty ? 'Note cleared' : 'Note saved successfully'),
+                      duration: const Duration(seconds: 1),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              },
+              child: Text('Save Note', style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        );
+      },
     );
   }
 

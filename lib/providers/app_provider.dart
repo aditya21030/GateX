@@ -481,15 +481,45 @@ class AppProvider with ChangeNotifier {
   Future<void> toggleStudyDayCompletion(int day) async {
     final currentState = _studyPlanDayStates[day] ?? {'isCompleted': false, 'userNote': ''};
     final newCompleted = !(currentState['isCompleted'] ?? false);
+    await _setStudyDayCompletionInternal(day, newCompleted);
+
+    // Synchronize corresponding Topic in Syllabus Checklist
+    final dayItemIndex = currentStudyPlanItems.indexWhere((item) => item.day == day);
+    if (dayItemIndex != -1) {
+      final dayItem = currentStudyPlanItems[dayItemIndex];
+      final currentTopic = getTopicStatus(dayItem.subject, dayItem.topic);
+      if (currentTopic.isCompleted != newCompleted) {
+        final key = '${dayItem.subject}_${dayItem.topic}';
+        final updated = currentTopic.copyWith(
+          conceptWatched: newCompleted,
+          pyqSolved: newCompleted,
+          revisedOnce: newCompleted,
+          isCompleted: newCompleted,
+        );
+        final idx = _topics.indexWhere((t) => t.subjectName == dayItem.subject && t.topicName == dayItem.topic);
+        if (idx != -1) {
+          _topics[idx] = updated;
+        } else {
+          _topics.add(updated);
+        }
+        await _storage.topicStatusBox.put(key, updated.toMap());
+        CloudSyncService().pushToCloud('topicStatus', key, updated.toMap());
+      }
+    }
+
+    notifyListeners();
+    _updateScheduledNotifications();
+  }
+
+  Future<void> _setStudyDayCompletionInternal(int day, bool isCompleted) async {
+    final currentState = _studyPlanDayStates[day] ?? {'isCompleted': false, 'userNote': ''};
     final newState = {
-      'isCompleted': newCompleted,
+      'isCompleted': isCompleted,
       'userNote': currentState['userNote'] ?? '',
     };
     _studyPlanDayStates[day] = newState;
     await _storage.studyPlanBox.put(day, newState);
     CloudSyncService().pushToCloud('studyPlan', day.toString(), newState);
-    notifyListeners();
-    _updateScheduledNotifications();
   }
 
   // Update Study Day User Note
@@ -519,27 +549,10 @@ class AppProvider with ChangeNotifier {
     return completedCount / phaseItems.length;
   }
 
-  // Toggle Topic Completion
+  // Toggle Topic Completion (from Roadmap or elsewhere)
   Future<void> toggleTopicCompletion(String subject, String topic) async {
-    // Check if this matches a study plan day
-    final dayItemIndex = currentStudyPlanItems.indexWhere((item) => item.subject == subject && item.topic == topic);
-    if (dayItemIndex != -1) {
-      final dayItem = currentStudyPlanItems[dayItemIndex];
-      await toggleStudyDayCompletion(dayItem.day);
-      return;
-    }
-
-    final key = '${subject}_$topic';
-    final index = _topics.indexWhere((t) => t.subjectName == subject && t.topicName == topic);
-    if (index != -1) {
-      final currentStatus = _topics[index];
-      final newStatus = currentStatus.copyWith(isCompleted: !currentStatus.isCompleted);
-      _topics[index] = newStatus;
-      await _storage.topicStatusBox.put(key, newStatus.toMap());
-      CloudSyncService().pushToCloud('topicStatus', key.toString(), newStatus.toMap());
-      notifyListeners();
-      _updateScheduledNotifications();
-    }
+    final current = getTopicStatus(subject, topic);
+    await toggleAllMilestones(subject, topic, !current.isCompleted);
   }
 
   // Agile Checklist: Get Topic Status
@@ -553,7 +566,15 @@ class AppProvider with ChangeNotifier {
       _topics.add(parsed);
       return parsed;
     }
-    return TopicStatus(topicName: topic, subjectName: subject);
+    // Check if there is an existing study plan day note for this topic
+    String initialNote = '';
+    final dayItemIndex = currentStudyPlanItems.indexWhere((item) => item.subject == subject && item.topic == topic);
+    if (dayItemIndex != -1) {
+      initialNote = getStudyDayUserNote(currentStudyPlanItems[dayItemIndex].day);
+    }
+    final created = TopicStatus(topicName: topic, subjectName: subject, note: initialNote);
+    _topics.add(created);
+    return created;
   }
 
   // Agile Checklist: Toggle specific milestone (concept, pyq, revise)
@@ -588,6 +609,15 @@ class AppProvider with ChangeNotifier {
       _topics.add(updated);
     }
 
+    // Also sync with study plan day state if this topic is in study plan
+    final dayItemIndex = currentStudyPlanItems.indexWhere((item) => item.subject == subject && item.topic == topic);
+    if (dayItemIndex != -1) {
+      final dayItem = currentStudyPlanItems[dayItemIndex];
+      if (isStudyDayCompleted(dayItem.day) != isAllDone) {
+        await _setStudyDayCompletionInternal(dayItem.day, isAllDone);
+      }
+    }
+
     await _storage.topicStatusBox.put(key, updated.toMap());
     CloudSyncService().pushToCloud('topicStatus', key, updated.toMap());
     notifyListeners();
@@ -618,7 +648,7 @@ class AppProvider with ChangeNotifier {
     if (dayItemIndex != -1) {
       final dayItem = currentStudyPlanItems[dayItemIndex];
       if (isStudyDayCompleted(dayItem.day) != isCompleted) {
-        await toggleStudyDayCompletion(dayItem.day);
+        await _setStudyDayCompletionInternal(dayItem.day, isCompleted);
       }
     }
 
@@ -646,23 +676,26 @@ class AppProvider with ChangeNotifier {
 
   // Update Topic Note
   Future<void> updateTopicNote(String subject, String topic, String note) async {
-    // Check if this matches a study plan day
+    // 1. Sync study plan day note if this matches a study plan day
     final dayItemIndex = currentStudyPlanItems.indexWhere((item) => item.subject == subject && item.topic == topic);
     if (dayItemIndex != -1) {
       final dayItem = currentStudyPlanItems[dayItemIndex];
       await updateStudyDayUserNote(dayItem.day, note);
-      return;
     }
 
+    // 2. Persist to topic status box and cloud
     final key = '${subject}_$topic';
+    final current = getTopicStatus(subject, topic);
+    final newStatus = current.copyWith(note: note);
     final index = _topics.indexWhere((t) => t.subjectName == subject && t.topicName == topic);
     if (index != -1) {
-      final newStatus = _topics[index].copyWith(note: note);
       _topics[index] = newStatus;
-      await _storage.topicStatusBox.put(key, newStatus.toMap());
-      CloudSyncService().pushToCloud('topicStatus', key.toString(), newStatus.toMap());
-      notifyListeners();
+    } else {
+      _topics.add(newStatus);
     }
+    await _storage.topicStatusBox.put(key, newStatus.toMap());
+    CloudSyncService().pushToCloud('topicStatus', key, newStatus.toMap());
+    notifyListeners();
   }
 
   // Solve PYQ
@@ -788,16 +821,22 @@ class AppProvider with ChangeNotifier {
 
   // Add Custom Topic to Revision Queue
   Future<void> addTopicToRevision(String subject, String topic) async {
-    final index = _topics.indexWhere((t) => t.subjectName == subject && t.topicName == topic);
-    if (index != -1 && !_topics[index].inRevisionQueue) {
+    final current = getTopicStatus(subject, topic);
+    if (!current.inRevisionQueue) {
       // Update topic status
-      final newTopic = _topics[index].copyWith(
+      final newTopic = current.copyWith(
         inRevisionQueue: true,
         dateAddedToRevision: DateTime.now(),
       );
-      _topics[index] = newTopic;
-      await _storage.topicStatusBox.put('${subject}_$topic', newTopic.toMap());
-      CloudSyncService().pushToCloud('topicStatus', '${subject}_$topic'.toString(), newTopic.toMap());
+      final index = _topics.indexWhere((t) => t.subjectName == subject && t.topicName == topic);
+      if (index != -1) {
+        _topics[index] = newTopic;
+      } else {
+        _topics.add(newTopic);
+      }
+      final key = '${subject}_$topic';
+      await _storage.topicStatusBox.put(key, newTopic.toMap());
+      CloudSyncService().pushToCloud('topicStatus', key, newTopic.toMap());
 
       // Add to revision list
       final revItem = RevisionItem(
@@ -887,13 +926,16 @@ class AppProvider with ChangeNotifier {
       CloudSyncService().pushToCloud('errorLog', entry.id.toString(), entry.toMap());
 
     // Update topic error log flag
+    final current = getTopicStatus(subject, topic);
+    final newTopic = current.copyWith(inErrorLog: true);
     final idx = _topics.indexWhere((t) => t.subjectName == subject && t.topicName == topic);
     if (idx != -1) {
-      final newTopic = _topics[idx].copyWith(inErrorLog: true);
       _topics[idx] = newTopic;
-      await _storage.topicStatusBox.put('${subject}_$topic', newTopic.toMap());
-      CloudSyncService().pushToCloud('topicStatus', '${subject}_$topic'.toString(), newTopic.toMap());
+    } else {
+      _topics.add(newTopic);
     }
+    await _storage.topicStatusBox.put('${subject}_$topic', newTopic.toMap());
+    CloudSyncService().pushToCloud('topicStatus', '${subject}_$topic', newTopic.toMap());
 
     notifyListeners();
   }

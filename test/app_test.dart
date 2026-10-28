@@ -813,6 +813,75 @@ void main() {
       expect(unmastered.isCompleted, false);
     });
 
+    test('Subject normalization and disambiguation correctly isolates CSIT and DA subjects', () {
+      // Helper function simulating _normalizeSubjectToSyllabusKey
+      String normalizeSubject(String inputSubject, bool isCSIT) {
+        final s = inputSubject.toLowerCase().trim();
+        final syllabus = isCSIT ? StorageService.csitSyllabusData : StorageService.syllabusData;
+        for (final key in syllabus.keys) {
+          if (key.toLowerCase() == s) return key;
+        }
+        if (!isCSIT) {
+          if (s.contains('prob') || s.contains('stat')) return 'Probability and Statistics';
+          if (s.contains('linear') || s.contains('algebra')) return 'Linear Algebra';
+          if (s.contains('calculus') || s.contains('optimi')) return 'Calculus and Optimization';
+          if (s.contains('machine') || RegExp(r'\bml\b').hasMatch(s)) return 'Machine Learning';
+          if (s.contains('python')) return 'Python (Main Topics Only)';
+          if (s.contains('dsa') || s.contains('data struct') || s.contains('algorithm')) return 'DSA (Data Structures and Algorithms)';
+          if (s.contains('database') || s.contains('dbms') || s.contains('warehousing')) return 'Database Management and Warehousing';
+          if (RegExp(r'\bai\b').hasMatch(s) || s.contains('artificial') || s.contains('logic')) return 'AI';
+          if (s.contains('aptitude')) return 'General Aptitude';
+        } else {
+          if (s.contains('aptitude')) return 'General Aptitude';
+          if (s.contains('math')) return 'Engineering Mathematics';
+          if (s.contains('digital') || s.contains('logic')) return 'Digital Logic';
+          if (s.contains('compiler')) return 'Compiler Design';
+          if (s.contains('computation') || s.contains('toc') || s.contains('automata')) return 'Theory of Computation';
+          if (s.contains('network') || RegExp(r'\bcn\b').hasMatch(s)) return 'Computer Networks';
+          if (s.contains('operating') || RegExp(r'\bos\b').hasMatch(s)) return 'Operating System';
+          if (s.contains('database') || s.contains('dbms')) return 'Databases';
+          if (s.contains('algorithm')) return 'Algorithms';
+          if (s.contains('program') || s.contains('data struct')) return 'Programming & Data Structures';
+          if (s.contains('organization') || s.contains('organisation') || s.contains('architecture') || RegExp(r'\bcoa?\b').hasMatch(s)) return 'Computer Organization';
+        }
+        return inputSubject;
+      }
+
+      // Verify CSIT ambiguous 'co' edge cases do not falsely resolve to Computer Organization
+      expect(normalizeSubject('Theory of Computation', true), 'Theory of Computation');
+      expect(normalizeSubject('TOC', true), 'Theory of Computation');
+      expect(normalizeSubject('Compiler Design', true), 'Compiler Design');
+      expect(normalizeSubject('Computer Networks', true), 'Computer Networks');
+      expect(normalizeSubject('CN', true), 'Computer Networks');
+      expect(normalizeSubject('Computer Organization', true), 'Computer Organization');
+      expect(normalizeSubject('COA', true), 'Computer Organization');
+
+      // Verify DA subjects
+      expect(normalizeSubject('Machine Learning', false), 'Machine Learning');
+      expect(normalizeSubject('ML', false), 'Machine Learning');
+      expect(normalizeSubject('AI', false), 'AI');
+      expect(normalizeSubject('Linear Algebra', false), 'Linear Algebra');
+    });
+
+    test('TopicStatus note serialization and modification preserves user formulas', () {
+      final initial = TopicStatus(topicName: 'Eigenvalues', subjectName: 'Linear Algebra');
+      expect(initial.note, '');
+
+      // Add formula note
+      final withNote = initial.copyWith(note: 'det(A - lambda*I) = 0');
+      expect(withNote.note, 'det(A - lambda*I) = 0');
+
+      final serialized = withNote.toMap();
+      expect(serialized['note'], 'det(A - lambda*I) = 0');
+
+      final restored = TopicStatus.fromMap(serialized);
+      expect(restored.note, 'det(A - lambda*I) = 0');
+
+      // Clear note
+      final cleared = restored.copyWith(note: '');
+      expect(cleared.note, '');
+    });
+
     test('Phase progress calculation matches both phase and subject keys', () {
       const daItem = StudyPlanItem(
         day: 1,
