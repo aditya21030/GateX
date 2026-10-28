@@ -57,7 +57,8 @@ class PurchaseService with ChangeNotifier {
     final b = branch.toUpperCase().trim();
     if (b == 'BOTH' || b == 'COMMON') return true;
     final targetBranch = b.contains('CS') ? 'CSIT' : 'DA';
-    return _soloBranch == targetBranch;
+    final currentSolo = _soloBranch.toUpperCase().contains('CS') ? 'CSIT' : 'DA';
+    return currentSolo == targetBranch;
   }
 
   bool _isLoading = false;
@@ -171,22 +172,42 @@ class PurchaseService with ChangeNotifier {
     }
   }
 
-  /// Synchronize logged-in Firebase user with RevenueCat
+  /// Synchronize logged-in Firebase user with RevenueCat and Cloud Firestore
   Future<void> syncUser(String? userId) async {
-    if (!RevenueCatConfig.isConfigured) return;
     try {
       if (userId != null && userId.isNotEmpty) {
-        final logInResult = await Purchases.logIn(userId);
-        await _updateProStatusFromCustomerInfo(logInResult.customerInfo);
+        if (RevenueCatConfig.isConfigured) {
+          try {
+            final logInResult = await Purchases.logIn(userId);
+            await _updateProStatusFromCustomerInfo(logInResult.customerInfo);
+          } catch (e) {
+            debugPrint('PurchaseService.syncUser RevenueCat error: ');
+          }
+        }
+
+        // Bidirectional sync:
+        // 1. If user already holds Pro locally (e.g. guest purchase), associate it with their newly linked Firebase account
+        if (_isPro) {
+          await _syncProToFirebase(_isDualPro ? proDualProductId : proSoloProductId, soloBranch: _soloBranch);
+        } else {
+          // 2. If not Pro locally, restore entitlements attached to their Firebase account
+          await _verifyWithFirebase();
+        }
       } else {
-        final isAnonymous = await Purchases.isAnonymous;
-        if (!isAnonymous) {
-          final customerInfo = await Purchases.logOut();
-          await _updateProStatusFromCustomerInfo(customerInfo);
+        if (RevenueCatConfig.isConfigured) {
+          try {
+            final isAnonymous = await Purchases.isAnonymous;
+            if (!isAnonymous) {
+              final customerInfo = await Purchases.logOut();
+              await _updateProStatusFromCustomerInfo(customerInfo);
+            }
+          } catch (e) {
+            debugPrint('PurchaseService.syncUser logOut error: ');
+          }
         }
       }
     } catch (e) {
-      debugPrint('PurchaseService.syncUser error: $e');
+      debugPrint('PurchaseService.syncUser error: ');
     }
   }
 
@@ -203,6 +224,11 @@ class PurchaseService with ChangeNotifier {
       await prefs.setBool(proPrefKey, true);
       await prefs.setString(proPlanTypeKey, _planType);
       AdService().setAdSuspended(true);
+
+      // If Solo pass, reconcile specific branch (DA vs CSIT) from Firebase cloud backup
+      if (!isDual) {
+        await _verifyWithFirebase();
+      }
     } else {
       _isPro = false;
       _isDualPro = false;
@@ -221,9 +247,10 @@ class PurchaseService with ChangeNotifier {
           final cloudPro = doc.data()!['isPro'] as bool? ?? false;
           final cloudDual = doc.data()!['isDualPro'] as bool? ?? false;
           final cloudPlan = doc.data()!['proPlanType'] as String? ?? 'SOLO';
-          final cloudBranch = doc.data()!['proSoloBranch'] as String? ?? 'DA';
+          final rawBranch = doc.data()!['proSoloBranch'] as String? ?? 'DA';
+          final cloudBranch = rawBranch.toUpperCase().contains('CS') ? 'CSIT' : 'DA';
 
-          if (cloudPro != _isPro || cloudDual != _isDualPro) {
+          if (cloudPro != _isPro || cloudDual != _isDualPro || cloudPlan != _planType || cloudBranch != _soloBranch) {
             _isPro = cloudPro;
             _isDualPro = cloudDual;
             _planType = cloudPlan;
@@ -240,7 +267,7 @@ class PurchaseService with ChangeNotifier {
         }
       }
     } catch (e) {
-      debugPrint('PurchaseService: Offline verification fallback active. Error: $e');
+      debugPrint('PurchaseService: Offline verification fallback active. Error: ');
     }
   }
 
@@ -249,6 +276,11 @@ class PurchaseService with ChangeNotifier {
     String planId = proSoloProductId,
     String targetBranch = 'DA',
   }) async {
+    if (_isDualPro) {
+      debugPrint('PurchaseService: Dual Pro already active. No purchase needed.');
+      return true;
+    }
+
     _isLoading = true;
     notifyListeners();
 
@@ -284,6 +316,12 @@ class PurchaseService with ChangeNotifier {
             await prefs.setString(proPlanTypeKey, _planType);
             await prefs.setString(proSoloBranchKey, _soloBranch);
             AdService().setAdSuspended(true);
+            try {
+              await Purchases.setAttributes({
+                'pro_solo_branch': _soloBranch,
+                'pro_plan_type': _planType,
+              });
+            } catch (_) {}
             await _syncProToFirebase(planId, soloBranch: _soloBranch);
             _isLoading = false;
             notifyListeners();
@@ -382,6 +420,10 @@ class PurchaseService with ChangeNotifier {
             await prefs.setBool(proPrefKey, true);
             await prefs.setString(proPlanTypeKey, _planType);
             AdService().setAdSuspended(true);
+
+            // Reconcile branch information with cloud Firebase account if present
+            await _verifyWithFirebase();
+
             _isLoading = false;
             notifyListeners();
             return true;

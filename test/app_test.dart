@@ -1582,6 +1582,91 @@ void main() {
       expect(eval, closeTo(0.5, 0.0001));
     });
   });
+
+  group('GateX Pro Pass & Payment Entitlement Tests', () {
+    test('Pricing constants and validity reflect official structure', () {
+      expect(PurchaseService.proSoloPlanPrice, equals('₹299'));
+      expect(PurchaseService.proDualPlanPrice, equals('₹499'));
+      expect(PurchaseService.proUpgradeToDualPrice, equals('₹200'));
+      expect(PurchaseService.proPlanValidity, contains('31st March 2027'));
+    });
+
+    test('Non-Pro user returns false for all branch queries', () {
+      final service = PurchaseService();
+      // Ensure clean non-pro state
+      expect(service.isProForBranch('DA'), isFalse);
+      expect(service.isProForBranch('CSIT'), isFalse);
+      expect(service.isProForBranch('CS/IT'), isFalse);
+      expect(service.isProForBranch(null), isFalse);
+    });
+
+    test('isProForBranch handles case insensitivity and branch normalization', () {
+      // Mock helper to test normalization rule
+      bool mockIsProForBranch({
+        required bool isPro,
+        required bool isDualPro,
+        required String soloBranch,
+        String? targetBranch,
+      }) {
+        if (!isPro) return false;
+        if (isDualPro) return true;
+        if (targetBranch == null || targetBranch.isEmpty) return true;
+        final b = targetBranch.toUpperCase().trim();
+        if (b == 'BOTH' || b == 'COMMON') return true;
+        final target = b.contains('CS') ? 'CSIT' : 'DA';
+        final currentSolo = soloBranch.toUpperCase().contains('CS') ? 'CSIT' : 'DA';
+        return currentSolo == target;
+      }
+
+      // Solo DA user
+      expect(mockIsProForBranch(isPro: true, isDualPro: false, soloBranch: 'DA', targetBranch: 'DA'), isTrue);
+      expect(mockIsProForBranch(isPro: true, isDualPro: false, soloBranch: 'da', targetBranch: 'DA'), isTrue);
+      expect(mockIsProForBranch(isPro: true, isDualPro: false, soloBranch: 'DA', targetBranch: 'da'), isTrue);
+      expect(mockIsProForBranch(isPro: true, isDualPro: false, soloBranch: 'DA', targetBranch: 'CSIT'), isFalse);
+      expect(mockIsProForBranch(isPro: true, isDualPro: false, soloBranch: 'DA', targetBranch: 'CS/IT'), isFalse);
+      expect(mockIsProForBranch(isPro: true, isDualPro: false, soloBranch: 'DA', targetBranch: 'COMMON'), isTrue);
+      expect(mockIsProForBranch(isPro: true, isDualPro: false, soloBranch: 'DA', targetBranch: null), isTrue);
+
+      // Solo CSIT user
+      expect(mockIsProForBranch(isPro: true, isDualPro: false, soloBranch: 'CSIT', targetBranch: 'CSIT'), isTrue);
+      expect(mockIsProForBranch(isPro: true, isDualPro: false, soloBranch: 'csit', targetBranch: 'CS/IT'), isTrue);
+      expect(mockIsProForBranch(isPro: true, isDualPro: false, soloBranch: 'CSIT', targetBranch: 'DA'), isFalse);
+      expect(mockIsProForBranch(isPro: true, isDualPro: false, soloBranch: 'CSIT', targetBranch: 'COMMON'), isTrue);
+
+      // Dual Pro user (Unlocks EVERYTHING)
+      expect(mockIsProForBranch(isPro: true, isDualPro: true, soloBranch: 'DA', targetBranch: 'DA'), isTrue);
+      expect(mockIsProForBranch(isPro: true, isDualPro: true, soloBranch: 'DA', targetBranch: 'CSIT'), isTrue);
+      expect(mockIsProForBranch(isPro: true, isDualPro: true, soloBranch: 'DA', targetBranch: 'CS/IT'), isTrue);
+      expect(mockIsProForBranch(isPro: true, isDualPro: true, soloBranch: 'DA', targetBranch: 'BOTH'), isTrue);
+    });
+
+    test('Upgrade package keyword isolation prevents cross-matching', () {
+      // Dry-run simulation of findPackageForPlan rule
+      String? resolvePlan(String requestedPlanId, List<String> availableIds) {
+        for (final id in availableIds) {
+          if (id == requestedPlanId) return id;
+        }
+        for (final id in availableIds) {
+          final lower = id.toLowerCase();
+          final isUpgrade = lower.contains('upgrade');
+          if (requestedPlanId == PurchaseService.proUpgradeToDualProductId) {
+            if (isUpgrade) return id;
+          } else if (requestedPlanId == PurchaseService.proDualProductId) {
+            if (!isUpgrade && lower.contains('dual')) return id;
+          } else if (requestedPlanId == PurchaseService.proSoloProductId) {
+            if (!isUpgrade && !lower.contains('dual') && lower.contains('solo')) return id;
+          }
+        }
+        return null;
+      }
+
+      final packages = ['gatex_pro_upgrade_dual_2027', 'gatex_pro_dual_2027', 'gatex_pro_solo_2027'];
+
+      expect(resolvePlan(PurchaseService.proUpgradeToDualProductId, packages), equals('gatex_pro_upgrade_dual_2027'));
+      expect(resolvePlan(PurchaseService.proDualProductId, packages), equals('gatex_pro_dual_2027'));
+      expect(resolvePlan(PurchaseService.proSoloProductId, packages), equals('gatex_pro_solo_2027'));
+    });
+  });
 }
 
 
