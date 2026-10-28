@@ -191,7 +191,7 @@ class MoreScreen extends StatelessWidget {
                     ListTile(
                       leading: const NeuIconTile(icon: Icons.system_update_rounded, iconColor: Color(0xFF8B5CF6), size: 34, iconSize: 18),
                       title: Text('Check for Updates', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor)),
-                      subtitle: Text('v1.0.8 (Build 9) • Tap to check', style: TextStyle(fontSize: 11, color: context.textSecondaryColor)),
+                      subtitle: Text('v1.0.9 (Build 10) • Tap to check', style: TextStyle(fontSize: 11, color: context.textSecondaryColor)),
                       trailing: Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor, size: 18),
                       onTap: () => _checkForUpdates(context),
                     ),
@@ -625,7 +625,7 @@ class MoreScreen extends StatelessWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('You are already on the latest version of GateX! (v1.0.8)'),
+              content: Text('You are already on the latest version of GateX! (v1.0.9)'),
               backgroundColor: AppTheme.success,
               behavior: SnackBarBehavior.floating,
             ),

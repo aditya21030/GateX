@@ -68,8 +68,8 @@ class AppUpdateService {
       return PackageInfo(
         appName: 'GateX',
         packageName: 'com.yousful.gatex',
-        version: '1.0.8',
-        buildNumber: '9',
+        version: '1.0.9',
+        buildNumber: '10',
       );
     }
   }
@@ -78,7 +78,7 @@ class AppUpdateService {
   Future<UpdateCheckResult> checkUpdate() async {
     final packageInfo = await getPackageInfo();
     final currentVersion = packageInfo.version;
-    final currentBuild = int.tryParse(packageInfo.buildNumber) ?? 9;
+    final currentBuild = int.tryParse(packageInfo.buildNumber) ?? 10;
 
     bool playUpdateAvailable = false;
     bool immediateAllowed = false;

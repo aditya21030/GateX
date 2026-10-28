@@ -2192,16 +2192,16 @@ void main() {
   group('In-App Update & Mandatory Force Gate Tests', () {
     test('UpdateCheckResult.noUpdate accurately reflects current build and non-blocking status', () {
       final res = UpdateCheckResult.noUpdate(
-        currentVersion: '1.0.8',
-        currentBuildNumber: 9,
+        currentVersion: '1.0.9',
+        currentBuildNumber: 10,
       );
 
       expect(res.isUpdateAvailable, isFalse);
       expect(res.isForceUpdate, isFalse);
-      expect(res.currentVersion, equals('1.0.8'));
-      expect(res.currentBuildNumber, equals(9));
-      expect(res.latestVersion, equals('1.0.8'));
-      expect(res.minRequiredBuildNumber, equals(9));
+      expect(res.currentVersion, equals('1.0.9'));
+      expect(res.currentBuildNumber, equals(10));
+      expect(res.latestVersion, equals('1.0.9'));
+      expect(res.minRequiredBuildNumber, equals(10));
       expect(res.updateTitle, equals('Up to Date'));
       expect(res.storeUrl, contains('com.yousful.gatex'));
     });
