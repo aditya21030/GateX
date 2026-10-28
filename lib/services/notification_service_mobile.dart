@@ -150,6 +150,44 @@ class NotificationService {
     debugPrint("Scheduled daily streak reminder for 21:00");
   }
 
+  Future<void> schedulePomodoroReminder(int seconds, String sessionType) async {
+    if (!_initialized || kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) return;
+    await cancelPomodoroReminder();
+
+    final scheduledDate = tz.TZDateTime.now(tz.local).add(Duration(seconds: seconds));
+
+    const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+      'pomodoro_channel',
+      'Pomodoro Focus Timer',
+      channelDescription: 'Alerts when your Pomodoro focus session or break is complete',
+      importance: Importance.max,
+      priority: Priority.high,
+      playSound: true,
+      enableVibration: true,
+    );
+
+    const NotificationDetails platformDetails = NotificationDetails(
+      android: androidDetails,
+    );
+
+    await _notificationsPlugin.zonedSchedule(
+      102,
+      '$sessionType Complete! 🎯',
+      sessionType == 'Break'
+          ? 'Break over! Ready to resume your GATE preparation deep work?'
+          : 'Great focus! Take a 5-minute breather to refresh your mind.',
+      scheduledDate,
+      platformDetails,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+    );
+  }
+
+  Future<void> cancelPomodoroReminder() async {
+    if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) return;
+    await _notificationsPlugin.cancel(102);
+  }
+
   Future<void> cancelDailyReminder() async {
     if (kIsWeb || (!Platform.isAndroid && !Platform.isIOS)) return;
     await _notificationsPlugin.cancel(100);

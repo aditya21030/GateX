@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:math_expressions/math_expressions.dart';
 import 'package:flutter/material.dart';
 import 'package:gateda/theme/app_theme.dart';
 import 'package:gateda/models/models.dart';
@@ -1534,6 +1535,51 @@ void main() {
         }
       }
       expect(totalMarks, 100.0);
+    });
+  });
+
+  group('Virtual Calculator & Engine Verification Tests', () {
+    test('Virtual Calculator parses single-argument base-10 log correctly', () {
+      String expr = 'log(100)';
+      expr = expr.replaceAllMapped(
+        RegExp(r'log\(([^,\)]+)\)'),
+        (match) => '(ln(${match.group(1)})/ln(10))',
+      );
+      final parser = ShuntingYardParser();
+      final exp = parser.parse(expr);
+      final cm = ContextModel();
+      final double eval = exp.evaluate(EvaluationType.REAL, cm);
+      expect(eval, closeTo(2.0, 0.0001));
+    });
+
+    test('Virtual Calculator Degree mode converts sin(30) to 0.5 and asin(0.5) to 30', () {
+      const double degToRad = 0.017453292519943295;
+      const double radToDeg = 57.29577951308232;
+
+      String exprSin = 'sin(30)'.replaceAllMapped(
+        RegExp(r'\b(sin|cos|tan)\(([^,\)]+)\)'),
+        (m) => '${m.group(1)}((${m.group(2)}) * $degToRad)',
+      );
+      final parser = ShuntingYardParser();
+      final cm = ContextModel();
+      final double evalSin = parser.parse(exprSin).evaluate(EvaluationType.REAL, cm);
+      expect(evalSin, closeTo(0.5, 0.0001));
+
+      String exprAsin = 'asin(0.5)'
+          .replaceAll('asin(', 'arcsin(')
+          .replaceAllMapped(
+            RegExp(r'\b(arcsin|arccos|arctan)\(([^,\)]+)\)'),
+            (m) => '(${m.group(1)}(${m.group(2)}) * $radToDeg)',
+          );
+      final double evalAsin = parser.parse(exprAsin).evaluate(EvaluationType.REAL, cm);
+      expect(evalAsin, closeTo(30.0, 0.0001));
+    });
+
+    test('Virtual Calculator Radian mode evaluates sin(pi/6) to 0.5', () {
+      final parser = ShuntingYardParser();
+      final cm = ContextModel();
+      final double eval = parser.parse('sin(3.14159265359 / 6)').evaluate(EvaluationType.REAL, cm);
+      expect(eval, closeTo(0.5, 0.0001));
     });
   });
 }

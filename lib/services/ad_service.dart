@@ -184,11 +184,17 @@ class AdService {
     );
   }
 
-  void showRewardedAd({required Function onUserEarnedReward}) {
+  void showRewardedAd({
+    required Function onUserEarnedReward,
+    VoidCallback? onDismissedWithoutReward,
+  }) {
     if (_rewardedAd == null) {
       loadRewardedAd();
+      onDismissedWithoutReward?.call();
       return;
     }
+
+    bool rewardEarned = false;
 
     _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (ad) { _isShowingAd = true; },
@@ -197,16 +203,23 @@ class AdService {
         ad.dispose();
         _rewardedAd = null;
         loadRewardedAd();
+        if (!rewardEarned) {
+          onDismissedWithoutReward?.call();
+        }
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
         _isShowingAd = false;
         ad.dispose();
         _rewardedAd = null;
         loadRewardedAd();
+        if (!rewardEarned) {
+          onDismissedWithoutReward?.call();
+        }
       },
     );
 
     _rewardedAd!.show(onUserEarnedReward: (AdWithoutView ad, RewardItem reward) {
+      rewardEarned = true;
       onUserEarnedReward();
     });
   }
@@ -256,9 +269,14 @@ class AdService {
 
     final completer = Completer<bool>();
     if (_rewardedAd != null) {
-      showRewardedAd(onUserEarnedReward: () {
-        completer.complete(true);
-      });
+      showRewardedAd(
+        onUserEarnedReward: () {
+          if (!completer.isCompleted) completer.complete(true);
+        },
+        onDismissedWithoutReward: () {
+          if (!completer.isCompleted) completer.complete(false);
+        },
+      );
     } else {
       // Graceful offline fallback or simulator mode for testing
       completer.complete(true);

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../services/storage_service.dart';
+import '../services/notification_service.dart';
 
 class PomodoroProvider with ChangeNotifier, WidgetsBindingObserver {
   final StorageService _storage = StorageService();
@@ -85,6 +86,7 @@ class PomodoroProvider with ChangeNotifier, WidgetsBindingObserver {
   void startTimer() {
     if (_isTimerRunning) return;
     _isTimerRunning = true;
+    NotificationService().schedulePomodoroReminder(_timerSecondsRemaining, _timerSessionType);
     _ticker = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_timerSecondsRemaining > 0) {
         _timerSecondsRemaining--;
@@ -99,6 +101,7 @@ class PomodoroProvider with ChangeNotifier, WidgetsBindingObserver {
   void pauseTimer() {
     _isTimerRunning = false;
     _ticker?.cancel();
+    NotificationService().cancelPomodoroReminder();
     notifyListeners();
   }
 

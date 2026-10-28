@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:math_expressions/math_expressions.dart';
 import '../theme/app_theme.dart';
 
@@ -30,6 +31,7 @@ class _VirtualCalculatorState extends State<VirtualCalculator> {
   Offset _dragOffset = Offset.zero;
   double _opacity = 0.96;
   bool _isMinimized = false;
+  bool _isDegreeMode = true;
 
   final List<List<String>> _buttons = [
     ['sin', 'cos', 'tan', 'C'],
@@ -70,13 +72,44 @@ class _VirtualCalculatorState extends State<VirtualCalculator> {
   void _evaluateExpression() {
     try {
       String evalExpr = _expression.replaceAll('×', '*').replaceAll('÷', '/');
+
+      // 1. Rewrite single-arg log(x) to base-10 log: (ln(x)/ln(10))
+      evalExpr = evalExpr.replaceAllMapped(
+        RegExp(r'log\(([^,\)]+)\)'),
+        (match) => '(ln(${match.group(1)})/ln(10))',
+      );
+
+      // 2. Translate asin/acos/atan into arcsin/arccos/arctan for math_expressions parser
+      evalExpr = evalExpr
+          .replaceAll('asin(', 'arcsin(')
+          .replaceAll('acos(', 'arccos(')
+          .replaceAll('atan(', 'arctan(');
+
+      // 3. Degree mode conversion for trig functions
+      if (_isDegreeMode) {
+        const double degToRad = 0.017453292519943295; // pi / 180
+        const double radToDeg = 57.29577951308232;   // 180 / pi
+
+        evalExpr = evalExpr.replaceAllMapped(
+          RegExp(r'\b(sin|cos|tan)\(([^,\)]+)\)'),
+          (m) => '${m.group(1)}((${m.group(2)}) * $degToRad)',
+        );
+
+        evalExpr = evalExpr.replaceAllMapped(
+          RegExp(r'\b(arcsin|arccos|arctan)\(([^,\)]+)\)'),
+          (m) => '(${m.group(1)}(${m.group(2)}) * $radToDeg)',
+        );
+      }
+
       final parser = ShuntingYardParser();
       final exp = parser.parse(evalExpr);
       final cm = ContextModel();
       // ignore: deprecated_member_use
       final double eval = exp.evaluate(EvaluationType.REAL, cm);
 
-      _result = eval.toString();
+      // Format to up to 8 decimal places to eliminate floating point noise (e.g. 0.49999999999999994)
+      final double rounded = double.parse(eval.toStringAsFixed(8));
+      _result = rounded.toString();
       if (_result.endsWith('.0')) {
         _result = _result.substring(0, _result.length - 2);
       }
@@ -152,6 +185,40 @@ class _VirtualCalculatorState extends State<VirtualCalculator> {
                       const Text(
                         'GATE Calculator',
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white),
+                      ),
+                      const SizedBox(width: 8),
+                      // DEG / RAD Mode Toggle Pill
+                      GestureDetector(
+                        onTap: () {
+                          HapticFeedback.selectionClick();
+                          setState(() {
+                            _isDegreeMode = !_isDegreeMode;
+                            if (_expression.isNotEmpty) {
+                              _evaluateExpression();
+                            }
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                          decoration: BoxDecoration(
+                            color: _isDegreeMode
+                                ? const Color(0xFFFF8522).withValues(alpha: 0.18)
+                                : AppTheme.accentPurple.withValues(alpha: 0.18),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                              color: _isDegreeMode ? const Color(0xFFFF8522) : AppTheme.accentPurple,
+                              width: 0.8,
+                            ),
+                          ),
+                          child: Text(
+                            _isDegreeMode ? 'DEG' : 'RAD',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: _isDegreeMode ? const Color(0xFFFF8522) : AppTheme.accentPurple,
+                            ),
+                          ),
+                        ),
                       ),
                       const Spacer(),
                       // Opacity button

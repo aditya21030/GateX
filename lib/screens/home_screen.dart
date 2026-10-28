@@ -89,9 +89,51 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: context.scaffoldBackground,
         elevation: 0,
-        title: Text(
-          'GateX',
-          style: AppTheme.poppinsBold(fontSize: 22, color: context.textColor),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'GateX',
+              style: AppTheme.poppinsBold(fontSize: 22, color: context.textColor),
+            ),
+            const SizedBox(width: 8),
+            GestureDetector(
+              onTap: () {
+                HapticFeedback.selectionClick();
+                _showBranchSwitcherSheet(context, provider);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                decoration: BoxDecoration(
+                  color: AppTheme.accentPurple.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: AppTheme.accentPurple.withValues(alpha: 0.35),
+                    width: 0.8,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      provider.activeExam == 'CSIT' ? 'CS/IT' : 'DA',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.accentPurple,
+                      ),
+                    ),
+                    const SizedBox(width: 2),
+                    const Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      size: 14,
+                      color: AppTheme.accentPurple,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
         actions: [
           // Tactile Streak Flame Pill

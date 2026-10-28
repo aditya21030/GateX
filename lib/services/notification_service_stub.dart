@@ -23,6 +23,14 @@ class NotificationService {
     // No-op for Web / Desktop
   }
 
+  Future<void> schedulePomodoroReminder(int seconds, String sessionType) async {
+    // No-op for Web / Desktop
+  }
+
+  Future<void> cancelPomodoroReminder() async {
+    // No-op for Web / Desktop
+  }
+
   Future<void> cancelAll() async {
     // No-op for Web / Desktop
   }
