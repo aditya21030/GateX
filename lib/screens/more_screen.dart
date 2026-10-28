@@ -27,6 +27,8 @@ import 'formula_sheet_screen.dart';
 import 'pro_upgrade_screen.dart';
 import 'roadmap_screen.dart';
 import '../widgets/virtual_calculator.dart';
+import '../services/app_update_service.dart';
+import 'force_update_screen.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -184,6 +186,14 @@ class MoreScreen extends StatelessWidget {
                       title: Text('Share GateX', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor)),
                       trailing: Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor, size: 18),
                       onTap: () => _shareApp(context),
+                    ),
+                    Divider(height: 1, color: context.colorBorder),
+                    ListTile(
+                      leading: const NeuIconTile(icon: Icons.system_update_rounded, iconColor: Color(0xFF8B5CF6), size: 34, iconSize: 18),
+                      title: Text('Check for Updates', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor)),
+                      subtitle: Text('v1.0.8 (Build 9) • Tap to check', style: TextStyle(fontSize: 11, color: context.textSecondaryColor)),
+                      trailing: Icon(Icons.chevron_right_rounded, color: context.textSecondaryColor, size: 18),
+                      onTap: () => _checkForUpdates(context),
                     ),
                     Divider(height: 1, color: context.colorBorder),
                     ListTile(
@@ -576,6 +586,58 @@ class MoreScreen extends StatelessWidget {
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Could not open the Play Store.')));
+      }
+    }
+  }
+
+  Future<void> _checkForUpdates(BuildContext context) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => const Center(
+        child: CircularProgressIndicator(color: AppTheme.accentPurple),
+      ),
+    );
+
+    try {
+      final updateResult = await AppUpdateService().checkUpdate();
+      if (context.mounted) {
+        Navigator.pop(context); // Dismiss loading dialog
+      }
+
+      if (updateResult.isUpdateAvailable) {
+        if (context.mounted) {
+          if (updateResult.isForceUpdate) {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => ForceUpdateScreen(updateResult: updateResult)),
+              (route) => false,
+            );
+          } else {
+            final updated = await AppUpdateService().triggerUpdate(context: context);
+            if (!updated && context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Update available on Google Play Store.')),
+              );
+            }
+          }
+        }
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('You are already on the latest version of GateX! (v1.0.8)'),
+              backgroundColor: AppTheme.success,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error checking updates: $e'), backgroundColor: AppTheme.accentCoral),
+        );
       }
     }
   }

@@ -22,6 +22,8 @@ import 'screens/more_screen.dart';
 import 'screens/exam_selection_screen.dart';
 import 'screens/auth_screen.dart';
 import 'screens/onboarding_screen.dart';
+import 'services/app_update_service.dart';
+import 'screens/force_update_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -140,34 +142,56 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
     _controller.forward();
 
-    // Navigate smoothly after animation completes
-    Future.delayed(Duration(milliseconds: delayMs), () {
-      if (mounted) {
-        final authProvider = Provider.of<AuthProvider>(context, listen: false);
-        final appProvider = Provider.of<AppProvider>(context, listen: false);
-        
-        final bool isLoggedIn = authProvider.isLoggedIn;
-        final bool hasSelectedExam = appProvider.selectedExam != null && appProvider.selectedExam!.isNotEmpty;
-        final bool isGuestMode = StorageService().prefs.getBool('is_guest_mode') ?? false;
+    // Navigate smoothly after animation completes and verify mandatory update
+    Future.delayed(Duration(milliseconds: delayMs), () async {
+      if (!mounted) return;
 
-        Widget nextScreen;
-        if (isLoggedIn || (isGuestMode && hasSelectedExam)) {
-          nextScreen = hasSelectedExam ? const MainNavigationScaffold() : const ExamSelectionScreen();
-        } else {
-          final hasSeenOnboarding = StorageService().prefs.getBool('has_seen_onboarding') ?? false;
-          nextScreen = hasSeenOnboarding ? const AuthScreen() : const OnboardingScreen();
+      // 1. Mandatory In-App Update Verification Gate
+      try {
+        final updateResult = await AppUpdateService().checkUpdate();
+        if (updateResult.isForceUpdate) {
+          if (mounted) {
+            Navigator.of(context).pushReplacement(
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    ForceUpdateScreen(updateResult: updateResult),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
+                transitionDuration: const Duration(milliseconds: 300),
+              ),
+            );
+          }
+          return;
         }
-
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => nextScreen,
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            transitionDuration: const Duration(milliseconds: 300),
-          ),
-        );
+      } catch (e) {
+        debugPrint('Splash update check notice: $e');
       }
+
+      if (!mounted) return;
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final appProvider = Provider.of<AppProvider>(context, listen: false);
+      
+      final bool isLoggedIn = authProvider.isLoggedIn;
+      final bool hasSelectedExam = appProvider.selectedExam != null && appProvider.selectedExam!.isNotEmpty;
+      final bool isGuestMode = StorageService().prefs.getBool('is_guest_mode') ?? false;
+
+      Widget nextScreen;
+      if (isLoggedIn || (isGuestMode && hasSelectedExam)) {
+        nextScreen = hasSelectedExam ? const MainNavigationScaffold() : const ExamSelectionScreen();
+      } else {
+        final hasSeenOnboarding = StorageService().prefs.getBool('has_seen_onboarding') ?? false;
+        nextScreen = hasSeenOnboarding ? const AuthScreen() : const OnboardingScreen();
+      }
+
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => nextScreen,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          transitionDuration: const Duration(milliseconds: 300),
+        ),
+      );
     });
   }
 
@@ -269,8 +293,49 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 }
 
 // 2. CORE NAVIGATION SCAFFOLD (5 Exam-Priority Tabs)
-class MainNavigationScaffold extends StatelessWidget {
+class MainNavigationScaffold extends StatefulWidget {
   const MainNavigationScaffold({super.key});
+
+  @override
+  State<MainNavigationScaffold> createState() => _MainNavigationScaffoldState();
+}
+
+class _MainNavigationScaffoldState extends State<MainNavigationScaffold> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkMandatoryUpdate());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _checkMandatoryUpdate();
+    }
+  }
+
+  Future<void> _checkMandatoryUpdate() async {
+    try {
+      final updateResult = await AppUpdateService().checkUpdate();
+      if (updateResult.isForceUpdate && mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) => ForceUpdateScreen(updateResult: updateResult),
+          ),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      debugPrint('Scaffold update check notice: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

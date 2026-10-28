@@ -22,6 +22,8 @@ import 'package:gateda/data/notes_data.dart';
 import 'package:gateda/services/storage_service.dart';
 import 'package:gateda/services/purchase_service.dart';
 import 'package:gateda/widgets/iit_onboarding_components.dart';
+import 'package:gateda/services/app_update_service.dart';
+import 'package:gateda/screens/force_update_screen.dart';
 
 class EstimationNode {
   final double marks;
@@ -2186,7 +2188,85 @@ void main() {
       expect(computeNegativePenalty('NAT', 2.0), equals(0.0));
     });
   });
+
+  group('In-App Update & Mandatory Force Gate Tests', () {
+    test('UpdateCheckResult.noUpdate accurately reflects current build and non-blocking status', () {
+      final res = UpdateCheckResult.noUpdate(
+        currentVersion: '1.0.8',
+        currentBuildNumber: 9,
+      );
+
+      expect(res.isUpdateAvailable, isFalse);
+      expect(res.isForceUpdate, isFalse);
+      expect(res.currentVersion, equals('1.0.8'));
+      expect(res.currentBuildNumber, equals(9));
+      expect(res.latestVersion, equals('1.0.8'));
+      expect(res.minRequiredBuildNumber, equals(9));
+      expect(res.updateTitle, equals('Up to Date'));
+      expect(res.storeUrl, contains('com.yousful.gatex'));
+    });
+
+    test('Force update triggers when current build is lower than required build', () {
+      const int currentBuild = 9;
+      const int minRequiredBuild = 10;
+      const bool forceUpdateFlag = true;
+
+      final bool isMandatory = (currentBuild < minRequiredBuild) || forceUpdateFlag;
+      expect(isMandatory, isTrue);
+
+      final res = UpdateCheckResult(
+        isUpdateAvailable: true,
+        isForceUpdate: isMandatory,
+        currentVersion: '1.0.8',
+        currentBuildNumber: currentBuild,
+        latestVersion: '1.0.9',
+        minRequiredBuildNumber: minRequiredBuild,
+        updateTitle: 'Critical Update Required',
+        updateMessage: 'Please update to continue.',
+        storeUrl: AppUpdateService.playStoreWebUrl,
+      );
+
+      expect(res.isForceUpdate, isTrue);
+      expect(res.isUpdateAvailable, isTrue);
+      expect(res.latestVersion, equals('1.0.9'));
+    });
+
+    testWidgets('ForceUpdateScreen enforces un-bypassable PopScope and renders update UI', (WidgetTester tester) async {
+      const result = UpdateCheckResult(
+        isUpdateAvailable: true,
+        isForceUpdate: true,
+        currentVersion: '1.0.8',
+        currentBuildNumber: 9,
+        latestVersion: '1.0.9',
+        minRequiredBuildNumber: 10,
+        updateTitle: 'Update Required to Continue',
+        updateMessage: 'A new version of GateX is required to continue.',
+        storeUrl: AppUpdateService.playStoreWebUrl,
+      );
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: ForceUpdateScreen(updateResult: result),
+        ),
+      );
+
+      // Verify PopScope has canPop == false
+      final popScopeFinder = find.byType(PopScope);
+      expect(popScopeFinder, findsOneWidget);
+      final PopScope popScope = tester.widget(popScopeFinder);
+      expect(popScope.canPop, isFalse);
+
+      // Verify UI text and elements
+      expect(find.text('MANDATORY UPDATE'), findsOneWidget);
+      expect(find.text('Update Required to Continue'), findsOneWidget);
+      expect(find.text('Your Version: v1.0.8'), findsOneWidget);
+      expect(find.text('Required: v1.0.9+'), findsOneWidget);
+      expect(find.text('Update via Google Play'), findsOneWidget);
+      expect(find.text('I have updated, Check Again'), findsOneWidget);
+    });
+  });
 }
+
 
 
 double calculateMockScoreDryRun(List<Map<String, dynamic>> questions, Map<String, String> userAnswers) {
