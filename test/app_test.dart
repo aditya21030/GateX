@@ -956,31 +956,31 @@ void main() {
   });
 
   group('PYQ Bank Logic & Filtering Tests', () {
-    test('Subject normalization resolves branch variations', () {
+    test('Subject normalization resolves branch variations with strict disambiguation', () {
       String normalizeSubject(String input, bool isCSIT) {
         final s = input.toLowerCase().trim();
         if (!isCSIT) {
           if (s.contains('prob') || s.contains('stat')) return 'Probability and Statistics';
           if (s.contains('linear') || s.contains('algebra')) return 'Linear Algebra';
-          if (s.contains('calculus') || s.contains('optimization')) return 'Calculus and Optimization';
-          if (s.contains('machine learning') || s == 'ml') return 'Machine Learning';
+          if (s.contains('calculus') || s.contains('optimi')) return 'Calculus and Optimization';
+          if (s.contains('machine') || RegExp(r'\bml\b').hasMatch(s)) return 'Machine Learning';
           if (s.contains('python')) return 'Python (Main Topics Only)';
           if (s.contains('dsa') || s.contains('data struct') || s.contains('algorithm')) return 'DSA (Data Structures and Algorithms)';
           if (s.contains('database') || s.contains('dbms') || s.contains('warehousing')) return 'Database Management and Warehousing';
-          if (s.contains('ai') || s.contains('artificial')) return 'AI';
+          if (RegExp(r'\bai\b').hasMatch(s) || s.contains('artificial') || s.contains('logic')) return 'AI';
           if (s.contains('aptitude')) return 'General Aptitude';
         } else {
+          if (s.contains('aptitude')) return 'General Aptitude';
           if (s.contains('math')) return 'Engineering Mathematics';
           if (s.contains('digital') || s.contains('logic')) return 'Digital Logic';
-          if (s.contains('co') || s.contains('organization') || s.contains('architecture')) return 'Computer Organization';
-          if (s.contains('program') || s.contains('data struct')) return 'Programming & Data Structures';
-          if (s.contains('algorithm')) return 'Algorithms';
-          if (s.contains('toc') || s.contains('computation')) return 'Theory of Computation';
           if (s.contains('compiler')) return 'Compiler Design';
-          if (s.contains('operating') || s.contains('os')) return 'Operating System';
+          if (s.contains('computation') || s.contains('toc') || s.contains('automata')) return 'Theory of Computation';
+          if (s.contains('network') || RegExp(r'\bcn\b').hasMatch(s)) return 'Computer Networks';
+          if (s.contains('operating') || RegExp(r'\bos\b').hasMatch(s)) return 'Operating System';
           if (s.contains('database') || s.contains('dbms')) return 'Databases';
-          if (s.contains('network') || s.contains('cn')) return 'Computer Networks';
-          if (s.contains('aptitude')) return 'General Aptitude';
+          if (s.contains('algorithm')) return 'Algorithms';
+          if (s.contains('program') || s.contains('data struct')) return 'Programming & Data Structures';
+          if (s.contains('organization') || s.contains('organisation') || s.contains('architecture') || RegExp(r'\bcoa?\b').hasMatch(s)) return 'Computer Organization';
         }
         return input;
       }
@@ -993,10 +993,39 @@ void main() {
       expect(normalizeSubject('Python', false), 'Python (Main Topics Only)');
       expect(normalizeSubject('AI & Logic', false), 'AI');
 
-      // CSIT Subject aliases
+      // CSIT Subject aliases without false positive CO collisions
+      expect(normalizeSubject('Theory of Computation', true), 'Theory of Computation');
+      expect(normalizeSubject('Compiler Design', true), 'Compiler Design');
+      expect(normalizeSubject('Computer Networks', true), 'Computer Networks');
       expect(normalizeSubject('Computer Organization and Architecture', true), 'Computer Organization');
       expect(normalizeSubject('Programming and Data Structures', true), 'Programming & Data Structures');
       expect(normalizeSubject('Engineering Mathematics', true), 'Engineering Mathematics');
+    });
+
+    test('NAT answer evaluation handles decimal comma and tolerances', () {
+      final natQuestion = PYQ(
+        id: 'pyq_test_nat',
+        subject: 'Linear Algebra',
+        topic: 'Eigenvalues',
+        questionText: 'Compute the trace of matrix A',
+        type: 'NAT',
+        isMCQ: false,
+        year: 2026,
+        options: [],
+        correctAnswer: '3.14',
+        explanation: 'Trace is sum of diagonal elements',
+        difficulty: 'Medium',
+      );
+
+      // Standard dot
+      expect(natQuestion.isAnswerCorrect('3.14'), true);
+      // Tolerance within 0.05
+      expect(natQuestion.isAnswerCorrect('3.17'), true);
+      // Comma converted to dot before evaluation
+      final commaInput = '3,14'.replaceAll(',', '.');
+      expect(natQuestion.isAnswerCorrect(commaInput), true);
+      // Clearly incorrect
+      expect(natQuestion.isAnswerCorrect('4.50'), false);
     });
 
     test('Pro Pass users receive 0 ad injection slots in PYQ lists', () {

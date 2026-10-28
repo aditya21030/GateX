@@ -30,6 +30,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
   final TextEditingController _searchController = TextEditingController();
 
   // Active filters
+  String? _lastExamBranch;
   String _searchQuery = '';
   String _selectedSubject = 'All';
   String _selectedYear = 'All';
@@ -82,25 +83,25 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
     if (!isCSIT) {
       if (s.contains('prob') || s.contains('stat')) return 'Probability and Statistics';
       if (s.contains('linear') || s.contains('algebra')) return 'Linear Algebra';
-      if (s.contains('calculus') || s.contains('optimization')) return 'Calculus and Optimization';
-      if (s.contains('machine learning') || s == 'ml') return 'Machine Learning';
+      if (s.contains('calculus') || s.contains('optimi')) return 'Calculus and Optimization';
+      if (s.contains('machine') || RegExp(r'\bml\b').hasMatch(s)) return 'Machine Learning';
       if (s.contains('python')) return 'Python (Main Topics Only)';
       if (s.contains('dsa') || s.contains('data struct') || s.contains('algorithm')) return 'DSA (Data Structures and Algorithms)';
       if (s.contains('database') || s.contains('dbms') || s.contains('warehousing')) return 'Database Management and Warehousing';
-      if (s.contains('ai') || s.contains('artificial')) return 'AI';
+      if (RegExp(r'\bai\b').hasMatch(s) || s.contains('artificial') || s.contains('logic')) return 'AI';
       if (s.contains('aptitude')) return 'General Aptitude';
     } else {
+      if (s.contains('aptitude')) return 'General Aptitude';
       if (s.contains('math')) return 'Engineering Mathematics';
       if (s.contains('digital') || s.contains('logic')) return 'Digital Logic';
-      if (s.contains('co') || s.contains('organization') || s.contains('architecture')) return 'Computer Organization';
-      if (s.contains('program') || s.contains('data struct')) return 'Programming & Data Structures';
-      if (s.contains('algorithm')) return 'Algorithms';
-      if (s.contains('toc') || s.contains('computation')) return 'Theory of Computation';
       if (s.contains('compiler')) return 'Compiler Design';
-      if (s.contains('operating') || s.contains('os')) return 'Operating System';
+      if (s.contains('computation') || s.contains('toc') || s.contains('automata')) return 'Theory of Computation';
+      if (s.contains('network') || RegExp(r'\bcn\b').hasMatch(s)) return 'Computer Networks';
+      if (s.contains('operating') || RegExp(r'\bos\b').hasMatch(s)) return 'Operating System';
       if (s.contains('database') || s.contains('dbms')) return 'Databases';
-      if (s.contains('network') || s.contains('cn')) return 'Computer Networks';
-      if (s.contains('aptitude')) return 'General Aptitude';
+      if (s.contains('algorithm')) return 'Algorithms';
+      if (s.contains('program') || s.contains('data struct')) return 'Programming & Data Structures';
+      if (s.contains('organization') || s.contains('organisation') || s.contains('architecture') || RegExp(r'\bcoa?\b').hasMatch(s)) return 'Computer Organization';
     }
 
     for (final key in keys) {
@@ -160,6 +161,25 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
     }).toList();
   }
 
+  List<PYQ> _getCurrentTabList(
+    List<PYQ> pyqListAll,
+    List<PYQ> pyqListBookmarked,
+    List<PYQ> pyqListDone,
+    List<PYQ> pyqListFlagged,
+  ) {
+    switch (_tabController.index) {
+      case 1:
+        return pyqListBookmarked;
+      case 2:
+        return pyqListDone;
+      case 3:
+        return pyqListFlagged;
+      case 0:
+      default:
+        return pyqListAll;
+    }
+  }
+
   void _startInstantDrill(BuildContext context, List<PYQ> questions) {
     HapticFeedback.mediumImpact();
     if (questions.isEmpty) return;
@@ -196,6 +216,18 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
     final pyqListFlagged = _applyFilters(allPyqs.where((p) => p.isFlaggedForRevision).toList());
 
     final isCSIT = provider.activeExam == 'CSIT';
+
+    // Reset filters if active exam branch changed
+    if (_lastExamBranch != null && _lastExamBranch != provider.activeExam) {
+      _selectedSubject = 'All';
+      _selectedYear = 'All';
+      _selectedDifficulty = 'All';
+      _natOnly = false;
+      _searchQuery = '';
+      _searchController.clear();
+    }
+    _lastExamBranch = provider.activeExam;
+
     final subjectsList = ['All', ...provider.currentSubjects];
 
     // Keep subject filter aligned when switching branch
@@ -213,6 +245,11 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
         .toList()
       ..sort((a, b) => b.compareTo(a));
     final yearsList = ['All', ...extractedYears];
+
+    // Keep year filter aligned when switching branch
+    if (_selectedYear != 'All' && !yearsList.contains(_selectedYear)) {
+      _selectedYear = 'All';
+    }
     
     final difficultiesList = ['All', 'Easy', 'Medium', 'Hard'];
 
@@ -232,6 +269,24 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
           style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: context.textColor),
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.flash_on_rounded, size: 21, color: Color(0xFFFF8522)),
+            tooltip: 'Start Instant Practice Drill',
+            onPressed: () {
+              final currentList = _getCurrentTabList(pyqListAll, pyqListBookmarked, pyqListDone, pyqListFlagged);
+              if (currentList.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('No questions available in this filter to start drill.'),
+                    duration: Duration(seconds: 2),
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+                return;
+              }
+              _startInstantDrill(context, currentList);
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.calculate_outlined, size: 21),
             tooltip: 'Virtual Calculator',
@@ -474,7 +529,11 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon3D(Icons.assignment_outlined, size: 15, color: Colors.white),
+                              Icon3D(
+                                Icons.assignment_outlined,
+                                size: 15,
+                                color: _tabController.index == 0 ? Colors.white : context.textSecondaryColor,
+                              ),
                               const SizedBox(width: 4),
                               Text('All (${pyqListAll.length})'),
                             ],
@@ -488,7 +547,11 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon3D(Icons.bookmark_outline_rounded, size: 15, color: Colors.white),
+                              Icon3D(
+                                Icons.bookmark_outline_rounded,
+                                size: 15,
+                                color: _tabController.index == 1 ? Colors.white : context.textSecondaryColor,
+                              ),
                               const SizedBox(width: 4),
                               Text('Saved (${pyqListBookmarked.length})'),
                             ],
@@ -502,7 +565,11 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon3D(Icons.done_all_rounded, size: 15, color: Colors.white),
+                              Icon3D(
+                                Icons.done_all_rounded,
+                                size: 15,
+                                color: _tabController.index == 2 ? Colors.white : context.textSecondaryColor,
+                              ),
                               const SizedBox(width: 4),
                               Text('Done (${pyqListDone.length})'),
                             ],
@@ -516,7 +583,11 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon3D(Icons.flag_outlined, size: 15, color: Colors.white),
+                              Icon3D(
+                                Icons.flag_outlined,
+                                size: 15,
+                                color: _tabController.index == 3 ? Colors.white : context.textSecondaryColor,
+                              ),
                               const SizedBox(width: 4),
                               Text('Flagged (${pyqListFlagged.length})'),
                             ],
@@ -544,6 +615,24 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
           ),
         ),
       ),
+      floatingActionButton: pyqListAll.isNotEmpty
+          ? FloatingActionButton.extended(
+              backgroundColor: const Color(0xFFFF8522),
+              foregroundColor: Colors.white,
+              elevation: 4,
+              icon: const Icon(Icons.flash_on_rounded, size: 20),
+              label: Text(
+                'Start Drill (${min(30, _getCurrentTabList(pyqListAll, pyqListBookmarked, pyqListDone, pyqListFlagged).length)})',
+                style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13),
+              ),
+              onPressed: () {
+                final currentList = _getCurrentTabList(pyqListAll, pyqListBookmarked, pyqListDone, pyqListFlagged);
+                if (currentList.isNotEmpty) {
+                  _startInstantDrill(context, currentList);
+                }
+              },
+            )
+          : null,
     );
   }
 
@@ -847,17 +936,69 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
 
   Widget _buildQuestionList(BuildContext context, AppProvider provider, List<PYQ> list) {
     if (list.isEmpty) {
+      String emptyTitle = 'No questions found';
+      String emptySubtitle = 'Try modifying your search or changing the filter criteria.';
+      IconData emptyIcon = Icons.search_off_rounded;
+
+      if (_activeFilterCount == 0 && _searchQuery.isEmpty) {
+        if (_tabController.index == 1) {
+          emptyTitle = 'No Saved Questions';
+          emptySubtitle = 'Tap the bookmark icon on any question to save it for quick review.';
+          emptyIcon = Icons.bookmark_border_rounded;
+        } else if (_tabController.index == 2) {
+          emptyTitle = 'No Solved Questions Yet';
+          emptySubtitle = 'Solve questions in this stream to track your completed PYQs.';
+          emptyIcon = Icons.done_all_rounded;
+        } else if (_tabController.index == 3) {
+          emptyTitle = 'No Flagged Questions';
+          emptySubtitle = 'Tap the flag icon on difficult questions to add them to Spaced Revision.';
+          emptyIcon = Icons.flag_outlined;
+        }
+      }
+
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.help_center_outlined, size: 56, color: context.textSecondaryColor.withValues(alpha: 0.4)),
-            const SizedBox(height: 12),
-            Text(
-              'No questions found matching the criteria.',
-              style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 14, color: context.textColor),
-            ),
-          ],
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(emptyIcon, size: 52, color: context.textSecondaryColor.withValues(alpha: 0.45)),
+              const SizedBox(height: 12),
+              Text(
+                emptyTitle,
+                style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 16, color: context.textColor),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                emptySubtitle,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.outfit(fontSize: 13, color: context.textSecondaryColor),
+              ),
+              if (_activeFilterCount > 0 || _searchQuery.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                NeuButton(
+                  isPrimary: true,
+                  borderRadius: 12,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  onPressed: () {
+                    setState(() {
+                      _searchController.clear();
+                      _searchQuery = '';
+                      _selectedSubject = 'All';
+                      _selectedYear = 'All';
+                      _selectedDifficulty = 'All';
+                      _natOnly = false;
+                    });
+                  },
+                  child: Text(
+                    'Reset Filters',
+                    style: GoogleFonts.outfit(fontSize: 12.5, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
       );
     }
@@ -1515,15 +1656,31 @@ class _PYQCardState extends State<_PYQCard> {
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: Text(
-                        option,
-                        style: GoogleFonts.outfit(
-                          color: textCol,
-                          fontSize: 13.5,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                          height: 1.35,
-                        ),
-                      ),
+                      child: option.contains(r'$')
+                          ? MarkdownBody(
+                              data: option,
+                              builders: {
+                                'math': MathElementBuilder(color: textCol),
+                              },
+                              inlineSyntaxes: [InlineMathSyntax()],
+                              styleSheet: MarkdownStyleSheet(
+                                p: GoogleFonts.outfit(
+                                  color: textCol,
+                                  fontSize: 13.5,
+                                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                                  height: 1.35,
+                                ),
+                              ),
+                            )
+                          : Text(
+                              option,
+                              style: GoogleFonts.outfit(
+                                color: textCol,
+                                fontSize: 13.5,
+                                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                                height: 1.35,
+                              ),
+                            ),
                     ),
                     if (alreadySolved && isCorrectOption)
                       const Icon(Icons.check_circle_rounded, color: AppTheme.accentMint, size: 21)
@@ -1628,7 +1785,7 @@ class _PYQCardState extends State<_PYQCard> {
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                 ),
                 onPressed: () {
-                  final ans = _natController.text.trim();
+                  final ans = _natController.text.trim().replaceAll(',', '.');
                   if (ans.isNotEmpty) {
                     provider.solvePYQ(pyq.id, ans);
                   }
