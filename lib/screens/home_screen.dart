@@ -12,7 +12,7 @@ import 'psu_predictor_screen.dart';
 import 'gate_score_predictor_screen.dart';
 import 'mock_tracker_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'mock_test_runner_screen.dart';
+import 'mock_instructions_screen.dart';
 import '../models/models.dart';
 import '../services/ad_service.dart';
 
@@ -46,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MockTestRunnerScreen(
+        builder: (context) => MockInstructionsScreen(
           questions: questions,
           duration: const Duration(minutes: 10),
           testName: 'Daily Rapid Fire (10 Min)',

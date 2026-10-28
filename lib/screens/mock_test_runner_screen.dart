@@ -9,6 +9,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../models/models.dart';
+import '../services/storage_service.dart';
+import '../widgets/question_report_sheet.dart';
+import 'mock_instructions_screen.dart';
 import '../theme/app_theme.dart';
 import '../providers/app_provider.dart';
 import '../services/ad_service.dart';
@@ -1188,6 +1191,24 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> with Widget
           ),
           actions: [
             IconButton(
+              icon: const Icon(Icons.info_outline_rounded, color: AppTheme.accentPurple),
+              tooltip: 'Exam Guidelines',
+              onPressed: () {
+                HapticFeedback.selectionClick();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MockInstructionsScreen(
+                      questions: widget.questions,
+                      duration: widget.duration,
+                      testName: widget.testName,
+                      isMidExamReview: true,
+                    ),
+                  ),
+                );
+              },
+            ),
+            IconButton(
               icon: const Icon(Icons.calculate_outlined, color: AppTheme.accentPurple),
               tooltip: 'GATE Virtual Calculator',
               onPressed: () {
@@ -1360,6 +1381,60 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> with Widget
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
+                            ),
+                            const Spacer(),
+                            // Report Question Button
+                            Builder(
+                              builder: (context) {
+                                final isReported = StorageService().isQuestionReported(q.id);
+                                return InkWell(
+                                  onTap: () {
+                                    QuestionReportSheet.show(
+                                      context,
+                                      pyq: q,
+                                      questionNumber: _currentIndex + 1,
+                                      testName: widget.testName,
+                                      onReportSubmitted: () => setState(() {}),
+                                    );
+                                  },
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
+                                    decoration: BoxDecoration(
+                                      color: isReported
+                                          ? const Color(0xFFF59E0B).withValues(alpha: 0.14)
+                                          : (context.isDarkMode
+                                              ? Colors.white.withValues(alpha: 0.05)
+                                              : Colors.black.withValues(alpha: 0.04)),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: isReported
+                                            ? const Color(0xFFF59E0B).withValues(alpha: 0.35)
+                                            : (context.isDarkMode ? Colors.white12 : Colors.black12),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          isReported ? Icons.flag_rounded : Icons.flag_outlined,
+                                          size: 13,
+                                          color: isReported ? const Color(0xFFF59E0B) : context.textSecondaryColor,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          isReported ? 'Reported' : 'Report',
+                                          style: GoogleFonts.outfit(
+                                            color: isReported ? const Color(0xFFF59E0B) : context.textSecondaryColor,
+                                            fontSize: 11,
+                                            fontWeight: isReported ? FontWeight.bold : FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),
@@ -2505,7 +2580,6 @@ class _MockQuestionReviewCardState extends State<_MockQuestionReviewCard> {
             Divider(color: context.isDarkMode ? Colors.white10 : Colors.black12, height: 1),
             const SizedBox(height: 8),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 // Error Log Shortcut
                 if (!isCorrect && uAns != null && uAns.isNotEmpty)
@@ -2532,9 +2606,47 @@ class _MockQuestionReviewCardState extends State<_MockQuestionReviewCard> {
                           },
                           icon: const Icon(Icons.add_alert_rounded, size: 15),
                           label: Text('Add to Error Log', style: GoogleFonts.outfit(fontSize: 11.5, fontWeight: FontWeight.bold)),
-                        )
-                else
-                  const SizedBox(),
+                        ),
+                const Spacer(),
+                // Report question issue
+                Builder(
+                  builder: (context) {
+                    final isReported = StorageService().isQuestionReported(q.id);
+                    return OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: isReported ? const Color(0xFFF59E0B) : context.textSecondaryColor,
+                        side: BorderSide(
+                          color: (isReported ? const Color(0xFFF59E0B) : context.textSecondaryColor).withValues(alpha: 0.35),
+                        ),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                        visualDensity: VisualDensity.compact,
+                      ),
+                      onPressed: () {
+                        QuestionReportSheet.show(
+                          context,
+                          pyq: q,
+                          questionNumber: widget.index + 1,
+                          testName: 'Mock Review',
+                          onReportSubmitted: () => setState(() {}),
+                        );
+                      },
+                      icon: Icon(
+                        isReported ? Icons.flag_rounded : Icons.flag_outlined,
+                        size: 14,
+                        color: isReported ? const Color(0xFFF59E0B) : context.textSecondaryColor,
+                      ),
+                      label: Text(
+                        isReported ? 'Reported' : 'Report',
+                        style: GoogleFonts.outfit(
+                          fontSize: 11.5,
+                          fontWeight: isReported ? FontWeight.bold : FontWeight.w500,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(width: 8),
 
                 // Toggle solution
                 if (q.explanation.trim().isNotEmpty)

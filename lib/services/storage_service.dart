@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -696,5 +697,36 @@ class StorageService {
     if (avatarId != null) await _prefs.setString('user_avatar_id', avatarId);
 
     await updateStreak();
+  }
+
+  /// Checks if a question has been reported by the user
+  bool isQuestionReported(String questionId) {
+    final list = _prefs.getStringList('reported_question_ids') ?? [];
+    return list.contains(questionId);
+  }
+
+  /// Records a user's question report
+  Future<void> saveQuestionReport({
+    required String questionId,
+    required String questionText,
+    required String testName,
+    required String issueType,
+    required String details,
+  }) async {
+    final list = (_prefs.getStringList('reported_question_ids') ?? []).toSet();
+    list.add(questionId);
+    await _prefs.setStringList('reported_question_ids', list.toList());
+
+    final reports = _prefs.getStringList('question_reports_history') ?? [];
+    final reportData = jsonEncode({
+      'questionId': questionId,
+      'questionText': questionText.length > 200 ? '...' : questionText,
+      'testName': testName,
+      'issueType': issueType,
+      'details': details,
+      'timestamp': DateTime.now().toIso8601String(),
+    });
+    reports.add(reportData);
+    await _prefs.setStringList('question_reports_history', reports);
   }
 }

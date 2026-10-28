@@ -14,7 +14,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../widgets/virtual_calculator.dart';
 import '../widgets/question_discussion_sheet.dart';
 import '../widgets/neu_widgets.dart';
-import 'mock_test_runner_screen.dart';
+import 'mock_instructions_screen.dart';
 import '../services/storage_service.dart';
 
 class PYQScreen extends StatefulWidget {
@@ -195,7 +195,7 @@ class _PYQScreenState extends State<PYQScreen> with SingleTickerProviderStateMix
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MockTestRunnerScreen(
+        builder: (context) => MockInstructionsScreen(
           questions: testQuestions,
           duration: Duration(minutes: minutes),
           testName: drillName,

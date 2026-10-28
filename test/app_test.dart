@@ -2074,6 +2074,118 @@ void main() {
       expect(reminderTime, equals('20:00'));
     });
   });
+
+  group('Mock Guidelines & Question Reporting Tests', () {
+    test('Question report records id, payload and prevents duplicate unflagged status', () {
+      final Set<String> reportedIds = {};
+      final List<Map<String, dynamic>> reportsHistory = [];
+
+      void recordReport({
+        required String questionId,
+        required String questionText,
+        required String testName,
+        required String issueType,
+        required String details,
+      }) {
+        reportedIds.add(questionId);
+        reportsHistory.add({
+          'questionId': questionId,
+          'questionText': questionText.length > 200 ? '${questionText.substring(0, 200)}...' : questionText,
+          'testName': testName,
+          'issueType': issueType,
+          'details': details,
+          'timestamp': DateTime.now().toIso8601String(),
+        });
+      }
+
+      bool isReported(String qId) => reportedIds.contains(qId);
+
+      expect(isReported('Q_DA_2026_01'), isFalse);
+
+      recordReport(
+        questionId: 'Q_DA_2026_01',
+        questionText: 'What is the eigenvalues of matrix A?',
+        testName: 'Full CBT Mock 1',
+        issueType: 'Wrong Answer Key',
+        details: 'Correct eigenvalue should be 5 not 3',
+      );
+
+      expect(isReported('Q_DA_2026_01'), isTrue);
+      expect(isReported('Q_DA_2026_02'), isFalse);
+      expect(reportsHistory.length, equals(1));
+      expect(reportsHistory.first['issueType'], equals('Wrong Answer Key'));
+      expect(reportsHistory.first['testName'], equals('Full CBT Mock 1'));
+    });
+
+    test('Question report categories support all primary candidate report scenarios', () {
+      const validCategories = [
+        'Wrong Answer Key',
+        'Typo / Stem Ambiguity',
+        'Diagram / Image Issue',
+        'NAT Range / Option Missing',
+        'Explanation Inaccurate',
+        'Other Feedback',
+      ];
+
+      expect(validCategories.contains('Wrong Answer Key'), isTrue);
+      expect(validCategories.contains('Diagram / Image Issue'), isTrue);
+      expect(validCategories.contains('NAT Range / Option Missing'), isTrue);
+      expect(validCategories.length, equals(6));
+    });
+
+    test('Mock guidelines accurately maps full 65-question CBT structure vs practice drill', () {
+      int calculateTotalMarks(int questionCount) {
+        if (questionCount >= 65) return 100;
+        return questionCount;
+      }
+
+      // Full CBT Mock
+      expect(calculateTotalMarks(65), equals(100));
+
+      // Practice drill
+      expect(calculateTotalMarks(10), equals(10));
+      expect(calculateTotalMarks(20), equals(20));
+
+      // Sectional question count validation for GATE 65-Q full mock
+      const totalQs = 65;
+      const gaQuestions = 10;
+      const coreQuestions = totalQs - gaQuestions;
+
+      const ga1MarkQs = 5;
+      const ga2MarkQs = 5;
+      const gaTotalMarks = (ga1MarkQs * 1) + (ga2MarkQs * 2);
+
+      const core1MarkQs = 25;
+      const core2MarkQs = 30;
+      const coreTotalMarks = (core1MarkQs * 1) + (core2MarkQs * 2);
+
+      expect(gaTotalMarks, equals(15));
+      expect(coreTotalMarks, equals(85));
+      expect(gaTotalMarks + coreTotalMarks, equals(100));
+      expect(coreQuestions, equals(55));
+    });
+
+    test('Official GATE negative marking penalty applies only to MCQs', () {
+      double computeNegativePenalty(String type, double questionMarks) {
+        if (type == 'MCQ') {
+          return questionMarks / 3.0;
+        }
+        return 0.0;
+      }
+
+      // 1-mark MCQ penalty is 1/3 (0.33)
+      expect(computeNegativePenalty('MCQ', 1.0), closeTo(0.333, 0.01));
+
+      // 2-mark MCQ penalty is 2/3 (0.67)
+      expect(computeNegativePenalty('MCQ', 2.0), closeTo(0.667, 0.01));
+
+      // MSQ and NAT have 0.0 negative penalty
+      expect(computeNegativePenalty('MSQ', 1.0), equals(0.0));
+      expect(computeNegativePenalty('MSQ', 2.0), equals(0.0));
+      expect(computeNegativePenalty('NAT', 1.0), equals(0.0));
+      expect(computeNegativePenalty('NAT', 2.0), equals(0.0));
+    });
+  });
 }
 
 

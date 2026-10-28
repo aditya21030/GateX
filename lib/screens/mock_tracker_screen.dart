@@ -31,7 +31,7 @@ import '../data/cs_full_mock_9_pyqs.dart';
 import '../data/cs_full_mock_10_pyqs.dart';
 import '../data/da_subjectwise_mock_data.dart';
 import '../data/csit_subjectwise_mock_data.dart';
-import 'mock_test_runner_screen.dart';
+import 'mock_instructions_screen.dart';
 import 'pro_upgrade_screen.dart';
 import '../services/ad_service.dart';
 import '../widgets/neu_widgets.dart';
@@ -263,7 +263,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MockTestRunnerScreen(
+        builder: (context) => MockInstructionsScreen(
           questions: questions,
           duration: duration,
           testName: name,

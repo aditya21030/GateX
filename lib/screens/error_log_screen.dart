@@ -6,7 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import '../providers/app_provider.dart';
 import '../services/storage_service.dart';
 import '../theme/app_theme.dart';
-import 'mock_test_runner_screen.dart';
+import 'mock_instructions_screen.dart';
 import '../widgets/neu_widgets.dart';
 
 class ErrorLogScreen extends StatefulWidget {
@@ -262,7 +262,7 @@ class _ErrorLogScreenState extends State<ErrorLogScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MockTestRunnerScreen(
+                          builder: (context) => MockInstructionsScreen(
                             questions: quizQuestions,
                             duration: Duration(minutes: quizQuestions.length * 3),
                             testName: _selectedSubjectFilter == 'All'
