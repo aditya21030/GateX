@@ -156,8 +156,8 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     if (base.length != 65) return base;
 
     // For custom crafted full-length mocks, maintain the exact curated question sequence
-    if ((activeExam == 'DA' && (mockNumber >= 2 && mockNumber <= 10)) ||
-        ((activeExam == 'CS' || activeExam == 'CSIT') && (mockNumber >= 2 && mockNumber <= 10))) {
+    if ((activeExam == 'DA' && (mockNumber >= 1 && mockNumber <= 10)) ||
+        ((activeExam == 'CS' || activeExam == 'CSIT') && (mockNumber >= 1 && mockNumber <= 10))) {
       return base;
     }
 
@@ -1571,7 +1571,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'Latest attempt: ${mocks.first.score.toStringAsFixed(1)}/100 on ${DateFormat('MMM dd').format(mocks.first.dateTaken)}. Regular 3-hour tests build speed and stamina.',
+                            'Latest attempt: ${mocks.last.score.toStringAsFixed(1)}/100 on ${DateFormat('MMM dd').format(mocks.last.dateTaken)}. Regular 3-hour tests build speed and stamina.',
                             style: GoogleFonts.outfit(fontSize: 11, color: context.textSecondaryColor, height: 1.3),
                           ),
                         ],
@@ -1628,7 +1628,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                     ),
                   )
                 : Column(
-                    children: mocks.map((mock) => _buildMockHistoryCard(context, provider, mock)).toList(),
+                    children: mocks.reversed.map((mock) => _buildMockHistoryCard(context, provider, mock)).toList(),
                   ),
           ),
         ],
@@ -1797,13 +1797,54 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                   const SizedBox(height: 12),
                 ],
 
-                // Delete Action
+                // Delete Action with Confirmation Dialog
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton.icon(
                     style: TextButton.styleFrom(foregroundColor: AppTheme.error),
                     onPressed: () {
-                      provider.deleteMockTest(mock.id);
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          backgroundColor: context.colorSurface,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          title: const Row(
+                            children: [
+                              Icon(Icons.delete_outline_rounded, color: AppTheme.error, size: 22),
+                              SizedBox(width: 8),
+                              Text('Delete Test Log?', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            ],
+                          ),
+                          content: Text(
+                            'Are you sure you want to remove "${mock.name}" (${mock.score.toStringAsFixed(1)}%) from your history and trajectory curve?',
+                            style: TextStyle(color: context.textSecondaryColor, fontSize: 13, height: 1.4),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: Text('Cancel', style: TextStyle(color: context.textSecondaryColor)),
+                            ),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.error,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(ctx);
+                                provider.deleteMockTest(mock.id);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Deleted "${mock.name}"'),
+                                    backgroundColor: AppTheme.error,
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                              },
+                              child: const Text('Delete', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        ),
+                      );
                     },
                     icon: const Icon(Icons.delete_outline, size: 16),
                     label: const Text('Delete Log', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11)),
@@ -1934,7 +1975,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                           if (val == null || val.trim().isEmpty) {
                             return 'Please enter score';
                           }
-                          final s = double.tryParse(val);
+                          final s = double.tryParse(val.trim().replaceAll(',', '.'));
                           if (s == null || s < 0 || s > 100) {
                             return 'Enter score between 0 and 100';
                           }
@@ -2003,7 +2044,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
                           ),
                           onPressed: () {
                             if (formKey.currentState!.validate()) {
-                              final score = double.parse(scoreController.text);
+                              final score = double.parse(scoreController.text.trim().replaceAll(',', '.'));
                               provider.addMockTest(
                                 nameController.text.trim(),
                                 DateTime.now(),

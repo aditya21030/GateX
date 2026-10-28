@@ -141,7 +141,7 @@ class PYQ {
 
   bool isAnswerCorrect(String? uAns) {
     if (uAns == null || uAns.trim().isEmpty) return false;
-    final cleanUser = uAns.trim().toLowerCase();
+    final cleanUser = uAns.trim().toLowerCase().replaceAll(',', '.');
     final cleanCorrect = correctAnswer.trim().toLowerCase();
 
     if (type == 'NAT') {
@@ -172,14 +172,14 @@ class PYQ {
       }
 
       final double? userNum = double.tryParse(cleanUser);
-      final double? correctNum = double.tryParse(cleanCorrect);
+      final double? correctNum = double.tryParse(cleanCorrect.replaceAll(',', '.'));
       if (userNum != null && correctNum != null) {
         // Absolute tolerance of 0.05 or relative tolerance of 1%
         final absDiff = (userNum - correctNum).abs();
         final maxAllowed = (0.05 > (correctNum.abs() * 0.01)) ? 0.05 : (correctNum.abs() * 0.01);
         return absDiff <= maxAllowed;
       }
-      return cleanUser == cleanCorrect;
+      return cleanUser == cleanCorrect.replaceAll(',', '.');
     } else if (type == 'MSQ') {
       final uSet = cleanUser.split(';').map((s) => s.trim()).toSet();
       final cSet = cleanCorrect.split(';').map((s) => s.trim()).toSet();

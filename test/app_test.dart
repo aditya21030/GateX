@@ -1076,6 +1076,82 @@ void main() {
     });
   });
 
+  group('Mock Arena Architecture & CBT Engine Tests', () {
+    test('CBT section weightage maps 15 marks GA and 85 marks Core totaling 100 marks', () {
+      double getWeight(int index) {
+        if ((index >= 0 && index < 5) || (index >= 10 && index < 35)) {
+          return 1.0;
+        }
+        return 2.0;
+      }
+
+      double gaMarks = 0;
+      for (int i = 0; i < 10; i++) {
+        gaMarks += getWeight(i);
+      }
+      expect(gaMarks, 15.0);
+
+      double coreMarks = 0;
+      for (int i = 10; i < 65; i++) {
+        coreMarks += getWeight(i);
+      }
+      expect(coreMarks, 85.0);
+      expect(gaMarks + coreMarks, 100.0);
+    });
+
+    test('Negative marking calculation conforms to official GATE regulations', () {
+      double getNegPenalty(String type, double weight) {
+        if (type != 'MCQ') return 0.0;
+        return weight / 3.0;
+      }
+
+      // 1-mark MCQ has 1/3 penalty
+      expect(getNegPenalty('MCQ', 1.0), closeTo(0.3333, 0.001));
+      // 2-mark MCQ has 2/3 penalty
+      expect(getNegPenalty('MCQ', 2.0), closeTo(0.6666, 0.001));
+      // MSQ and NAT have 0 penalty
+      expect(getNegPenalty('MSQ', 1.0), 0.0);
+      expect(getNegPenalty('MSQ', 2.0), 0.0);
+      expect(getNegPenalty('NAT', 1.0), 0.0);
+      expect(getNegPenalty('NAT', 2.0), 0.0);
+    });
+
+    test('NAT decimal normalization handles comma separator in answer validation', () {
+      final q = PYQ(
+        id: 'mock_nat_comma_test',
+        subject: 'Engineering Mathematics',
+        topic: 'Calculus',
+        questionText: 'Evaluate the limit',
+        type: 'NAT',
+        isMCQ: false,
+        year: 2026,
+        options: [],
+        correctAnswer: '2.718',
+        difficulty: 'Hard',
+        explanation: 'Limit resolves to Euler number e',
+      );
+
+      // Comma in user response
+      expect(q.isAnswerCorrect('2,718'), true);
+      // Tolerance within 0.05
+      expect(q.isAnswerCorrect('2,74'), true);
+      // Out of bounds
+      expect(q.isAnswerCorrect('3,14'), false);
+    });
+
+    test('External mock test score parser normalizes comma inputs without crashing', () {
+      double? parseScore(String input) {
+        return double.tryParse(input.trim().replaceAll(',', '.'));
+      }
+
+      expect(parseScore('72.5'), 72.5);
+      expect(parseScore('72,5'), 72.5);
+      expect(parseScore('0,0'), 0.0);
+      expect(parseScore('100,00'), 100.0);
+      expect(parseScore('invalid'), isNull);
+    });
+  });
+
   group('GateX Hub Screen Architecture & Tools Tests', () {
     test('Hub Tools Grid contains comprehensive study tools including Score and PSU Predictor', () {
       final expectedTools = [

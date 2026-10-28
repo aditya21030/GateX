@@ -12,6 +12,8 @@ import '../models/models.dart';
 import '../theme/app_theme.dart';
 import '../providers/app_provider.dart';
 import '../services/ad_service.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import '../utils/math_markdown_builder.dart';
 import '../widgets/virtual_calculator.dart';
 import '../widgets/neu_widgets.dart';
 
@@ -39,7 +41,7 @@ class MockTestRunnerScreen extends StatefulWidget {
   State<MockTestRunnerScreen> createState() => _MockTestRunnerScreenState();
 }
 
-class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
+class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> with WidgetsBindingObserver {
   // Navigation
   int _currentIndex = 0;
 
@@ -79,6 +81,7 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     AdService().setAdSuspended(true);
     _secondsRemaining = widget.duration.inSeconds;
     _startTime = DateTime.now();
@@ -112,12 +115,32 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     AdService().setAdSuspended(false);
     for (var controller in _natControllers.values) {
       controller.dispose();
     }
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && !_isTestSubmitted) {
+      final elapsed = DateTime.now().difference(_startTime).inSeconds;
+      final remaining = widget.duration.inSeconds - elapsed;
+      if (remaining <= 0) {
+        setState(() {
+          _secondsRemaining = 0;
+        });
+        _timer?.cancel();
+        _autoSubmitTest();
+      } else {
+        setState(() {
+          _secondsRemaining = remaining;
+        });
+      }
+    }
   }
 
   String _formatTime(int totalSeconds) {
@@ -220,7 +243,7 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
         _userAnswers.remove(q.id);
       }
     } else if (isNAT) {
-      final text = _natControllers[q.id]?.text.trim() ?? '';
+      final text = _natControllers[q.id]?.text.trim().replaceAll(',', '.') ?? '';
       if (text.isNotEmpty) {
         _userAnswers[q.id] = text;
       } else {
@@ -294,6 +317,9 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
   }
 
   void _autoSubmitTest() {
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Time is up! Submitting your examination automatically.'),
@@ -310,7 +336,7 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
 
     // Sync all NAT inputs
     _natControllers.forEach((qId, controller) {
-      final text = controller.text.trim();
+      final text = controller.text.trim().replaceAll(',', '.');
       if (text.isNotEmpty) {
         _userAnswers[qId] = text;
       }
@@ -951,7 +977,7 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
 
   // --- Monospace & Formula Formatter ---
   Widget _buildQuestionText(String text, {bool isExplanation = false, Color? textColor}) {
-    final cacheKey = '${text.hashCode}_${isExplanation}_${textColor?.value}';
+    final cacheKey = '${text.hashCode}_${isExplanation}_${textColor?.value}_${context.isDarkMode}';
     if (_questionWidgetCache.containsKey(cacheKey)) {
       return _questionWidgetCache[cacheKey]!;
     }
@@ -994,20 +1020,45 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
           ),
         );
       } else {
-        widgets.add(
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Text(
-              blockText,
-              style: TextStyle(
-                fontSize: isExplanation ? 13 : 15,
-                fontWeight: isExplanation ? FontWeight.normal : FontWeight.w500,
-                color: textColor ?? AppTheme.textPrimary,
-                height: 1.4,
+        if (blockText.contains(r'$')) {
+          widgets.add(
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: MarkdownBody(
+                data: blockText,
+                builders: {
+                  'math': MathElementBuilder(color: textColor ?? context.textColor),
+                  'block_math': BlockMathElementBuilder(color: textColor ?? context.textColor),
+                },
+                inlineSyntaxes: [InlineMathSyntax()],
+                blockSyntaxes: [BlockMathSyntax()],
+                styleSheet: MarkdownStyleSheet(
+                  p: TextStyle(
+                    fontSize: isExplanation ? 13 : 15,
+                    fontWeight: isExplanation ? FontWeight.normal : FontWeight.w500,
+                    color: textColor ?? context.textColor,
+                    height: 1.4,
+                  ),
+                ),
               ),
             ),
-          ),
-        );
+          );
+        } else {
+          widgets.add(
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Text(
+                blockText,
+                style: TextStyle(
+                  fontSize: isExplanation ? 13 : 15,
+                  fontWeight: isExplanation ? FontWeight.normal : FontWeight.w500,
+                  color: textColor ?? context.textColor,
+                  height: 1.4,
+                ),
+              ),
+            ),
+          );
+        }
       }
       currentBlock = [];
     }
@@ -1721,9 +1772,10 @@ class _MockTestRunnerScreenState extends State<MockTestRunnerScreen> {
                   : null,
             ),
             onChanged: (val) {
+              final normalized = val.trim().replaceAll(',', '.');
               setState(() {
-                if (val.trim().isNotEmpty) {
-                  _userAnswers[q.id] = val.trim();
+                if (normalized.isNotEmpty) {
+                  _userAnswers[q.id] = normalized;
                 } else {
                   _userAnswers.remove(q.id);
                 }
@@ -2099,24 +2151,59 @@ https://github.com/aditya21030/GateX''';
               ),
 
               // 3. Question-by-Question Review List (full screen scrolling!)
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 60),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final q = filteredQuestions[index];
-                      final originalIndex = widget.questions.indexOf(q);
-                      return _MockQuestionReviewCard(
-                        index: originalIndex,
-                        pyq: q,
-                        userAnswer: _userAnswers[q.id],
-                        buildTextHelper: _buildQuestionText,
-                      );
-                    },
-                    childCount: filteredQuestions.length,
+              if (filteredQuestions.isEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            _reviewFilter == 'Incorrect'
+                                ? Icons.emoji_events_rounded
+                                : Icons.check_circle_outline_rounded,
+                            size: 48,
+                            color: _reviewFilter == 'Incorrect'
+                                ? AppTheme.accentMint
+                                : context.textSecondaryColor.withValues(alpha: 0.4),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            _reviewFilter == 'Incorrect'
+                                ? 'No incorrect questions! Outstanding 100% accuracy in attempted questions! 🎉'
+                                : 'No questions found under this filter.',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.outfit(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              color: context.textColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 60),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final q = filteredQuestions[index];
+                        final originalIndex = widget.questions.indexOf(q);
+                        return _MockQuestionReviewCard(
+                          index: originalIndex,
+                          pyq: q,
+                          userAnswer: _userAnswers[q.id],
+                          buildTextHelper: _buildQuestionText,
+                        );
+                      },
+                      childCount: filteredQuestions.length,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         ),
@@ -2200,6 +2287,13 @@ class _MockQuestionReviewCard extends StatefulWidget {
 class _MockQuestionReviewCardState extends State<_MockQuestionReviewCard> {
   bool _showExplanation = false;
   bool _addedToErrorLog = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final provider = Provider.of<AppProvider>(context, listen: false);
+    _addedToErrorLog = provider.errorLog.any((e) => e.questionText.trim() == widget.pyq.questionText.trim());
+  }
 
   void _showAddErrorLogDialog(BuildContext context) {
     final noteController = TextEditingController();
