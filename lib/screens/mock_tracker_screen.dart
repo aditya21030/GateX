@@ -1285,281 +1285,354 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     final double avgScore = mocks.isNotEmpty ? mocks.map((m) => m.score).reduce((a, b) => a + b) / mocks.length : 0.0;
     final double bestScore = mocks.isNotEmpty ? mocks.map((m) => m.score).reduce(max) : 0.0;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Summary Benchmark Strip
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
-          child: Row(
-            children: [
-              Expanded(
-                child: _buildMetricTile(
-                  context: context,
-                  label: 'Tests Taken',
-                  value: '${mocks.length}',
-                  icon: Icons.assignment_turned_in_rounded,
-                  iconColor: AppTheme.accentPurple,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _buildMetricTile(
-                  context: context,
-                  label: 'Mock Average',
-                  value: mocks.isNotEmpty ? avgScore.toStringAsFixed(1) : 'N/A',
-                  icon: Icons.speed_rounded,
-                  iconColor: const Color(0xFFFF8522),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _buildMetricTile(
-                  context: context,
-                  label: 'Peak Score',
-                  value: mocks.isNotEmpty ? bestScore.toStringAsFixed(1) : 'N/A',
-                  icon: Icons.emoji_events_rounded,
-                  iconColor: AppTheme.accentMint,
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        // Performance graph
-        if (mocks.length >= 2) ...[
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.only(bottom: 120),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 1. Summary Benchmark Strip
           Padding(
-            padding: const EdgeInsets.fromLTRB(18, 12, 18, 8),
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
             child: Row(
               children: [
-                const Icon3D(Icons.trending_up_rounded, size: 20, color: Color(0xFFFF8522)),
-                const SizedBox(width: 8),
-                Text(
-                  'Score Trajectory & Growth',
-                  style: GoogleFonts.outfit(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: context.textColor,
+                Expanded(
+                  child: _buildMetricTile(
+                    context: context,
+                    label: 'Tests Taken',
+                    value: '${mocks.length}',
+                    subLabel: mocks.isEmpty ? '0 Attempted' : '${mocks.length} Completed',
+                    icon: Icons.assignment_turned_in_rounded,
+                    iconColor: AppTheme.accentPurple,
                   ),
                 ),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFF8522).withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: const Color(0xFFFF8522).withValues(alpha: 0.25),
-                      width: 0.8,
-                    ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildMetricTile(
+                    context: context,
+                    label: 'Mock Average',
+                    value: mocks.isNotEmpty ? avgScore.toStringAsFixed(1) : 'N/A',
+                    subLabel: mocks.isNotEmpty ? '${avgScore.toStringAsFixed(0)}% Overall' : 'Awaiting Tests',
+                    icon: Icons.speed_rounded,
+                    iconColor: const Color(0xFFFF8522),
                   ),
-                  child: Text(
-                    '${mocks.length} Attempts',
-                    style: GoogleFonts.outfit(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFFFF8522),
-                    ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildMetricTile(
+                    context: context,
+                    label: 'Peak Score',
+                    value: mocks.isNotEmpty ? bestScore.toStringAsFixed(1) : 'N/A',
+                    subLabel: mocks.isNotEmpty ? 'Personal Best' : 'Target: 100',
+                    icon: Icons.emoji_events_rounded,
+                    iconColor: AppTheme.accentMint,
                   ),
                 ),
               ],
             ),
           ),
-          NeuContainer(
-            height: 195,
-            padding: const EdgeInsets.fromLTRB(16, 14, 24, 10),
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            borderRadius: 20,
-            child: LineChart(
-              LineChartData(
-                minY: 0,
-                maxY: 100,
-                lineTouchData: LineTouchData(
-                  enabled: true,
-                  touchTooltipData: LineTouchTooltipData(
-                    getTooltipColor: (_) => context.isDarkMode ? const Color(0xFF1E202C) : Colors.white,
-                    tooltipPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    getTooltipItems: (touchedSpots) {
-                      return touchedSpots.map((spot) {
-                        final idx = spot.x.toInt();
-                        final name = (idx >= 0 && idx < mocks.length) ? mocks[idx].name : 'Mock';
-                        return LineTooltipItem(
-                          '$name\nScore: ${spot.y.toStringAsFixed(1)}/100',
-                          GoogleFonts.outfit(
-                            color: const Color(0xFFFF8522),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 11.5,
-                          ),
-                        );
-                      }).toList();
-                    },
-                  ),
-                ),
-                gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  getDrawingHorizontalLine: (value) {
-                    return FlLine(
-                      color: context.colorBorder.withValues(alpha: 0.6),
-                      strokeWidth: 1,
-                      dashArray: [4, 4],
-                    );
-                  },
-                ),
-                titlesData: FlTitlesData(
-                  show: true,
-                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 22,
-                      interval: 1,
-                      getTitlesWidget: (value, meta) {
-                        final idx = value.toInt();
-                        if (idx >= 0 && idx < mocks.length) {
-                          return Text(
-                            DateFormat('MM/dd').format(mocks[idx].dateTaken),
-                            style: TextStyle(color: context.textSecondaryColor, fontSize: 8.5, fontWeight: FontWeight.bold),
-                          );
-                        }
-                        return const Text('');
-                      },
+
+          // 2. Performance graph or guided state
+          if (mocks.length >= 2) ...[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(18, 12, 18, 8),
+              child: Row(
+                children: [
+                  const Icon3D(Icons.trending_up_rounded, size: 20, color: Color(0xFFFF8522)),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Score Trajectory & Growth',
+                    style: GoogleFonts.outfit(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: context.textColor,
                     ),
                   ),
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 28,
-                      interval: 25,
-                      getTitlesWidget: (value, meta) {
-                        return Text(
-                          value.toInt().toString(),
-                          style: TextStyle(color: context.textSecondaryColor, fontSize: 8.5, fontWeight: FontWeight.bold),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                borderData: FlBorderData(show: false),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: List.generate(mocks.length, (index) {
-                      return FlSpot(index.toDouble(), mocks[index].score);
-                    }),
-                    isCurved: true,
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF8B5CF6), Color(0xFFFF8522)],
-                    ),
-                    barWidth: 3.5,
-                    isStrokeCapRound: true,
-                    dotData: FlDotData(
-                      show: true,
-                      getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
-                        radius: 4.5,
-                        color: const Color(0xFFFF8522),
-                        strokeWidth: 2,
-                        strokeColor: context.colorSurface,
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFF8522).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: const Color(0xFFFF8522).withValues(alpha: 0.25),
+                        width: 0.8,
                       ),
                     ),
-                    belowBarData: BarAreaData(
-                      show: true,
-                      gradient: LinearGradient(
-                        colors: [
-                          const Color(0xFFFF8522).withValues(alpha: 0.28),
-                          const Color(0xFF8B5CF6).withValues(alpha: 0.08),
-                          Colors.transparent,
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+                    child: Text(
+                      '${mocks.length} Attempts',
+                      style: GoogleFonts.outfit(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFFFF8522),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-        ] else
-          NeuContainer(
-            isRecessed: true,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            borderRadius: 18,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            NeuContainer(
+              height: 195,
+              padding: const EdgeInsets.fromLTRB(16, 14, 24, 10),
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              borderRadius: 20,
+              child: LineChart(
+                LineChartData(
+                  minY: 0,
+                  maxY: 100,
+                  lineTouchData: LineTouchData(
+                    enabled: true,
+                    touchTooltipData: LineTouchTooltipData(
+                      getTooltipColor: (_) => context.isDarkMode ? const Color(0xFF1E202C) : Colors.white,
+                      tooltipPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      getTooltipItems: (touchedSpots) {
+                        return touchedSpots.map((spot) {
+                          final idx = spot.x.toInt();
+                          final name = (idx >= 0 && idx < mocks.length) ? mocks[idx].name : 'Mock';
+                          return LineTooltipItem(
+                            '$name\nScore: ${spot.y.toStringAsFixed(1)}/100',
+                            GoogleFonts.outfit(
+                              color: const Color(0xFFFF8522),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 11.5,
+                            ),
+                          );
+                        }).toList();
+                      },
+                    ),
+                  ),
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: false,
+                    getDrawingHorizontalLine: (value) {
+                      return FlLine(
+                        color: context.colorBorder.withValues(alpha: 0.6),
+                        strokeWidth: 1,
+                        dashArray: [4, 4],
+                      );
+                    },
+                  ),
+                  titlesData: FlTitlesData(
+                    show: true,
+                    rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 22,
+                        interval: 1,
+                        getTitlesWidget: (value, meta) {
+                          final idx = value.toInt();
+                          if (idx >= 0 && idx < mocks.length) {
+                            return Text(
+                              DateFormat('MM/dd').format(mocks[idx].dateTaken),
+                              style: TextStyle(color: context.textSecondaryColor, fontSize: 8.5, fontWeight: FontWeight.bold),
+                            );
+                          }
+                          return const Text('');
+                        },
+                      ),
+                    ),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 28,
+                        interval: 25,
+                        getTitlesWidget: (value, meta) {
+                          return Text(
+                            value.toInt().toString(),
+                            style: TextStyle(color: context.textSecondaryColor, fontSize: 8.5, fontWeight: FontWeight.bold),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  borderData: FlBorderData(show: false),
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: List.generate(mocks.length, (index) {
+                        return FlSpot(index.toDouble(), mocks[index].score);
+                      }),
+                      isCurved: true,
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF8B5CF6), Color(0xFFFF8522)],
+                      ),
+                      barWidth: 3.5,
+                      isStrokeCapRound: true,
+                      dotData: FlDotData(
+                        show: true,
+                        getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
+                          radius: 4.5,
+                          color: const Color(0xFFFF8522),
+                          strokeWidth: 2,
+                          strokeColor: context.colorSurface,
+                        ),
+                      ),
+                      belowBarData: BarAreaData(
+                        show: true,
+                        gradient: LinearGradient(
+                          colors: [
+                            const Color(0xFFFF8522).withValues(alpha: 0.28),
+                            const Color(0xFF8B5CF6).withValues(alpha: 0.08),
+                            Colors.transparent,
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ] else
+            NeuContainer(
+              isRecessed: true,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              borderRadius: 18,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppTheme.accentPurple.withValues(alpha: 0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon3D(Icons.auto_graph_rounded, color: AppTheme.accentPurple, size: 24),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    mocks.isEmpty ? 'Your AIR Score Trajectory Curve' : '1 Attempt Logged — Need 1 More for Curve',
+                    style: GoogleFonts.outfit(fontSize: 13.5, fontWeight: FontWeight.bold, color: context.textColor),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Complete 2 or more CBT mocks to unlock your AIR score trajectory curve and subject accuracy trends!',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 11.5, height: 1.35),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      HapticFeedback.selectionClick();
+                      _tabController.animateTo(0);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.accentPurple,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    icon: const Icon(Icons.play_arrow_rounded, size: 16),
+                    label: Text(
+                      'Start Diagnostic Mock 1',
+                      style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 11.5),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+          const SizedBox(height: 14),
+
+          // 3. Quick Performance Analysis Callout (when mocks exist)
+          if (mocks.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: NeuContainer(
+                borderRadius: 16,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppTheme.accentMint.withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.insights_rounded, color: AppTheme.accentMint, size: 20),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            avgScore >= 60
+                                ? '🔥 Strong Momentum (IIT Top Tier)'
+                                : (avgScore >= 40
+                                    ? '⚡ Good Progress (Target NIT / New IITs)'
+                                    : '📈 Foundation Building Mode'),
+                            style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 13, color: context.textColor),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Latest attempt: ${mocks.first.score.toStringAsFixed(1)}/100 on ${DateFormat('MMM dd').format(mocks.first.dateTaken)}. Regular 3-hour tests build speed and stamina.',
+                            style: GoogleFonts.outfit(fontSize: 11, color: context.textSecondaryColor, height: 1.3),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+          if (mocks.isNotEmpty) const SizedBox(height: 14),
+
+          // 4. History Title
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
               children: [
+                Text(
+                  'Test History & Scores',
+                  style: AppTheme.poppinsBold(fontSize: 15, color: context.textColor),
+                ),
+                const SizedBox(width: 6),
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                   decoration: BoxDecoration(
-                    color: AppTheme.accentPurple.withValues(alpha: 0.12),
-                    shape: BoxShape.circle,
+                    color: AppTheme.accentPurple.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon3D(Icons.auto_graph_rounded, color: AppTheme.accentPurple, size: 24),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  mocks.isEmpty ? 'Your AIR Score Trajectory Curve' : '1 Attempt Logged — Need 1 More for Curve',
-                  style: GoogleFonts.outfit(fontSize: 13.5, fontWeight: FontWeight.bold, color: context.textColor),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Complete 2 or more CBT mocks to unlock your AIR score trajectory curve and subject accuracy trends!',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.outfit(color: context.textSecondaryColor, fontSize: 11.5, height: 1.35),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    HapticFeedback.selectionClick();
-                    _tabController.animateTo(0);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.accentPurple,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    visualDensity: VisualDensity.compact,
-                  ),
-                  icon: const Icon(Icons.play_arrow_rounded, size: 16),
-                  label: Text(
-                    'Start Diagnostic Mock 1',
-                    style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 11.5),
+                  child: Text(
+                    '${mocks.length}',
+                    style: GoogleFonts.outfit(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.accentPurple,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
+          const SizedBox(height: 10),
 
-        const SizedBox(height: 14),
-        // History Title
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            'Test History & Scores (${mocks.length})',
-            style: AppTheme.poppinsBold(fontSize: 15, color: context.textColor),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Expanded(
-          child: mocks.isEmpty
-              ? Center(
-                  child: Text(
-                    'Your exam history will show up here.',
-                    style: TextStyle(color: context.textSecondaryColor, fontSize: 13),
+          // 5. Test History Cards (100% Scrollable in the parent view!)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: mocks.isEmpty
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 36),
+                      child: Text(
+                        'Your exam history will show up here.',
+                        style: TextStyle(color: context.textSecondaryColor, fontSize: 13),
+                      ),
+                    ),
+                  )
+                : Column(
+                    children: mocks.map((mock) => _buildMockHistoryCard(context, provider, mock)).toList(),
                   ),
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: mocks.length,
-                  itemBuilder: (context, index) {
-                    final mock = mocks[index];
-                    return _buildMockHistoryCard(context, provider, mock);
-                  },
-                ),
-        ),
-      ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -1567,6 +1640,7 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
     required BuildContext context,
     required String label,
     required String value,
+    String? subLabel,
     required IconData icon,
     required Color iconColor,
   }) {
@@ -1603,6 +1677,19 @@ class _MockTrackerScreenState extends State<MockTrackerScreen> with SingleTicker
               color: context.textColor,
             ),
           ),
+          if (subLabel != null) ...[
+            const SizedBox(height: 2),
+            Text(
+              subLabel,
+              style: GoogleFonts.outfit(
+                fontSize: 9.5,
+                color: context.textSecondaryColor,
+                fontWeight: FontWeight.w500,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ],
       ),
     );

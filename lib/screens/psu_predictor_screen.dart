@@ -352,6 +352,7 @@ class _PsuPredictorScreenState extends State<PsuPredictorScreen> {
     } else if (provider.estimatedGateScore > 0) {
       _gateScore = provider.estimatedGateScore;
     }
+    AdService().loadInterstitialAd();
   }
 
   String _getChance(int cutoff) {
@@ -438,7 +439,7 @@ class _PsuPredictorScreenState extends State<PsuPredictorScreen> {
 
     if (!provider.isPro) {
       AdService().showInterstitialAd(
-        enforceCooldown: true,
+        enforceCooldown: false,
         onDismissed: () {
           finish();
         },

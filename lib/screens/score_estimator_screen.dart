@@ -28,11 +28,70 @@ class ScoreEstimatorScreen extends StatefulWidget {
 }
 
 class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
+  late String _selectedBranch; // 'DA' or 'CSIT'
   bool _isRealGateExam = false; // false = Mock Test, true = Real GATE Exam (Response Sheet)
   String _targetYearTrend = 'Average Trend';
   bool _isPredicting = false;
   bool _hasPredicted = false;
   Map<String, dynamic>? _prediction;
+
+  @override
+  void initState() {
+    super.initState();
+    final provider = Provider.of<AppProvider>(context, listen: false);
+    _selectedBranch = (provider.activeExam == 'CSIT') ? 'CSIT' : 'DA';
+    AdService().loadInterstitialAd();
+  }
+
+  static const List<EstimationNode> _csNodes2026 = [
+    EstimationNode(marks: 100.0, gateScore: 1000.0, minRank: 1, maxRank: 1),
+    EstimationNode(marks: 90.0, gateScore: 980.0, minRank: 2, maxRank: 10),
+    EstimationNode(marks: 85.0, gateScore: 940.0, minRank: 11, maxRank: 35),
+    EstimationNode(marks: 80.0, gateScore: 890.0, minRank: 36, maxRank: 80),
+    EstimationNode(marks: 75.0, gateScore: 840.0, minRank: 81, maxRank: 180),
+    EstimationNode(marks: 70.0, gateScore: 790.0, minRank: 181, maxRank: 350),
+    EstimationNode(marks: 65.0, gateScore: 740.0, minRank: 351, maxRank: 700),
+    EstimationNode(marks: 60.0, gateScore: 680.0, minRank: 701, maxRank: 1300),
+    EstimationNode(marks: 55.0, gateScore: 620.0, minRank: 1301, maxRank: 2200),
+    EstimationNode(marks: 50.0, gateScore: 560.0, minRank: 2201, maxRank: 3800),
+    EstimationNode(marks: 45.0, gateScore: 500.0, minRank: 3801, maxRank: 6000),
+    EstimationNode(marks: 40.0, gateScore: 440.0, minRank: 6001, maxRank: 9500),
+    EstimationNode(marks: 35.0, gateScore: 390.0, minRank: 9501, maxRank: 14000),
+    EstimationNode(marks: 27.0, gateScore: 350.0, minRank: 16000, maxRank: 19000),
+    EstimationNode(marks: 0.0, gateScore: 0.0, minRank: 50000, maxRank: 80000),
+  ];
+
+  static const List<EstimationNode> _csNodes2025 = [
+    EstimationNode(marks: 100.0, gateScore: 1000.0, minRank: 1, maxRank: 1),
+    EstimationNode(marks: 88.0, gateScore: 970.0, minRank: 2, maxRank: 12),
+    EstimationNode(marks: 82.0, gateScore: 920.0, minRank: 13, maxRank: 45),
+    EstimationNode(marks: 76.0, gateScore: 860.0, minRank: 46, maxRank: 120),
+    EstimationNode(marks: 70.0, gateScore: 800.0, minRank: 121, maxRank: 300),
+    EstimationNode(marks: 64.0, gateScore: 730.0, minRank: 301, maxRank: 750),
+    EstimationNode(marks: 58.0, gateScore: 660.0, minRank: 751, maxRank: 1500),
+    EstimationNode(marks: 52.0, gateScore: 590.0, minRank: 1501, maxRank: 2800),
+    EstimationNode(marks: 46.0, gateScore: 520.0, minRank: 2801, maxRank: 4800),
+    EstimationNode(marks: 40.0, gateScore: 450.0, minRank: 4801, maxRank: 8000),
+    EstimationNode(marks: 34.0, gateScore: 390.0, minRank: 8001, maxRank: 13000),
+    EstimationNode(marks: 26.5, gateScore: 350.0, minRank: 15000, maxRank: 18000),
+    EstimationNode(marks: 0.0, gateScore: 0.0, minRank: 60000, maxRank: 90000),
+  ];
+
+  static const List<EstimationNode> _csNodes2024 = [
+    EstimationNode(marks: 100.0, gateScore: 1000.0, minRank: 1, maxRank: 1),
+    EstimationNode(marks: 90.0, gateScore: 990.0, minRank: 2, maxRank: 8),
+    EstimationNode(marks: 84.0, gateScore: 930.0, minRank: 9, maxRank: 30),
+    EstimationNode(marks: 78.0, gateScore: 870.0, minRank: 31, maxRank: 90),
+    EstimationNode(marks: 72.0, gateScore: 810.0, minRank: 91, maxRank: 220),
+    EstimationNode(marks: 66.0, gateScore: 750.0, minRank: 221, maxRank: 550),
+    EstimationNode(marks: 60.0, gateScore: 680.0, minRank: 551, maxRank: 1200),
+    EstimationNode(marks: 54.0, gateScore: 610.0, minRank: 1201, maxRank: 2400),
+    EstimationNode(marks: 48.0, gateScore: 540.0, minRank: 2401, maxRank: 4200),
+    EstimationNode(marks: 42.0, gateScore: 470.0, minRank: 4201, maxRank: 7200),
+    EstimationNode(marks: 36.0, gateScore: 400.0, minRank: 7201, maxRank: 11500),
+    EstimationNode(marks: 27.6, gateScore: 350.0, minRank: 16000, maxRank: 19500),
+    EstimationNode(marks: 0.0, gateScore: 0.0, minRank: 55000, maxRank: 85000),
+  ];
 
   static const List<EstimationNode> _nodes2026 = [
     EstimationNode(marks: 100.0, gateScore: 1000.0, minRank: 1, maxRank: 1),
@@ -104,23 +163,32 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
     final double multiplier = _isRealGateExam ? 1.0 : (_coachingMultipliers[source] ?? 1.0);
     final double scaledMarks = (marks * multiplier).clamp(0.0, 100.0);
 
+    final bool isCS = _selectedBranch == 'CSIT';
+    final nodes26 = isCS ? _csNodes2026 : _nodes2026;
+    final nodes25 = isCS ? _csNodes2025 : _nodes2025;
+    final nodes24 = isCS ? _csNodes2024 : _nodes2024;
+    final cut26 = isCS ? 27.0 : 26.4;
+    final cut25 = isCS ? 26.5 : 29.0;
+    final cut24 = isCS ? 27.6 : 37.1;
+    final avgCut = isCS ? 27.0 : 30.8;
+
     List<EstimationNode> nodes;
     double cutoff;
     if (yearTrend == 'GATE 2026') {
-      nodes = _nodes2026;
-      cutoff = 26.4;
+      nodes = nodes26;
+      cutoff = cut26;
     } else if (yearTrend == 'GATE 2025') {
-      nodes = _nodes2025;
-      cutoff = 29.0;
+      nodes = nodes25;
+      cutoff = cut25;
     } else if (yearTrend == 'GATE 2024') {
-      nodes = _nodes2024;
-      cutoff = 37.1;
+      nodes = nodes24;
+      cutoff = cut24;
     } else {
       // Average Trend
-      cutoff = 30.8;
-      final p2026 = _interpolateNode(scaledMarks, _nodes2026);
-      final p2025 = _interpolateNode(scaledMarks, _nodes2025);
-      final p2024 = _interpolateNode(scaledMarks, _nodes2024);
+      cutoff = avgCut;
+      final p2026 = _interpolateNode(scaledMarks, nodes26);
+      final p2025 = _interpolateNode(scaledMarks, nodes25);
+      final p2024 = _interpolateNode(scaledMarks, nodes24);
       final avgScore = (p2026['score']! + p2025['score']! + p2024['score']!) / 3.0;
       final avgMinRank = ((p2026['minRank']! + p2025['minRank']! + p2024['minRank']!) / 3.0).round();
       final avgMaxRank = ((p2026['maxRank']! + p2025['maxRank']! + p2024['maxRank']!) / 3.0).round();
@@ -507,7 +575,7 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
 
     if (!provider.isPro) {
       AdService().showInterstitialAd(
-        enforceCooldown: true,
+        enforceCooldown: false,
         onDismissed: () {
           computeAndShow();
         },
@@ -576,6 +644,144 @@ class _ScoreEstimatorScreenState extends State<ScoreEstimatorScreen> {
                         ? 'Official response sheet evaluation based on normalized GATE curves'
                         : 'Calibrated algorithm with coaching difficulty multipliers and GATE curves',
                     style: TextStyle(color: context.textSecondaryColor, fontSize: 12),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Branch Selector: GATE DA vs GATE CS/IT
+                  Row(
+                    children: [
+                      Container(
+                        width: 7,
+                        height: 7,
+                        decoration: BoxDecoration(
+                          color: _selectedBranch == 'CSIT' ? const Color(0xFF9C27B0) : const Color(0xFF2962FF),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'SELECT TARGET PAPER',
+                        style: TextStyle(
+                          color: context.textSecondaryColor,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.8,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: context.colorSurfaceElevated,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: context.colorBorder),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              if (_selectedBranch != 'DA') {
+                                HapticFeedback.selectionClick();
+                                setState(() {
+                                  _selectedBranch = 'DA';
+                                  _hasPredicted = false;
+                                });
+                              }
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              decoration: BoxDecoration(
+                                color: _selectedBranch == 'DA' ? const Color(0xFF2962FF) : Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: _selectedBranch == 'DA'
+                                    ? [
+                                        BoxShadow(
+                                          color: const Color(0xFF2962FF).withValues(alpha: 0.3),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ]
+                                    : null,
+                              ),
+                              alignment: Alignment.center,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.data_object_rounded,
+                                    size: 15,
+                                    color: _selectedBranch == 'DA' ? Colors.white : context.textSecondaryColor,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'GATE DA',
+                                    style: TextStyle(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.bold,
+                                      color: _selectedBranch == 'DA' ? Colors.white : context.textSecondaryColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              if (_selectedBranch != 'CSIT') {
+                                HapticFeedback.selectionClick();
+                                setState(() {
+                                  _selectedBranch = 'CSIT';
+                                  _hasPredicted = false;
+                                });
+                              }
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              decoration: BoxDecoration(
+                                color: _selectedBranch == 'CSIT' ? const Color(0xFF9C27B0) : Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: _selectedBranch == 'CSIT'
+                                    ? [
+                                        BoxShadow(
+                                          color: const Color(0xFF9C27B0).withValues(alpha: 0.3),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ]
+                                    : null,
+                              ),
+                              alignment: Alignment.center,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.computer_rounded,
+                                    size: 15,
+                                    color: _selectedBranch == 'CSIT' ? Colors.white : context.textSecondaryColor,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'GATE CS/IT',
+                                    style: TextStyle(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.bold,
+                                      color: _selectedBranch == 'CSIT' ? Colors.white : context.textSecondaryColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 16),
 

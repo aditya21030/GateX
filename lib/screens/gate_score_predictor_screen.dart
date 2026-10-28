@@ -53,6 +53,7 @@ class _GateScorePredictorScreenState extends State<GateScorePredictorScreen> {
     if (widget.initialMarks != null) {
       _marks = widget.initialMarks!.clamp(0.0, 100.0);
     }
+    AdService().loadInterstitialAd();
   }
 
   // Branch session parameters: { Mq (GEN cutoff), Mt (Top 0.1% mean marks) }
@@ -414,7 +415,7 @@ class _GateScorePredictorScreenState extends State<GateScorePredictorScreen> {
 
     if (!provider.isPro) {
       AdService().showInterstitialAd(
-        enforceCooldown: true,
+        enforceCooldown: false,
         onDismissed: () {
           computeAndShow();
         },
