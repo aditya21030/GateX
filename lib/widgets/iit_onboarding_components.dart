@@ -1391,7 +1391,7 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
     return LayoutBuilder(
       builder: (context, constraints) {
         final stageW = constraints.maxWidth;
-        final cardW = (stageW * 0.90).clamp(310.0, 380.0);
+        final cardW = (stageW * 0.90).clamp(310.0, 390.0);
 
         return Center(
           child: AnimatedBuilder(
@@ -1401,10 +1401,7 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
                 offset: Offset(0, _floatAnim.value),
                 child: SizedBox(
                   width: cardW,
-                  child: switch (widget.slideIndex) {
-                    0 => _buildCleanIITIllustration(context),
-                    _ => _buildCleanPSUIllustration(context),
-                  },
+                  child: _buildCardForSlide(context, widget.slideIndex),
                 ),
               );
             },
@@ -1414,20 +1411,46 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
     );
   }
 
-  /// Slide 0: Clean, Dignified Architectural IIT Monument Illustration (Uncluttered)
-  Widget _buildCleanIITIllustration(BuildContext context) {
+  Widget _buildCardForSlide(BuildContext context, int index) {
+    final (imagePath, badgeText, badgeIcon, badgeColor, borderColor, shadowColor) = switch (index) {
+      0 => (
+        'assets/images/onboarding_iit.webp',
+        'TARGET TOP IITs • BOMBAY • DELHI • MADRAS',
+        Icons.school_rounded,
+        const Color(0xFFFF8522),
+        const Color(0xFF8338EC).withValues(alpha: 0.35),
+        const Color(0xFF8338EC).withValues(alpha: 0.20),
+      ),
+      1 => (
+        'assets/images/onboarding_psu.webp',
+        'TOP PSUs • ONGC • IOCL • NTPC • ISRO • BARC',
+        Icons.precision_manufacturing_rounded,
+        const Color(0xFF00E5FF),
+        const Color(0xFF00B4D8).withValues(alpha: 0.35),
+        const Color(0xFF0077B6).withValues(alpha: 0.20),
+      ),
+      _ => (
+        'assets/images/onboarding_campus.webp',
+        'GATE CS/IT & GATE DA • 100% CBT SIMULATED',
+        Icons.military_tech_rounded,
+        const Color(0xFFA78BFA),
+        const Color(0xFF7C3AED).withValues(alpha: 0.35),
+        const Color(0xFF7C3AED).withValues(alpha: 0.20),
+      ),
+    };
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: const Color(0xFF111019),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: const Color(0xFF8338EC).withValues(alpha: 0.35),
+          color: borderColor,
           width: 1.2,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF8338EC).withValues(alpha: 0.16),
+            color: shadowColor,
             blurRadius: 28,
             offset: const Offset(0, 10),
           ),
@@ -1436,294 +1459,54 @@ class _CurvedMinimalIITCardsStageState extends State<CurvedMinimalIITCardsStage>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
-            height: 195,
-            width: double.infinity,
-            child: CustomPaint(
-              painter: _IITBuildingPainter(),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: SizedBox(
+              height: 205,
+              width: double.infinity,
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
+              ),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: const Color(0xFF181524),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: const Color(0xFFFF8522).withValues(alpha: 0.5),
+                color: badgeColor.withValues(alpha: 0.5),
                 width: 1.0,
               ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.school_rounded, color: Color(0xFFFF8522), size: 14),
+                Icon(badgeIcon, color: badgeColor, size: 14),
                 const SizedBox(width: 6),
-                Text(
-                  'TARGET TOP IITs • BOMBAY • DELHI • MADRAS',
-                  style: GoogleFonts.outfit(
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Slide 1: Clean, Dignified PSU Engineering Infrastructure Illustration (Uncluttered)
-  Widget _buildCleanPSUIllustration(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0C1322),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: const Color(0xFF00B4D8).withValues(alpha: 0.35),
-          width: 1.2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF0077B6).withValues(alpha: 0.18),
-            blurRadius: 28,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            height: 195,
-            width: double.infinity,
-            child: CustomPaint(
-              painter: _PSUEngineeringPainter(),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: const Color(0xFF101B2E),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: const Color(0xFF00E5FF).withValues(alpha: 0.5),
-                width: 1.0,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.precision_manufacturing_rounded, color: Color(0xFF00E5FF), size: 14),
-                const SizedBox(width: 6),
-                Text(
-                  'TOP PSUs • ONGC • IOCL • NTPC • ISRO • BARC',
-                  style: GoogleFonts.outfit(
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Slide 2: Official TCS iON CBT Exam Console & AI Mistake Notebook (Uncluttered)
-  Widget _buildCleanCbtExamIllustration(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF10131E),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: const Color(0xFF3A86FF).withValues(alpha: 0.35),
-          width: 1.2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF3A86FF).withValues(alpha: 0.16),
-            blurRadius: 28,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF3A86FF).withValues(alpha: 0.18),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(Icons.desktop_windows_rounded, color: Color(0xFF3A86FF), size: 16),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'TCS iON CBT SIMULATOR',
+                Flexible(
+                  child: Text(
+                    badgeText,
                     style: GoogleFonts.outfit(
-                      fontSize: 12,
+                      fontSize: 10.5,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
-                      letterSpacing: 0.6,
+                      letterSpacing: 0.5,
                     ),
-                  ),
-                ],
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFF5722).withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: const Color(0xFFFF5722).withValues(alpha: 0.4)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.timer_outlined, color: Color(0xFFFF5722), size: 12),
-                    const SizedBox(width: 4),
-                    Text(
-                      '02:59:45',
-                      style: GoogleFonts.jetBrainsMono(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFFFF5722),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 18),
-          Row(
-            children: [
-              _buildPaletteChip('42', 'Answered', const Color(0xFF00E676)),
-              const SizedBox(width: 8),
-              _buildPaletteChip('5', 'Review', const Color(0xFF8338EC)),
-              const SizedBox(width: 8),
-              _buildPaletteChip('18', 'Left', Colors.white38),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.white10),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.calculate_rounded, color: Color(0xFFFFB300), size: 16),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Virtual Calculator',
-                        style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.white10),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.insights_rounded, color: Color(0xFF00E676), size: 16),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Live AIR Projector',
-                        style: GoogleFonts.outfit(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF00E676).withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: const Color(0xFF00E676).withValues(alpha: 0.25)),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.auto_fix_high_rounded, color: Color(0xFF00E676), size: 16),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'AI Mistake Notebook • Auto-Generates Drills',
-                    style: GoogleFonts.outfit(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF00E676),
-                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildPaletteChip(String count, String label, Color color) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: color.withValues(alpha: 0.35)),
-        ),
-        child: Column(
-          children: [
-            Text(
-              count,
-              style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold, color: color),
-            ),
-            Text(
-              label,
-              style: GoogleFonts.plusJakartaSans(fontSize: 9.5, color: Colors.white60),
-            ),
-          ],
-        ),
       ),
     );
   }
 }
-
 
 class NeonGlowSheet extends StatelessWidget {
   final Widget child;
@@ -1862,7 +1645,7 @@ class AuthPurpleHeaderWithIIT extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
-    final headerHeight = isKeyboardOpen ? 100.0 : 215.0;
+    final headerHeight = isKeyboardOpen ? 110.0 : 215.0;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 220),
@@ -1878,14 +1661,14 @@ class AuthPurpleHeaderWithIIT extends StatelessWidget {
             Positioned(
               top: 10,
               child: Container(
-                width: 220,
-                height: 170,
+                width: 240,
+                height: 180,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
                       const Color(0xFFFF8522).withValues(alpha: 0.18),
-                      const Color(0xFF8338EC).withValues(alpha: 0.22),
+                      const Color(0xFF8338EC).withValues(alpha: 0.25),
                       Colors.transparent,
                     ],
                     stops: const [0.1, 0.55, 1.0],
@@ -1894,12 +1677,14 @@ class AuthPurpleHeaderWithIIT extends StatelessWidget {
               ),
             ),
 
-          // Central Group of Students Vector Illustration
+          // Central Group of Students 3D Asset (Sitting around laptop)
           Positioned(
-            bottom: isKeyboardOpen ? 4 : 10,
-            child: GroupOfStudentsIllustration(
-              size: isKeyboardOpen ? 72.0 : 132.0,
-              targetBadge: airRank,
+            bottom: isKeyboardOpen ? 0 : 6,
+            child: Image.asset(
+              imageAsset ?? 'assets/images/auth_students.webp',
+              height: isKeyboardOpen ? 92.0 : 165.0,
+              fit: BoxFit.contain,
+              filterQuality: FilterQuality.high,
             ),
           ),
 

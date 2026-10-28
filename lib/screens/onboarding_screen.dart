@@ -25,6 +25,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       title: 'Prestigious PSU\nCareers & Recruitment',
       subtitle: 'Direct high-paying recruitment in ONGC, IOCL, NTPC, BHEL, ISRO & BARC with top percentile.',
     ),
+    (
+      title: 'Master Full GATE\nSyllabus & CBT Mocks',
+      subtitle: 'Full-length TCS iON simulated mock tests, official virtual calculator & topic-wise solved PYQs.',
+    ),
   ];
 
   Future<void> _completeOnboarding({bool toSignUp = false}) async {
